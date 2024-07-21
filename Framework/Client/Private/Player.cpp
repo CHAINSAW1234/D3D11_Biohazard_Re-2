@@ -107,6 +107,18 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
 
+	CModel* pModel = Get_Body_Model();
+
+
+	m_pL_Ball_Combined = pModel->Get_CombinedMatrix("l_leg_ball");
+	m_pR_Ball_Combined = pModel->Get_CombinedMatrix("r_leg_ball");
+	m_pRoot_Combined = pModel->Get_CombinedMatrix("root");
+
+	if (nullptr == m_pL_Ball_Combined ||
+		nullptr == m_pL_Ball_Combined ||
+		nullptr == m_pL_Ball_Combined)
+		return E_FAIL;
+
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 6);	// 일단 3개
 
 	m_pGameInstance->SetPlayer(this);
@@ -227,17 +239,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		if (PRESSING == m_pGameInstance->Get_KeyState('S'))
 		{
-			/*if (m_bTurnAround == false)
-			{
-				m_bTurnAround = true;
-
-				auto CamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
-				CamLook.x = -CamLook.x;
-				CamLook.z = -CamLook.z;
-				m_vTurnAround_Look_Vector = Float4_Normalize(CamLook);
-				m_fTurnAround_Time = 0.f;
-			}*/
-
 			m_bMove_Backward = true;
 			m_bMove = true;
 
@@ -340,9 +341,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	//if (UP == m_pGameInstance->Get_KeyState('Z'))
-	//	m_isCamTurn = !m_isCamTurn;
-
 	if (m_pCamera && false == m_isCamTurn)
 	{
 		Calc_Camera_LookAt_Point(fTimeDelta);
@@ -385,10 +383,10 @@ void CPlayer::Tick(_float fTimeDelta)
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
 
-
 	Update_KeyInput_Reload();
 	Update_LightCondition();
 	Update_Equip();
+	Update_FootStep_Sound();
 
 #pragma endregion
 
@@ -1416,22 +1414,7 @@ void CPlayer::Update_Equip()
 					}
 				}
 			}
-
-
 		}
-
-		//// test
-		//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-		//	Requst_Change_Equip(HG);
-		//}
-
-		//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-		//	Requst_Change_Equip(STG);
-		//}
-
-		//if (m_pGameInstance->Get_KeyState('6') == DOWN) {
-		//	Requst_Change_Equip(NONE);
-		//}
 	}
 }
 
@@ -1530,6 +1513,58 @@ void CPlayer::Update_Direction()
 		dwDirection |= DIRECTION_RIGHT;
 
 	m_dwDirection = dwDirection;
+}
+
+void CPlayer::Update_FootStep_Sound()
+{
+	if (m_eState == BITE)
+		return ;
+
+	_float4				vL_Ball_Position_Local_Float3 = { *(_float4*)(&m_pL_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
+	_float4				vR_Ball_Position_Local_Float3 = { *(_float4*)(&m_pR_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
+	_float4				vRoot_Position_Local_Float3 = { *(_float4*)(&m_pRoot_Combined->m[CTransform::STATE_POSITION][0]) };
+
+	_float				fL_Ball_Height = { vL_Ball_Position_Local_Float3.y };
+	_float				fR_Ball_Height = { vR_Ball_Position_Local_Float3.y };
+	_float				fRootHeight = { vRoot_Position_Local_Float3.y };
+
+	_float				fDistanceYToLBall = { fL_Ball_Height - fRootHeight };
+	_float				fDistanceYToRBall = { fR_Ball_Height - fRootHeight };
+
+	_float				fRange = { 12.f };
+
+	static _bool m_isUp_L_Leg = false;
+	static _bool m_isUp_R_Leg = false;
+
+	static _float fPrevDistanceYToLBall = {};
+	static _float fPrevDistanceYToRBall = {};
+
+	if (fRange < fDistanceYToLBall &&
+		fRange >= fPrevDistanceYToLBall)
+	{
+		m_isUp_L_Leg = true;
+	}
+
+	if (fRange < fDistanceYToRBall &&
+		fRange >= fPrevDistanceYToRBall)
+	{
+		m_isUp_R_Leg = true;
+	}
+
+	if (fRange > fDistanceYToLBall && true == m_isUp_L_Leg)
+	{
+		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 9, 4);
+		m_isUp_L_Leg = false;
+	}
+
+	if (fRange > fDistanceYToRBall && true == m_isUp_R_Leg)
+	{
+		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 9, 4);
+		m_isUp_R_Leg = false;
+	}
+
+	fPrevDistanceYToLBall = fDistanceYToLBall;
+	fPrevDistanceYToRBall = fDistanceYToRBall;
 }
 
 void CPlayer::Turn_Spine_Default(_float fTimeDelta)
@@ -1881,14 +1916,6 @@ void CPlayer::Interact_Props(CGameObject* pPickedUp_Item)
 	m_isCamTurn = true;
 }
 
-
-//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
-//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
-//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
-// 
-//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
-//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
-
 void CPlayer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
 {
 	switch (eCallItemType)
@@ -1944,6 +1971,8 @@ void CPlayer::RayCast_Shoot()
 	_float4 vBlockNormal;
 	_bool	bHit_Props = false;
 
+	_bool isHit = false; // 사운드 재생용 Hit 성공 체크
+
 	if (m_eEquip == STG)
 	{
 		auto vCamPos = m_pCamera->GetPosition();
@@ -1972,7 +2001,7 @@ void CPlayer::RayCast_Shoot()
 		}
 		else
 		{
-			m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, true, true, &bHit_Props);
+			isHit = m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, true, true, &bHit_Props);
 		}
 
 		for (size_t i = 0; i < SHOTGUN_BULLET_COUNT; ++i)
@@ -2042,13 +2071,35 @@ void CPlayer::RayCast_Shoot()
 			return;
 		}
 
-		if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props))
-		{
+		isHit = m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props);
 
-		}
-		else
-			int a = 0;
 	}
+
+	if (1 &&		// 조건 들어갈 예정 : 형준형의 변수 들어감
+		!isHit) {
+		wstring strSoundTag;
+		_int iRandCnt;
+		switch (m_iHp) {
+		case 5:
+			strSoundTag = TEXT("Fine");
+			iRandCnt = 6;
+			break;
+		case 4:
+		case 3:
+			strSoundTag = TEXT("Caution");
+			iRandCnt = 5;
+			break;
+		case 2:
+		case 1:
+			strSoundTag = TEXT("Danger");
+			iRandCnt = 6;
+			break;
+		}
+
+		strSoundTag = TEXT("Sound_Player_Abuse_") + strSoundTag;
+		Change_Sound_3D(strSoundTag, iRandCnt, 3);
+	}
+
 }
 
 #pragma endregion
