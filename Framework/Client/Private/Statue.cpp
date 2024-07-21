@@ -41,8 +41,11 @@ HRESULT CStatue::Initialize(void* pArg)
 
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
-	//m_iNeedItem = statuebookhand;
-	m_iNeedItem = statuehand01a;
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
+	m_iNeedItem = statuebookhand;
 	m_iItemIndex = kingscepter01a;
 	return S_OK;
 }

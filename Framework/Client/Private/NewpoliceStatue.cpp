@@ -38,6 +38,13 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 	
+
+
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
+		return E_FAIL;
+
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom,0, 0.9f);
 	
 	return S_OK;
 }

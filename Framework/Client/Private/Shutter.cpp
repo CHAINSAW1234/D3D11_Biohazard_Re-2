@@ -46,6 +46,15 @@ HRESULT CShutter::Initialize(void* pArg)
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
+
+
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 0,0.8f);
+
+
 	return S_OK;
 }
 

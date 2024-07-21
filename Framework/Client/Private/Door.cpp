@@ -46,17 +46,20 @@ HRESULT CDoor::Initialize(void* pArg)
 
 	else if (m_tagPropDesc.strGamePrototypeName.find("056") != string::npos)
 	{
-		/*
-		if (m_tagPropDesc.strGamePrototypeName.find("iron") != string::npos)
-			sound_Map_sm40_door_m_iron_normal2_1
-		else
-			sound_Map_sm40_door_m_wood_normal2_1
-		*/
+
 		m_eType = DOOR_DUMMY;
 	}
 
 	else
+	{
+		
+		if (m_tagPropDesc.strGamePrototypeName.find("iron") != string::npos)
+			m_eDoorTexture = IRON;
+		else
+			m_eDoorTexture = WOOD;
+		
 		m_eType = DOOR_ONE;
+	}
 
 	if (m_eType == DOOR_DOUBLE)
 	{
@@ -78,7 +81,7 @@ HRESULT CDoor::Initialize(void* pArg)
 		m_bLock = false;
 
 
-	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
 		return E_FAIL;
 
 	return S_OK;
@@ -282,6 +285,7 @@ HRESULT CDoor::Add_PartObjects()
 	BodyDesc.pOneDoorState = &m_eOneState;
 	BodyDesc.pOneDoorState_Prev = &m_eOneState_Prev;
 	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
+	BodyDesc.pDoorTexture = &m_eDoorTexture;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 
 	if (true == m_bLock && m_tagPropDesc.tagDoor.iLockType == 0 && 
@@ -938,7 +942,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		//m_bActivity = true;
 		
 	}
-	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f))
+	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f)&& m_eOneState== ONEDOOR_STATIC)
 	{
 		//UI¶ç¿ì°í
 		
@@ -1020,6 +1024,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 
 	if (!m_bBlock && m_bOnce&& m_bCol[INTER_COL_NORMAL][COL_STEP2])
 	{
+		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_12.mp3"), 0);
 		m_bOnce = false;
 		if (m_bLock)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_LOCK, Get_PlayerLook_Degree());

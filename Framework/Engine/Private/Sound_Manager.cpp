@@ -200,6 +200,47 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	FMOD_System_Update(m_pSystem);
 }
 
+void CSound_Manager::Change_Same_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex)
+{
+
+	SOUND_DESC* pSoundDesc = { Find_SoundDesc_3D(pTransform, iSoundIndex) };
+	FMOD_SOUND* pSound = { Find_Sound(strSoundTag) };
+
+	if (nullptr == pSoundDesc || nullptr == pSound)
+		return;
+
+	if (pSound == pSoundDesc->pSound)
+	{
+		FMOD_BOOL				isPlaying = { false };
+		FMOD_RESULT				eResult = { FMOD_OK };
+		FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
+		if (true == isPlaying)
+		{
+			return;
+		}
+		pSoundDesc->pSound = pSound;
+		eResult = FMOD_System_PlaySound(m_pSystem, pSoundDesc->pSound, nullptr, FALSE, &m_pChannelArr[pSoundDesc->iChannelIndex]);
+		if (FMOD_OK != eResult)
+			return;
+		FMOD_System_Update(m_pSystem);
+		return;
+	}
+
+	FMOD_BOOL				isPlaying = { false };
+	FMOD_RESULT				eResult = { FMOD_OK };
+	FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
+	if (true == isPlaying)
+	{
+		Stop_Sound_3D(pTransform, iSoundIndex);
+	}
+
+	pSoundDesc->pSound = pSound;
+	eResult = FMOD_System_PlaySound(m_pSystem, pSoundDesc->pSound, nullptr, FALSE, &m_pChannelArr[pSoundDesc->iChannelIndex]);
+	if (FMOD_OK != eResult)
+		return;
+	FMOD_System_Update(m_pSystem);
+}
+
 void CSound_Manager::Set_Volume_2D(_uint iChannelIndex, _float fVolume)
 {
 	SOUND_DESC*				pSoundDesc = { Find_SoundDesc_2D(iChannelIndex) };
@@ -275,6 +316,20 @@ HRESULT CSound_Manager::Update_Sounds()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CSound_Manager::Is_Playing_Sound(CTransform* pTransform, _uint iSoundIndex)
+{
+	SOUND_DESC* pSoundDesc = { Find_SoundDesc_3D(pTransform, iSoundIndex) };
+
+	FMOD_BOOL				isPlaying = { false };
+	FMOD_RESULT				eResult = { FMOD_OK };
+	FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
+	if (true == isPlaying)
+	{
+		return true;
+	}
+	return false;
 }
 
 HRESULT CSound_Manager::Update_Sounds_Position()

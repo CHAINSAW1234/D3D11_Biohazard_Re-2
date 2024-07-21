@@ -39,6 +39,12 @@ HRESULT CReaderMachine::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
+		return E_FAIL;
+
+
+
 	m_iNeedItem = blankkey01a;
 	return S_OK;
 }
@@ -90,7 +96,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			m_iPush[0] = -1;
 			m_iPush[1] = -1;
 			m_iPush[2] = -1;
-			
+			bCam = true;
 		}
 	}
 	else
@@ -110,11 +116,19 @@ void CReaderMachine::Tick(_float fTimeDelta)
 	{
 		if (Open_Cabinet())
 		{
+			Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_1.mp3"),0);
+			m_iSelectPushNum = 0;
 			m_bDoOpen = false;
 			m_bCameraReset = true;
+			m_eMachine_Key_State = CReaderMachine::READERMACHINE_KEY_STATIC;
+
 		}
 		else
+		{
+			Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_11.mp3"), 0);
+			m_iSelectPushNum = 0;
 			m_bDoOpen = false;
+		}
 	}
 
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1]&&!m_bCamera)

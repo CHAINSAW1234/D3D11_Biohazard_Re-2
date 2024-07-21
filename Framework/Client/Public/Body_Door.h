@@ -27,6 +27,7 @@ public:
 		const _ubyte* pOneDoorState_Prev;
 		const _ubyte* pDoubleDoorState;
 		const _ubyte* pDoubleDoorState_Prev;
+		const _ubyte* pDoorTexture = { nullptr };
 		_bool isEmblem;
 
 	}BODY_DOOR_DESC;
@@ -69,6 +70,10 @@ private:
 public:
 	void						Hit(CTransform* pTransform);
 
+private:
+	void						WoodSound_Double(_int iRandom, _int iRandom1);
+	void						IronSound(_int iRandom, _int iRandom1);
+	void						WoodSound(_int iRandom, _int iRandom1);
 
 
 private:
@@ -84,6 +89,7 @@ private :
 	const _ubyte*				m_pOneState_Prev				= {};
 	const _ubyte*				m_pDoubleState					= {};
 	const _ubyte*				m_pDoubleState_Prev				= {};
+	const _ubyte*				m_pDoorTexture = {};
 
 private :
 	_bool						m_isHit							= { false };

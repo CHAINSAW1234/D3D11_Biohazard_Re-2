@@ -52,6 +52,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		m_pOneState_Prev = pbody_door_desc->pOneDoorState_Prev;
 
 		m_isEmblem = pbody_door_desc->isEmblem;
+		m_pDoorTexture = pbody_door_desc->pDoorTexture;
 	}
 
 	if (*m_pState != CDoor::DOOR_DUMMY)
@@ -574,6 +575,9 @@ void CBody_Door::DoubleDoor_Tick(_float fTimeDelta)
 
 void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 {
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 1);
+	_int iRandPlus = m_pGameInstance->GetRandom_Int(0, 3);
+
 	if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
 	{
 		switch (*m_pDoubleState)
@@ -586,6 +590,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 
 
 			break;
@@ -598,7 +604,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
-
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
 		}
 		case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
@@ -609,6 +616,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
 		}
 		case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
@@ -619,13 +628,16 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 
 			break;
 		}
 		case CDoor::DOUBLEDOOR_STATIC:
 		{
 			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
-
+			if (!m_pModelCom->isFinished(0))
+				Change_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_7.mp3"), 0);
 			switch (*m_pDoubleState_Prev)
 			{
 			case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
@@ -693,7 +705,7 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			break;
 		}
 		case CDoor::L_DOUBLEDOOR_OPEN:
-			{
+		{
 			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
@@ -704,25 +716,27 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
-
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
-			}
-			case CDoor::R_DOUBLEDOOR_OPEN:
-			{
-				m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+		}
+		case CDoor::R_DOUBLEDOOR_OPEN:
+		{
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
 
-				auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
-				_float4x4 ResultMat;
-				XMStoreFloat4x4(&ResultMat, Combined);
-				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
-				m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
 
-				Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
-				XMStoreFloat4x4(&ResultMat, Combined);
-				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
-
-				break;
-			}
+			Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
+			break;
+		}
 
 		}
 	}
@@ -731,13 +745,16 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 		switch (*m_pDoubleState)
 		{
 		case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
-		{	
+		{
 			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
+
 			break;
 		}
 		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
@@ -748,6 +765,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 
 			break;
 		}
@@ -759,6 +778,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
 		}
 		case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
@@ -770,12 +791,15 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
-
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
 		}
 		case CDoor::DOUBLEDOOR_STATIC:
 		{
 			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+			if (!m_pModelCom->isFinished(0))
+				Change_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_6.mp3"), 0);
 
 			switch (*m_pDoubleState_Prev)
 			{
@@ -853,10 +877,11 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
 			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
-			 Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
+			Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
-
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
 		}
 		case CDoor::R_DOUBLEDOOR_OPEN:
@@ -872,7 +897,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
-
+			if (*m_pDoorTexture == CDoor::WOOD)
+				WoodSound_Double(iRand, iRandPlus);
 			break;
 		}
 
@@ -900,6 +926,8 @@ void CBody_Door::OneDoor_Tick(_float fTimeDelta)
 
 void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 {
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 1);
+	_int iRandPlus = m_pGameInstance->GetRandom_Int(0, 4);
 
 	switch (*m_pOneState)
 	{
@@ -913,20 +941,36 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 		_float4x4 ResultMat;
 		XMStoreFloat4x4(&ResultMat, Combined);
 		m_pPx_Collider->Update_Transform(&ResultMat);
+
+		if (*m_pDoorTexture == CDoor::WOOD)
+			WoodSound(iRand, iRandPlus);
+		else
+			IronSound(iRand, iRandPlus);
+		
+
 		break;
 	}
 	case CDoor::ONEDOOR_OPEN_R:
 	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pOneState);
+
 		auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R]->Get_TrasformationMatrix();
 		_float4x4 ResultMat;
 		XMStoreFloat4x4(&ResultMat, Combined);
 		m_pPx_Collider->Update_Transform(&ResultMat);
+		if (*m_pDoorTexture == CDoor::WOOD)
+			WoodSound(iRand, iRandPlus);
+		else
+			IronSound(iRand, iRandPlus);
 		break;
 
 	}
 	case CDoor::ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pOneState);
+		if (!m_pModelCom->isFinished(0))
+			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_1.mp3"), 0);
 
+			
 		switch (*m_pOneState_Prev)
 		{
 		case CDoor::ONEDOOR_OPEN_L:
@@ -935,7 +979,8 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform(&ResultMat);
-			Change_Sound(TEXT(""),0);
+
+			
 			break;
 		}
 		case CDoor::ONEDOOR_OPEN_R:
@@ -944,7 +989,6 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform(&ResultMat);
-			Change_Sound(TEXT(""), 0);
 
 			break;
 		}
@@ -1045,6 +1089,85 @@ void CBody_Door::Hit(CTransform* pTransform)
 	//	SingleDoor = { Front -> Open -> R }
 	_bool				isFront = { XMVectorGetZ(vDirectionToTargetLocalXZPlane) > 0.f };
 	m_isHitFromFront = true;
+}
+
+void CBody_Door::WoodSound_Double(_int iRandom, _int iRandom1)
+{
+
+	if (m_pModelCom->Get_TrackPosition(0) >= 12.f)
+		;
+	else if (m_pModelCom->Get_TrackPosition(0) >= 10.f)
+	{
+		switch (iRandom1)
+		{
+		case 0:
+			Change_Same_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_17.mp3"), iRandom);
+			break;
+		case 1:
+			Change_Same_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_14.mp3"), iRandom);
+			break;
+		case 2:
+			Change_Same_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_12.mp3"), iRandom);
+			break;
+		case 3:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
+			break;
+		}
+	}
+	else
+		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_2.mp3"), !iRandom);
+}
+
+void CBody_Door::IronSound(_int iRandom, _int iRandom1)
+{
+	if (m_pModelCom->Get_TrackPosition(0) >= 12.f)
+		;
+	else if (m_pModelCom->Get_TrackPosition(0) >= 10.f)
+	{
+		switch (iRandom1)
+		{
+		case 0:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_1.mp3"), iRandom);
+			break;
+		case 1:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_15.mp3"), iRandom);
+			break;
+		case 2:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_iron_fence2_7.mp3"), iRandom);
+			break;
+		case 3:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
+			break;
+		}
+	}
+	else
+		Change_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_9.mp3"), !iRandom);
+}
+
+void CBody_Door::WoodSound(_int iRandom, _int iRandom1)
+{
+	if (m_pModelCom->Get_TrackPosition(0) >= 12.f)
+		;
+	else if (m_pModelCom->Get_TrackPosition(0) >= 10.f)
+	{
+		switch (iRandom1)
+		{
+		case 0:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_4.mp3"), iRandom);
+			break;
+		case 1:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_9.mp3"), iRandom);
+			break;
+		case 2:
+			Change_Same_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_12.mp3"), iRandom);
+			break;
+		case 3:
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
+			break;
+		}
+	}
+	else
+		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_2.mp3"), !iRandom);
 }
 
 CBody_Door* CBody_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

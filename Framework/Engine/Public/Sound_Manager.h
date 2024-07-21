@@ -12,7 +12,7 @@ private:
 
 public:
 	HRESULT										Initialize();
-	
+
 private:
 	HRESULT										Initialize_SoundDesc_2D();
 
@@ -27,6 +27,7 @@ public:
 public:
 	void										Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag);
 	void										Change_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
+	void										Change_Same_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
 
 	void										Set_Volume_2D(_uint iChannelIndex, _float fVolume);
 	void										Set_Volume_3D(class CTransform* pTransform, _uint iSoundIndex, _float fVolume);
@@ -37,6 +38,9 @@ public:
 	void										Set_Distance_3D(class CTransform* pTransform, _uint iSoundIndex, _float fMinDistance, _float fMaxDistance);
 
 	HRESULT										Update_Sounds();
+
+	_bool										Is_Playing_Sound(class CTransform* pTransform, _uint iSoundIndex);
+
 
 private:
 	HRESULT										Update_Sounds_Position();

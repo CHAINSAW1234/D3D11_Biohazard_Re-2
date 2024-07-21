@@ -57,15 +57,25 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 	{
 	case CNewpoliceStatue::POLICEHALLSTATUE_0:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_1:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);		
+		Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 0);
+		if (m_pModelCom->isFinished(0))
+			Stop_Sound(0);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_2:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 1);
+		if (m_pModelCom->isFinished(0))
+			Stop_Sound(1);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_3:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 2);
+		if (m_pModelCom->isFinished(2))
+			Stop_Sound(0);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_END:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);

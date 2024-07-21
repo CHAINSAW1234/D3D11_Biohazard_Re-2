@@ -210,7 +210,6 @@ void CLever::Active()
 	
 	m_eState = LEVER_DOWN;
 	
-	Change_Sound(TEXT("sound_Map_sm42_shutter_lever2_1.mp3"),0);
 
 	m_pPlayer->Set_Lever_Setting(CPlayer::LEVER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
 	

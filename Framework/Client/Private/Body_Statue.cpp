@@ -61,6 +61,10 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		if (m_pModelCom->isFinished(0))
 			*m_pResetCamera = true;
+		if (m_pModelCom->Get_TrackPosition(0)>=213.f)
+			Change_Sound(TEXT("sound_Map_sm41_wisdom_statue2_2.mp3"), 0);
+		else if (m_pModelCom->Get_TrackPosition(0))
+			Change_Sound(TEXT("sound_Map_sm41_wisdom_statue2_1.mp3"),0);
 		break;
 	case CStatue::STATE_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);

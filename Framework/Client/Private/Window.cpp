@@ -33,6 +33,10 @@ HRESULT CWindow::Initialize(void* pArg)
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 	m_iNeedItem = woodbarricade01a;
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

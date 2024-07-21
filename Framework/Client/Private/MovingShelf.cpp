@@ -40,6 +40,10 @@ HRESULT CMovingShelf::Initialize(void* pArg)
 	else
 		m_eType = SHELF_197_RICKER;
 
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

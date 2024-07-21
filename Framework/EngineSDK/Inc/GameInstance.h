@@ -259,6 +259,7 @@ public: /* For.m_pSound_Manager */
 	void									Set_Pause_2D(_uint iChannelIndex, _bool isPause);
 
 	void									Change_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
+	void									Change_Same_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
 	void									Set_Volume_3D(CTransform* pTransform, _uint iSoundIndex, _float fVolume);
 	void									Set_Pause_3D(CTransform* pTransform, _uint iSoundIndex, _bool isPause);
 	void									Set_Distance_3D(CTransform* pTransform, _uint iSoundIndex, _float fMinDistance, _float fMaxDistance);
@@ -266,6 +267,9 @@ public: /* For.m_pSound_Manager */
 	HRESULT									Add_Object_Sound(class CTransform* pTransform, _uint iNumChannel);
 	HRESULT									PlayBGM(_uint iChannelIndex, const wstring& strSoundTag);
 	HRESULT									Stop_All();
+
+	_bool									Is_Playing_Sound(CTransform* pTransform,_uint iSoundIndex);
+
 #pragma endregion
 
 #pragma region Sound_Manager_2D
