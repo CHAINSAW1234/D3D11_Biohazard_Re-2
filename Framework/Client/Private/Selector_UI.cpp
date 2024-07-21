@@ -218,6 +218,7 @@ void CSelector_UI::Rendering(_float fTimeDelta)
             {
                 m_isRender = true;
 
+                _float4 a = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
                 m_fBlending = 0.f;
             }
         }
