@@ -32,18 +32,12 @@ void CPlayer_State_Bite::OnStateEnter()
 
 	m_pPlayer->Set_ManualMove(true);
 
+	m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Hit_Start"), 11, 4);
 }
 
 void CPlayer_State_Bite::OnStateUpdate(_float fTimeDelta)
 {
-
 	m_pPlayer->Update_InterplationMatrix(fTimeDelta);
-
-	if (m_pPlayer->Get_BiteLayerTag() == TEXT("Bite_Default") && (
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == 0 ||
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == 2)) {
-		;
-	}
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) 
 	{
@@ -62,16 +56,20 @@ void CPlayer_State_Bite::OnStateUpdate(_float fTimeDelta)
 					m_pPlayer->Change_State(CPlayer::MOVE);
 				}
 			}
-
 			else
 			{
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
 
+				if (m_pPlayer->Get_Hp() <= 0) {
+					m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Dead"), 6, 4);
+				}
+				else {
+					m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Hit"), 8, 4);
+				}
 				////////////////////TEST///////////////
 				pBody_Model->Set_TickPerSec(m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex(), 10.f);
 			}
 		}
-
 		else
 		{
 			if ((m_pPlayer->Get_BiteAnimIndex() == -1))
@@ -79,11 +77,40 @@ void CPlayer_State_Bite::OnStateUpdate(_float fTimeDelta)
 				m_pPlayer->Change_State(CPlayer::MOVE);
 			}
 			else {
+				if (m_pPlayer->Get_Hp() <= 0) {
+					m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Dead"), 6, 4);
+				}
+				else {
+					m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Hit"), 8, 4);
+				}
+
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
 			}
 		}		
 	}
 
+	//// 애니메이션이 좀 많이 길면 사운드 하나 더
+	//static _bool isPlay = false;
+
+	//_float fTrackPosition = m_pPlayer->Get_Body_Model()->Get_TrackPosition(0);
+	//
+	//_int iTrackPosition = static_cast<_int>(floor(fTrackPosition));
+
+	//if (!isPlay && iTrackPosition >= 200 && m_pPlayer->Get_Body_Model()->Get_Duration_From_PlayingInfo(0) >= 300) {
+	//	isPlay = true;
+
+	//	if (m_pPlayer->Get_Hp() <= 0) {
+	//		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Hit"), 6, 4);
+	//	}
+	//	else {
+	//		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_Hit_Start"), 8, 4);
+	//	}
+
+	//}
+
+	//if (isPlay && iTrackPosition <= 10) {
+	//	isPlay = false;
+	//}
 
 }
 

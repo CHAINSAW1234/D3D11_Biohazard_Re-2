@@ -977,7 +977,7 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-
+		m_pGameInstance->PlaySoundEffect_2D();
 		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
@@ -2819,7 +2819,6 @@ void CPlayer::Calc_Decal_Map()
 			m_pHeadModel->SetDecalWorldMatrix_Player_Front(m_DecalMatrix);
 			m_pHeadModel->Perform_Calc_DecalMap_Player();
 		}
-
 		break;
 	}
 	case BITE_TYPE_FOR_EFFECT::STAND_BACK:
