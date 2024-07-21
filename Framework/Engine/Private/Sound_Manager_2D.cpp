@@ -13,7 +13,7 @@ HRESULT CSound_Manager_2D::Initialize()
 	// 1. 시스템 포인터, 2. 사용할 가상채널 수 , 초기화 방식) 
 	FMOD_System_Init(m_pSystem, SOUND_CHANNEL_SIZE, FMOD_INIT_NORMAL, NULL);
 
-	//LoadSoundFile();
+	LoadSoundFile();
 
 	return S_OK;
 }
@@ -301,7 +301,6 @@ void CSound_Manager_2D::LoadSoundFile()
 	wstring szFilePath = TEXT("");
 	wstring szFullPath = TEXT("");
 
-
 	__int64 Typehandle = _tfindfirst64(L"../Bin/Resources/Sound/*", &TypePathFinder);
 
 	while (wcscmp(TypePathFinder.name, L".") == 0 || wcscmp(TypePathFinder.name, L"..") == 0) 
@@ -330,21 +329,26 @@ void CSound_Manager_2D::LoadSoundFile()
 
 		szFullPath = szCurPath + TypePathFinder.name + L"/" + FileNameFinder.name;
 
-		iFileResult = 0;
-		while (iFileResult != -1)
+		wstring Is2DSound = TypePathFinder.name;
+
+		if (TEXT("em") != Is2DSound && TEXT("Player") != Is2DSound)
 		{
-			szFullPath = szCurPath + TypePathFinder.name + L"/" + FileNameFinder.name;
-			int size_needed = WideCharToMultiByte(CP_UTF8, 0, &szFullPath[0], (int)szFullPath.size(), NULL, 0, NULL, NULL);
-			string str(size_needed, 0);
-			WideCharToMultiByte(CP_UTF8, 0, &szFullPath[0], (int)szFullPath.size(), &str[0], size_needed, NULL, NULL);
-			char* cstr = &str[0];
+			iFileResult = 0;
+			while (iFileResult != -1)
+			{
+				szFullPath = szCurPath + TypePathFinder.name + L"/" + FileNameFinder.name;
+				int size_needed = WideCharToMultiByte(CP_UTF8, 0, &szFullPath[0], (int)szFullPath.size(), NULL, 0, NULL, NULL);
+				string str(size_needed, 0);
+				WideCharToMultiByte(CP_UTF8, 0, &szFullPath[0], (int)szFullPath.size(), &str[0], size_needed, NULL, NULL);
+				char* cstr = &str[0];
 
-			FMOD_SOUND* pSound = nullptr;
-			FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, cstr, FMOD_DEFAULT, 0, &pSound);
+				FMOD_SOUND* pSound = nullptr;
+				FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, cstr, FMOD_DEFAULT, 0, &pSound);
 
-			m_mapSoundSeparate.emplace(make_pair(TypePathFinder.name, FileNameFinder.name), pSound);
+				m_mapSoundSeparate.emplace(make_pair(TypePathFinder.name, FileNameFinder.name), pSound);
 
-			iFileResult = _tfindnext64(Filehandle, &FileNameFinder);//다음파일이 있다없다
+				iFileResult = _tfindnext64(Filehandle, &FileNameFinder);//다음파일이 있다없다
+			}
 		}
 
 		FMOD_System_Update(m_pSystem);

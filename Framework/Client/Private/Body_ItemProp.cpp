@@ -34,7 +34,7 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 
 	BODY_ITEMPROPS_DESC* pDesc = (BODY_ITEMPROPS_DESC*)pArg;
-	m_pObtain = pDesc->pObtain;
+	m_pItemDead = pDesc->pItemDead;
 	m_iItemIndex = pDesc->iItemIndex;
 
 	/*m_pModelCom->Set_RootBone("RootNode");
@@ -72,7 +72,7 @@ void CBody_ItemProp::Tick(_float fTimeDelta)
 
 void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 {
-	if (*m_pObtain)
+	if (*m_pItemDead)
 		return;
 	/*
 	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);

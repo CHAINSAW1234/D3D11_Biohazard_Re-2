@@ -2,6 +2,7 @@
 
 #include "Inventory_Manager.h"
 #include "Player.h"
+#include "Tab_Window.h"
 
 constexpr _float	Z_POS_SLOT = 0.008f;
 constexpr _float	Z_POS_ITEM_UI = 0.007f;
@@ -163,7 +164,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		{
 			if (m_pHoverdSlot != m_vecInvenSlot[i])
 			{
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.2f);
 
 				m_pHoverdSlot = m_vecInvenSlot[i];
 			}
@@ -285,7 +286,6 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 	{
 	case Client::HandGun:
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH1_2D, 0.5f);
-
 		break;
 	case Client::ShotGun:
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH1_2D, 0.5f);
@@ -312,11 +312,14 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
+		m_fClickTimer += fTimeDelta;
+
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			m_eTaskSequence = APPLY;
 			m_pContextMenu->Set_Dead(true);
 			m_PickResult = -1;
+			m_fClickTimer = 0.f;
 		}
 
 		m_IsNoOneHover = true;
@@ -329,7 +332,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			{
 				if (m_pHoverdSlot != m_vecInvenSlot[i])
 				{
-					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.2f);
 					m_pHoverdSlot = m_vecInvenSlot[i];
 				}
 				m_IsNoOneHover = false;
@@ -348,7 +351,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			m_pDragShadowTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
-			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) && m_fClickTimer > 0.8f)
 			{
 				m_pSelected_ItemUI = nullptr;
 				for (auto& iter : m_vecItem_UI)
@@ -396,6 +399,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 					AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), m_pDragShadow->Get_ItemQuantity(), _float3(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI));
 					m_pSlotHighlighter->Set_DragShadow(false);
 					m_pDragShadow->Set_Dead(true);
+					m_fClickTimer = 0.f;
 					m_pSelected_ItemUI = nullptr;
 					m_eInven_Manager_State = GET_ITEM;
 					pHoveredSlot->Set_IsFilled(true);
@@ -447,6 +451,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
+		m_fClickTimer = 0.f;
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D ,0.5f);
 		if (m_PickResult == -1)
 		{
@@ -501,6 +506,8 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 				m_eInven_Manager_State = GET_ITEM;
 			}
 		}
+
+
 		break;
 	}
 		
@@ -508,6 +515,8 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 		break;
 	}
 }
+
+
 
 void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 {
@@ -672,7 +681,7 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 			{
 				if (m_pHoverdSlot != m_vecInvenSlot[i])
 				{
-					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.2f);
 					m_pHoverdSlot = m_vecInvenSlot[i];
 				}
 				IsNoOneHover = false;
@@ -739,54 +748,6 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 
 }
 
-void CInventory_Manager::COMBINED_ITEM_SoundPlay()
-{
-	if (nullptr == m_pSelected_ItemUI)
-		return;
-
-	ITEM_NUMBER eItemNum = m_pSelected_ItemUI->Get_ItemNumber();
-	switch (eItemNum)
-	{
-	case Client::herbsgb01a:
-		break;
-	case Client::herbsggb01a:
-		break;
-	case Client::herbsggg01a:
-		break;
-	case Client::herbsgrb01a:
-		break;
-	case Client::herbsrb01a:
-		break;
-
-	case Client::handgun_bullet01a:
-		break;
-	case Client::shotgun_bullet01a:
-		break;
-
-
-	
-	case Client::HandGun:
-		break;
-	case Client::ShotGun:
-		break;
-	case Client::Flash_Bomb:
-		break;
-	case Client::Grenade:
-		break;
-	case Client::vp70stock:
-		break;
-	case Client::portablesafe:
-		break;
-	case Client::statuebookhand:
-		break;
-	case Client::ITEM_NUMBER_END:
-		break;
-	default:
-		break;
-	}
-	
-}
-
 void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 {
 	switch (m_eTaskSequence)
@@ -804,7 +765,7 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 		{
 			if (m_pHoverdSlot != pHoverdSlot)
 			{
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.2f);
 				m_pHoverdSlot = pHoverdSlot;
 			}
 
@@ -847,7 +808,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 			{
 				if (m_pHoverdSlot != m_vecInvenSlot[i])
 				{
-					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.2f);
 					m_pHoverdSlot = m_vecInvenSlot[i];
 				}
 				m_IsNoOneHover = false;
@@ -986,7 +947,47 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		//ÀÌÂ¡ ½ºÅ¸Æ® µµÂø ÁöÁ¡ Á¦´ë·Î Á¤ÇØÁÖ±â
 		_float3 TempTrashCanValue = _float3(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y, Z_POS_CONTEXT_MENU);
 
-		m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
+		ITEM_TYPE eItemType = m_pSelected_ItemUI->Get_ItemType();
+
+		switch (eItemType)
+		{
+		case Client::EQUIPABLE: {
+			_bool isEquipd = m_pSelected_ItemUI->Get_isEquiped();
+			m_pContextMenu->Set_Operation(eItemType, isEquipd, TempTrashCanValue, TempTrashCanValue);
+			break;
+		}
+			
+		case Client::CONSUMABLE_EQUIPABLE: {
+			_bool isEquipd = m_pSelected_ItemUI->Get_isEquiped();
+			m_pContextMenu->Set_Operation(eItemType, isEquipd, TempTrashCanValue, TempTrashCanValue);
+
+			break;
+		}
+			
+		case Client::USEABLE: {
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_Player"), 0));
+			_bool isCanUse = true;
+			if (5 == pPlayer->Get_Hp())
+				isCanUse = false;
+			m_pContextMenu->Set_Operation(eItemType, isCanUse, TempTrashCanValue, TempTrashCanValue);
+			break;
+		}
+			
+		case Client::CONSUMABLE: {
+			m_pContextMenu->Set_Operation(eItemType, true, TempTrashCanValue, TempTrashCanValue);
+			break;
+		}
+			
+		case Client::QUEST:{
+			m_pContextMenu->Set_Operation(eItemType, true, TempTrashCanValue, TempTrashCanValue);
+			break;
+		}
+			
+		default:
+			break;
+		}
+
+		
 		m_eTaskSequence = SELECT;
 		break;
 	}
@@ -1229,21 +1230,85 @@ void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondIte
 	ITEM_NUMBER eSecondNum = SecondItemUI->Get_ItemNumber();
 	ITEM_NUMBER eItemResult = Find_Recipe(eFirstNum, eSecondNum);
 
-	if (handgun_bullet01a == eFirstNum && handgun_bullet01a == eSecondNum && handgun_bullet01a == eItemResult)
-		FirstItemUI->Set_ItemVariation(SecondItemUI->Get_ItemQuantity());
-	else if (shotgun_bullet01a == eFirstNum && shotgun_bullet01a == eSecondNum && shotgun_bullet01a == eItemResult)
-		FirstItemUI->Set_ItemVariation(SecondItemUI->Get_ItemQuantity());
+	if (handgun_bullet01a == eFirstNum && handgun_bullet01a == eSecondNum && handgun_bullet01a == eItemResult) {
+		FirstItemUI->Set_ItemVariation(SecondItemUI->Get_ItemQuantity());//±ÇÃÑ ÃÑ¾Ë
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Bullet.mp3"), CH3_2D, 0.5f);
+	}
+
+	else if (shotgun_bullet01a == eFirstNum && shotgun_bullet01a == eSecondNum && shotgun_bullet01a == eItemResult) {
+		FirstItemUI->Set_ItemVariation(SecondItemUI->Get_ItemQuantity());//¼¦°Ç ÃÑ¾Ë
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_ShotgunShell.mp3"), CH3_2D, 0.5f);
+	}
+
+
+	else if (HandGun == eFirstNum && vp70powerup == eSecondNum && HandGun == eItemResult){
+		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(HandGun, 1); //¼Ò¿°±â
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), CH3_2D, 0.5f);
+	}
+
+	else if (HandGun == eFirstNum && vp70longmagazine == eSecondNum && HandGun == eItemResult){
+		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(HandGun, 2); //´ë¿ë·® ÅºÃ¢
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), CH3_2D, 0.5f);
+	}
+
+	else if (HandGun == eFirstNum && vp70stock == eSecondNum && HandGun == eItemResult){
+		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(HandGun, 0); //°³¸Ó¸®ÆÇ
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), CH3_2D, 0.5f);
+	}
+
+	else if (ShotGun == eFirstNum && shotgunpartsstock_00 == eSecondNum && ShotGun == eItemResult){
+		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(ShotGun, 1);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH3_2D, 0.5f);
+	}
+
+	else if (ShotGun == eFirstNum && shotgunpartsbarrel == eSecondNum && ShotGun == eItemResult){
+		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(ShotGun, 0);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH3_2D, 0.5f);
+	}
+
 	else
 		FirstItemUI->Set_ItemNumber(eItemResult);
 
-	_float2 fFindPos = { FirstItemUI->GetPosition().x , FirstItemUI->GetPosition().y };
+	switch (eItemResult)
+	{
+	case Client::herbsgg01a:
+	case Client::herbsgr01a:
+	case Client::herbsgb01a:
+	case Client::herbsggb01a:
+	case Client::herbsggg01a:
+	case Client::herbsgrb01a:
+	case Client::herbsrb01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH3_2D, 0.5f);
+		break;
+	case Client::handgun_bullet01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Bullet.mp3"), CH3_2D, 0.5f);
+		break;
+	case Client::shotgun_bullet01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_ShotgunShell.mp3"), CH3_2D, 0.5f);
+		break;
 
+	case Client::statuebookhand:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Rock.mp3"), CH3_2D, 0.5f);
+		break;
+
+	default:
+		break;
+	}
+
+	_float2 fFindPos = { SecondItemUI->GetPosition().x , SecondItemUI->GetPosition().y };
+	//_float2 fFindPos = { FirstItemUI->GetPosition().x , FirstItemUI->GetPosition().y };
 	Find_Slot(fFindPos)->Set_IsFilled(false);
-
-	Switch_ItemPos(FirstItemUI, SecondItemUI);
+	//Switch_ItemPos(FirstItemUI, SecondItemUI);
+	//Switch_ItemPos(SecondItemUI, FirstItemUI);
 
 	SecondItemUI->Reset_ItemUI();
 }
+
 
 CInventory_Slot* CInventory_Manager::Find_Slot(_float2 FindPos)
 {
@@ -1257,11 +1322,6 @@ CInventory_Slot* CInventory_Manager::Find_Slot(_float2 FindPos)
 	}
 
 	return nullptr;
-}
-
-void CInventory_Manager::Deactivation(CItem_UI* pExcludeObj)
-{
-	
 }
 
 void CInventory_Manager::INTERACT_ITEM_SoundPlay()
@@ -1312,11 +1372,11 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
 	if (false == bInput)
 	{
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Inven_Open.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Inven_Open.mp3"), CH1_2D, 0.2f);
 	}
 	else
 	{
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Inven_Close.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Inven_Close.mp3"), CH1_2D, 0.2f);
 	}
 
 
@@ -1338,6 +1398,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 		}
 
 		//²ø¶© ´Ù²ôÀÚ
+
 		else
 		{
 			iter->Set_Dead(bInput);
@@ -1465,6 +1526,12 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 		{
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x, fItemPos.y, Z_POS_ITEM_UI, 1.f), iItemQuantity);
 			Itemiter->Set_Dead(false);
+			if (ShotGun == eAcquiredItem)
+			{
+				_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, Itemiter->Get_ItemNumber(), Itemiter->Get_ItemQuantity());
+				Itemiter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
+			}
+
 			break;
 		}
 	}
@@ -1871,7 +1938,7 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		return CONSUMABLE_EQUIPABLE;
 		break;
 	case Client::vp70stock:
-		return CONSUMABLE_EQUIPABLE;
+		return QUEST;
 		break;
 	case Client::portablesafe:
 		return QUEST;

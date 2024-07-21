@@ -40,6 +40,10 @@ HRESULT CMovingShelf::Initialize(void* pArg)
 	else
 		m_eType = SHELF_197_RICKER;
 
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -136,6 +140,7 @@ HRESULT CMovingShelf::Add_PartObjects()
 	CPartObject* pBodyObj = { nullptr };
 	CBody_MovingShlef::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	BodyDesc.iPropType = m_tagPropDesc.iPropType;

@@ -59,26 +59,51 @@ void CEmblem_Door::Tick(_float fTimeDelta)
 
 void CEmblem_Door::Late_Tick(_float fTimeDelta)
 {
+	_int iRand = m_pGameInstance->GetRandom_Int(0,1);
 	if (m_bDead)
 		return;
-
 	switch (*m_pEmblem_Anim)
 	{
 	case (_int)EMBLEM_ANIM::STATIC_ANIM:
+		//
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		
+
 		break;
 
 	case (_int)EMBLEM_ANIM::START_ANIM : 
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		//if ((!*m_pSoundCue) && m_pModelCom->isFinished(0) != true)
+		//	*m_pSoundCue = true;
+		//sound_Map_sm40_door_handle2_1
+		if (iRand)
+		{
+			if (!m_pModelCom->isFinished(0))
+				Change_Same_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
+		}
+		else if (!m_pModelCom->isFinished(0))
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
 		break;
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_2 
+		(emblem이 두번 돌아가는데 소리는 한 번만 나오고 총 두번 나와야 함)*/
 
 	case (_int)EMBLEM_ANIM::OPEN_ANIM:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
 		if (m_pModelCom->isFinished(0))
 			*m_pEmblem_Anim = (_int)EMBLEM_ANIM::OPENED_ANIM;
+
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
+		//if ((!*m_pSoundCue) && m_pModelCom->isFinished(0) != true)
+		//	*m_pSoundCue = true;
+		if (!m_pModelCom->isFinished(0)&& m_pModelCom->Get_TrackPosition(0))
+			Change_Sound(TEXT("sound_Map_sm40_conveni_keyhole2_4.mp3"), 0);
+
+			//if (m_pModelCom->Get_TrackPosition(0) >= )
+		//sound_Map_sm40_conveni_keyhole2_4
+		break;
 	case (_int)EMBLEM_ANIM::OPENED_ANIM:
 		m_bClear = true;
-		break;
+		break;	
 	}
 	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(360.f));
 
@@ -123,7 +148,6 @@ HRESULT CEmblem_Door::Render()
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 

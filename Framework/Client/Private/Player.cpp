@@ -38,6 +38,7 @@
 #include "Zombie.h"
 
 #include "Call_Center.h"
+#include "MissionBar_UI.h"
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
@@ -500,6 +501,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 #pragma region 나옹 추가
 	Player_First_Behavior();
+
+	Player_Mission_Timer(fTimeDelta);
 #pragma endregion 
 
 #ifdef _DEBUG
@@ -677,6 +680,61 @@ CGameObject* CPlayer::Create_Selector_UI()
 	}
 
 	return nullptr;
+}
+
+void CPlayer::Player_Mission_Timer(_float fTimeDelta)
+{
+	if (false == m_isFlod_EntranceDoor)
+	{
+		m_isMissionTimer += fTimeDelta;
+
+		if(m_isMissionTimer >= 2.f)
+		{
+			if(false == m_MissionCollection[MISSION_TYPE::FOLD_ENTRANCE_MISSION])
+			{
+				MissionClear_Font(TEXT("경찰서로 이동하기"), static_cast<_ubyte>(MISSION_TYPE::FOLD_ENTRANCE_MISSION));
+				
+				m_isMissionTimer = 0.f;
+			}
+		}
+	}
+
+	else if (true == m_isFlod_EntranceDoor)
+	{
+		if (false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
+		{
+			MissionClear_Font(TEXT("주변 환경 탐색하기"), static_cast<_ubyte>(MISSION_TYPE::EXPLORING_SURROUNDING_MISSION));
+		}
+	}
+}
+
+void CPlayer::MissionClear_Font(wstring _missionText, _ubyte _missionType)
+{
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pUIList)
+	{
+		CMissionBar_UI* pMission = dynamic_cast<CMissionBar_UI*>(iter);
+
+		if(nullptr != pMission)
+		{
+			if (static_cast<_ubyte>(CMissionBar_UI::MISSION_UI_TYPE::FONT_MISSION) == pMission->Get_MissionType())
+			{
+				if (!pMission->Get_vecTextBoxes()->empty())
+				{
+					CTextBox* pFont = pMission->Get_vecTextBoxes()->back();
+
+					m_MissionCollection[_missionType] = true;
+
+					*pMission->Get_MissionBar()->Get_FontStart_Ptr() = false;
+
+					pFont->Set_Text(_missionText);
+
+					m_isMissionClear = true;
+				}
+			}
+		}
+	}
 }
 
 #pragma endregion
@@ -919,7 +977,8 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-
+		//m_pGameInstance->PlaySoundEffect_2D(폴더명, 파일명, 체널, 볼륨); 이 체널에 넣어주세요
+		//m_pGameInstance->PlaySoundEffect_2D(폴더명, 파일명, 볼륨); 체널 상관없이 알아서 넣어주세요
 		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
@@ -1885,6 +1944,63 @@ void CPlayer::Interact_Props(CGameObject* pPickedUp_Item)
 	m_isCamTurn = true;
 }
 
+
+//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
+//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
+//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
+// 
+//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
+//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+
+void CPlayer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
+{
+	switch (eCallItemType)
+	{
+	case Client::HandGun:
+		switch (iAccessories)
+		{
+		case 0:
+			m_Weapons[HG]->Set_Weapon_Accessory("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", false);
+			break;
+
+		case 1:
+			m_Weapons[HG]->Set_Weapon_Accessory("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", false);
+			break;
+
+		case 2:
+			m_Weapons[HG]->Set_Weapon_Accessory("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", false);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+
+	case Client::ShotGun:
+		switch (iAccessories)
+		{
+		case 0:
+			m_Weapons[STG]->Set_Weapon_Accessory("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", false);
+			break;
+
+		case 1:
+			m_Weapons[STG]->Set_Weapon_Accessory("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", false);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+}
+
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;
@@ -2761,7 +2877,6 @@ void CPlayer::Calc_Decal_Map()
 			m_pHeadModel->SetDecalWorldMatrix_Player_Front(m_DecalMatrix);
 			m_pHeadModel->Perform_Calc_DecalMap_Player();
 		}
-
 		break;
 	}
 	case BITE_TYPE_FOR_EFFECT::STAND_BACK:

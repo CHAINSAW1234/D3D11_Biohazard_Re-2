@@ -49,7 +49,6 @@ HRESULT CMedal_BigStatue::Initialize(void* pArg)
 
 void CMedal_BigStatue::Tick(_float fTimeDelta)
 {
-	m_bDead = true;
 	if(m_eMedelType == MEDAL_TYPE::MEDAL_UNICORN)
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 
@@ -69,10 +68,12 @@ void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 
 	_float4x4 vMedalpos = m_pTransformCom->Get_WorldMatrix();
 	vMedalpos._43 += 1.f;
+
 	if(nullptr != m_isMedalAnim)
 	{
 		if (true == *m_isMedalAnim)
 		{
+			/* LN : 키 클리어 : sound_Map_sm41_wisdom_statue2_1 */
 			if (m_fStore_ZPos + 2.5f > m_pTransformCom->Get_WorldFloat4x4()._43)
 			{
 				vMedalpos._43 += fTimeDelta * 1.5f;

@@ -33,6 +33,13 @@ public:
 		COL_STEP_END,
 	};
 
+	enum INTERACT_GIMMICK_TYPE
+	{
+		LOCK_GIMMICK,
+		KEY_GIMMICK,
+		NONE_GIMMICK
+	};
+
 	typedef struct Door_Desc
 	{
 		//lock의 여부, 엠블럼||사슬
@@ -135,10 +142,9 @@ public:
 	void												Tick_PartObjects(_float fTimeDelta);
 	void												Late_Tick_PartObjects(_float fTimeDelta);
 
-	void Camera_Active(_int ePart, _float3 vRatio);
-	
+	void												Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_TYPE _layoutType, _float4 vPos = _float4{ 0.f,0.f,0.f,1.f });
 
-	void Reset_Camera();
+	void												Reset_Camera();
 	
 
 
@@ -154,7 +160,7 @@ public:
 	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4								Get_Object_Pos() = 0;
+	virtual _float4										Get_Object_Pos() = 0;
 	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 
@@ -177,10 +183,11 @@ public:
 	class CSelector_UI*									m_pSelector = { nullptr }; /* 사용 중인 Selector Obj */
 
 #pragma endregion
-#pragma region	For 창균오빠 - interact_Props()
+#pragma region	For 창균오빠 - interact_Props() && GET
 public:
 	_int												Get_NeedItem_Index() const { return m_iNeedItem; }
 	virtual void										Do_Interact_Props() { return ; }
+	CGameObject*										Get_Item_Props() { return this ; }
 
 public:
 	void												Set_OutOfControll(_bool isOutOfControll) { m_isOutOfControll = isOutOfControll; }
@@ -191,7 +198,7 @@ protected:
 
 private :
 	_bool												m_isSelector_Rendering = { false };
-	_bool												m_isNYResult				= { false };
+	_bool												m_isNYResult			= { false };
 
 protected:
 	_bool												m_isCamera_Reset = { false };
@@ -203,11 +210,11 @@ protected:
 	_bool												m_bVisible = { true };
 	_bool												m_bCol[INTER_COL_END][COL_STEP_END] = { {false,false,false},{false,false,false} };
 	_int												m_iItemIndex = { -1 };
-	_float											m_fTimeDelay = { 0.f };
-	_float											m_fDistance = { 0.f };
-	CModel*										m_pModelCom = { nullptr };
-	CShader*										m_pShaderCom = { nullptr };
-	CCollider*										m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
+	_float												m_fTimeDelay = { 0.f };
+	_float												m_fDistance = { 0.f };
+	CModel*												m_pModelCom = { nullptr };
+	CShader*											m_pShaderCom = { nullptr };
+	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
 	class CPlayer*										m_pPlayer = { nullptr };
 	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
@@ -225,7 +232,7 @@ protected:
 	vector<CPartObject*>								m_PartObjects;
 
 	_bool												m_isOutOfControll = { false };
-
+	_bool												m_bSoundCueSign = { false };
 protected:
 	void												Check_Player();
 	_float												Check_Player_Distance();
@@ -234,6 +241,20 @@ protected:
 	_bool												Check_Col_Player(INTERACTPROPS_COL eInterCol, INTERACTPROPS_COL_STEP eStepCol);
 	void												Tick_Col();
 	_bool												Visible();
+
+	void Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
+	{
+		m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+	}
+	void Change_Same_Sound(const wstring& strSoundTag, _uint iSoundIndex)
+	{
+		m_pGameInstance->Change_Same_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+	}
+
+	void Stop_Sound(_uint iSoundIndex)
+	{
+		m_pGameInstance->Stop_Sound_3D(m_pTransformCom, iSoundIndex);
+	}
 
 #ifdef		_DEBUG
 	void												Add_Col_DebugCom();

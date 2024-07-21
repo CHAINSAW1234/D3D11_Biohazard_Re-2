@@ -39,7 +39,6 @@ private:
 	void USE_ITEM_Operation(_float fTimeDelta);				
 	//아이템 조합
 	void COMBINED_ITEM_Operation(_float fTimeDelta);	
-	void COMBINED_ITEM_SoundPlay();
 	//단축키 등록
 	void HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta); 
 	//아이템 드래그 드랍
@@ -56,9 +55,6 @@ private:
 	void Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
 	void Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
 	CInventory_Slot* Find_Slot(_float2 FindPos);
-	void Deactivation(CItem_UI* pExcludeObj);
-
-
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -128,6 +124,8 @@ private:
 	CInventory_Slot*				m_pHoverdSlot = { nullptr }; //사운드용
 	_uint							m_iInvenCount = { 8 };
 	_uint                           m_iInvenMaxCount = { 20 };
+	_float							m_fClickTimer = { 0.f };
+	_bool							m_isCanClick = { false };
 
 	/* for Highlighter */
 	CSlot_Highlighter*				m_pSlotHighlighter = { nullptr };

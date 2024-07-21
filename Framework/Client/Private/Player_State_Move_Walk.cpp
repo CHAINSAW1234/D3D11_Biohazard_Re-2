@@ -174,7 +174,7 @@ void CPlayer_State_Move_Walk::Update_Sound()
 
 	if (!isPlayed && iTrackPosition == 24) {
 		isPlayed = true;	
-		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_FootStep_Wood"), 9, 4);
+		//m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_FootStep_Wood"), 9, 4);
 	}
 
 	if (isPlayed && iTrackPosition <= 5) {

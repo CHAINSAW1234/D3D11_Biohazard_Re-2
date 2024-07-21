@@ -313,6 +313,12 @@ void CBody_Shutter::Shutter_Normal_Late_Tick(_float fTimeDelta)
 	{
 	case CShutter::SHUTTER_OPEN:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
+		
+		if(m_pModelCom->isFinished(0))
+			Change_Sound(TEXT("sound_Map_sm42_hall_pipe_shutter2_7.mp3"), 0);
+		else
+			Change_Sound(TEXT("sound_Map_sm42_hall_pipe_shutter2_5.mp3"), 0);
+
 		break;
 	case CShutter::SHUTTER_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
@@ -352,6 +358,10 @@ void CBody_Shutter::Shutter_033_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
 	case CShutter::SHUTTER_033_HALF_OPENED:
+		if (m_pModelCom->isFinished(0))
+			Change_Sound(TEXT("sound_Map_sm60_hall_pipe_shutter_e2_2.mp3"), 0);
+		else
+			Change_Sound(TEXT("sound_Map_sm60_hall_pipe_shutter_e2_6.mp3"), 0);
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
 	}

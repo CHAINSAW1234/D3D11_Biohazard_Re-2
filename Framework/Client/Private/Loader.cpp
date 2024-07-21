@@ -199,8 +199,8 @@ HRESULT CLoader::Start()
 	case LEVEL_GAMEPLAY:
 		g_Level = LEVEL_GAMEPLAY;
 
-	/*	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-			return E_FAIL;*/
+		if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+			return E_FAIL;
 
 		hr = Loading_For_GamePlay();
 		break;
@@ -1089,15 +1089,15 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	//큰 석상이 가지고 있는 미니 
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Anim.fbx", Ininitmatrix));
-	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Part_Anim.fbx", Ininitmatrix));
+	//m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Part_Anim.fbx", Ininitmatrix));
+	
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Anim.fbx", Ininitmatrix));
-	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_Mini_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Parts_Anim.fbx", Ininitmatrix));
 
 	//석상의dial
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_177_hieroglyphicdiallock01b_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_177_hieroglyphicdiallock01b_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_176_hieroglyphicdiallock01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_176_hieroglyphicdiallock01a_Anim.fbx", Ininitmatrix));
 	
-	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Parts_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_Mini_Anim.fbx", Ininitmatrix)); 
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_MiniParts_Anim.fbx", Ininitmatrix)); 
 	
@@ -2598,7 +2598,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 #ifdef Map_J
 	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_J/Make_Prototype.dat"))))
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_NYY/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 #ifdef Map_Ye
@@ -2632,10 +2632,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 			iter->Set_IsRender(false);
 	}
 
-	//if (true == m_isFinished)
-	//{
-	//	m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
-	//}
+	if (true == m_isFinished)
+	{
+		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
+	}
 
 	return S_OK;
 }

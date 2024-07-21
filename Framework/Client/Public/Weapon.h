@@ -57,6 +57,8 @@ public:
 
 	void							Set_RenderLocation(RENDERLOCATION eRenderLocation);
 
+	void							Set_Weapon_Accessory(string strAccessory, _bool IsOnOff);
+
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CShader*						m_pShaderCom = { nullptr };

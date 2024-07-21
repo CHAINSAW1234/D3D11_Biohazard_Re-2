@@ -50,7 +50,7 @@ HRESULT CStatic_Map_UI::Render()
 }
 
 HRESULT CStatic_Map_UI::Change_Tool()
-{
+ {
     return S_OK;
 }
 

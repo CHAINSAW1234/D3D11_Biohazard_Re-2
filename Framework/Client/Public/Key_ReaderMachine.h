@@ -60,7 +60,8 @@ private:
 	HRESULT						Initialize_Model();
 	_bool								Check_PadFull();
 	_bool								Check_CanPush();
-
+	void								InPutKey_Sound(_int iRand, _int iRand1);
+	void								Check_KeyNum();
 public:
 	_bool								Get_Clear() { return m_bClear; }
 	

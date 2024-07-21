@@ -169,7 +169,7 @@ void CHint::Hoverd_Highlight()
 					if (m_pHoveredDirectory != m_vecDirectory[i])
 					{
 						m_pHoveredDirectory = m_vecDirectory[i];
-						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.5f);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.5f);
 					}
 				}
 			}
@@ -191,7 +191,7 @@ void CHint::Hoverd_Highlight()
 					if (m_pHoveredDirectory != m_vecDirectory[i])
 					{
 						m_pHoveredDirectory = m_vecDirectory[i];
-						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.5f);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.5f);
 					}
 				}
 			}

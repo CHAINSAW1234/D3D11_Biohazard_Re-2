@@ -12,7 +12,7 @@ class CBody_ItemProp final : public CPart_InteractProps
 public:
 	typedef struct tagBodyItemProp_desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
 	{
-		_bool* pObtain = { nullptr };
+		_bool* pItemDead = { nullptr };
 		_int	   iItemIndex = { 0 };
 	}BODY_ITEMPROPS_DESC;
 private:
@@ -39,8 +39,7 @@ public:
 private:
 	_int								m_iItemIndex = { 0 };
 	_bool								m_bRealDead = { false };
-	_bool*							m_pObtain = { nullptr };
-	_bool*							iItemDead = { nullptr };
+	_bool*							m_pItemDead = { nullptr };
 
 
 public:

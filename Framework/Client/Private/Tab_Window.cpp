@@ -406,6 +406,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			}
 
 			m_vecCollect_ITEM.push_back(static_cast<ITEM_NUMBER>(iCollectNum));
+			PICK_UP_ITEM_SoundPlay(static_cast<ITEM_NUMBER>(iCollectNum));
 			m_pPickedUp_Item->Set_Dead(true);
 			m_fCurTime = 0.f;
 			m_eSequence = HIDE;
@@ -464,6 +465,113 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 
 }
 
+void CTab_Window::PICK_UP_ITEM_SoundPlay(ITEM_NUMBER eItemNum)
+{
+	switch (eItemNum)
+	{
+	case Client::emergencyspray01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_emergencyspray.mp3"), 0.5f);
+		break;
+	case Client::herbsgg01a:
+	case Client::herbsgr01a:
+	case Client::herbsgb01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Herb.mp3"), 0.5f);
+		break;
+	case Client::herbsggb01a:
+	case Client::herbsggg01a:
+	case Client::herbsgrb01a:
+	case Client::herbsrb01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), 0.5f);
+		break;
+	case Client::handgun_bullet01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Bullet.mp3"), 0.5f);
+		break;
+	case Client::shotgun_bullet01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_ShotgunShell.mp3"), 0.5f);
+		break;
+	case Client::woodbarricade01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Wood.mp3"), 0.5f);
+		break;
+
+	case Client::gunpowder01a:
+	case Client::gunpowder01b:
+	case Client::strengtheningyellow01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_GunPowder.mp3"), 0.5f);
+		break;
+
+
+	case Client::vp70powerup:
+	case Client::vp70longmagazine:
+	case Client::shotgunpartsstock_00:
+	case Client::shotgunpartsbarrel:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Metal4.mp3"), 0.5f);
+		break;
+		
+	case Client::unicornmedal01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Medal.mp3"), 0.5f);
+		break;
+
+	case Client::spadekey01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Key.mp3"), 0.5f);
+		break;
+
+	case Client::cardkeylv101a:
+	case Client::cardkeylv201a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Plastic.mp3"), 0.5f);
+		break;
+
+	case Client::valvehandle01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Metal4.mp3"), 0.5f);
+		break;
+	case Client::kingscepter01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Metal3.mp3"), 0.5f);
+		break;
+	case Client::virginheart01a:
+		break;
+	case Client::blankkey01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_blankkey.mp3"), 0.5f);
+		break;
+	case Client::statuebook01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Rock.mp3"), 0.5f);
+		break;
+	case Client::statuehand01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Rock.mp3"), 0.5f);
+		break;
+	case Client::virginmedal01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Medal.mp3"), 0.5f);
+		break;
+	case Client::diakey01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Key.mp3"), 0.5f);
+		break;
+	case Client::virginmedal02a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Medal.mp3"), 0.5f);
+		break;
+	case Client::chaincutter01a:
+		break;
+	case Client::clairesbag01a:
+		break;
+	case Client::HandGun:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), 0.5f);
+		break;
+	case Client::ShotGun:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
+		break;
+	case Client::Flash_Bomb:
+		break;
+	case Client::Grenade:
+		break;
+	case Client::vp70stock:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Metal4.mp2"), 0.5f);
+		break;
+	case Client::portablesafe:
+		break;
+	case Client::ITEM_NUMBER_END:
+		break;
+	default:
+		break;
+	}
+}
+
 void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 {
 	switch (m_eSequence)
@@ -510,13 +618,13 @@ void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 		break;
 	}
 		
-	case Client::UI_IDLE: {
-		break;
-	}
-		
-	case Client::HIDE: {
-		break;
-	}
+	//case Client::UI_IDLE: {
+	//	break;
+	//}
+	//	
+	//case Client::HIDE: {
+	//	break;
+	//}
 	
 	default:
 		break;
@@ -545,6 +653,7 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 			ITEM_NUMBER eItem_Num = m_pInventory_Manager->Get_Selected_ItemNum();
 			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, eItem_Num, 0);
 			m_pItem_Discription->Set_Item_Number(eItem_Num);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ExaminPopUp.mp3"), CH2_2D, 0.3f);
 		}
 		break;
 	}
@@ -657,20 +766,59 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	
 	if (eItemType != DOCUMENT)
 	{
-		/*TabWindow 세팅*/
-		m_bDead = false;
-		m_eWindowType = PICK_UP_ITEM_WINDOW;
-		m_eSequence = POP_UP;
-		m_pPickedUp_Item = pPickedUp_Item;
-		m_isAlphaControl = true;
+		_bool isColletedItem = false;
+		for (auto& iter : m_vecCollect_ITEM)
+		{
+			if (ePickedItemNum == iter)
+				isColletedItem = true;
+		}
+		if (false == isColletedItem) //이아이템을 먹으적이 없으면
+		{
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_FirstPickUp.mp3"), 0.3f);
 
-		/*Item_Discription 세팅*/
-		m_pItem_Discription->Set_Item_Number(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
+			/*TabWindow 세팅*/
+			m_bDead = false;
+			m_eWindowType = PICK_UP_ITEM_WINDOW;
+			m_eSequence = POP_UP;
+			m_pPickedUp_Item = pProp->Get_Item_Props();
+			m_isAlphaControl = true;
 
-		/*Item_Mesh_Viewer 세팅*/
-		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum, 1);
+			/*Item_Discription 세팅*/
+			m_pItem_Discription->Set_Item_Number(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
 
+			/*Item_Mesh_Viewer 세팅*/
+			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum, 1);
+		}
+		
+		else
+		{
+			/*TabWindow 세팅*/
+			m_bDead = false;
+			m_eWindowType = PICK_UP_ITEM_WINDOW;
+			m_eSequence = UI_IDLE;
+			m_pPickedUp_Item = pPickedUp_Item;
+			m_isAlphaControl = true;
 
+			/*Item_Discription 세팅*/
+			m_pItem_Discription->Set_Item_Number(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
+
+			/*Item_Mesh_Viewer 세팅*/
+			m_pItem_Mesh_Viewer->Set_Operation(UI_IDLE, ePickedItemNum, 2);
+
+			/*Inventory_Manager 세팅*/
+			ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+			m_pInventory_Manager->PUO_Seting(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
+
+			/*Cursor 세팅*/
+			if (nullptr != m_pCursor[1])
+			{
+				m_pCursor[0]->Set_Inven_Open(true);
+				m_pCursor[1]->Set_Inven_Open(true);
+			}
+
+			/*TabWindow 세팅*/
+			m_fCurTime = 0.f;
+		}
 	}
 
 	else
@@ -706,8 +854,8 @@ void CTab_Window::Interact_Props(CGameObject* pInteractedProps)
 		m_pCursor[1]->Set_Inven_Open(true);
 	}
 
-	//_int iRequiredItem = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
-	//pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
+	_int iRequiredItem = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
+	pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
@@ -738,6 +886,13 @@ void CTab_Window::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 void CTab_Window::Hotkey_PopUp()
 {
 	m_pHotKey->PopUp_Call();
+}
+
+void CTab_Window::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
+{
+	m_pItem_Mesh_Viewer->Set_Weapon_Accessories(eCallItemType, iAccessories);
+	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	pPlayer->Set_Weapon_Accessories(eCallItemType, iAccessories);
 }
 
 void CTab_Window::Find_Cursor()

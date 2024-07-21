@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "InteractProps.h"
 
-#define ALHPE_ZERO              _float4(0, 0, 0, 0)
+#define ALPHA_ZERO              _float4(0, 0, 0, 0)
 
 #define OUT_DISTANCE            5.f
 #define INTERACTIVE_DISTANCE    2.f
@@ -93,7 +93,7 @@ HRESULT CSelector_UI::Change_Tool()
     m_isPlay = false;
 
     m_vColor[0].isBlender = m_isBlending = true;
-    m_vColor[0].vColor = m_vCurrentColor = ALHPE_ZERO;
+    m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
     m_vColor[0].isColorChange = m_isColorChange = true;
 
     /* Client*/

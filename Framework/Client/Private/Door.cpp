@@ -45,10 +45,21 @@ HRESULT CDoor::Initialize(void* pArg)
 		m_eType = DOOR_DOUBLE;
 
 	else if (m_tagPropDesc.strGamePrototypeName.find("056") != string::npos)
+	{
+
 		m_eType = DOOR_DUMMY;
+	}
 
 	else
+	{
+		
+		if (m_tagPropDesc.strGamePrototypeName.find("iron") != string::npos)
+			m_eDoorTexture = IRON;
+		else
+			m_eDoorTexture = WOOD;
+		
 		m_eType = DOOR_ONE;
+	}
 
 	if (m_eType == DOOR_DOUBLE)
 	{
@@ -68,6 +79,11 @@ HRESULT CDoor::Initialize(void* pArg)
 		return E_FAIL;
 	if (m_tagPropDesc.tagDoor.iLockType != 0)
 		m_bLock = false;
+
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -118,6 +134,7 @@ void CDoor::Start()
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
+
 	if (m_fDelayLockTime > 0.f)
 		m_fDelayLockTime -= fTimeDelta;
 	if (m_fDelayLockTime < 0.f)
@@ -125,10 +142,6 @@ void CDoor::Tick(_float fTimeDelta)
 		m_fDelayLockTime = 0.f;
 		m_bLock = false;
 	}
-
-	if(m_isCameraGimmick)
-
-
 
 	if (!m_bVisible)
 		return;
@@ -154,7 +167,16 @@ void CDoor::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
+
 		return;
+	}
 
 	if (m_eType == CDoor::DOOR_DUMMY)
 		return;
@@ -271,6 +293,8 @@ HRESULT CDoor::Add_PartObjects()
 	BodyDesc.pDoubleDoorState_Prev = &m_eDoubleState_Prev;
 	BodyDesc.pOneDoorState = &m_eOneState;
 	BodyDesc.pOneDoorState_Prev = &m_eOneState_Prev;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
+	BodyDesc.pDoorTexture = &m_eDoorTexture;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 
 	if (true == m_bLock && m_tagPropDesc.tagDoor.iLockType == 0 && 
@@ -300,6 +324,7 @@ HRESULT CDoor::Add_PartObjects()
 		CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
 
 		EmblemDesc.pParentsTransform = m_pTransformCom;
+		EmblemDesc.pSoundCueSign = &m_bSoundCueSign;
 		EmblemDesc.EmblemAnim = &m_eEmblemAnim_Type;
 		EmblemDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
 		EmblemDesc.pDoorState = &m_eOneState;
@@ -309,6 +334,7 @@ HRESULT CDoor::Add_PartObjects()
 
 		CMark_Door::EMBLEMMARK_DOOR_DESC MarkDesc;
 
+		MarkDesc.pSoundCueSign = &m_bSoundCueSign;
 		MarkDesc.pParentsTransform = m_pTransformCom;
 		MarkDesc.EmblemAnim = &m_eEmblemAnim_Type;
 		MarkDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
@@ -318,7 +344,7 @@ HRESULT CDoor::Add_PartObjects()
 		CPartObject* pKey;
 
 		CKey_Door::KEY_DOOR KeyDesc;
-
+		KeyDesc.pSoundCueSign = &m_bSoundCueSign;
 		KeyDesc.pParentsTransform = m_pTransformCom;
 		KeyDesc.EmblemAnim = &m_eEmblemAnim_Type; /* emblem Anim */
 
@@ -679,7 +705,13 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-			Opreate_Selector_UI(false, Get_Object_Pos());
+
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+				m_pSelector = nullptr;
+			}
 
 		}
 	}
@@ -702,11 +734,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_LOCK, Get_PlayerLook_Degree());
 		else
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
-
 	}
-
-
-
 }
 
 void CDoor::DoubleDoor_Active()
@@ -873,26 +901,27 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	}
 	
 	_bool bCam = { false };
-	if (m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::START_ANIM)
+
+	
+	switch (m_eEmblemAnim_Type)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	case  (_ubyte)CEmblem_Door::EMBLEM_ANIM::START_ANIM:
+		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == DOWN)
 		{
-			if ((m_eEmblemAnim_Type != (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)||(m_eEmblemAnim_Type != (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM))
-				m_eEmblemAnim_Type = (_ubyte)CEmblem_Door::EMBLEM_ANIM::STATIC_ANIM;
+			m_eEmblemAnim_Type = (_ubyte)CEmblem_Door::EMBLEM_ANIM::STATIC_ANIM;
 			bCam = true;
 		}
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
-		{
-			m_eEmblemAnim_Type =(_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM;
-		}
+	break;
 	}
+
+
 
 	if (m_bCamera && (bCam || static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM])->Get_Clear()))
 	{
-		if (!bCam&&m_bLock)
+		if ((!bCam)&&m_bLock)
 		{
-			if (m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM && m_fDelayLockTime == 0.f)
-				m_fDelayLockTime = 5.f;
+			if ((m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM|| m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM) && m_fDelayLockTime == 0.f)
+				m_fDelayLockTime = 2.f;
 		}
 		else if (bCam || !m_bLock)
 		{
@@ -905,9 +934,9 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		_float fScala = Radian_To_Player();
 
 		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-			Camera_Active(PART_EMBLEM, _float3(-0.5f, -0.5f, -10.1f));
+			Camera_Active(PART_EMBLEM, _float3(-0.5f, -0.5f, -10.1f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 		else
-			Camera_Active(PART_EMBLEM, _float3(0.5f, 0.5f, -10.1f));
+			Camera_Active(PART_EMBLEM, _float3(0.5f, 0.5f, -10.1f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 
 	}
 
@@ -924,7 +953,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		//m_bActivity = true;
 		
 	}
-	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
+	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f)&& m_eOneState== ONEDOOR_STATIC)
 	{
 		//UI¶ç¿ì°í
 		
@@ -1006,6 +1035,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 
 	if (!m_bBlock && m_bOnce&& m_bCol[INTER_COL_NORMAL][COL_STEP2])
 	{
+		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_12.mp3"), 0);
 		m_bOnce = false;
 		if (m_bLock)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_LOCK, Get_PlayerLook_Degree());
@@ -1056,10 +1086,11 @@ void CDoor::OneDoor_Active()
 		//m_bInteract = true;
 
 		m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
-		m_pCameraGimmick->Active_Camera(true);
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 		m_bCamera = true;
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
+		if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);
 	}
 	else
 	{

@@ -304,8 +304,6 @@ HRESULT CDial_BigStatue::Initialize_Model()
 
 	string strFirstTag, strSecondTag, strThirdTag;
 
-
-
 	switch (m_eBigStatueType)
 	{
 	case static_cast<_uint>(CBigStatue::BIGSTATUE_UNICON):
