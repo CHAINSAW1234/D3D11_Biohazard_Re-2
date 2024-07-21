@@ -676,6 +676,22 @@ void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix Tra
 	m_pPipeLine->Set_Transform(eState, TransformMatrix);
 }
 
+void CGameInstance::Set_Player_Collider(_int iCol)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	m_pPipeLine->Set_Player_Collider(iCol);
+}
+
+void CGameInstance::Set_Player_Dir(_int iDir)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	m_pPipeLine->Set_Player_Dir(iDir);
+}
+
 HRESULT CGameInstance::Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight)
 {
 	if (nullptr == m_pPipeLine)
@@ -856,6 +872,22 @@ _float* CGameInstance::Get_PBRLerpTime()
 		return nullptr;
 
 	return m_pPipeLine->Get_PBRLerpTime();
+}
+
+_int CGameInstance::Get_Player_Collider()
+{
+	if (nullptr == m_pPipeLine)
+		return -1;
+
+	return m_pPipeLine->Get_Player_Collider();
+}
+
+_int CGameInstance::Get_Player_Dir()
+{
+	if (nullptr == m_pPipeLine)
+		return -1;
+
+	return m_pPipeLine->Get_Player_Dir();
 }
 
 #pragma endregion

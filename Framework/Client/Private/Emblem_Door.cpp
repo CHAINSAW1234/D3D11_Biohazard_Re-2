@@ -175,10 +175,9 @@ HRESULT CEmblem_Door::Render()
 	}
 	
 	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP),XMConvertToRadians(180.f));
-	_float4x4			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
+	_matrix			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
 	
-	mWorldMatrix._41 += 95.f;
-	mWorldMatrix._42 += 95.f;
+	mWorldMatrix.r[3] += _float4(95.f, 95.f, 0.f, 0.f);
 
 	_matrix			WorldMatrix = { };
 	switch (*m_pDoorState)

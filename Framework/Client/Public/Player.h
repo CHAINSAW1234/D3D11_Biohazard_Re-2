@@ -323,8 +323,8 @@ private:
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
-	_int										m_iRegion = { 0 };
-	_int										m_iDir = { 0 };
+	_int										m_iRegion = { 0 };		
+	_int										m_iDir = { 0 };			// 0 : DIRECTION_WEST,  1 : DIRECTION_EAST,  2 : DIRECTION_MID
 	_int										m_iPreCol = { 1 };
 	_int										m_iFloor = { 2 };
 	_float										m_fTimeTEST = { 0.f };

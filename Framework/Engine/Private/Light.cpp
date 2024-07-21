@@ -8,7 +8,9 @@ CLight::CLight()
 
 HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
-	LIGHT_DESC* pNewDesc = new LIGHT_DESC;
+	LIGHT_DESC* pNewDesc = new LIGHT_DESC();
+	ZeroMemory(pNewDesc, sizeof(LIGHT_DESC));
+
 	pNewDesc->bRender = desc.bRender;
 	pNewDesc->bShadow = desc.bShadow;
 	pNewDesc->eType = desc.eType;
@@ -20,6 +22,14 @@ HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _fl
 	pNewDesc->vDirection = desc.vDirection;
 	pNewDesc->vPosition = desc.vPosition;
 	pNewDesc->vSpecular = desc.vSpecular;
+	pNewDesc->BelongNumVec = desc.BelongNumVec; //vec로 받고
+	
+	for (auto iter : pNewDesc->BelongNumVec) // 실제로 사용할 배열에 넣는다.
+	{
+		pNewDesc->BelongNum[iter] = true;
+	}
+
+
 	if (LIGHT_DESC::TYPE_POINT == pNewDesc->eType) {
 		XMStoreFloat4x4(&pNewDesc->ViewMatrix[0], XMMatrixLookToLH(XMLoadFloat4(&pNewDesc->vPosition), XMVectorSet(1.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 		XMStoreFloat4x4(&pNewDesc->ViewMatrix[1], XMMatrixLookToLH(XMLoadFloat4(&pNewDesc->vPosition), XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));

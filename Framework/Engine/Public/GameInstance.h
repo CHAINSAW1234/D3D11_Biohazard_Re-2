@@ -137,6 +137,8 @@ public: /* For.Timer_Manager */
 #pragma region PipeLine
 public: /* For.PipeLine */
 	void									Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	void 									Set_Player_Collider(_int iCol);
+	void									Set_Player_Dir(_int iDir);
 	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight);
 	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, const wstring& strLightTag);
 	void									Set_CubeMap(CTexture* pTexture, _uint iIndex = 0);
@@ -159,6 +161,8 @@ public: /* For.PipeLine */
 	HRESULT									Bind_PrevCubeMapTexture(CShader* pShader, const _char* pConstantName);
 	HRESULT									Bind_CurCubeMapTexture(CShader* pShader, const _char* pConstantName);
 	_float*									Get_PBRLerpTime();
+	_int									Get_Player_Collider();
+	_int									Get_Player_Dir();
 #pragma endregion
 
 #pragma region Light_Manager
