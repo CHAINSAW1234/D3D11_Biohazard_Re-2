@@ -105,6 +105,7 @@ private:
 	HRESULT								Add_SoundTags_Foot();
 	HRESULT								Add_SoundTags_ETC();
 	HRESULT								Add_SoundTags_Interact();
+	HRESULT								Add_SoundTags_BreakHead();
 
 public:
 	void								Play_Random_Hit_Sound();
@@ -114,6 +115,7 @@ public:
 	void								Play_Random_Bite_Sound();
 	void								Play_Random_Bite_Reject_Sound();
 	void								Play_Random_Foot_Sound();
+	void								Play_Random_Broken_Head_Sound();
 
 public:
 	void								Play_Animations_Body(_float fTimeDelta);

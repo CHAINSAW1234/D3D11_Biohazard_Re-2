@@ -31,6 +31,7 @@ public:
 private:
 	HRESULT										Update_Listener_Camera();
 
+	HRESULT										Update_Sounds_Playing();
 	HRESULT										Update_Sounds_Position();
 	HRESULT										Update_Sounds_Volume();
 	HRESULT										Update_Sounds_Mode();

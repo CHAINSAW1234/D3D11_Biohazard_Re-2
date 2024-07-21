@@ -74,6 +74,8 @@
 #define ZOMBIE_MIN_VOLUME_HIT								0.3f
 #define ZOMBIE_MAX_VOLUME_HIT								0.7f
 
+#define ZOMBIE_VOLUME_BREAK_HEAD							0.6f
+
 /* Interact */
 #define ZOMBIE_NUM_SOUND_KNOCK_WINDOW
 #define ZOMBIE_NUM_SOUND_BREAK_WINDOW

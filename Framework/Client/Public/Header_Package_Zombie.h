@@ -75,6 +75,7 @@
 #include "Turn_Spine_Head_Zombie.h"
 #include "Raise_Up_Hand_Zombie.h"
 #include "Foot_Sound_Zombie.h"
+#include "Break_Sound_Zombie.h"
 
 /* Utility */
 #include "Execute_PreTask_Zombie.h"

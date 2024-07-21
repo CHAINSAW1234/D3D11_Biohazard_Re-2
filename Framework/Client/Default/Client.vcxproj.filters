@@ -802,6 +802,9 @@
     <Filter Include="Event_Center">
       <UniqueIdentifier>{2c07f731-035d-48cf-8f69-4e5fc3b1ae3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Break_Sound">
+      <UniqueIdentifier>{1e796123-6237-4b81-8b41-f11d98420c15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1558,6 +1561,9 @@
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Event_Call_Center.h" />
+    <ClInclude Include="..\Public\Break_Sound_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Break_Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2275,6 +2281,9 @@
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Event_Call_Center.cpp" />
+    <ClCompile Include="..\Private\Break_Sound_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Break_Sound</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

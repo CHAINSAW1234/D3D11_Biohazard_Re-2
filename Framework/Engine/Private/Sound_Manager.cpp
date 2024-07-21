@@ -23,6 +23,7 @@ HRESULT CSound_Manager::Initialize()
 	LoadSoundFile();
 	LoadSoundFile_Zombie();
 	LoadSoundFile_Player();
+
 	return S_OK;
 }
 
@@ -39,37 +40,6 @@ HRESULT CSound_Manager::Update_Listener(CTransform* pTransform, _float3 vVelocit
 	Safe_AddRef(m_pListener_Transform);
 
 	m_vVelocity = vVelocity;
-
-	/*FMOD_3D_ATTRIBUTES					Attributes_desc;
-	_vector			vPosition = { pTransform->Get_State_Vector(CTransform::STATE_POSITION) };
-	_vector			vUp = { pTransform->Get_State_Vector(CTransform::STATE_UP) };
-	_vector			vLook = { pTransform->Get_State_Vector(CTransform::STATE_LOOK) };
-
-	_float3			vPositionFloat3, vUpFloat3 , vLookFloat3;
-
-	XMStoreFloat3(&vPositionFloat3, vPosition);
-	XMStoreFloat3(&vUpFloat3, vUp);
-	XMStoreFloat3(&vLookFloat3, vLook);
-
-	Attributes_desc.position = vPositionFloat3;
-	Attributes_desc.forward = vLookFloat3;
-	Attributes_desc.up = vUpFloat3;
-	Attributes_desc.velocity = vVelocity;
-
-	FMOD_RESULT eResult = { FMOD_OK };
-	eResult = FMOD_System_Set3DListenerAttributes(m_pSystem, 0, &Attributes_desc.position, &Attributes_desc.velocity, &Attributes_desc.forward, &Attributes_desc.up);
-	if (eResult != FMOD_OK)
-		return E_FAIL;
-
-#ifdef _DEBUG
-	eResult = FMOD_System_Get3DListenerAttributes(m_pSystem, 0, &Attributes_desc.position, &Attributes_desc.velocity, &Attributes_desc.forward, &Attributes_desc.up);
-	if (eResult != FMOD_OK)
-		return E_FAIL;
-#endif
-
-	eResult = FMOD_System_Update(m_pSystem);
-	if (eResult != FMOD_OK)
-		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -112,20 +82,8 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	//if (pSound == pSoundDesc->pSound)
 	//	return;
 
-	FMOD_BOOL				isPlaying = { false };
-	FMOD_RESULT				eResult = { FMOD_OK };
-	FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
-	if (FALSE != isPlaying)
-	{
-		Stop_Sound_3D(pTransform, iSoundIndex);
-	}
-
 	pSoundDesc->pSound = pSound;
-	eResult = FMOD_System_PlaySound(m_pSystem, pSoundDesc->pSound, nullptr , FALSE, &m_pChannelArr[pSoundDesc->iChannelIndex]);
-	if (FMOD_OK != eResult)
-		return;
-
-	FMOD_System_Update(m_pSystem);
+	pSoundDesc->isChange = true;
 }
 
 void CSound_Manager::Set_Volume_3D(CTransform* pTransform, _uint iSoundIndex, _float fVolume)
@@ -165,21 +123,47 @@ void CSound_Manager::Set_Distance_3D(CTransform* pTransform, _uint iSoundIndex, 
 HRESULT CSound_Manager::Update_Sounds()
 {
 	if (FAILED(Update_Listener_Camera()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 
+	if (FAILED(Update_Sounds_Playing()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		return E_FAIL;
+	}	
 	if (FAILED(Update_Sounds_Mode()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 	if (FAILED(Update_Sounds_Position()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 	if (FAILED(Update_Sounds_Volume()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 	if (FAILED(Update_Sounds_Paused()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 	if (FAILED(Update_Sounds_Distance()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 
 	if (FAILED(Update_Sounds_System()))
+	{
+		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -218,6 +202,38 @@ HRESULT CSound_Manager::Update_Listener_Camera()
 	return S_OK;
 }
 
+HRESULT CSound_Manager::Update_Sounds_Playing()
+{
+	FMOD_RESULT			eResult = { FMOD_OK };
+	FMOD_BOOL			isPlaying = { false };
+
+	for (auto& Pair : m_Sound_Descs_3D)
+	{
+		for (auto& SoundDesc : Pair.second)
+		{
+			/*if (nullptr == m_pChannelArr[SoundDesc.iChannelIndex])
+				continue;*/
+
+			if (false == SoundDesc.isChange)
+				continue;			
+
+			FMOD_BOOL		isPlaying = { false };
+			FMOD_Channel_IsPlaying(m_pChannelArr[SoundDesc.iChannelIndex], &isPlaying);
+			if (isPlaying)
+			{
+				eResult = FMOD_Channel_Stop(m_pChannelArr[SoundDesc.iChannelIndex]);
+			}
+
+
+			eResult = FMOD_System_PlaySound(m_pSystem, SoundDesc.pSound, nullptr, SoundDesc.bPause, &m_pChannelArr[SoundDesc.iChannelIndex]);
+			if (FMOD_OK != eResult)
+				return E_FAIL;
+
+			SoundDesc.isChange = false;
+		}
+	}
+}
+
 HRESULT CSound_Manager::Update_Sounds_Position()
 {
 	if (nullptr == m_pListener_Transform)
@@ -246,8 +262,10 @@ HRESULT CSound_Manager::Update_Sounds_Position()
 		_float					fDistanceFromListner = { XMVectorGetX(XMVector3Length(vDirectionFromListener)) };
 		_float					fDistanceFromCamera = { XMVectorGetX(XMVector3Length(vDirectionFromCamera)) };
 
-		_vector					vVirtualPosition = { (vDirectionFromCamera / fDistanceFromCamera) * fDistanceFromListner };
+		_vector					vVirtualDirection = { (vDirectionFromCamera / fDistanceFromCamera) * fDistanceFromListner };
+		_vector					vVirtualPosition = { vCameraPosition + vVirtualDirection };
 		_float3					vVirtualPositionFloat3;
+
 		XMStoreFloat3(&vVirtualPositionFloat3, vVirtualPosition);
 
 		for (auto& SoundDesc : Pair.second)

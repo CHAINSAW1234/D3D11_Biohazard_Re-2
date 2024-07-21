@@ -471,13 +471,15 @@ void CZombie::Tick(_float fTimeDelta)
 								if (eType != COLLIDER_TYPE::HEAD)
 								{
 									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));									
 								}
 
 								if (eType == COLLIDER_TYPE::HEAD)
 								{
 									m_bHeadBlow = true;
 									m_bRagdoll = true;
+
+									Play_Random_Broken_Head_Sound();
 									
 									SetRagdoll_StartPose();
 
@@ -1420,6 +1422,9 @@ HRESULT CZombie::Add_SoundTags()
 	if (FAILED(Add_SoundTags_Hit()))
 		return E_FAIL;
 
+	if (FAILED(Add_SoundTags_BreakHead()))
+		return E_FAIL;
+
 	if (FAILED(Add_SoundTags_Bite_Reject()))
 		return E_FAIL;
 
@@ -1637,6 +1642,20 @@ HRESULT CZombie::Add_SoundTags_Interact()
 	return S_OK;
 }
 
+HRESULT CZombie::Add_SoundTags_BreakHead()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBreakHeadSoundTag = { TEXT("em_common_dmg_hit_media.bnk.2_") };
+	vector<wstring>				BreakHeadSoundTags;
+	wstring			strTag = { strBreakHeadSoundTag + to_wstring(24) + strExtTag };
+	BreakHeadSoundTags.push_back(strTag);
+
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_HIT, BreakHeadSoundTags);
+
+	return S_OK;
+}
+
 void CZombie::Play_Random_Hit_Sound()
 {
 	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_HIT) };
@@ -1766,6 +1785,22 @@ void CZombie::Play_Random_Foot_Sound()
 
 	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+}
+
+void CZombie::Play_Random_Broken_Head_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_HEAD) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
+	iRandomIndex = 8;
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_BREAK_HEAD };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
 }
 
 void CZombie::Play_Animations_Body(_float fTimeDelta)

@@ -151,6 +151,7 @@ namespace Engine
 	typedef struct Sound_Desc
 	{
 		_uint				iChannelIndex = { 0 };
+		_bool				isChange = { false };
 		_bool				bPause = { true };
 		_float2				vRange = { 0.f,1.f };
 		_float				fVolume = { SOUND_DEFAULT };
