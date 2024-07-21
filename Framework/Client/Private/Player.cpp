@@ -935,7 +935,7 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-		Change_Sound_3D(TEXT("Sound_Player_STG_Shot"), 0, 0);
+		Change_Sound_3D(TEXT("Sound_Player_STG_Shot"), 2, 0);
 		break;
 	}
 	}
