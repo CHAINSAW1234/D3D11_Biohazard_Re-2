@@ -394,7 +394,7 @@ void CContextMenu::Set_Dead(_bool bDead)
 {
 	__super::Set_Dead(bDead);
 
-	//m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Close.mp3"), 0.5f);
+	m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Close.mp3"), 0.5f);
 }
 
 void CContextMenu::Set_EventbyTexture(_uint iTextureNum)

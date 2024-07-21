@@ -705,6 +705,13 @@ void CRagdoll_Physics::create_ragdoll()
 		m_vecBreakPartFilter[m_thigh_r_idx] = false;
 	}
 
+	joints[0].parent_index = m_spine_02_idx;
+	joints[1].parent_index = m_spine_02_idx;
+	joints[2].parent_index = m_spine_02_idx;
+	m_ragdoll->m_rigid_bodies[0] = m_Chest;
+	m_ragdoll->m_rigid_bodies[1] = m_Chest;
+	m_ragdoll->m_rigid_bodies[2] = m_Chest;
+
 	auto iNumBone = m_skeletal_mesh->skeleton()->num_bones();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
