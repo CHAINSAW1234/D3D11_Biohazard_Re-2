@@ -237,6 +237,9 @@ HRESULT CBody_Statue::Render_LightDepth_Point()
 
 HRESULT CBody_Statue::Render_LightDepth_Spot()
 {
+	if (m_bRender == false)
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

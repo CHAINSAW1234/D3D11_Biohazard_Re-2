@@ -64,6 +64,8 @@ public:
 		CModel*					pPants_Model = { nullptr };
 		CModel*					pShirts_Model = { nullptr };
 		_int					iBodyType = { -1 };
+		_int					iClothesModelID_Shirts = { -1 };
+		_int					iClothesModelID_Pants = { -1 };
 	}PART_BREAKER_DESC;
 	
 private:
@@ -120,6 +122,9 @@ private:
 	CModel*											m_pFace_Model = { nullptr };
 	CModel*											m_pPants_Model = { nullptr };
 	CModel*											m_pShirts_Model = { nullptr };
+
+	_int											m_iClothesModelID_Shirts = { -1 };
+	_int											m_iClothesModelID_Pants = { -1 };
 
 public:
 	static CPart_Breaker_Zombie* Create(void* pArg);

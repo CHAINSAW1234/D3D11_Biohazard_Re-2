@@ -43,6 +43,11 @@ HRESULT CSG_Cartridge::Initialize(void* pArg)
 
 void CSG_Cartridge::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		return;
+	}
+
 	if (m_bRender == false)
 		return;
 
