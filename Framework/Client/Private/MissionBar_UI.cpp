@@ -378,8 +378,8 @@ void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
         {
             m_fBlending -= fTimeDelta;
 
-            if (m_fBlending <= 0.f)
-                m_fBlending = 0.f;
+            if (m_fBlending <= 0.2f)
+                m_fBlending = 0.2f;
 
         }
     }
@@ -418,8 +418,7 @@ void CMissionBar_UI::Mission_Start()
     if (!m_pMission_ColliderQueue.empty())
         m_pMission_ColliderQueue.pop();
 
-
-    m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_mission.mp3"), 0.5f);
+    m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_mission.mp3"), CH_TICK_2D, 0.2f);
 
     /*Client */
     m_isFontStart = true;

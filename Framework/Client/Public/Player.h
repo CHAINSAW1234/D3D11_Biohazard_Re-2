@@ -270,7 +270,6 @@ private:
 	_bool										m_isMissionClear				= { false };
 	_bool										m_isFlod_EntranceDoor			= { false };
 	
-	_bool										m_isMissionTimer				= { 0.0f };
 	_bool										m_MissionCollection[MISSION_TYPE::END_MISSION] = { false };
 #pragma
 

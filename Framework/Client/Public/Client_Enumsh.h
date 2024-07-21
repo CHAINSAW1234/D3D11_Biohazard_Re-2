@@ -50,17 +50,17 @@ namespace Client
 	};
 
 	enum class ITEM_READ_TYPE { 
-		INCIDENT_LOG_NOTE, //사건 일지
-		OPERATE_REPORT_NOTE, //작전 보고서
-		TASK_NOTE, //신입의 첫 번째 과제
+		INCIDENT_LOG_NOTE,		//사건 일지
+		OPERATE_REPORT_NOTE,	//작전 보고서
+		TASK_NOTE,				//신입의 첫 번째 과제
 		MEDICINAL_NOTE, //약초의 의학적 효능
-		OFFICER_NOTE, //경관의 노트
+		OFFICER_NOTE,			//경관의 노트
 		GUNPOWDER_NOTE, //화약 사용
 		FIX_LOCKER_NOTE, //물품 보관함 단말기 관련 쪽지
 		HAND_HELD_SAFE_NOTE, //휴대용 금고 지침
 		RICKER_NOTE, //만일의 생존자에게
 		SAFE_PASSWARD_NOTE, //내부용 쪽지
-		PAMPHLET, //가이드 책자
+		PAMPHLET_NOTE, //가이드 책자
 		EXAMIN_ITEM, //아이템 검사
 		USE_KEY_ITEM, //열쇠 아이템 사용
 		ABOUT_MAP,//지도 활용
@@ -68,6 +68,7 @@ namespace Client
 		HP_HEAL_ITEM,//체력 및 회복 아이템
 		END_NOTE 
 	};
+
 	// 사건 일지 , 작전실 노트 , 레온의 과제, 약초의 효능, 경찰의 수첩, 화약 일지 , 락커 고쳐줘, 휴대용 금고 설명서, 리커에 대한 설명
 	// 맵 5번 : 
 	// hand-held safe manual
@@ -275,7 +276,6 @@ namespace Client
 		JOMBIE_BEHAVIOR_COLLIDER_NON_WINDOW, //창문은 없고 창틀만 있는(기믹객체가 아니라 이미 깨져있는)
 		JOMBIE_BEHAVIOR_COLLIDER_END,
 	};
-	//
 
 	enum PLAYER_BEHAVIOR_COLLIDER_TYPE
 	{
@@ -289,6 +289,7 @@ namespace Client
 	{
 		FOLD_ENTRANCE_MISSION,
 		EXPLORING_SURROUNDING_MISSION,
+		GO_BACK_MAINHOLL,
 		END_MISSION
 	};
 

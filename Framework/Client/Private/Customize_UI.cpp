@@ -98,7 +98,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 	m_isLoad			= true;
 
 	/* ▶ 만약 보간 과정에서 하얀 게 보인다면 
-	> Blending 하는 과정에서 알파를 1로 주지 않았는 지 확인, */
+	> Blending 하는 과정에서 알파를 1로 주지 않았는 지 확인 */
 
 	return S_OK;
 }

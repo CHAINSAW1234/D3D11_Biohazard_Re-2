@@ -146,7 +146,7 @@ HRESULT CTitle_UI::Change_Tool()
 void CTitle_UI::TitleGame_Start()
 {
     /* 만약 로고의 플레이가 완료 되었다면, */
-    m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleLogoClear.mp3"), 0.5f);
+    m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleLogoClear.mp3"), CH_TICK_2D, 0.2f);
 
 
     if (nullptr != m_pLogo && true == m_pLogo->m_isPlay)
@@ -216,7 +216,7 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         {
             if(m_pGameInstance->Get_KeyState(VK_LBUTTON))
             {
-                m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleInGame.mp3"), 0.5f);
+                m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleInGame.mp3"), CH_TICK_2D, 0.2f);
 
                 // m_isSelectCharector = true;
                 m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_GAMEPLAY));
@@ -224,8 +224,8 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         }
 
         m_vecTextBoxes.back()->Set_FontColor(FONT_LIGHT_COLOR);
+        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleSelectOption.mp3"), CH_TICK_2D, 0.2f);
 
-        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleSelectOption.mp3"), 0.5f);
 
         /* 오른쪽으로 밀기 */
         if (fOptionTextTrans.x < m_vOriginOption_Pos.x + OPTION_MOVE_DISTANCE)

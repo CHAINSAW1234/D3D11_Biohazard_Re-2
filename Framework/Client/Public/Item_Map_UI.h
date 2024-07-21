@@ -20,18 +20,18 @@ public:
 
 	
 public :
-	wstring*		Item_Name() { return &m_wstrItemNumber;  }
-	_bool*			Distance_ItemEnd() { return &m_isItemEnd;  }
-	void			Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
-	_vector*		Player_Between_Item_Distance() { return &m_vMapOpen_Player_Distance; }
+	wstring*						Item_Name() { return &m_wstrItemNumber;  }
+	_bool*							Distance_ItemEnd() { return &m_isItemEnd;  }
+	void							Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
+	_vector*						Player_Between_Item_Distance() { return &m_vMapOpen_Player_Distance; }
 
 
 private :
-	CGameObject*	Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
-	void			Item_Name_Selection(); /* 아이템 Type에 따른 이름 선정 */
+	CGameObject*					Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
+	void							Item_Name_Selection(); /* 아이템 Type에 따른 이름 선정 */
 
-	void			Rendering();
-	void			Player_BetweenDistance();
+	void							Rendering();
+	void							Player_BetweenDistance();
 
 
 private :
