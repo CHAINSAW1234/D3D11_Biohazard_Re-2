@@ -41,6 +41,7 @@
 #define BLOOD_DROP_COUNT_STG 10
 #define HEADBLOW_BLOOD_SIZE 8.f
 #define HEADBLOW_BLOOD_SIZE_DROP 8.f
+#define BLOOD_SOUND_COUNT 4
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }

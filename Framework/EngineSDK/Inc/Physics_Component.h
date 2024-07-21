@@ -98,9 +98,17 @@ public:
 	{
 		return &m_pRigid_Dynamic;
 	}
-	PxRigidDynamic* GetRigidDynamic_Ptr()
+	PxRigidDynamic*					GetRigidDynamic_Ptr()
 	{
 		return m_pRigid_Dynamic;
+	}
+	void							SetbPlaySound(_bool boolean)
+	{
+		m_bPlaySound = boolean;
+	}
+	_bool							GetbPlaySound()
+	{
+		return m_bPlaySound;
 	}
 public:
 	static CPhysics_Component*		Create();
@@ -130,6 +138,7 @@ protected:
 	class CGameObject*				m_pObject = { nullptr };
 
 	_bool							m_bGravity = { true };
+	_bool							m_bPlaySound = { false };
 protected:
 	_int m_iRefCnt_Px = { 0 };
 public:

@@ -18,6 +18,7 @@ public:
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
+	virtual void			PlaySound() override;
 
 public:
 	void					SetSize(_float fSizeX, _float fSizeY,_float fSizeZ);
