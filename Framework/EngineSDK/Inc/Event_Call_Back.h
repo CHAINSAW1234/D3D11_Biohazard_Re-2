@@ -63,18 +63,17 @@ static physx::PxFilterFlags MegamotionFilterShader(
 
 	if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::EFFECT))
 	{
-		auto GameInstance = CGameInstance::Get_Instance();
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
 
-		//auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData0.word3);
 	}
 
-	if ((filterData0.word1 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::EFFECT))
+	if ((filterData1.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 & COLLISION_CATEGORY::EFFECT))
 	{
-		auto GameInstance = CGameInstance::Get_Instance();
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
 
-		//auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData1.word3);
 	}
-
 
 #pragma region Default
 	//面倒 公矫 内靛
@@ -121,14 +120,6 @@ public:
         PxPairFlags& pairFlags) override {
 
 		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-
-#pragma region CCT 面倒 公矫
-		//if ((filterData0.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION) && (filterData1.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION))
-		//{
-		//	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-		//	return physx::PxFilterFlag::eNOTIFY;
-		//}
-#pragma endregion
 
 #pragma region Default
 		if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))

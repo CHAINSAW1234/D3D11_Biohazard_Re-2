@@ -51,7 +51,7 @@ HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC& 
 		m_Lights.emplace(strLightTag, pLight);
 	}
 
-	return pLight->Add_LightDesc(LightDesc, fFovY, fAspect, fNearZ, fFarZ);;
+	return pLight->Add_LightDesc(LightDesc, fFovY, fAspect, fNearZ, fFarZ);
 }
 
 HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)

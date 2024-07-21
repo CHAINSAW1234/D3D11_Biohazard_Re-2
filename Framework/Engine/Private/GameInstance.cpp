@@ -1192,9 +1192,9 @@ void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint 
 	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders,pTransforms, pTransform);
 }
 
-void CGameInstance::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, PxRigidDynamic** pCollider, CTransform* pTransform)
+void CGameInstance::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, _int iId,PxRigidDynamic** pCollider, CTransform* pTransform)
 {
-	m_pPhysics_Controller->Cook_Mesh_Convex_RigidDynamic(pVertices, pIndices, VertexNum, IndexNum, pCollider, pTransform);
+	m_pPhysics_Controller->Cook_Mesh_Convex_RigidDynamic(pVertices, pIndices, VertexNum, IndexNum, iId,pCollider, pTransform);
 }
 
 void CGameInstance::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)

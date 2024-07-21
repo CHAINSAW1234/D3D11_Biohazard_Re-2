@@ -748,9 +748,9 @@ void CMesh::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTr
 	m_pGameInstance->Cook_Mesh_Convex(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform);
 }
 
-void CMesh::Convex_Mesh_Cooking_RigidDynamic(PxRigidDynamic** pCollider, CTransform* pTransform)
+void CMesh::Convex_Mesh_Cooking_RigidDynamic(PxRigidDynamic** pCollider,_int iId, CTransform* pTransform)
 {
-	m_pGameInstance->Cook_Mesh_Convex_RigidDynamic(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pCollider, pTransform);
+	m_pGameInstance->Cook_Mesh_Convex_RigidDynamic(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, iId,pCollider, pTransform);
 }
 
 void CMesh::Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)

@@ -286,6 +286,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 #pragma endregion
 
 	r *= SIZE_VALUE;
+	l *= SIZE_VALUE;
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, l), *m_material);
 	shape->setContactOffset(0.02f);
 
