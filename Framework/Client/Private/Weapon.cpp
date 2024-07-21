@@ -369,6 +369,11 @@ void CWeapon::Set_RenderLocation(RENDERLOCATION eRenderLocation)
 	}
 }
 
+void CWeapon::Set_Weapon_Accessory(string wstrAccessory, _bool IsOnOff)
+{
+	m_pModelCom->Hide_Mesh(wstrAccessory, IsOnOff);
+}
+
 HRESULT CWeapon::Add_Components()
 {
 	/* For.Com_Shader */

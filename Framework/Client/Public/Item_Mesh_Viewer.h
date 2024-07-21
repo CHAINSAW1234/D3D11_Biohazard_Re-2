@@ -13,7 +13,7 @@ BEGIN(Client)
 class CItem_Mesh_Viewer final : public CGameObject
 {
 private:
-	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, OPER_TYPE_END};
+	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, SECON_PICKUPITEM, OPER_TYPE_END};
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
@@ -35,6 +35,7 @@ private:
 public:
 	void Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType);
 	void Set_ScaleByItemNum(ITEM_NUMBER eCallItemType);
+	void Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories);
 	
 private:
 	vector<CModel*>		m_vecModelCom;

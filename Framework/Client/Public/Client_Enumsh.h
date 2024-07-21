@@ -13,7 +13,8 @@ namespace Client
 	enum CHANNELID_2D
 	{
 		BGM_2D, 
-		CH1_2D, CH2_2D,
+		CH1_2D, CH2_2D, CH3_2D,
+		CH_TICK_2D,
 		CH_END
 	};
 

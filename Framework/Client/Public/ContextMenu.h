@@ -55,6 +55,8 @@ private:
 
 	CGameObject*				m_pHoverdChild = { nullptr };//사운드용
 
+	_bool						m_isActive = { false };
+
 #pragma region 나옹
 private:
 	/* Fuction */

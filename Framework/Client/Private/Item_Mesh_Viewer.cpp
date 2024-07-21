@@ -84,7 +84,7 @@ void CItem_Mesh_Viewer::Start()
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 {
-	if(PICKUPITEM == m_eOperType)
+	if(PICKUPITEM == m_eOperType || SECON_PICKUPITEM == m_eOperType)
 		m_pTransformCom->Set_Scaled(m_fCurSize, m_fCurSize, m_fCurSize);
 
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
@@ -210,7 +210,13 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 		_float fRadian = m_pGameInstance->Get_Ease(Ease_InSine, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
+
+		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Rotation(MyUp, fRadian);
+
+		//_vector CamUp = m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_UP);
+		//m_pTransformCom->Rotation(CamUp, fRadian);
+		// 
 		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
 	}
 }
@@ -270,7 +276,10 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 				vSpeed.y = 0.f;
 		}
 
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
+
 		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
 
 
@@ -300,6 +309,10 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			}
 		}
 
+		break;
+	}
+
+	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM: {
 		break;
 	}
 
@@ -336,6 +349,7 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 		break;
 	}
 		
+	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM:
 	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
 		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 		{
@@ -354,8 +368,6 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 	default:
 		break;
 	}
-
-
 }
 
 void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
@@ -373,23 +385,46 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
 		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
 		m_matMoveCenter *= TempMat;
+		_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
 		m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		break;
 	}
 
 	case Client::UI_IDLE: {
-		m_bDead = false;
-		m_eViewer_State = eOperation;
-		m_fPopupHide_CurTime = 0.f;
 		if (PICKUPITEM == iOperateType)
 		{
+			m_bDead = false;
+			m_eViewer_State = eOperation;
+			m_fPopupHide_CurTime = 0.f;
 			m_bStop = false;
 			m_fPickupIdle_StartDist = m_fDistCamZ;
 		}
+		if (SECON_PICKUPITEM == iOperateType)
+		{
+			m_bDead = false;
+			m_eItem_Number = eCallItemType;
+			m_eViewer_State = eOperation;
+			
+			Set_ScaleByItemNum(eCallItemType);
+
+			m_fPopupHide_CurTime = 0.f;
+			m_fDistCamZ = m_fPopupHide_EndDist;
+			m_fDistCamX = PICK_UP_IDLE_X_DIST;
+			m_fCurSize = m_fEndSize;
+
+			m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
+			_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
+			_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+			m_matMoveCenter *= TempMat;
+			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+			m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+		}
+		
 		break;
 	}
 
-		
 	case Client::HIDE: {
 		m_bDead = false;
 		m_eViewer_State = eOperation;
@@ -993,6 +1028,52 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
 		m_matMoveCenter = XMMatrixIdentity();
+		break;
+
+	default:
+		break;
+	}
+}
+
+void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
+{
+	switch (eCallItemType)
+	{
+	case Client::HandGun:
+		switch (iAccessories)
+		{
+		case 0:
+			m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", false);
+			break;
+
+		case 1:
+			m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", false);
+			break;
+
+		case 2:
+			m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", false);
+			break;
+
+		default:
+			break;}
+
+		break;
+
+
+	case Client::ShotGun:
+		switch (iAccessories)
+		{
+		case 0:
+			m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", false);
+			break;
+
+		case 1:
+			m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", false);
+			break;
+
+		default:
+			break;}
+
 		break;
 
 	default:
