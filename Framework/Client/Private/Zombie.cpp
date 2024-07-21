@@ -1138,6 +1138,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSequenceNode_Additional_Blend_Anim = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSequenceNode_Root->Insert_Child_Node(pSequenceNode_Additional_Blend_Anim);
 
+#pragma region		Task Set Focus Player
+
+	CSet_Focus_Player* pTask_Set_Focus_Player = { CSet_Focus_Player::Create() };
+	pTask_Set_Focus_Player->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Set_Focus_Player);
+
+#pragma endregion
+
 #pragma region		Task Shake Skin
 
 	CShake_Skin_Zombie* pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
@@ -1167,6 +1175,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CFoot_Sound_Zombie* pTask_Foot_Sound = { CFoot_Sound_Zombie::Create() };
 	pTask_Foot_Sound->SetBlackBoard(m_pBlackBoard);
 	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Foot_Sound);
+
+#pragma endregion		//	Sequence Root Child
+
+#pragma region		Task Break Sound 
+
+	CBreak_Sound_Zombie* pTask_Break_Sound = { CBreak_Sound_Zombie::Create() };
+	pTask_Break_Sound->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Break_Sound);
 
 #pragma endregion		//	Sequence Root Child
 
@@ -1445,16 +1461,25 @@ HRESULT CZombie::Add_SoundTags()
 	if (FAILED(Add_SoundTags_Bite_Reject_Voice()))
 		return E_FAIL;
 
+	if (FAILED(Add_SoundTags_Bite_Kill_Voice()))
+		return E_FAIL;
+
 	if (FAILED(Add_SoundTags_Bite_Creep_Voice()))
 		return E_FAIL;
 
 	if (FAILED(Add_SoundTags_Bite_Creep_Reject_Voice()))
 		return E_FAIL;
 
+	if (FAILED(Add_SoundTags_Bite_Creep_Kill_Voice()))
+		return E_FAIL;
+
 	if (FAILED(Add_SoundTags_Hold_Voice()))
 		return E_FAIL;
 
 	if (FAILED(Add_SoundTags_Foot_Foot()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Foot_Creep_Foot()))
 		return E_FAIL;
 
 	if (FAILED(Add_SoundTags_Drop_Body_Foot()))
@@ -1616,6 +1641,42 @@ HRESULT CZombie::Add_SoundTags_KnockBack_Voice()
 		KnockBackFemaleSoundTags.emplace_back(strTag);
 	}
 	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCKBACK_FEMALE, KnockBackFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Stun_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strKnockBackMaleSoundTag = { TEXT("em_Stun_Male_") };
+	vector<wstring>				KnockBackMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STUN_MALE; ++i)
+	{
+		wstring			strTag = { strKnockBackMaleSoundTag + to_wstring(i) + strExtTag };
+		KnockBackMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STUN_MALE, KnockBackMaleSoundTags);
+
+
+	wstring						strKnockBackMaleBigSoundTag = { TEXT("em_Stun_Male_Big_") };
+	vector<wstring>				KnockBackMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STUN_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strKnockBackMaleBigSoundTag + to_wstring(i) + strExtTag };
+		KnockBackMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STUN_MALE_BIG, KnockBackMaleBigSoundTags);
+
+
+	wstring						strKnockBackFemaleSoundTag = { TEXT("em_Stun_Female_") };
+	vector<wstring>				KnockBackFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STUN_FEMALE; ++i)
+	{
+		wstring			strTag = { strKnockBackFemaleSoundTag + to_wstring(i) + strExtTag };
+		KnockBackFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STUN_FEMALE, KnockBackFemaleSoundTags);
 
 	return S_OK;
 }
@@ -1906,6 +1967,21 @@ HRESULT CZombie::Add_SoundTags_Foot_Foot()
 	return S_OK;
 }
 
+HRESULT CZombie::Add_SoundTags_Foot_Creep_Foot()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+	wstring						strFootSoundTag = { TEXT("em_Foot_Creep_") };
+	vector<wstring>				FootSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_FOOT_CREEP; ++i)
+	{
+		wstring			strTag = { strFootSoundTag + to_wstring(i) + strExtTag };
+		FootSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_FOOT_CREEP, FootSoundTags);
+
+	return S_OK;
+}
+
 HRESULT CZombie::Add_SoundTags_Drop_Body_Foot()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
@@ -1965,7 +2041,7 @@ HRESULT CZombie::Add_SoundTags_Interact_Interact()
 		wstring			strTag = { strOpenDoorSoundTag + to_wstring(i) + strExtTag };
 		OpenDoorSOundTags.push_back(strTag);
 	}
-	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCK_DOOR, OpenDoorSOundTags);
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_OPEN_DOOR, OpenDoorSOundTags);
 
 	return S_OK;
 }
@@ -1974,18 +2050,31 @@ HRESULT CZombie::Add_SoundTags_BreakHead_Break()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
-	wstring						strBreakHeadSoundTag = { TEXT("em_common_dmg_hit_media.bnk.2_") };
+	wstring						strBreakHeadSoundTag = { TEXT("em_Break_Head_") };
 	vector<wstring>				BreakHeadSoundTags;
-	wstring			strTag = { strBreakHeadSoundTag + to_wstring(24) + strExtTag };
-	BreakHeadSoundTags.push_back(strTag);
-
-	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_HIT, BreakHeadSoundTags);
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BREAK_HEAD; ++i)
+	{
+		wstring			strTag = { strBreakHeadSoundTag + to_wstring(i) + strExtTag };
+		BreakHeadSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BREAK_HEAD, BreakHeadSoundTags);
 
 	return S_OK;
 }
 
 HRESULT CZombie::Add_SoundTags_BreakOthers_Break()
 {
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBreakOtherSoundTag = { TEXT("em_Break_Other_") };
+	vector<wstring>				BreakOtherSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BREAK_OTHER; ++i)
+	{
+		wstring			strTag = { strBreakOtherSoundTag + to_wstring(i) + strExtTag };
+		BreakOtherSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BREAK_HEAD, BreakOtherSoundTags);
+
 	return S_OK;
 }
 
@@ -2308,6 +2397,21 @@ void CZombie::Play_Random_Foot_Sound()
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
 }
 
+void CZombie::Play_Random_Foot_Creep_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_FOOT_CREEP) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_FOOT, ZOMBIE_MAX_VOLUME_FOOT) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+}
+
 void CZombie::Play_Random_Drop_Body_Sound()
 {
 	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_DROP_BODY) };
@@ -2385,7 +2489,7 @@ void CZombie::Play_Random_Break_Window_Sound()
 
 void CZombie::Play_Random_Knock_Door_Sound()
 {
-	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW) };
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_KNOCK_DOOR) };
 	if (iter == m_SoundTags.end())
 		return;
 
@@ -2400,7 +2504,7 @@ void CZombie::Play_Random_Knock_Door_Sound()
 
 void CZombie::Play_Random_Open_Door_Sound()
 {
-	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW) };
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_OPEN_DOOR) };
 	if (iter == m_SoundTags.end())
 		return;
 

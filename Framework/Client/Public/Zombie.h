@@ -104,10 +104,12 @@ private:
 	HRESULT								Add_SoundTags_Bite_Creep_Reject_Voice();
 	HRESULT								Add_SoundTags_Bite_Creep_Kill_Voice();
 	HRESULT								Add_SoundTags_KnockBack_Voice();
+	HRESULT								Add_SoundTags_Stun_Voice();
 	HRESULT								Add_SoundTags_StandUp_Voice();
 	HRESULT								Add_SoundTags_Hit_EF();
 	HRESULT								Add_SoundTags_Hold_Voice();
 	HRESULT								Add_SoundTags_Foot_Foot();
+	HRESULT								Add_SoundTags_Foot_Creep_Foot();
 	HRESULT								Add_SoundTags_Drop_Body_Foot();
 	HRESULT								Add_SoundTags_ETC();
 	HRESULT								Add_SoundTags_Interact_Interact();
@@ -129,6 +131,7 @@ public:
 	void								Play_Random_Bite_Creep_Reject_Sound();
 	void								Play_Random_Bite_Creep_Kill_Sound();
 	void								Play_Random_Foot_Sound();
+	void								Play_Random_Foot_Creep_Sound();
 	void								Play_Random_Drop_Body_Sound();
 	void								Play_Random_Broken_Head_Sound();
 	void								Play_Random_Broken_Part_Sound();

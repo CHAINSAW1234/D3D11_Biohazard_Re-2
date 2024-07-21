@@ -141,6 +141,9 @@
 
 #pragma region BREAK
 
+#define ZOMBIE_NUM_SOUND_BREAK_HEAD						10
+#define ZOMBIE_NUM_SOUND_BREAK_OTHER					15
+
 #define ZOMBIE_VOLUME_BREAK_HEAD						0.6f
 #define ZOMBIE_VOLUME_BREAK_OTHER						0.6f
 
@@ -148,12 +151,12 @@
 
 #pragma region INTERACT
 /* Interact */
-#define ZOMBIE_NUM_SOUND_KNOCK_WINDOW					1		//	미설정
-#define ZOMBIE_NUM_SOUND_BREAK_WINDOW					1		//	미설정
-#define ZOMBIE_NUM_SOUND_KNOCK_DOOR						1		//	미설정
-#define ZOMBIE_NUM_SOUND_OPEN_DOOR						1		//	미설정
+#define ZOMBIE_NUM_SOUND_KNOCK_WINDOW					6		
+#define ZOMBIE_NUM_SOUND_BREAK_WINDOW					0		//	미설정 => 윈도우 자체에서 재생
+#define ZOMBIE_NUM_SOUND_KNOCK_DOOR						4		
+#define ZOMBIE_NUM_SOUND_OPEN_DOOR						7		
 
-#define ZOMBIE_VOLUME_INTERACT							0.5f	//	미설정
+#define ZOMBIE_VOLUME_INTERACT							0.6f	//	미설정
 
 #pragma endregion
 
@@ -161,11 +164,12 @@
 
 /* Foot */
 #define ZOMBIE_NUM_SOUND_FOOT							12
+#define ZOMBIE_NUM_SOUND_FOOT_CREEP						1
 #define ZOMBIE_MIN_VOLUME_FOOT							0.2f
 #define ZOMBIE_MAX_VOLUME_FOOT							0.5f
 
-#define ZOMBIE_NUM_SOUND_DROP_BODY						1		//	미설정
-#define ZOMBIE_MIN_VOLUME_DROP_BODY						0.2f	//	미설정
-#define ZOMBIE_MAX_VOLUME_DROP_BODY						0.5f	//	미설정
+#define ZOMBIE_NUM_SOUND_DROP_BODY						3
+#define ZOMBIE_MIN_VOLUME_DROP_BODY						0.6f	
+#define ZOMBIE_MAX_VOLUME_DROP_BODY						0.6f	
 
 #pragma endregion

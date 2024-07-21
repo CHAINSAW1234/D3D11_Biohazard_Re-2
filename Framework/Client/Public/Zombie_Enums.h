@@ -23,33 +23,34 @@ enum class ZOMBIE_SOUND_TYPE {
 	_BITE_EF,
 
 	//	Foot
-	_FOOT, 
-	_DROP_BODY,
+	_FOOT,					
+	_FOOT_CREEP,
+	_DROP_BODY,					
 
 	//	Voice
-	_IDLE_MALE, _IDLE_FEMALE, _IDLE_MALE_BIG,
-	_MOVE_MALE, _MOVE_FEMALE, _MOVE_MALE_BIG,
-	_STUN_MALE, _STUN_FEMALE, _STUN_MALE_BIG,
-	_KNOCKBACK_MALE, _KNOCKBACK_FEMALE, _KNOCKBACK_MALE_BIG,
+	_IDLE_MALE, _IDLE_FEMALE, _IDLE_MALE_BIG,											//	=> 평시에 내는 소리 갑자기 크르릉 거리거나 보통 정적임
+	_MOVE_MALE, _MOVE_FEMALE, _MOVE_MALE_BIG,											//	=> 플레이어를 향해 오면서 위협하듯 크르릉 하는소리
+	_STUN_MALE, _STUN_FEMALE, _STUN_MALE_BIG,											//	=> 맞고 살짝 밀려날때 내는 소리들 으에!! 윽.. 이런 느낌? ( 우리 게임상 권총으로 쐇을때 한번씩 밀리는 모션에서 낼 소리 )
+	_KNOCKBACK_MALE, _KNOCKBACK_FEMALE, _KNOCKBACK_MALE_BIG,							//	=> 맞고 많이 밀려날때 내는 소리들 ( 우리 게임상으로 샷건으로 쐇을때 크게 밀리는 모션에서 낼 소리 )
 
-	_BITE_CREEP_MALE, _BITE_CREEP_FEMALE, _BITE_CREEP_MALE_BIG,
-	_BITE_CREEP_REJECT_MALE, _BITE_CREEP_REJECT_FEMALE, _BITE_CREEP_REJECT_MALE_BIG,
-	_BITE_CREEP_KILL_MALE, _BITE_CREEP_KILL_FEMALE, _BITE_CREEP_KILL_MALE_BIG,
+	_BITE_CREEP_MALE, _BITE_CREEP_FEMALE, _BITE_CREEP_MALE_BIG,							//	=> 땅바닥 기는중에 무는 모션에서 내는 소리 (덮치기 시작때 짧은... )
+	_BITE_CREEP_REJECT_MALE, _BITE_CREEP_REJECT_FEMALE, _BITE_CREEP_REJECT_MALE_BIG,	//	=> 땅바닥 기는중에 무는 모션에서 플레이어가 죽지않고서 다시쳐내는 모션에서 내는소리 ( 우리게임에서 물리고 발로 걷어차는모션 )
+	_BITE_CREEP_KILL_MALE, _BITE_CREEP_KILL_FEMALE, _BITE_CREEP_KILL_MALE_BIG,			//	=> 땅바닥 기는중에 물고 플레이어 완전히 죽이는 모션
 
-	_BITE_MALE, _BITE_FEMALE, _BITE_MALE_BIG,
-	_BITE_REJECT_MALE, _BITE_REJECT_FEMALE, _BITE_REJECT_MALE_BIG,
-	_BITE_KILL_MALE, _BITE_KILL_FEMALE, _BITE_KILL_MALE_BIG,
+	_BITE_MALE, _BITE_FEMALE, _BITE_MALE_BIG,											//	=> 서있는 중에 무는 모션 ( 시작 )
+	_BITE_REJECT_MALE, _BITE_REJECT_FEMALE, _BITE_REJECT_MALE_BIG,						//	=> 서있는 중에 무는 모션에서 플레이어가 죽지않고서 다시 쳐내는 모션
+	_BITE_KILL_MALE, _BITE_KILL_FEMALE, _BITE_KILL_MALE_BIG,							//	=> 서있는 중에 물고 플레이어 완전히 죽이는 모션
 
-	_HOLD_MALE, _HOLD_FEMALE, _HOLD_MALE_BIG,
+	_HOLD_MALE, _HOLD_FEMALE, _HOLD_MALE_BIG,											//	=> 물기 모션전에 좀비가 덮치려고 시도하는 모션 
 
-	_STAND_UP_MALE, _STAND_UP_FEMALE, _STAND_UP_MALE_BIG, 
+	_STAND_UP_MALE, _STAND_UP_FEMALE, _STAND_UP_MALE_BIG,								//	=> 좀비가 바닥에서 일어나는 모션 => 누워있는상태에서 일어남으로 전환 보통 끄으으으응....
 
 	//	Cloth
-	_STAND_UP_CLOTH, 
-	_IN_WINDOW_CLOTH,
+	_STAND_UP_CLOTH,				//	=> 일어날때 옷 쓸리는 소리들...
+	_IN_WINDOW_CLOTH,				//	=> 창문 넘을때 옷쓸리는 소리
 
 	//	Interact
-	_KNOCK_WINDOW, _BREAK_WINDOW,
+	_KNOCK_WINDOW, _BREAK_WINDOW,		
 	_KNOCK_DOOR, _OPEN_DOOR,
 	
 
