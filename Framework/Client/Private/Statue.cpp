@@ -87,7 +87,7 @@ void CStatue::Tick(_float fTimeDelta)
 		//m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
 
 		//m_pCameraGimmick->Active_Camera(true);
-		Camera_Active(PART_BODY, _float3(-0.5f, -1.f, -1.5f),_float4(0.f,1.5f,0.f,0.f));
+		Camera_Active(PART_BODY, _float3(-0.5f, -1.f, -1.5f),INTERACT_GIMMICK_TYPE::KEY_GIMMICK, _float4(0.f,1.5f,0.f,0.f));
 
 	}
 

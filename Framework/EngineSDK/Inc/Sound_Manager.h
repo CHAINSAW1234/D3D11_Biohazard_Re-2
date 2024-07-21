@@ -12,6 +12,9 @@ private:
 
 public:
 	HRESULT										Initialize();
+	
+private:
+	HRESULT										Initialize_SoundDesc_2D();
 
 public:
 	//리스너 설정

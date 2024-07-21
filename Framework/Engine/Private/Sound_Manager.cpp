@@ -169,21 +169,6 @@ void CSound_Manager::Change_Same_Sound_3D(CTransform* pTransform, const wstring&
 	FMOD_System_Update(m_pSystem);
 }
 
-void CSound_Manager::Set_Volume_2D(_uint iChannelIndex, _float fVolume)
-{
-	SOUND_DESC*				pSoundDesc = { Find_SoundDesc_2D(iChannelIndex) };
-	if (nullptr == pSoundDesc)
-		return;
-
-	if (fVolume > SOUND_MAX)
-		fVolume = SOUND_MAX;
-
-	if (fVolume < SOUND_MIN)
-		fVolume = SOUND_MIN;
-
-	pSoundDesc->fVolume = fVolume;
-}
-
 void CSound_Manager::Set_Volume_3D(CTransform* pTransform, _uint iSoundIndex, _float fVolume)
 {
 	SOUND_DESC*				pSoundDesc = { Find_SoundDesc_3D(pTransform, iSoundIndex) };
@@ -563,40 +548,6 @@ void CSound_Manager::LoadSoundFile_Zombie()
 		strcpy_s(szFullPath, szCurPath);
 		strcat_s(szFullPath, szFilename);
 		FMOD_SOUND*					pSound = { nullptr };
-		FMOD_RESULT					eRes = FMOD_System_CreateSound(m_pSystem, szFullPath, FMOD_3D, 0, &pSound);//|FMOD_3D_HEADRELATIVE  | FMOD_3D_INVERSEROLLOFF
-		if (eRes == FMOD_OK)
-		{
-			_int iLength = (_int)strlen(szFilename) + 1;
-
-			TCHAR pSoundKey[MAX_PATH] = { TEXT("") };
-			MultiByteToWideChar(CP_ACP, 0, szFilename, iLength, pSoundKey, iLength);
-			m_Soundmap.emplace(pSoundKey, pSound);
-		}
-		iResult = _tfindnext64(handle, &fd);
-	}
-
-	FMOD_System_Update(m_pSystem);
-	_findclose(handle);
-}
-
-void CSound_Manager::LoadSoundFile_Player()
-{
-	_tfinddata64_t fd;
-	__int64 handle = _tfindfirst64(L"../Bin/Resources/Sound/Player/*.*", &fd);
-	if (handle == -1 || handle == 0)
-		return;
-
-	_int iResult = 0;
-
-	char szCurPath[MAX_PATH] = "../Bin/Resources/Sound/Player/";
-	char szFullPath[MAX_PATH] = "";
-	char szFilename[MAX_PATH];
-	while (iResult != -1)
-	{
-		WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
-		strcpy_s(szFullPath, szCurPath);
-		strcat_s(szFullPath, szFilename);
-		FMOD_SOUND* pSound = { nullptr };
 		FMOD_RESULT					eRes = FMOD_System_CreateSound(m_pSystem, szFullPath, FMOD_3D, 0, &pSound);//|FMOD_3D_HEADRELATIVE  | FMOD_3D_INVERSEROLLOFF
 		if (eRes == FMOD_OK)
 		{

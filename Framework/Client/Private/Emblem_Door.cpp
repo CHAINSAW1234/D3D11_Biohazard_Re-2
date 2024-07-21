@@ -79,10 +79,10 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 		if (iRand)
 		{
 			if (!m_pModelCom->isFinished(0))
-				Change_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
+				Change_Same_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
 		}
 		else if (!m_pModelCom->isFinished(0))
-				Change_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
+			Change_Same_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
 		break;
 		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_2 
 		(emblem이 두번 돌아가는데 소리는 한 번만 나오고 총 두번 나와야 함)*/

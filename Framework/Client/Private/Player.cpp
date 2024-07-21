@@ -977,7 +977,6 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-		m_pGameInstance->PlaySoundEffect_2D();
 		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
