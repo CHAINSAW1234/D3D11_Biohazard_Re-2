@@ -1457,6 +1457,9 @@ HRESULT CZombie::Add_SoundTags()
 	if (FAILED(Add_SoundTags_Foot_Foot()))
 		return E_FAIL;
 
+	if (FAILED(Add_SoundTags_Drop_Body_Foot()))
+		return E_FAIL;
+
 	if (FAILED(Add_SoundTags_ETC()))
 		return E_FAIL;
 
@@ -1903,6 +1906,21 @@ HRESULT CZombie::Add_SoundTags_Foot_Foot()
 	return S_OK;
 }
 
+HRESULT CZombie::Add_SoundTags_Drop_Body_Foot()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+	wstring						strDropBodySoundTag = { TEXT("em_Drop_Body_") };
+	vector<wstring>				DropBodySoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_DROP_BODY; ++i)
+	{
+		wstring			strTag = { strDropBodySoundTag + to_wstring(i) + strExtTag };
+		DropBodySoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_DROP_BODY, DropBodySoundTags);
+
+	return S_OK;
+}
+
 HRESULT CZombie::Add_SoundTags_ETC()
 {
 	return S_OK;
@@ -2290,6 +2308,21 @@ void CZombie::Play_Random_Foot_Sound()
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
 }
 
+void CZombie::Play_Random_Drop_Body_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_DROP_BODY) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumDropBodySound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumDropBodySound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_DROP_BODY, ZOMBIE_MAX_VOLUME_DROP_BODY) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+}
+
 void CZombie::Play_Random_Broken_Head_Sound()
 {
 	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_HEAD) };
@@ -2318,6 +2351,66 @@ void CZombie::Play_Random_Broken_Part_Sound()
 
 	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
 	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
+}
+
+void CZombie::Play_Random_Knock_Window_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_KNOCK_WINDOW) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumKnockWindowSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockWindowSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+}
+
+void CZombie::Play_Random_Break_Window_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBreakWindowSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakWindowSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+}
+
+void CZombie::Play_Random_Knock_Door_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumKnockDoorSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockDoorSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+}
+
+void CZombie::Play_Random_Open_Door_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumOpenDoorSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumOpenDoorSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
 }
 
 void CZombie::Play_Animations_Body(_float fTimeDelta)

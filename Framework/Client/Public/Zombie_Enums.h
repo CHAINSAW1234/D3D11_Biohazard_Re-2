@@ -24,6 +24,7 @@ enum class ZOMBIE_SOUND_TYPE {
 
 	//	Foot
 	_FOOT, 
+	_DROP_BODY,
 
 	//	Voice
 	_IDLE_MALE, _IDLE_FEMALE, _IDLE_MALE_BIG,
@@ -50,6 +51,7 @@ enum class ZOMBIE_SOUND_TYPE {
 	//	Interact
 	_KNOCK_WINDOW, _BREAK_WINDOW,
 	_KNOCK_DOOR, _OPEN_DOOR,
+	
 
 	//	Break
 	_BREAK_HEAD,

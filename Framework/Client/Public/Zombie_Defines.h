@@ -164,4 +164,8 @@
 #define ZOMBIE_MIN_VOLUME_FOOT							0.2f
 #define ZOMBIE_MAX_VOLUME_FOOT							0.5f
 
+#define ZOMBIE_NUM_SOUND_DROP_BODY						1		//	미설정
+#define ZOMBIE_MIN_VOLUME_DROP_BODY						0.2f	//	미설정
+#define ZOMBIE_MAX_VOLUME_DROP_BODY						0.5f	//	미설정
+
 #pragma endregion

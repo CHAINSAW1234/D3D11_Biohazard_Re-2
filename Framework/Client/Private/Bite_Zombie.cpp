@@ -150,6 +150,8 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 	{
 		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_START_F);
 		m_eAnimType = BITE_ANIM_TYPE::_DEFAULT_F;
+
+		m_pBlackBoard->Get_AI()->Play_Random_Bite_Sound();
 	}
 
 	//	Change MiddleAnim
@@ -160,7 +162,6 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 
 		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_DEFAULT);
 
-		m_pBlackBoard->Get_AI()->Play_Random_Bite_Sound();
 	}
 
 	//	Change FinishAnim
