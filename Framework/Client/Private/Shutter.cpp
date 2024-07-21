@@ -46,6 +46,15 @@ HRESULT CShutter::Initialize(void* pArg)
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
+
+
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 0,0.8f);
+
+
 	return S_OK;
 }
 
@@ -131,7 +140,8 @@ HRESULT CShutter::Add_PartObjects()
 	CBody_Shutter::BODY_SHUTTER_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.eShutter_Type = &m_eType;
-	BodyDesc.eNormalState = &m_eNormalState;
+	BodyDesc.eNormalState = &m_eNormalState;	
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.e033State = &m_e033State;
 	BodyDesc.e034State = &m_e034State;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;

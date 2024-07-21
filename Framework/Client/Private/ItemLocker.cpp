@@ -120,6 +120,7 @@ HRESULT CItemLocker::Add_PartObjects()
 	CPartObject* pBodyObj = { nullptr };
 	CBody_Statue::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));

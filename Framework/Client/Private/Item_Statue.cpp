@@ -191,8 +191,6 @@ void CItem_Statue::StatueHand_Item(_float fTimeDelta)
 			m_isHandRender = true;
 		}
 
-		if (DOWN == m_pGameInstance->Get_KeyState('H'))
-			*m_isPut_HandItem = true;
 	}
 } 
 

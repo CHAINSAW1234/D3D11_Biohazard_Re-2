@@ -149,18 +149,21 @@ void CInteractProps::Late_Tick_PartObjects(_float fTimeDelta)
 	}
 }
 
-void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_TYPE _layoutType)
+void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_TYPE _layoutType, _float4 vPos)
 {
-	CPart_InteractProps* pPartLock = { nullptr };
-	pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
-	m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + XMVectorSetW(XMVector4Normalize(pPartLock->Get_World_Look_Dir()) * _vector { vRatio.x, vRatio.y, vRatio.z, 0.f }, 0.f));
-	m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+	CPart_InteractProps* pPart = { nullptr };
+	pPart = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
+	m_pCameraGimmick->SetPosition(pPart->Get_Pos_vector() + XMVectorSetW(XMVector4Normalize(pPart->Get_World_Look_Dir()) * _vector { vRatio.x, vRatio.y, vRatio.z, 1.f }, 0.f));
+	m_pCameraGimmick->LookAt(pPart->Get_Pos());
+	m_pCameraGimmick->SetPosition(XMVectorSetW(m_pCameraGimmickTransform->Get_State_Float4(CTransform::STATE_POSITION) + vPos, 1.f));
 	*m_pCameraGimmick->Get_Layout_Type_Ptr() = _layoutType;
 }
 
+
 void CInteractProps::Reset_Camera()
 {
-	m_pCameraGimmick->Active_Camera(false);
+	m_pGameInstance->Active_Camera(g_Level, m_pCamera);
+
 	m_isCamera_Reset = false;
 	m_pPlayer->ResetCamera();
 	*m_pCameraGimmick->Get_Layout_Type_Ptr() = INTERACT_GIMMICK_TYPE::NONE_GIMMICK;

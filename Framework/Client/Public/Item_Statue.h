@@ -21,6 +21,7 @@ public :
 	{
 		_ubyte		eItemType = {};
 		_bool*		isPut_HandItem = {};
+		_bool*		pItemDead = {};
 
 	}BODY_ITEM_STATUE;
 
@@ -48,6 +49,7 @@ private :
 private :
 	STATUE_ITEM					m_Item_Type = { STATUE_ITEM::END_ITEM };
 	_bool*						m_isPut_HandItem;
+	_bool*					m_pItemDead = {nullptr};
 	_bool						m_isHandRender = { false };
 
 public:
