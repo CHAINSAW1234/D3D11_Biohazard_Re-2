@@ -61,23 +61,19 @@ static physx::PxFilterFlags MegamotionFilterShader(
 {
 	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 
-	// trigger the contact callback for pairs (A,B) where
-	// the filtermask of A contains the ID of B and vice versa.
-	/*if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+	if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::EFFECT))
 	{
-		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-		return physx::PxFilterFlag::eNOTIFY;
+		auto GameInstance = CGameInstance::Get_Instance();
+
+		//auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData0.word3);
 	}
 
-	return physx::PxFilterFlag::eDEFAULT;*/
-
-#pragma region CCT 충돌 무시
-	/*if ((filterData0.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION) && (filterData1.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION))
+	if ((filterData0.word1 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::EFFECT))
 	{
-		pairFlags = physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-		return physx::PxFilterFlag::eNOTIFY;
-	}*/
-#pragma endregion
+		auto GameInstance = CGameInstance::Get_Instance();
+
+		//auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData1.word3);
+	}
 
 
 #pragma region Default

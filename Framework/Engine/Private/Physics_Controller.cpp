@@ -662,7 +662,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uin
 	PxShape* shape = m_Physics->createShape(geometry, *material);
 
 	PxFilterData StaticMeshFilter;
-	StaticMeshFilter.word0 = COLLISION_CATEGORY::COLLIDER;
+	StaticMeshFilter.word0 = COLLISION_CATEGORY::EFFECT;
 	StaticMeshFilter.word3 = IndexNum;
 	shape->setSimulationFilterData(StaticMeshFilter);
 
