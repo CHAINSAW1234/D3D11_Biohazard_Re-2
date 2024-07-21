@@ -977,7 +977,8 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-		m_pGameInstance->PlaySoundEffect_2D();
+		//m_pGameInstance->PlaySoundEffect_2D(폴더명, 파일명, 체널, 볼륨); 이 체널에 넣어주세요
+		//m_pGameInstance->PlaySoundEffect_2D(폴더명, 파일명, 볼륨); 체널 상관없이 알아서 넣어주세요
 		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
