@@ -37,6 +37,8 @@ public:
 	}
 	void				Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight);
 	void				Set_CubeMap(CTexture* m_pTexture, _uint iIndex);
+	void				Set_Player_Collider(_int iCol) { m_iCol = iCol; }
+	void				Set_Player_Dir(_int iDir) { m_iDir = iDir; }
 
 public:
 	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const
@@ -123,6 +125,9 @@ public:
 
 	_float*				Get_PBRLerpTime() { return &m_fLerpTimeDelta; }
 
+	_int				Get_Player_Collider() { return m_iCol; }
+	_int				Get_Player_Dir() { return m_iDir; }
+
 public:
 	HRESULT				Initialize();
 	void				Tick(_float fTimeDelta);
@@ -167,6 +172,8 @@ private:
 	_bool					m_isRender = { false };
 	CComputeShader*			m_pShaderCom = { nullptr };
 
+
+	//PBR을 위한 큐브멥
 	_float					m_fLerpTimeDelta = { 0.f };
 	_uint					m_iPrevCubeMapIndex = { 0 };
 	_uint					m_iCurCubeMapIndex = { 0 };
@@ -176,6 +183,10 @@ private:
 	CRenderTarget*			m_pPrevIrradialTexture = { nullptr };
 	CRenderTarget*			m_pHDRTexture = { nullptr };
 	CRenderTarget*			m_pCurIrradialTexture = { nullptr };
+
+	// 라이트 컬링을 위한 위치 정보
+	_int					m_iCol = { 0 };	// 현재 방
+	_int					m_iDir = { 0 };		// 현재 위치
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

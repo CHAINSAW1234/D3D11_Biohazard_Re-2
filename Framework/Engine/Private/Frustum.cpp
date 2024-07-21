@@ -75,7 +75,7 @@ _bool CFrustum::isIn_LocalSpace(_fvector vLocalPos, _float fRange)
 		if (fRange < XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vLocalPlanes[i]), XMVectorSetW(vLocalPos, 1.f))))
 			return false;
 	}
-
+	
 	return true;
 }
 

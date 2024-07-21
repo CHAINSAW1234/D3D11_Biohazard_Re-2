@@ -17,6 +17,9 @@ namespace Engine
 		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_SPOT, TYPE_END };
 		TYPE		eType;
 
+		vector<_int> BelongNumVec;
+		_int      BelongNum[50];
+
 		float		fRange;
 		float 		fCutOff;
 		float 		fOutCutOff;
