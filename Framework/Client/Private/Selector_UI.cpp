@@ -2,6 +2,7 @@
 #include "Selector_UI.h"
 #include "Player.h"
 #include "InteractProps.h"
+#include "Tab_Window.h"
 
 #define ALPHA_ZERO              _float4(0, 0, 0, 0)
 
@@ -55,6 +56,8 @@ HRESULT CSelector_UI::Initialize(void* pArg)
     /* Find Player / Object */
     Find_Player();
 
+    Find_TabWindow();
+
     /* Tool*/
     if (FAILED(Change_Tool()))
         return E_FAIL;
@@ -69,7 +72,6 @@ void CSelector_UI::Tick(_float fTimeDelta)
     Exception_Handle();
 
     Operate_Selector(fTimeDelta);
-
 }
 
 void CSelector_UI::Late_Tick(_float fTimeDelta)
@@ -79,6 +81,9 @@ void CSelector_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CSelector_UI::Render()
 {
+    if (false == *m_pTab_Window->Get_MainRender_Ptr())
+        return E_FAIL;
+
     if (FAILED(__super::Render()))
         return E_FAIL;
 
@@ -223,7 +228,6 @@ void CSelector_UI::Rendering(_float fTimeDelta)
         CTransform* pTransform = static_cast<CTransform*>(m_pSelectorParent->Get_Component(g_strTransformTag));
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTransform->Get_State_Float4(CTransform::STATE_POSITION));
 
-
         if (true == m_pSelectorParent->m_isRender)
         {
             m_fBlending = m_pSelectorParent->m_fBlending;
@@ -259,11 +263,31 @@ void CSelector_UI::Reset()
 
     m_isRender = false;
 
+    m_isUsing = false;
+
     m_isInteractive = false;
 
     m_isOutDistance = false;
 }
 
+
+void CSelector_UI::Find_TabWindow()
+{
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_TabWindow"));
+
+    for (auto& iter : *pUIList)
+    {
+        CTab_Window* pTabWin = dynamic_cast<CTab_Window*>(iter);
+
+        if (nullptr != pTabWin)
+        {
+            m_pTab_Window = pTabWin;
+
+            //  Safe_AddRef<CTab_Window*>(m_pTab_Window);
+        }
+    }
+
+}
 CCustomize_UI* CSelector_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CSelector_UI* pInstance = new CSelector_UI(pDevice, pContext);

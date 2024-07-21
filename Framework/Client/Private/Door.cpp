@@ -166,14 +166,15 @@ void CDoor::Late_Tick(_float fTimeDelta)
 {
 	if (m_pPlayer == nullptr)
 		return;
+
 	if (!Visible())
 	{
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+		//if (nullptr != m_pSelector)
+		//{
+		//	m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
 
-			m_pSelector = nullptr;
-		}
+		//	m_pSelector = nullptr;
+		//}
 
 		return;
 	}

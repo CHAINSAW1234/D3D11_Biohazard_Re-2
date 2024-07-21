@@ -20,7 +20,6 @@ private:
 	void Update_KeyInput();
 	void Set_MoveAnimation(_float fTimeDelta);
 	void Look_Cam(_float fTimeDelta);
-	void Update_Sound();
 
 
 private:

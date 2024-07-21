@@ -53,7 +53,7 @@ HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC& 
 		m_Lights.emplace(strLightTag, pLight);
 	}
 
-	return pLight->Add_LightDesc(LightDesc, fFovY, fAspect, fNearZ, fFarZ);;
+	return pLight->Add_LightDesc(LightDesc, fFovY, fAspect, fNearZ, fFarZ);
 }
 
 HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
@@ -65,6 +65,23 @@ HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	for (auto& pLight : m_Lights) {
 		list<LIGHT_DESC*>* pList = pLight.second->Get_Light_List();
 
+		// 1. Dir 컬링 : 플레이어의 좌, 우, 중에 따라 분류된 라이트중 일부를 꺼야됨
+		// 	enum MAP_DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
+		switch (iDir) {
+		case 0:
+			if (pLight.first == TEXT("Layer_Light_Right"))
+				continue;
+			break;
+		case 1:
+			if (pLight.first == TEXT("Layer_Light_Left"))
+				continue;
+
+			if (pLight.first == TEXT("Layer_Light_Library"))
+				continue;
+			break;
+		case 2:
+			break;
+		}
 
 		for (size_t i = 0; i < pList->size(); i++)
 		{
@@ -78,7 +95,6 @@ HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 				pLight.second->Render(pShader, pVIBuffer, (_uint)i);
 			}
 			else {
-
 				if (iCol >=0 && !eDesc.BelongNum[iCol]) {
 					continue;
 				}

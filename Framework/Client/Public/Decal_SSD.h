@@ -27,6 +27,7 @@ public:
 	void					SetWorldMatrix_With_HitNormal(_vector vUp);
 	void					SetPosition(_float4 vPos);
 	void					LookAt(_float4 vDir);
+	virtual void			PlaySound();
 protected:
 	class CModel*			m_pModelCom = { nullptr };
 	class CShader*			m_pShaderCom = { nullptr };
