@@ -1,10 +1,12 @@
 #include "Light_Manager.h"
 
 #include "Light.h"
+#include "GameInstance.h"
 
 CLight_Manager::CLight_Manager()
+	: m_pGameInstance{ CGameInstance::Get_Instance()}
 {
-
+	Safe_AddRef(m_pGameInstance);
 }
 
 const LIGHT_DESC* CLight_Manager::Get_LightDesc(const wstring& strLightTag, _uint iIndex)
@@ -28,6 +30,18 @@ CLight* CLight_Manager::Get_Light(const wstring& strLightTag)
 HRESULT CLight_Manager::Initialize()
 {
 	return S_OK;
+}
+
+list<CLight*>* CLight_Manager::Culling_RenderringLight()
+{
+
+
+	for (auto& pLight : m_Lights) {
+		
+	}
+
+
+	return nullptr;
 }
 
 HRESULT CLight_Manager::Add_Light_Layer(const wstring& strLightTag)
@@ -56,6 +70,36 @@ HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC& 
 
 HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 {
+
+	// 1. Frustum으로 처리하기
+	//for (auto& pLight : m_Lights) {
+	//	list<LIGHT_DESC*>* pList = pLight.second->Get_Light_List();
+
+
+	//	for (size_t i = 0; i < pList->size(); i++)
+	//	{
+	//		auto iter = (*pList).begin();
+	//		advance(iter, i);
+
+	//		LIGHT_DESC eDesc = **iter;
+
+	//		cout << eDesc.eType << endl;
+
+	//		if (eDesc.eType == LIGHT_DESC::TYPE_DIRECTIONAL) {
+	//			pLight.second->Render(pShader, pVIBuffer, i);
+	//		}
+	//		else {
+	//			if (m_pGameInstance->isInFrustum_WorldSpace(eDesc.vPosition)) {
+	//				pLight.second->Render(pShader, pVIBuffer, i);
+	//			}
+	//		}
+
+
+	//	}
+
+	//}
+
+
 	for (auto& pLight : m_Lights)
 		pLight.second->Render(pShader, pVIBuffer);
 
@@ -107,9 +151,9 @@ void CLight_Manager::Free()
 {
 	for (auto& pLight : m_Lights)
 		Safe_Release(pLight.second);
-
-
 	m_Lights.clear();
+
+	Safe_Release(m_pGameInstance);
 }
 
 

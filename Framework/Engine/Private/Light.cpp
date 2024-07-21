@@ -174,6 +174,79 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	return S_OK;
 }
 
+HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer, _uint iIndex)
+{
+	if (iIndex >= m_Lights.size())
+		return E_FAIL;
+	
+	auto iter = m_Lights.begin();
+	advance(iter, iIndex);
+
+	LIGHT_DESC eDesc = **iter;
+
+	if (eDesc.bRender == false)
+		return S_OK;
+
+	_uint		iPassIndex = { 0 };
+
+	if (LIGHT_DESC::TYPE_DIRECTIONAL == eDesc.eType)
+	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_DIRECTIONAL;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &eDesc.vDirection, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &eDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+	}
+
+	else if (LIGHT_DESC::TYPE_POINT == eDesc.eType)
+	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_POINT;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &eDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &eDesc.fRange, sizeof(_float))))
+			return E_FAIL;
+
+	}
+	else if (LIGHT_DESC::TYPE_SPOT == eDesc.eType)
+	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_SPOT;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &eDesc.vDirection, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &eDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &eDesc.fRange, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fCutOff", &eDesc.fCutOff, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fOutCutOff", &eDesc.fOutCutOff, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &eDesc.vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_RawValue("g_vLightAmbient", &eDesc.vAmbient, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_RawValue("g_vLightSpecular", &eDesc.vSpecular, sizeof(_float4))))
+		return E_FAIL;
+
+
+	if(FAILED(pShader->Begin(iPassIndex)))
+		return E_FAIL;
+
+	if (FAILED(pVIBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 CLight* CLight::Create()
 {
 	CLight* pInstance = new CLight();
