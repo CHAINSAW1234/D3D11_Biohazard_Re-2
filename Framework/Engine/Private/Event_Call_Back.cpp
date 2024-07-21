@@ -1,6 +1,7 @@
 #include "Event_Call_Back.h"
 #include "Rigid_Dynamic.h"
 #include "Character_Controller.h"
+#include "RagDoll_Physics.h"
 
 void CEventCallBack::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
@@ -29,6 +30,7 @@ void CEventCallBack::onContact(const PxContactPairHeader& pairHeader, const PxCo
 
 					auto GameInstance = CGameInstance::Get_Instance();
 
+#pragma region 藕乔 家府
 					if ((filterData0.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 == (int)COLLISION_CATEGORY::EFFECT))
 					{
 						auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData1.word3);
@@ -48,6 +50,31 @@ void CEventCallBack::onContact(const PxContactPairHeader& pairHeader, const PxCo
 							Rigid_Dynamic->SetbPlaySound(true);
 						}
 					}
+#pragma endregion
+
+#pragma region Ragdoll 家府
+					if ((filterData0.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 == (int)COLLISION_CATEGORY::RAGDOLL))
+					{
+						auto pRagdoll = GameInstance->Get_Ragdoll(filterData1.word2);
+
+						if (pRagdoll != nullptr)
+						{
+							COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData1.word3;
+							pRagdoll->PlaySound_Ragdoll(eType);
+						}
+					}
+
+					if ((filterData1.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 == (int)COLLISION_CATEGORY::RAGDOLL))
+					{
+						auto pRagdoll = GameInstance->Get_Ragdoll(filterData0.word2);
+
+						if (pRagdoll != nullptr)
+						{
+							COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData0.word3;
+							pRagdoll->PlaySound_Ragdoll(eType);
+						}
+					}
+#pragma endregion
 				}
 			}
 		}

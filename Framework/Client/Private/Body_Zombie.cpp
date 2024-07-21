@@ -53,13 +53,13 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	m_eCurrentMotionType = MOTION_TYPE::MOTION_A;
 
 	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE)
-		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform,m_pDevice,m_pContext, "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
 
 	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_FEMALE)
-		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx");
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, m_pDevice, m_pContext, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx");
 
 	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE_BIG)
-		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male_Big/Body_Male_Big.fbx");
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, m_pDevice, m_pContext, "../Bin/Resources/Models/Zombie_Male_Big/Body_Male_Big.fbx");
 
 #pragma region Effect
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);

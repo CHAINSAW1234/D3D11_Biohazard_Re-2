@@ -188,12 +188,13 @@ private:
 
 #pragma region Ragdoll
 public:
-	class CRagdoll_Physics*								Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
+	class CRagdoll_Physics*								Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name);
 	void												Start_Ragdoll(class CRagdoll_Physics* pRagdoll,_uint iId);
 	void												Start_PartialRagdoll(class CRagdoll_Physics* pRagdoll,_uint iId,COLLIDER_TYPE eType);
 	void												SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void												SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);
 	void												SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix);
+	class CRagdoll_Physics*								GetRagdoll(_uint iId);
 private://RagDoll
 	_bool												m_bRagdoll = { false };
 	vector<class CRagdoll_Physics*>						m_vecRagdoll = { nullptr };
