@@ -240,6 +240,12 @@ void CZombie::Tick(_float fTimeDelta)
 		fTimeDelta = 0.f;
 	}
 
+	if (m_eStartType == ZOMBIE_START_TYPE::_RAG_DOLL)
+	{
+		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+		pBody->WakeUp_Ragdoll();
+	}
+
 	if (m_bEvent)
 		m_eBeHavior_Col;
 

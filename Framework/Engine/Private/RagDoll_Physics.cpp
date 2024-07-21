@@ -2748,6 +2748,11 @@ _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex)
 	return &m_BoneMatrices_Cloth_Leg_R[iIndex];
 }
 
+void CRagdoll_Physics::WakeUp()
+{
+	m_ragdoll->WakeUp();
+}
+
 _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth_Arm_L(_uint iIndex)
 {
 	return &m_BoneMatrices_Cloth_Arm_L[iIndex];

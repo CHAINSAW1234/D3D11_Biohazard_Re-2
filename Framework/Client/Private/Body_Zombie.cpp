@@ -1138,6 +1138,11 @@ void CBody_Zombie::Update_Current_MotionType()
 
 }
 
+void CBody_Zombie::WakeUp_Ragdoll()
+{
+	m_pRagdoll->WakeUp();
+}
+
 HRESULT CBody_Zombie::Add_Components()
 {
 	/* For.Com_Shader */

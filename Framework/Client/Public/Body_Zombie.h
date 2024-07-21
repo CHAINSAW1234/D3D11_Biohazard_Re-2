@@ -127,6 +127,8 @@ private:
 private:
 	class CPart_Breaker_Zombie**			m_ppPart_Breaker = { nullptr };
 
+public:
+	void								WakeUp_Ragdoll();
 
 private:
 	HRESULT								Add_Components();

@@ -475,6 +475,7 @@ public:
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Arm_R(_uint iIndex);
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_L(_uint iIndex);
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex);
+    void                          WakeUp();
 #pragma endregion
 
 private:
