@@ -384,14 +384,12 @@ void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
         }
     }
 
-    /* 시작하지 않았다면, */
     else
         m_isRender = false;
 }
 
 void CMissionBar_UI::Operater_MissionFont(_float fTimeDelta)
 {
-    /* 부모가 렌더를 시작했을 때*/
     if (true == m_pMissionBar->m_isRender)
     {
         if(!m_vecTextBoxes.empty())
@@ -404,7 +402,6 @@ void CMissionBar_UI::Operater_MissionFont(_float fTimeDelta)
             }
         }
     }
-    /* 시작하지 않았다면, */
     else
     {
         m_vCurrentColor = ALPHA_ZERO;

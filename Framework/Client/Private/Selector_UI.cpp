@@ -263,6 +263,8 @@ void CSelector_UI::Reset()
 
     m_isRender = false;
 
+    m_isUsing = false;
+
     m_isInteractive = false;
 
     m_isOutDistance = false;
