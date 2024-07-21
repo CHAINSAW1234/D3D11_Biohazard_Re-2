@@ -780,7 +780,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			m_bDead = false;
 			m_eWindowType = PICK_UP_ITEM_WINDOW;
 			m_eSequence = POP_UP;
-			m_pPickedUp_Item = pPickedUp_Item;
+			m_pPickedUp_Item = pProp->Get_Item_Props();
 			m_isAlphaControl = true;
 
 			/*Item_Discription 세팅*/
@@ -854,8 +854,8 @@ void CTab_Window::Interact_Props(CGameObject* pInteractedProps)
 		m_pCursor[1]->Set_Inven_Open(true);
 	}
 
-	//_int iRequiredItem = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
-	//pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
+	_int iRequiredItem = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
+	pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

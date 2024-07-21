@@ -12,6 +12,9 @@ private:
 
 public:
 	HRESULT										Initialize();
+	
+private:
+	HRESULT										Initialize_SoundDesc_2D();
 
 public:
 	//리스너 설정
@@ -22,11 +25,16 @@ public:
 
 public:
 	void										Change_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
+	void										Change_Same_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
+
 	void										Set_Volume_3D(class CTransform* pTransform, _uint iSoundIndex, _float fVolume);
 	void										Set_Pause_3D(class CTransform* pTransform, _uint iSoundIndex, _bool isPause);
 	void										Set_Distance_3D(class CTransform* pTransform, _uint iSoundIndex, _float fMinDistance, _float fMaxDistance);
 
 	HRESULT										Update_Sounds();
+
+	_bool										Is_Playing_Sound(class CTransform* pTransform, _uint iSoundIndex);
+
 
 private:
 	HRESULT										Update_Listener_Camera();
@@ -42,12 +50,10 @@ public:
 	HRESULT										Add_Object_Sound(class CTransform* pTransform, _uint iNumChannel);
 
 private:
-	void										LoadSoundFile();
-	void										LoadSoundFile_Zombie();
-	void										LoadSoundFile_Player();
-
-	FMOD_SOUND*									Find_Sound(const wstring& strSoundTag);
-	SOUND_DESC*									Find_SoundDesc_3D(class CTransform* pTransform, _uint iSoudIndex);
+	void												LoadSoundFile();
+	void												LoadSoundFile_Zombie();
+	FMOD_SOUND*								Find_Sound(const wstring& strSoundTag);
+	SOUND_DESC*								Find_SoundDesc_3D(class CTransform* pTransform, _uint iSoudIndex);
 private:
 	// 사운드 리소스 정보를 갖는 객체 
 	map<const wstring, FMOD_SOUND*>				m_Soundmap;

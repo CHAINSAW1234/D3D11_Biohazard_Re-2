@@ -45,7 +45,7 @@ private:
 
 private:
 	_ubyte  m_eState = { ITEM_UNUSE };
-	_bool		m_bObtain = { true };
+	_bool		m_bItemDead = { false };
 public:
 	static CItemProp* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

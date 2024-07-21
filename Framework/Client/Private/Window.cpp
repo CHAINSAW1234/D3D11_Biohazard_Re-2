@@ -3,6 +3,8 @@
 #include"Player.h"
 #include"CustomCollider.h"
 #include"Body_Window.h"
+#include"Pannel_Window.h"
+#include"Camera_Gimmick.h"
 
 CWindow::CWindow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
@@ -31,6 +33,10 @@ HRESULT CWindow::Initialize(void* pArg)
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 	m_iNeedItem = woodbarricade01a;
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -72,7 +78,43 @@ void CWindow::Tick(_float fTimeDelta)
 
 	if (m_pPlayer == nullptr)
 		return;
+
+	if (m_fDelayLockTime > 0.f)
+		m_fDelayLockTime -= fTimeDelta;
+	if (m_fDelayLockTime < 0.f)
+	{
+		m_fDelayLockTime = 0.f;
+		m_isCamera_Reset = false;
+		Reset_Camera();
+		m_bCamera = false;
+	}
+
+	_bool bCam = { false };
+	if (m_bCamera&& DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		bCam = true;
+	}
+
+	if (m_isCamera_Reset)
+		bCam = true;
+	if (m_bCamera && (bCam))
+	{
+		if (bCam&&m_bBarrigate)
+		{
+			if (m_fDelayLockTime == 0.f)
+				m_fDelayLockTime = 2.f;
+			 
+		}
+		else if (bCam )
+		{
+			Reset_Camera();
+			m_bCamera = false;
+		}
+	}
+	if (m_bCamera)
+		Camera_Active(PART_BODY, _float3(0.2f, 0.5f, -1.f), INTERACT_GIMMICK_TYPE::KEY_GIMMICK, _float4(0.f,1.5f,0.f,1.f));
 	
+
 	if (m_iHP[PART_BODY] <= 0)
 		m_eState = WINDOW_BREAK;
 
@@ -175,6 +217,7 @@ HRESULT CWindow::Add_PartObjects()
 	CPartObject* pBodyObj = { nullptr };
 	CBody_Window::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
@@ -187,6 +230,7 @@ HRESULT CWindow::Add_PartObjects()
 
 	CPartObject* pPannel = { nullptr };
 	CBody_Window::PART_INTERACTPROPS_DESC PannelDesc = {};
+	PannelDesc.pSoundCueSign = &m_bSoundCueSign;
 	PannelDesc.pParentsTransform = m_pTransformCom;
 	PannelDesc.pState = &m_eBarrigateState;
 	pPannel = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_PannelWindow"), &PannelDesc));
@@ -231,6 +275,11 @@ void CWindow::Active()
 	m_bActivity = true;
 	if(false == m_pGameInstance->IsPaused())
 		m_pPlayer->Interact_Props(this);
+
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
+	//tabwindowÀÇ ÈûÀ» ºô·Á¾ß ÇÒ Â÷·ÊÀÔ´Ï´Ù
+	m_bCamera = true;
 	//m_bBarrigate = true;
 	//m_bBarrigateInstallable = false;
 	//m_eBarrigateState = BARRIGATE_NEW;
@@ -247,6 +296,7 @@ _float4 CWindow::Get_Object_Pos()
 void CWindow::Do_Interact_Props()
 {
 	Set_Barrigate();
+	m_isCamera_Reset = true;
 }
 
 CWindow* CWindow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

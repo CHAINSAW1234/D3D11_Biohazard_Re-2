@@ -8,6 +8,12 @@ BEGIN(Client)
 class CDoor final : public CInteractProps
 {
 public:
+	enum DOOR_TEXTURE
+	{
+		WOOD,
+		IRON
+	};
+
 	enum ONEDOOR_STATE
 	{
 		ONEDOOR_OPEN_L,
@@ -128,6 +134,7 @@ public :
 
 private:
 	_bool										m_bLock =	{ false };
+	_ubyte									m_eDoorTexture = { WOOD };
 	_bool										m_bAttack = { false };
 	_int										m_iHP = { 5 };
 	_float										m_fDelayTime = { 0.f };
@@ -152,7 +159,7 @@ private :
 	_bool										m_bCamera = { false };
 	_uint										m_iEmblemType = {};
 	_int										m_iPropType = { 0 };
-	_ubyte										m_eEmblemAnim_Type = {};
+	_ubyte										m_eEmblemAnim_Type = {0};
 	_bool										m_isCameraGimmick = {};
 
 public:

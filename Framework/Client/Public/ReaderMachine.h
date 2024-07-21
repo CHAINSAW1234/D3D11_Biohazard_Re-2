@@ -107,10 +107,10 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
+	virtual void					Do_Interact_Props() override;
 
 private:
 	void						Active();
-	void						Reset_Camera();
 	void						Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio);
 	_bool						Open_Cabinet();
 public:

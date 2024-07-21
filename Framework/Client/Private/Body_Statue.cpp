@@ -28,7 +28,11 @@ HRESULT CBody_Statue::Initialize(void* pArg)
 	
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
+	if (pArg != nullptr)
+	{
+		STATUE_BODY_DESC* body_desc = (STATUE_BODY_DESC*)pArg;
+		m_pResetCamera = body_desc->pResetCamera;
+	}
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
@@ -56,8 +60,13 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 	case CStatue::STATE_PLAY:
 		/* LN : Å° Å¬¸®¾î : sound_Map_sm41_wisdom_statue2_1 */
 		/* LN : ¼Õ¿¡¼­ ºÀÀ» ³ùÀ» ¶§  : sound_Map_sm41_wisdom_statue2_3*/
-		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		if (m_pModelCom->isFinished(0))
+			*m_pResetCamera = true;
+		if (m_pModelCom->Get_TrackPosition(0)>=213.f)
+			Change_Sound(TEXT("sound_Map_sm41_wisdom_statue2_2.mp3"), 0);
+		else if (m_pModelCom->Get_TrackPosition(0))
+			Change_Sound(TEXT("sound_Map_sm41_wisdom_statue2_1.mp3"),0);
 		break;
 	case CStatue::STATE_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);

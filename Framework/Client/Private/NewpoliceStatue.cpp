@@ -38,6 +38,13 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 	
+
+
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
+		return E_FAIL;
+
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom,0, 0.9f);
 	
 	return S_OK;
 }
@@ -132,6 +139,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
 	CBody_NewpoliceStatue::PART_INTERACTPROPS_DESC BodyDesc = {};
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
@@ -145,9 +153,11 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	/* Item Medal */
 	CMedal_NewpoliceStatue::BODY_MEDAL_POLICESTATUS		MedalDesc = {};
 	MedalDesc.eMedalRenderType = m_eMedalRender;
-	
+	MedalDesc.pSoundCueSign = &m_bSoundCueSign;
+
 	/* 1. Unicorn Medal */
 	CPartObject* pMedal1 = { nullptr };
+	MedalDesc.pSoundCueSign = &m_bSoundCueSign;
 
 	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState; 
@@ -168,7 +178,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 
 	/* 2 */
 	CPartObject* pMedal2 = { nullptr };
-
+	MedalDesc.pSoundCueSign = &m_bSoundCueSign;
 	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState;
 	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_145_virginmedal02a");
@@ -187,7 +197,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	
 	/* 3 */
 	CPartObject* pMedal3 = { nullptr };
-
+	MedalDesc.pSoundCueSign = &m_bSoundCueSign;
 	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState; 
 	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
