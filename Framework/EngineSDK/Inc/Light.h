@@ -28,6 +28,7 @@ public:
 	HRESULT						Initialize();
 	HRESULT						Update(const LIGHT_DESC& Light_Desc, _uint iIndex, _float fLerp);
 	HRESULT						Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+	HRESULT						Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer, _uint iIndex);
 
 private:
 	bool bUse = { false };			// 구역에 대한 설정용 

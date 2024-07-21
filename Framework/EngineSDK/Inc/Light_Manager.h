@@ -24,6 +24,7 @@ public:
 
 private:
 	map<const wstring, class CLight* > m_Lights;
+	class CGameInstance* m_pGameInstance = { nullptr };
 
 private:
 	class CLight* Find_Light(const wstring& strLightTag);
