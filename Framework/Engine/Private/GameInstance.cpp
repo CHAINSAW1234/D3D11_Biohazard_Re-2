@@ -1677,7 +1677,7 @@ HRESULT CGameInstance::Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex)
 	return m_pSound_Manager->Stop_Sound_3D(pTransform, iSoundIndex);
 }
 
-void CGameInstance::Change_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex)
+void CGameInstance::Change_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex, _bool isCullSameSound)
 {
 	if (nullptr == m_pSound_Manager)
 	{
@@ -1685,18 +1685,7 @@ void CGameInstance::Change_Sound_3D(CTransform* pTransform, const wstring& strSo
 		return;
 	}
 
-	m_pSound_Manager->Change_Sound_3D(pTransform, strSoundTag, iSoundIndex);
-}
-
-void CGameInstance::Change_Same_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return;
-	}
-
-	m_pSound_Manager->Change_Same_Sound_3D(pTransform, strSoundTag, iSoundIndex);
+	m_pSound_Manager->Change_Sound_3D(pTransform, strSoundTag, iSoundIndex, isCullSameSound);
 }
 
 void CGameInstance::Set_Volume_3D(CTransform* pTransform, _uint iSoundIndex, _float fVolume)

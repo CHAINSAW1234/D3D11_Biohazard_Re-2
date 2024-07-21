@@ -24,8 +24,7 @@ public:
 
 
 public:
-	void										Change_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
-	void										Change_Same_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
+	void										Change_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex, _bool isCullSameSound = false);
 
 	void										Set_Volume_3D(class CTransform* pTransform, _uint iSoundIndex, _float fVolume);
 	void										Set_Pause_3D(class CTransform* pTransform, _uint iSoundIndex, _bool isPause);

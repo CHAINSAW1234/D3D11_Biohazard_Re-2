@@ -244,11 +244,11 @@ protected:
 
 	void Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
 	{
-		m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+		m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex, true);
 	}
 	void Change_Same_Sound(const wstring& strSoundTag, _uint iSoundIndex)
 	{
-		m_pGameInstance->Change_Same_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+		m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
 	}
 
 	void Stop_Sound(_uint iSoundIndex)

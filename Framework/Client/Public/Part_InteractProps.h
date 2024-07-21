@@ -75,14 +75,14 @@ public:
 	void Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
 	{
 		if (m_pParentsTransform != nullptr)
-			m_pGameInstance->Change_Sound_3D(m_pParentsTransform, strSoundTag, iSoundIndex);
+			m_pGameInstance->Change_Sound_3D(m_pParentsTransform, strSoundTag, iSoundIndex, true);
 		else
 			MSG_BOX(L"이 친구는 부모transform이 없다는 군(고쳐라~)");
 	}
 	void Change_Same_Sound(const wstring& strSoundTag, _uint iSoundIndex)
 	{
 		if (m_pParentsTransform != nullptr)
-			m_pGameInstance->Change_Same_Sound_3D(m_pParentsTransform, strSoundTag, iSoundIndex);
+			m_pGameInstance->Change_Sound_3D(m_pParentsTransform, strSoundTag, iSoundIndex);
 		else
 			MSG_BOX(L"이 친구는 부모transform이 없다는 군(고쳐라~)");
 	}
