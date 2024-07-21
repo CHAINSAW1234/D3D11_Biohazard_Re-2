@@ -337,6 +337,7 @@ public:
 	void										PickUp_Item(CGameObject* pPickedUp_Item); //TabWindow의 PickUp_Item함수 호출용
 	void										Interact_Props(CGameObject* pPickedUp_Item); //TabWindow의 Interact_Props함수 호출용
 	void										Set_isCamTurn(_bool isCamTurn) { m_isCamTurn = isCamTurn; }
+	void										Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories);
 
 private:
 	_bool										m_isCamTurn = { false };

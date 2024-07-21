@@ -32,6 +32,7 @@ private:
 	void HINT_Operation(_float fTimeDelta);
 	void EXAMINE_Operation(_float fTimeDelta);
 	void PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta);
+	void PICK_UP_ITEM_SoundPlay(ITEM_NUMBER eItemNum);
 	void INTERACT_PROPS_Operation(_float fTimeDelta);
 
 #pragma region 나옹
@@ -60,6 +61,8 @@ private:
 public:
 	void			OnOff_EventHandle();
 	void			Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
+	void			Hotkey_PopUp();
+	void			Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories);
 
 	//플레이어가 아이템을 집었을때 호출해주는 함수
 	void			PickUp_Item(CGameObject* pPickedUp_Item);
@@ -81,8 +84,6 @@ public:
 
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void			UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
-
-	void			Hotkey_PopUp();
 
 private:
 	class CButton_UI*			m_pMapButton = { nullptr };

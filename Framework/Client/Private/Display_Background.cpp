@@ -24,7 +24,7 @@ HRESULT CHint_Display_Background::Initialize(void* pArg)
 	{
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
-
+		
 		if (FAILED(Load_Texture()))
 			return E_FAIL;
 	}

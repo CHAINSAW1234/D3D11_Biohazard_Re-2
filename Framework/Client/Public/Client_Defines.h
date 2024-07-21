@@ -41,8 +41,8 @@ extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
 	
-#define MAP_NOTHING
-//#define MAP_INTERACT
+//#define MAP_NOTHING
+#define MAP_INTERACT
 // #define MAP_TEST
 // #define Map_J
 // #define Map_Ye
@@ -58,8 +58,8 @@ using namespace Client;
 //#define NO_COLLISTION
 
 #define DISPLAY_FRAME
-//	#define DISPLAY_NAVMESH
-	#define FRAME_LOCK
+//#define DISPLAY_NAVMESH
+#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {
