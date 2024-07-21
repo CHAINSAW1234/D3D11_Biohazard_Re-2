@@ -52,15 +52,40 @@ void CBody_Window::Tick(_float fTimeDelta)
 
 void CBody_Window::Late_Tick(_float fTimeDelta)
 {
+	_int iRand = m_pGameInstance->GetRandom_Int(0,3);
 
 	switch (*m_pState)
 	{
 	case CWindow::WINDOW_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+		{
+			switch (iRand)
+			{
+			case 0:
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"),0);
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_9.mp3"), 1);
+				break;
+			case 1:
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_3.mp3"), 1);
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_5.mp3"), 0);
+				break;
+			case 2:
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_2.mp3"), 1);
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_9.mp3"), 0);
+				break;
+			case 3:
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_7.mp3"), 1);
+				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"), 0);
+				break;
+
+			}
+			break;
+		}
 		break;
 	case CWindow::WINDOW_BREAK:
+		Change_Sound(TEXT("sound_Map_sm40_zombie_window2_6.mp3"), 0);
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		break;
 		break;
 	}
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);

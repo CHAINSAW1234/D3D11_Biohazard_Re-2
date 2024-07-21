@@ -69,22 +69,27 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 	{
 	case CMovingShelf::SHELF_FINISH:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_3.mp3"), 0);
+
 		break;
 	case CMovingShelf::SHELF_MOVE:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_6.mp3"), 0);
 
 		break;
 	}
 	case CMovingShelf::SHELF_START:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_4.mp3"), 0);
 
 		break;
 	}
 	case CMovingShelf::SHELF_STOP:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_1.mp3"), 0);
 
 		break;
 	}

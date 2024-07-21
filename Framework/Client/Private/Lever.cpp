@@ -37,6 +37,10 @@ HRESULT CLever::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;	
 
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -175,6 +179,7 @@ HRESULT CLever::Add_PartObjects()
 	CPartObject* pBodyObj = { nullptr };
 	CBody_Lever::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	BodyDesc.iPropType = m_tagPropDesc.iPropType;
@@ -204,6 +209,8 @@ void CLever::Active()
 	m_bActivity = true;
 	
 	m_eState = LEVER_DOWN;
+	
+
 	m_pPlayer->Set_Lever_Setting(CPlayer::LEVER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
 	
 }

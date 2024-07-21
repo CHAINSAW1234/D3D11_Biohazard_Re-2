@@ -93,7 +93,9 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
-
+	_int iRand = m_pGameInstance->GetRandom_Int(0,3);
+	_int iRand1 = m_pGameInstance->GetRandom_Int(0,2);
+	_int iRand2 = m_pGameInstance->GetRandom_Int(3,5);
 
 	switch (*m_pKeyState)
 	{
@@ -117,7 +119,7 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 
 		case CReaderMachine::KEY_W:
 			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
-
+			InPutKey_Sound(iRand,iRand1);
 			*m_pSelectRow -= 1;
 			if (*m_pSelectRow < CReaderMachine::ROW_0)
 				*m_pSelectRow = CReaderMachine::ROW_4;
@@ -126,6 +128,7 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 
 		case CReaderMachine::KEY_A:
 			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+			InPutKey_Sound(iRand, iRand1);
 
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			*m_pSelectCol -= 1;
@@ -135,6 +138,7 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 
 		case CReaderMachine::KEY_S:
 			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+			InPutKey_Sound(iRand, iRand1);
 
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			*m_pSelectRow += 1;
@@ -144,6 +148,7 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 
 		case CReaderMachine::KEY_D:
 			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+			InPutKey_Sound(iRand, iRand1);
 
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			*m_pSelectCol += 1;
@@ -155,16 +160,32 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_DELETE)
 			{
+				Check_KeyNum();
+
 				if (m_pPush[*m_pKeyNum] == -1)
 				{
-					*m_pKeyNum--;
+					--*m_pKeyNum;
 					if (*m_pKeyNum < CReaderMachine::NUM_0)
+					{
 						*m_pKeyNum = CReaderMachine::NUM_0;
+						//m_fGoalLength[m_pPush[*m_pKeyNum]] = _float3(0.f, 0.f, 0.f);
+						break;
+					}
+					m_fGoalLength[m_pPush[*m_pKeyNum]] = _float3(0.f, 0.f, 0.f);
 
 					m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] = _float3(0.f, 0.f, -0.01f);
+
+					InPutKey_Sound(iRand, 6);
 				}
 				else
+				{
+					m_fGoalLength[m_pPush[*m_pKeyNum]] = _float3(0.f, 0.f, 0.f);
+					m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] = _float3(0.f, 0.f, -0.01f);
+
 					m_pPush[*m_pKeyNum] = -1;
+					InPutKey_Sound(iRand, 6);
+					
+				}
 
 			}
 			else if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_ENTER)
@@ -189,6 +210,10 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 					(*m_pKeyNum)++;
 					if (*m_pKeyNum > CReaderMachine::NUM_2)
 						*m_pKeyNum = CReaderMachine::NUM_0;
+
+					InPutKey_Sound(iRand, iRand2);
+
+
 				}
 				break;
 			}
@@ -400,6 +425,47 @@ _bool CKey_ReaderMachine::Check_CanPush()
 		return true;
 
 	return false;
+}
+
+void CKey_ReaderMachine::InPutKey_Sound(_int iRand, _int iRand1)
+{
+	switch (iRand1)
+	{
+	case 0:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_5.mp3"), iRand);
+		break;
+	case 1:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_3.mp3"), iRand);
+		break;
+	case 2:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_4.mp3"), iRand);
+		break;
+	case 3:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_2.mp3"), iRand);
+		break;
+	case 4:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_6.mp3"), iRand);
+		break;
+	case 5:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_7.mp3"), iRand);
+		break;
+	case 6:
+		Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_19.mp3"), iRand);
+		break;
+
+	}
+
+
+}
+
+void CKey_ReaderMachine::Check_KeyNum()
+{
+	for (_int i = 0; i < CReaderMachine::NUM_END; i++)
+	{
+		if (m_pPush[i] != -1)
+			*m_pKeyNum = i;
+
+	}
 }
 
 

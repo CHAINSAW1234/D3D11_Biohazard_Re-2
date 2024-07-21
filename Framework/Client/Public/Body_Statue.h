@@ -9,6 +9,11 @@ BEGIN(Client)
 
 class CBody_Statue final : public CPart_InteractProps
 {
+public:
+	typedef struct StatueBody_desc :public CPart_InteractProps::PART_INTERACTPROPS_DESC
+	{
+		_bool* pResetCamera = { nullptr };
+	}STATUE_BODY_DESC;
 private:
 	CBody_Statue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Statue(const CBody_Statue& rhs);
@@ -29,7 +34,8 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-
+private:
+	_bool* m_pResetCamera = { nullptr };
 
 
 public:

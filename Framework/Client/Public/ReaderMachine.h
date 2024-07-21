@@ -107,6 +107,7 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
+	virtual void					Do_Interact_Props() override;
 
 private:
 	void						Active();

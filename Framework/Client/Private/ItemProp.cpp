@@ -43,7 +43,10 @@ void CItemProp::Tick(_float fTimeDelta)
 	__super::Tick_Col();
 
 	if (m_bDead)
+	{
+		m_bItemDead = true;
 		return;
+	}
 
 	if (!m_bVisible)
 		return;
@@ -87,15 +90,30 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	if(Activate_Col(Get_Collider_World_Pos(_float4(0.f, -50.f, 0.f, 1.f))))
-		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
-		{
-			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+	if (!m_bItemDead)
+	{
+		if (Activate_Col(Get_Collider_World_Pos(_float4(0.f, -50.f, 0.f, 1.f))))
+			if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+			{
+				Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 
-			Opreate_Selector_UI(true, Get_Object_Pos());
-		}
+				Opreate_Selector_UI(true, Get_Object_Pos());
+			}
+			else
+			{
+				m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+
+				if (nullptr != m_pSelector)
+				{
+					m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+					m_pSelector = nullptr;
+				}
+
+			}
 		else
 		{
+			m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 
 			if (nullptr != m_pSelector)
@@ -106,19 +124,8 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 			}
 
 		}
-	else
-	{
-		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
-		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-			m_pSelector = nullptr;
-		}
-
 	}
+	
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -160,9 +167,10 @@ HRESULT CItemProp::Add_PartObjects()
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
 	CBody_ItemProp::BODY_ITEMPROPS_DESC BodyDesc = {};
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
-	BodyDesc.pObtain = &m_bObtain;
+	BodyDesc.pItemDead = &m_bItemDead;
 	m_iItemIndex  = BodyDesc.iItemIndex = m_tagPropDesc.tagItemDesc.iItemIndex;
 	BodyDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagItemDesc.Name;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagItemDesc.Name, &BodyDesc));

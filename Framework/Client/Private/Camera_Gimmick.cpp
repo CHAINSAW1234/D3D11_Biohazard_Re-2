@@ -146,8 +146,6 @@ void CCamera_Gimmick::Bind_PipeLine()
 void CCamera_Gimmick::Active_Camera(_bool isActive)
 {
 	m_isActive = isActive;
-	if(m_pPlayer)
-		m_pPlayer->ResetCamera();
 	if (m_isActive)
 		Bind_PipeLines();
 }
