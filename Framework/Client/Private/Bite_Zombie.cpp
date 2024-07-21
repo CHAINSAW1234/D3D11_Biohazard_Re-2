@@ -59,20 +59,6 @@ void CBite_Zombie::Enter()
 
 	m_fAccLinearTime_HalfMatrix = 0.f;
 
-	_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->Get_Player()->Get_Hp()) };
-	_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
-	_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
-
-	if (true == isCanKillPlayer)
-	{
-		m_pBlackBoard->Get_AI()->Play_Random_Bite_Sound();
-	}
-
-	else
-	{
-		m_pBlackBoard->Get_AI()->Play_Random_Bite_Reject_Sound();
-	}
-
 #ifdef _DEBUG
 	cout << "Enter Bite " << endl;
 #endif 
@@ -173,6 +159,8 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 			return;
 
 		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_DEFAULT);
+
+		m_pBlackBoard->Get_AI()->Play_Random_Bite_Sound();
 	}
 
 	//	Change FinishAnim
@@ -191,12 +179,14 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 		if (true == isCanKillPlayer)
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_KILL_F);
+			m_pBlackBoard->Get_AI()->Play_Random_Bite_Kill_Sound();
 		}
 
 		else
 		{
 			_int				iRandRejectAnimIndex = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT1), static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT3)) };
 			iResultAnimationIndex = iRandRejectAnimIndex;
+			m_pBlackBoard->Get_AI()->Play_Random_Bite_Reject_Sound();
 		}
 	}
 
@@ -224,6 +214,7 @@ void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
 	{
 		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_START_B);
 		m_eAnimType = BITE_ANIM_TYPE::_DEFAULT_B;
+		m_pBlackBoard->Get_AI()->Play_Random_Bite_Sound();
 	}
 
 	//	Change MiddleAnim
@@ -242,11 +233,13 @@ void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
 		if (true == isCanKillPlayer)
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_KILL_B);
+			m_pBlackBoard->Get_AI()->Play_Random_Bite_Kill_Sound();
 		}
 
 		else
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_REJECT_B);
+			m_pBlackBoard->Get_AI()->Play_Random_Bite_Reject_Sound();
 		}
 	}
 
@@ -311,6 +304,7 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 		}
 #endif
 		m_eAnimType = BITE_ANIM_TYPE::_CREEP;
+		m_pBlackBoard->Get_AI()->Play_Random_Bite_Creep_Sound();
 	}
 
 	//	Change FinishAnim
@@ -340,6 +334,8 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_KILL_R);
 			else
 				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_KILL_L);
+
+			m_pBlackBoard->Get_AI()->Play_Random_Bite_Creep_Kill_Sound();
 		}
 
 		else
@@ -348,6 +344,8 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_REJECT_R);
 			else
 				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_REJECT_L);
+
+			m_pBlackBoard->Get_AI()->Play_Random_Bite_Creep_Reject_Sound();
 		}
 	}
 

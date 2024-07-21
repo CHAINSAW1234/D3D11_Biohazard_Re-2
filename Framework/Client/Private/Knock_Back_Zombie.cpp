@@ -31,6 +31,8 @@ void CKnock_Back_Zombie::Enter()
 
 	m_isEntry = true;
 
+	m_pBlackBoard->Get_AI()->Play_Random_KnockBack_Sound();
+
 #ifdef _DEBUG
 
 	cout << "Enter Knock Back " << endl;

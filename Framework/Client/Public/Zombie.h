@@ -95,27 +95,41 @@ private:
 private:
 	virtual HRESULT						Add_SoundTags();
 
-	HRESULT								Add_SoundTags_Idle();
-	HRESULT								Add_SoundTags_Move();
-	HRESULT								Add_SoundTags_Bite();
-	HRESULT								Add_SoundTags_KnockBack();
-	HRESULT								Add_SoundTags_Hit();
-	HRESULT								Add_SoundTags_Bite_Reject();
-	HRESULT								Add_SoundTags_Hold();
-	HRESULT								Add_SoundTags_Foot();
+	HRESULT								Add_SoundTags_Idle_Voice();
+	HRESULT								Add_SoundTags_Move_Voice();
+	HRESULT								Add_SoundTags_Bite_Voice();
+	HRESULT								Add_SoundTags_Bite_Reject_Voice();
+	HRESULT								Add_SoundTags_Bite_Kill_Voice();
+	HRESULT								Add_SoundTags_Bite_Creep_Voice();
+	HRESULT								Add_SoundTags_Bite_Creep_Reject_Voice();
+	HRESULT								Add_SoundTags_Bite_Creep_Kill_Voice();
+	HRESULT								Add_SoundTags_KnockBack_Voice();
+	HRESULT								Add_SoundTags_StandUp_Voice();
+	HRESULT								Add_SoundTags_Hit_EF();
+	HRESULT								Add_SoundTags_Hold_Voice();
+	HRESULT								Add_SoundTags_Foot_Foot();
 	HRESULT								Add_SoundTags_ETC();
-	HRESULT								Add_SoundTags_Interact();
-	HRESULT								Add_SoundTags_BreakHead();
+	HRESULT								Add_SoundTags_Interact_Interact();
+	HRESULT								Add_SoundTags_BreakHead_Break();
+	HRESULT								Add_SoundTags_BreakOthers_Break();
 
 public:
 	void								Play_Random_Hit_Sound();
+	void								Play_Random_Stun_Sound();
+	void								Play_Random_KnockBack_Sound();
+	void								Play_Random_StandUp_Sound();
 	void								Play_Random_Idle_Sound();
 	void								Play_Random_Move_Sound();
 	void								Play_Random_Hold_Sound();
 	void								Play_Random_Bite_Sound();
 	void								Play_Random_Bite_Reject_Sound();
+	void								Play_Random_Bite_Kill_Sound();
+	void								Play_Random_Bite_Creep_Sound();
+	void								Play_Random_Bite_Creep_Reject_Sound();
+	void								Play_Random_Bite_Creep_Kill_Sound();
 	void								Play_Random_Foot_Sound();
 	void								Play_Random_Broken_Head_Sound();
+	void								Play_Random_Broken_Part_Sound();
 
 public:
 	void								Play_Animations_Body(_float fTimeDelta);
@@ -150,9 +164,6 @@ public:		/* For.Outdoor */
 public:		/* For.Start_Trigger */
 	inline _bool						Is_Start() { return m_isStart; }
 	inline void							Set_Start(_bool isStart) { m_isStart = isStart; }
-
-public:		/* For.Update_Sound */
-	void								Update_Sounds();
 
 public:		/* For.Location Controll */
 	_bool								Is_In_Location(LOCATION_MAP_VISIT eLocation);
