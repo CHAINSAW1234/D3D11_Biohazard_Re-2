@@ -154,7 +154,6 @@ void CBody_Door::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Door::Render()
 {
-
 	if (m_bRender == false)
 		return S_OK;
 	else
@@ -358,6 +357,9 @@ HRESULT CBody_Door::Render_LightDepth_Point()
 
 HRESULT CBody_Door::Render_LightDepth_Spot()
 {
+	if (m_bRender == false)
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

@@ -27,7 +27,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	BODY_MONSTER_DESC*		pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
+	BODY_MONSTER_DESC* pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
 
 
 	m_ppPart_Breaker = pDesc->ppPart_Breaker;
@@ -52,7 +52,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 
 	m_eCurrentMotionType = MOTION_TYPE::MOTION_A;
 
-	if(m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE)
+	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE)
 		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
 
 	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_FEMALE)
@@ -78,41 +78,13 @@ void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 void CBody_Zombie::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if(m_bRagdoll)
-	{
-		auto vPos = m_pRagdoll->GetBodyPosition();
-		if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
-		{
-			m_pRagdoll->SetCulling(true);
-			m_bRender = false;
-		}
-		else
-		{
-			m_pRagdoll->SetCulling(false);
-			m_bRender = true;
-		}
-	}
-	else
-	{
-		auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-		vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-		if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
-		{
-			m_bRender = false;
-		}
-		else
-		{
-			m_bRender = true;
-		}
-	}
 }
 
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_bRagdoll == false && 
+	if (m_bRagdoll == false &&
 		true == *m_pRender)
 	{
 		_bool			isCulled = { false };
@@ -128,7 +100,7 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 	//	현재 모션이 A ~ F 타입인지 판단하고 저장 => 다음 틱에 태스크 노드에서 참조하여 모션을 결정할것이다.
 	Update_Current_MotionType();
 
-	if (true == *m_pRender && 
+	if (true == *m_pRender &&
 		true == m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
@@ -157,7 +129,7 @@ HRESULT CBody_Zombie::Render()
 
 		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(i))
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i),m_pRagdoll->GetBoneMatrices_Ragdoll())))
+			if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i), m_pRagdoll->GetBoneMatrices_Ragdoll())))
 				return E_FAIL;
 		}
 		else
@@ -194,7 +166,7 @@ HRESULT CBody_Zombie::Render()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
-		
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
 		{
 			_bool isEmissive = false;
@@ -209,7 +181,7 @@ HRESULT CBody_Zombie::Render()
 		}
 
 		auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
-		if(iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DAMAGED && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DEFICIT
+		if (iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DAMAGED && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DEFICIT
 			&& iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_BROKEN_HEAD)
 		{
 			m_bDecalRender = true;
@@ -382,7 +354,7 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 
 void CBody_Zombie::Add_RenderGroup()
 {
-	if(m_bRender)
+	if (m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -438,7 +410,7 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_27), BONE_LAYER_DEFAULT_TAG, 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_28), BONE_LAYER_DEFAULT_TAG, 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_29), BONE_LAYER_DEFAULT_TAG, 0.f);
-	
+
 	/* Set_Root_Motion */
 	m_pModelCom->Active_RootMotion_XZ(true);
 	m_pModelCom->Active_RootMotion_Y(true);
@@ -643,7 +615,7 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INNER));
 		}
-	
+
 		else if (strMeshTag.find("Joint") != string::npos || strMeshTag.find("joint") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_JOINT));
@@ -768,7 +740,7 @@ HRESULT CBody_Zombie::Register_Animation_Branches_AnimType()
 HRESULT CBody_Zombie::Register_Animation_Branches_AnimGroup()
 {
 	m_GroupAnimLayerTags.resize(static_cast<size_t>(ZOMBIE_BODY_ANIM_GROUP::_END));
-	
+
 	/* For.Anim Group Add */
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Arm_L"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Arm_R"));
@@ -959,7 +931,7 @@ HRESULT CBody_Zombie::Register_BoneLayer_Childs_NonInclude_Joint(const wstring& 
 		else
 			++iterSrc;
 	}
-	m_pModelCom->Add_Bone_Layer_BoneIndices(strBoneLayerTag, ChildBoneIndices);	
+	m_pModelCom->Add_Bone_Layer_BoneIndices(strBoneLayerTag, ChildBoneIndices);
 
 	return S_OK;
 }
@@ -1014,7 +986,7 @@ void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 {
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
 
-	m_pRagdoll->Add_Force(vForce,eType);
+	m_pRagdoll->Add_Force(vForce, eType);
 	m_bRagdoll = true;
 	m_pModelCom->Set_OptimizationCulling(false);
 }
@@ -1024,16 +996,15 @@ void CBody_Zombie::SetPartialRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eTy
 	if (eType == COLLIDER_TYPE::HEAD)
 		return;
 
-	m_pGameInstance->Start_PartialRagdoll(m_pRagdoll, iId,eType);
+	m_pGameInstance->Start_PartialRagdoll(m_pRagdoll, iId, eType);
 
-	//m_pRagdoll->Add_Force(vForce, eType);
 	m_bPartial_Ragdoll = true;
 	m_pModelCom->Set_OptimizationCulling(false);
 }
 
 void CBody_Zombie::SetCulling(_bool boolean)
 {
-	if(m_pRagdoll)
+	if (m_pRagdoll)
 		m_pRagdoll->SetCulling(boolean);
 }
 
@@ -1167,6 +1138,11 @@ void CBody_Zombie::Update_Current_MotionType()
 
 }
 
+void CBody_Zombie::WakeUp_Ragdoll()
+{
+	m_pRagdoll->WakeUp();
+}
+
 HRESULT CBody_Zombie::Add_Components()
 {
 	/* For.Com_Shader */
@@ -1181,7 +1157,7 @@ HRESULT CBody_Zombie::Add_Components()
 			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 	}
-	
+
 	else if (ZOMBIE_BODY_TYPE::_MALE == m_eBodyModelType)
 	{
 		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Body_Male"),
@@ -1277,7 +1253,7 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 
 CBody_Zombie* CBody_Zombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBody_Zombie*		pInstance = { new CBody_Zombie(pDevice, pContext) };
+	CBody_Zombie* pInstance = { new CBody_Zombie(pDevice, pContext) };
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -1291,7 +1267,7 @@ CBody_Zombie* CBody_Zombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 CGameObject* CBody_Zombie::Clone(void* pArg)
 {
-	CBody_Zombie*		pInstance = { new CBody_Zombie(*this) };
+	CBody_Zombie* pInstance = { new CBody_Zombie(*this) };
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -253,6 +253,8 @@ HRESULT CCard_Cabinet::Render_LightDepth_Point()
 
 HRESULT CCard_Cabinet::Render_LightDepth_Spot()
 {
+	if (m_bRender == false)
+		return S_OK;
 
 	if (m_bRender)
 		return S_OK;

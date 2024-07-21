@@ -293,6 +293,9 @@ HRESULT CMini_BigStatue::Render_LightDepth_Point()
 
 HRESULT CMini_BigStatue::Render_LightDepth_Spot()
 {
+	if (m_bRender == false)
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

@@ -11,6 +11,7 @@
 #define CHEST_SIZE 7.f
 #define SIZE_MAG 1.5f
 
+
 #pragma region Zombie Bone - Joint
 
 #ifdef ZOMBIE
@@ -50,6 +51,7 @@
 #define SIZE_VALUE 2.f
 #define JOINT_GAP 0.1f
 #define RADIUS 2.5f
+
 
 PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation, COLLIDER_TYPE eType)
 {
@@ -770,38 +772,6 @@ void CRagdoll_Physics::create_ragdoll()
 			m_ragdoll->m_original_joint_rotations_BreakPart[i] = XMQuaternionRotationMatrix(bind_pose_ws);
 		}
 	}
-
-	// ---------------------------------------------------------------------------------------------------------------
-	// Add rigid bodies to scene
-	// ---------------------------------------------------------------------------------------------------------------
-
-//	// Chest and Head
-//	m_Scene->addActor(*m_Pelvis);
-//	m_Scene->addActor(*m_Head);
-//
-//	// Left Arm
-//	m_Scene->addActor(*m_Arm_L);
-//	m_Scene->addActor(*m_ForeArm_L);
-//	m_Scene->addActor(*m_Hand_L);
-//
-//	// Right Arm
-//	m_Scene->addActor(*m_Arm_R);
-//	m_Scene->addActor(*m_ForeArm_R);
-//	m_Scene->addActor(*m_Hand_R);
-//
-//	// Left Leg
-//	m_Scene->addActor(*m_Leg_L);
-//	m_Scene->addActor(*m_Calf_L);
-//	m_Scene->addActor(*m_Foot_L);
-//
-//	// Right Leg
-//	m_Scene->addActor(*m_Leg_R);
-//	m_Scene->addActor(*m_Calf_R);
-//	m_Scene->addActor(*m_Foot_R);
-//
-//#ifdef ZOMBIE
-//	m_Scene->addActor(*m_Chest);
-//#endif
 #pragma endregion
 }
 
@@ -1044,7 +1014,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region For Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_upperarm_high_l_idx && joints[i].parent_index != m_hand_l_idx
+				&& joints[i].parent_index != m_lowerarm_l_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
@@ -1052,7 +1023,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i] = m_Arm_L_High;
 			}
 
-		/*	if (joints[i].parent_index == -1)
+		/*	if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
@@ -1151,6 +1122,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		{
 			m_Arm_R_High = create_capsule_bone(m_upperarm_high_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_R);
 			m_Scene->addActor(*m_Arm_R_High);
+
+			m_ragdoll->m_rigid_bodies_BreakPart[m_upperarm_high_r_idx] = m_Arm_R_High;
 		}
 		else
 		{
@@ -1161,11 +1134,15 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		{
 			m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx, m_hand_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::FOREARM_R);
 			m_Scene->addActor(*m_ForeArm_R);
+
+			m_ragdoll->m_rigid_bodies_BreakPart[m_lowerarm_r_idx] = m_ForeArm_R;
 		}
 		if (!m_Hand_R)
 		{
 			m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::HAND_R);
 			m_Scene->addActor(*m_Hand_R);
+
+			m_ragdoll->m_rigid_bodies_BreakPart[m_hand_r_idx] = m_Hand_R;
 		}
 
 		m_vecBreak_Parent_Flag[m_Arm_R_Twist_0] = true;
@@ -1185,7 +1162,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region For Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_upperarm_high_r_idx && joints[i].parent_index != m_hand_r_idx
+				&& joints[i].parent_index != m_lowerarm_r_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
@@ -1193,7 +1171,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i] = m_Arm_R_High;
 			}
 
-			/*if (joints[i].parent_index == -1)
+			/*if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
@@ -1563,7 +1541,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_foot_l_idx && joints[i].parent_index != m_thigh_l_idx && joints[i].parent_index != m_calf_l_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_L = m_thigh_l_idx;
@@ -1571,7 +1549,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i] = m_Leg_L_High;
 			}
 
-		/*	if (joints[i].parent_index == -1)
+			/*if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_L = m_thigh_l_idx;
@@ -1699,7 +1677,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_foot_r_idx && joints[i].parent_index != m_thigh_r_idx && joints[i].parent_index != m_calf_r_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_R = m_thigh_r_idx;
@@ -1707,7 +1685,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i] = m_Leg_R_High;
 			}
 
-			/*if (joints[i].parent_index != -1)
+			/*if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_R = m_thigh_r_idx;
@@ -1919,7 +1897,7 @@ void CRagdoll_Physics::update_animations()
 	else
 	{
 #pragma region Original Version
-		/*m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
+	/*	m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
 		m_Global_transforms_BreakPart_Cloth_Arm_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_L);
 		m_Global_transforms_BreakPart_Cloth_Arm_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
 		m_Global_transforms_BreakPart_Cloth_Leg_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);
@@ -2768,6 +2746,11 @@ _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth_Leg_L(_uint iIndex)
 _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex)
 {
 	return &m_BoneMatrices_Cloth_Leg_R[iIndex];
+}
+
+void CRagdoll_Physics::WakeUp()
+{
+	m_ragdoll->WakeUp();
 }
 
 _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth_Arm_L(_uint iIndex)

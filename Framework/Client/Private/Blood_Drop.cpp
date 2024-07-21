@@ -51,6 +51,11 @@ HRESULT CBlood_Drop::Initialize(void* pArg)
 
 void CBlood_Drop::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		return;
+	}
+
 	if (m_bDecal)
 	{
 		Tick_SubEffect(fTimeDelta);

@@ -475,6 +475,7 @@ public:
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Arm_R(_uint iIndex);
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_L(_uint iIndex);
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex);
+    void                          WakeUp();
 #pragma endregion
 
 private:
@@ -492,7 +493,7 @@ private:
     _matrix                                         m_model_only_scale = XMMatrixIdentity();
     float                                           m_scale = 1.f;
     float                                           m_ui_scale = m_scale;
-    float                                           m_mass = 14.f;
+    float                                           m_mass = 20.f;
 
     class SkeletalMesh* m_skeletal_mesh = { nullptr };
     class CRagdoll* m_ragdoll = { nullptr };
