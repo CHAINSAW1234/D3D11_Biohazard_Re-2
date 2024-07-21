@@ -229,6 +229,9 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if (m_pFrustum)
 		m_pFrustum->Tick();
 
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Simulate_Ragdoll(fTimeDelta);
+
 	if(m_pObject_Manager)
 		m_pObject_Manager->Late_Tick(fTimeDelta);
 
