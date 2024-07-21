@@ -130,6 +130,7 @@ public:
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
 	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
 	_int										Get_MaxBullet();
+
 	// =============================== SET ===============================
 	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
@@ -177,6 +178,7 @@ private:
 	void										Update_Equip();
 	void										Update_AnimSet();
 	void										Update_Direction();
+	void										Update_FootStep_Sound();
 	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
 	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
 	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
@@ -218,6 +220,10 @@ private:
 
 	CWeapon*									m_pWeapon = { nullptr };
 	vector<CWeapon*>							m_Weapons;
+
+	const _float4x4*							m_pL_Ball_Combined = { nullptr };
+	const _float4x4*							m_pR_Ball_Combined = { nullptr };
+	const _float4x4*							m_pRoot_Combined = { nullptr };
 
 	friend class CPlayer_State_SubHold_Start;
 	friend class CPlayer_State_Move_Walk;
