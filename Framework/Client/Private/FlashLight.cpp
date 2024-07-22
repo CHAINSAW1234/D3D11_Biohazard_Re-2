@@ -89,7 +89,7 @@ void CFlashLight::Tick(_float fTimeDelta)
 
 void CFlashLight::Late_Tick(_float fTimeDelta)
 {
-	if (true) {
+	if (m_bRender) {
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	}
@@ -134,7 +134,7 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 	LIGHT_DESC eNewDesc = *eDesc;
 
 
-	if (true) {
+	if (m_bRender) {
 
 		const _float4x4 pMatrix = m_pModelCom->Get_BonePtr(0)->Get_CombinedTransformationMatrix_Var();
 

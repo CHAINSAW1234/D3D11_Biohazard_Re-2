@@ -41,7 +41,7 @@ void CActor_PL00::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Move_Player();
-	Render_Off_RealPlayer();
+	//	Render_Off_RealPlayer();
 }
 
 void CActor_PL00::Late_Tick(_float fTimeDelta)

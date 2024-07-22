@@ -117,6 +117,7 @@ void CCut_Scene_CF95::Start_CutScene()
 	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
 	pFlashLight->Set_Origin_Translation(true);
 	pFlashLight->Set_Right_Handed(true);
+	pFlashLight->Set_Render(true);
 
 	pPlayer->Set_Spotlight(true);
 

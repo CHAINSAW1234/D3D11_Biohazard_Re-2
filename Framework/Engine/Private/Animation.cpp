@@ -191,7 +191,7 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, const vector<_float4x4>& T_Pose_Matrices, CPlayingInfo* pPlayingInfo)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, const vector<CBone*>& Bones, CPlayingInfo* pPlayingInfo)
 {
 	vector<_float4x4>			TransformationMatrices;
 	_bool						isFinished = false;
@@ -226,7 +226,22 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		}
 	}
 
-	memcpy(&TransformationMatrices[0], &T_Pose_Matrices[0], sizeof(_float4x4) * iNumBones);
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		_float4x4				TransformationMatrix = { Bones[i]->Get_TrasformationFloat4x4() };
+		TransformationMatrices[i] = TransformationMatrix;
+	}
+	//	memcpy(&TransformationMatrices[0], &T_Pose_Matrices[0], sizeof(_float4x4) * iNumBones);
+	//const vector<KEYFRAME>&				LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+	//for (_uint i = 0; i < iNumBones; ++i)
+	//{
+	//	_vector				vScale = { XMLoadFloat3(&LastKeyFrames[i].vScale) };
+	//	_vector				vTranslation = { XMLoadFloat3(&LastKeyFrames[i].vTranslation) };
+	//	_vector				vQuaternion = { XMLoadFloat4(&LastKeyFrames[i].vRotation) };
+
+	//	_matrix				TransformMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation) };
+	//	XMStoreFloat4x4(&TransformationMatrices[i], TransformMatrix);
+	//}
 
 	for (_uint iChannelIndex = 0; iChannelIndex < m_iNumChannels; ++iChannelIndex)
 	{

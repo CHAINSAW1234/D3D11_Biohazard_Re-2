@@ -139,8 +139,8 @@ void CCut_Scene_CF92::Start_CutScene()
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
-
 	pPlayer->Set_Spotlight(true);
+	pFlashLight->Set_Render(true);
 
 	pShutter->Set_OutOfControll(true);
 }

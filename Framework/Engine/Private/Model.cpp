@@ -2637,7 +2637,8 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 		unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
 		CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
-		TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
+		//	TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
+		TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_Bones, pPlayingInfo) };
 
 		Update_LinearInterpolation(fTimeDelta, 0);
 		if (true == pPlayingInfo->Is_LinearInterpolation())
@@ -2650,23 +2651,21 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 				TransformationMatrices = pAnimation->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearTime, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
 			}
 		}
+
+		for (_uint i = 0; i < iNumBones; ++i)
+		{
+			/*unordered_set<_uint>::iterator			iter = { IncludeBoneIndices.find(i) };
+			if (iter == IncludeBoneIndices.end())
+				continue;*/
+
+			m_Bones[i]->Set_TransformationMatrix(TransformationMatrices[i]);
+		}
+
+
+		pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
+		pPlayingInfo->Set_FirstTick(false);
 	}	
 
-	else
-	{
-		for (auto& T_Pose_Matrix : m_T_Pose_Matrices)
-		{
-			TransformationMatrices.push_back(T_Pose_Matrix);
-		}
-	}
-
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		m_Bones[i]->Set_TransformationMatrix(TransformationMatrices[i]);
-	}
-
-	pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
-	pPlayingInfo->Set_FirstTick(false);
 
 	for (_uint i = 0; i < iNumBones; ++i)
 	{
@@ -2704,7 +2703,7 @@ HRESULT CModel::Play_Pose(_uint iPlayingIndex)
 	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
 	CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
-	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(0.f, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
+	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(0.f, iNumBones, IncludeBoneIndices, m_Bones, pPlayingInfo) };
 
 	for (_uint i = 0; i < iNumBones; ++i)
 	{
@@ -2787,7 +2786,8 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	}
 
 	unordered_set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
-	TransformationMatrices = pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, m_T_Pose_Matrices, pPlayingInfo);
+	TransformationMatrices = pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, m_Bones, pPlayingInfo);
+	//	TransformationMatrices = pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, m_T_Pose_Matrices, pPlayingInfo);
 
 	const _bool						isFirstTick = { pPlayingInfo->Is_FirstTick() };
 	const _bool						isFinished = { pPlayingInfo->Is_Finished() };
