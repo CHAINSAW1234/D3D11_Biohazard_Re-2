@@ -59,6 +59,10 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
     if (FAILED(Change_Tool()))
         return E_FAIL;
 
+    Non_Frame();
+
+    Frame_Reset();
+
     return S_OK;
 }
 
@@ -69,13 +73,14 @@ void CTutorial_UI::Tick(_float fTimeDelta)
     if (false == m_IsChild)
     {
         Find_TextBox();
+
         First_Behaivor(fTimeDelta);
     }
 
     Player_First_Interact();
 
-    /* Operate */
     Tutorial_Start();
+
     Operation_Tutorial(fTimeDelta);
 
 }
@@ -126,7 +131,9 @@ void CTutorial_UI::First_Behaivor(_float fTimeDelta)
                 return;
 
             *m_pisTutorial_Notify = true;
+
             *m_eTutorial_Type = UI_TUTORIAL_TYPE::TUTORIAL_AROUND;
+
             m_isTutorial[(_int)UI_TUTORIAL_TYPE::TUTORIAL_AROUND] = true;
         }
 
@@ -246,11 +253,14 @@ void CTutorial_UI::Tutorial_Start()
         m_isTutorial_Start = true;
 
         m_isPlay = true;
+
         m_isKeepPlay = false;
+
         m_isRender = true;
+
         m_fTutorial_Life_Tiemr = 0.f;
 
-        Frame_Reset(); /* Tool에서 잘못 만져줘서 Frame 0이 아니라 Frame 1에서 시작하고자 한다. */
+        Frame_Reset();
     }
 }
 
@@ -258,17 +268,16 @@ void CTutorial_UI::Operation_Tutorial(_float fTimeDelta)
 {
     if (true == m_isPlay)
     {
-        /* ▶ Texture */
-        /* UI가 나타났음*/
         if ((_int)m_iColorCurNum >= m_iColorMaxNum)
         {
             m_isKeepPlay = true;
+
             m_iColorCurNum = m_iColorMaxNum;
 
             m_fTutorial_Life_Tiemr += fTimeDelta;
+
             if (LIFE_TIME <= m_fTutorial_Life_Tiemr)
                 m_isPlay = false;
-            
         }
     }
 
@@ -286,12 +295,18 @@ void CTutorial_UI::Operation_Tutorial(_float fTimeDelta)
             m_isRender = false;
 
             m_fBlending = 1.f;
+
+            if (false == m_IsChild && UI_TUTORIAL_TYPE::TUTORIAL_AROUND == *m_eTutorial_Type)
+            {
+                m_pPlayer->MissionClear_Font(TEXT("경찰서로 이동하기"), static_cast<_ubyte>(MISSION_TYPE::FOLD_ENTRANCE_MISSION));
+            }
         }
     }
 
-    /* ▶  Font */
     if (!m_vecTextBoxes.empty())
+    {
         Play_Font(fTimeDelta);
+    }
 }
 
 CCustomize_UI* CTutorial_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

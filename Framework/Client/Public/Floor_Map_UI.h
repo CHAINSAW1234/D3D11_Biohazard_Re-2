@@ -18,9 +18,6 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Change_Tool() override;
 
-public :
-	MAP_FLOOR_TYPE			Get_SelectFloor() { return m_eSelect_Floor; }
-
 
 private :
 	void					Rendering();

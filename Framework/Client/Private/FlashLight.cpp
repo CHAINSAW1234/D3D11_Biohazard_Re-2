@@ -36,6 +36,8 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.fCutOff = XMConvertToRadians(20.f);
 	eDesc.fOutCutOff = XMConvertToRadians(50.f);
 
+	eDesc.BelongNumVec = vector<_int>(50, 1);
+
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
 
@@ -82,8 +84,6 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 	if (m_bRender) {
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
 
 	_float3				vDirection = { };

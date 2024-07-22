@@ -679,6 +679,22 @@ void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix Tra
 	m_pPipeLine->Set_Transform(eState, TransformMatrix);
 }
 
+void CGameInstance::Set_Player_Collider(_int iCol)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	m_pPipeLine->Set_Player_Collider(iCol);
+}
+
+void CGameInstance::Set_Player_Dir(_int iDir)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	m_pPipeLine->Set_Player_Dir(iDir);
+}
+
 HRESULT CGameInstance::Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight)
 {
 	if (nullptr == m_pPipeLine)
@@ -859,6 +875,22 @@ _float* CGameInstance::Get_PBRLerpTime()
 		return nullptr;
 
 	return m_pPipeLine->Get_PBRLerpTime();
+}
+
+_int CGameInstance::Get_Player_Collider()
+{
+	if (nullptr == m_pPipeLine)
+		return -1;
+
+	return m_pPipeLine->Get_Player_Collider();
+}
+
+_int CGameInstance::Get_Player_Dir()
+{
+	if (nullptr == m_pPipeLine)
+		return -1;
+
+	return m_pPipeLine->Get_Player_Dir();
 }
 
 #pragma endregion
@@ -1192,9 +1224,9 @@ void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint 
 	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders,pTransforms, pTransform);
 }
 
-void CGameInstance::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, PxRigidDynamic** pCollider, CTransform* pTransform)
+void CGameInstance::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, _int iId,PxRigidDynamic** pCollider, CTransform* pTransform)
 {
-	m_pPhysics_Controller->Cook_Mesh_Convex_RigidDynamic(pVertices, pIndices, VertexNum, IndexNum, pCollider, pTransform);
+	m_pPhysics_Controller->Cook_Mesh_Convex_RigidDynamic(pVertices, pIndices, VertexNum, IndexNum, iId,pCollider, pTransform);
 }
 
 void CGameInstance::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
@@ -1325,11 +1357,18 @@ _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPo
 
 	return false;
 }
-CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, const string& name)
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,pDevice,pContext,name);
 	
+	return nullptr;
+}
+CRagdoll_Physics* CGameInstance::Get_Ragdoll(_uint iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->GetRagdoll(iId);
+
 	return nullptr;
 }
 void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)

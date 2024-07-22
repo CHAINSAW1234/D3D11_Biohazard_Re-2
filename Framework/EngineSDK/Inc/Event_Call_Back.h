@@ -61,24 +61,35 @@ static physx::PxFilterFlags MegamotionFilterShader(
 {
 	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 
-	// trigger the contact callback for pairs (A,B) where
-	// the filtermask of A contains the ID of B and vice versa.
-	/*if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+#pragma region For Sound
+	if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::EFFECT))
 	{
-		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-		return physx::PxFilterFlag::eNOTIFY;
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
+
 	}
 
-	return physx::PxFilterFlag::eDEFAULT;*/
-
-#pragma region CCT 충돌 무시
-	/*if ((filterData0.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION) && (filterData1.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION))
+	if ((filterData1.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 & COLLISION_CATEGORY::EFFECT))
 	{
-		pairFlags = physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-		return physx::PxFilterFlag::eNOTIFY;
-	}*/
-#pragma endregion
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
 
+	}
+
+	if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::RAGDOLL))
+	{
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
+
+	}
+
+	if ((filterData1.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 & COLLISION_CATEGORY::RAGDOLL))
+	{
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
+
+	}
+#pragma endregion
 
 #pragma region Default
 	//충돌 무시 코드
@@ -105,18 +116,6 @@ static physx::PxFilterFlags MegamotionFilterShader(
 
 class CEventCallBack : public PxSimulationEventCallback {
 public:
-	/*virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override {
-		for (physx::PxU32 i = 0; i < nbPairs; i++)
-		{
-			const physx::PxContactPair& cp = pairs[i];
-
-			if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				int a = 0;
-			}
-		}
-	}*/
-
 	virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override;
 	// 다른 이벤트 콜백 함수들은 사용하지 않으므로 빈 구현으로 남겨둡니다.
 	virtual void onTrigger(PxTriggerPair*, PxU32) override {}
@@ -137,14 +136,6 @@ public:
         PxPairFlags& pairFlags) override {
 
 		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-
-#pragma region CCT 충돌 무시
-		//if ((filterData0.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION) && (filterData1.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION))
-		//{
-		//	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-		//	return physx::PxFilterFlag::eNOTIFY;
-		//}
-#pragma endregion
 
 #pragma region Default
 		if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))

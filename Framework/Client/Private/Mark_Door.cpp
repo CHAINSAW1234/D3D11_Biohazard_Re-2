@@ -55,27 +55,24 @@ void CMark_Door::Late_Tick(_float fTimeDelta)
 		return;
 
 	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(360.f));
-	_float4x4			mWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
-
-	mWorldMatrix._41 += 50.f;
-	mWorldMatrix._42 += 145.f;
-	mWorldMatrix._43 -= 5.f;
-
-
+	_matrix			mWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	
+	mWorldMatrix.r[3] += _float4(50.f, 145.f, -5.f, 0.f);
 
 	_matrix			WorldMatrix = { };
+
 	switch (*m_pDoorState)
 	{
 	case CDoor::ONEDOOR_OPEN_L:
-		WorldMatrix = { mWorldMatrix *(*m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * m_pParentsTransform->Get_WorldMatrix() };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	case CDoor::ONEDOOR_OPEN_R:
-		WorldMatrix = { mWorldMatrix *(*m_pSocketMatrix_01)* (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * m_pParentsTransform->Get_WorldMatrix() };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	case CDoor::ONEDOOR_STATIC:
-		WorldMatrix = { mWorldMatrix * (*m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * m_pParentsTransform->Get_WorldMatrix() };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	}
@@ -140,26 +137,24 @@ HRESULT CMark_Door::Render()
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(180.f));
-	_float4x4			mWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	_matrix			mWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 
-	mWorldMatrix._41 += 50.f;
-	mWorldMatrix._42 += 145.f;
+	mWorldMatrix.r[3] += _float4(50.f, 145.f, 0.f, 0.f);
 	//mWorldMatrix._43 -= 2.f;
-
 
 	_matrix			WorldMatrix = { };
 	switch (*m_pDoorState)
 	{
 	case CDoor::ONEDOOR_OPEN_L:
-		WorldMatrix = { mWorldMatrix * *m_pSocketMatrix_01 * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * m_pParentsTransform->Get_WorldMatrix() };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	case CDoor::ONEDOOR_OPEN_R:
-		WorldMatrix = { mWorldMatrix * *m_pSocketMatrix_01 * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * m_pParentsTransform->Get_WorldMatrix() };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	case CDoor::ONEDOOR_STATIC:
-		WorldMatrix = { mWorldMatrix * *m_pSocketMatrix_01 * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * m_pParentsTransform->Get_WorldMatrix() };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	}

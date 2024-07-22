@@ -37,7 +37,8 @@ private:
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
-	_float							m_fAccActiveTime = { 0.f };
+	_float							m_fAccCreepFootSoundCool = { 0.f };
+	_float							m_fTotalCreepFootSoundTime = { 0.f };
 
 private:
 	const _float4x4*				m_pRoot_Combiend = { nullptr };

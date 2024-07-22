@@ -1533,7 +1533,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/J_4.png")))))
 		return E_FAIL;
 
-	/* ÆÊÇÃ·¿ PAMPHLET*/
+	/* ÆÊÇÃ·¿ PAMPHLET_NOTE*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_PamphletNote1"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/F_1.png")))))
 		return E_FAIL;

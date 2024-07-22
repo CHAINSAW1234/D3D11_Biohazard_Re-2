@@ -157,7 +157,6 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
 
     Targeting_Render(fTimeDelta);
 
-
     __super::Tick(fTimeDelta);
 }
 
@@ -258,10 +257,9 @@ void CTargeting_Map_UI::Find_NotifyText_RenderState()
 /* 아이템을 먹음으로써 Map 상태가 어떻게 변화하였는가? */
 void CTargeting_Map_UI::Verification_MapType()
 {
-    /* 아이템을 먹었는 지 확인 */
     if (true == m_isSearchForVerification)
     {
-        /* 1. 아이템을 먹었을 때 맵 안의 모든 아이템을 먹었는가? */
+        /* 1. 모든 아이템을 먹었는가? */
         for (auto& iter : m_ItemStore_Vec[m_eFloorVerification])
         {
             if (m_eLocationVerification == iter->Get_Map_Location_Type())
@@ -275,9 +273,9 @@ void CTargeting_Map_UI::Verification_MapType()
             }
         }
         
-        /* 2. 아이템을 전부 먹었다면 맵에 나 먹었어요 전달해야 한다. */
         list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
+        /* 2. or One ITem*/
         for (auto& iter : *pMapUI_List)
         {
             CMain_Map_UI* pMain = dynamic_cast<CMain_Map_UI*>(iter);
@@ -536,6 +534,10 @@ _bool CTargeting_Map_UI::Item_Hovering(_float4 _mainPos, _float3 _scaled) // 타�
                     {
                         for(auto& iter : m_vecTextBoxes)
                         {
+                            if (m_wstrItem_Name == TEXT(""))
+                            {
+                                m_wstrItem_Name = TEXT("필수 요건");
+                            }
                             iter->Set_Text(m_wstrItem_Name);
                         }
                     }

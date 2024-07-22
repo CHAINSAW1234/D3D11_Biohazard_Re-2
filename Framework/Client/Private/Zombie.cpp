@@ -41,6 +41,7 @@
 #define BLOOD_DROP_COUNT_STG 10
 #define HEADBLOW_BLOOD_SIZE 8.f
 #define HEADBLOW_BLOOD_SIZE_DROP 8.f
+#define BLOOD_SOUND_COUNT 4
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
@@ -50,11 +51,17 @@ CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CZombie::CZombie(const CZombie& rhs)
 	: CMonster{ rhs }
 {
-
+	for (auto& Pair : rhs.m_SoundTags)
+	{
+		m_SoundTags.emplace(Pair.first, Pair.second);
+	}
 }
 
 HRESULT CZombie::Initialize_Prototype()
 {
+	if (FAILED(Add_SoundTags()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -144,9 +151,6 @@ HRESULT CZombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, static_cast<_uint>(ZOMBIE_SOUND_CH::_END))))
-		return E_FAIL;
-
-	if (FAILED(Add_SoundTags()))
 		return E_FAIL;
 
 	//if (FAILED(Add_Components()))
@@ -270,8 +274,6 @@ void CZombie::Tick(_float fTimeDelta)
 				it->SetCulling(false);
 		}
 	}
-
-	Update_Sounds();
 
 	__super::Tick(fTimeDelta);
 
@@ -486,7 +488,9 @@ void CZombie::Tick(_float fTimeDelta)
 								if (eType != COLLIDER_TYPE::HEAD)
 								{
 									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));									
+									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+									m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
+									m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
 								}
 
 								if (eType == COLLIDER_TYPE::HEAD)
@@ -1137,6 +1141,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSequenceNode_Additional_Blend_Anim = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSequenceNode_Root->Insert_Child_Node(pSequenceNode_Additional_Blend_Anim);
 
+#pragma region		Task Set Focus Player
+
+	CSet_Focus_Player* pTask_Set_Focus_Player = { CSet_Focus_Player::Create() };
+	pTask_Set_Focus_Player->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Set_Focus_Player);
+
+#pragma endregion
+
 #pragma region		Task Shake Skin
 
 	CShake_Skin_Zombie* pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
@@ -1166,6 +1178,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CFoot_Sound_Zombie* pTask_Foot_Sound = { CFoot_Sound_Zombie::Create() };
 	pTask_Foot_Sound->SetBlackBoard(m_pBlackBoard);
 	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Foot_Sound);
+
+#pragma endregion		//	Sequence Root Child
+
+#pragma region		Task Break Sound 
+
+	CBreak_Sound_Zombie* pTask_Break_Sound = { CBreak_Sound_Zombie::Create() };
+	pTask_Break_Sound->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Break_Sound);
 
 #pragma endregion		//	Sequence Root Child
 
@@ -1423,43 +1443,67 @@ HRESULT CZombie::Add_RagDoll_OtherParts()
 
 HRESULT CZombie::Add_SoundTags()
 {
-	if (FAILED(Add_SoundTags_Idle()))
+	if (FAILED(Add_SoundTags_Idle_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Move()))
+	if (FAILED(Add_SoundTags_Move_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Bite()))
+	if (FAILED(Add_SoundTags_KnockBack_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_KnockBack()))
+	if (FAILED(Add_SoundTags_StandUp_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Hit()))
+	if (FAILED(Add_SoundTags_Hit_EF()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_BreakHead()))
+	if (FAILED(Add_SoundTags_Bite_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Bite_Reject()))
+	if (FAILED(Add_SoundTags_Bite_Reject_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Hold()))
+	if (FAILED(Add_SoundTags_Bite_Kill_Voice()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Foot()))
+	if (FAILED(Add_SoundTags_Bite_Creep_Voice()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Bite_Creep_Reject_Voice()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Bite_Creep_Kill_Voice()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Hold_Voice()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Foot_Foot()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Foot_Creep_Foot()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_Drop_Body_Foot()))
 		return E_FAIL;
 
 	if (FAILED(Add_SoundTags_ETC()))
 		return E_FAIL;
 
-	if (FAILED(Add_SoundTags_Interact()))
+	if (FAILED(Add_SoundTags_Interact_Interact()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_BreakHead_Break()))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags_BreakOthers_Break()))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Idle()
+HRESULT CZombie::Add_SoundTags_Idle_Voice()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
@@ -1496,7 +1540,7 @@ HRESULT CZombie::Add_SoundTags_Idle()
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Move()
+HRESULT CZombie::Add_SoundTags_Move_Voice()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
@@ -1532,17 +1576,151 @@ HRESULT CZombie::Add_SoundTags_Move()
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Bite()
+HRESULT CZombie::Add_SoundTags_Bite_Voice()
 {
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBiteMaleSoundTag = { TEXT("em_Bite_Male_") };
+	vector<wstring>				BiteMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_MALE; ++i)
+	{
+		wstring			strTag = { strBiteMaleSoundTag + to_wstring(i) + strExtTag };
+		BiteMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_MALE, BiteMaleSoundTags);
+
+
+	wstring						strBiteMaleBigSoundTag = { TEXT("em_Bite_Male_Big_") };
+	vector<wstring>				BiteMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strBiteMaleBigSoundTag + to_wstring(i) + strExtTag };
+		BiteMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_MALE_BIG, BiteMaleBigSoundTags);
+
+
+	wstring						strBiteFemaleSoundTag = { TEXT("em_Bite_Female_") };
+	vector<wstring>				BiteFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_FEMALE; ++i)
+	{
+		wstring			strTag = { strBiteFemaleSoundTag + to_wstring(i) + strExtTag };
+		BiteFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_FEMALE, BiteFemaleSoundTags);
+
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_KnockBack()
+HRESULT CZombie::Add_SoundTags_KnockBack_Voice()
 {
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strKnockBackMaleSoundTag = { TEXT("em_KnockBack_Male_") };
+	vector<wstring>				KnockBackMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_KNOCKBACK_MALE; ++i)
+	{
+		wstring			strTag = { strKnockBackMaleSoundTag + to_wstring(i) + strExtTag };
+		KnockBackMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCKBACK_MALE, KnockBackMaleSoundTags);
+
+
+	wstring						strKnockBackMaleBigSoundTag = { TEXT("em_KnockBack_Male_Big_") };
+	vector<wstring>				KnockBackMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_KNOCKBACK_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strKnockBackMaleBigSoundTag + to_wstring(i) + strExtTag };
+		KnockBackMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCKBACK_MALE_BIG, KnockBackMaleBigSoundTags);
+
+
+	wstring						strKnockBackFemaleSoundTag = { TEXT("em_KnockBack_Female_") };
+	vector<wstring>				KnockBackFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_KNOCKBACK_FEMALE; ++i)
+	{
+		wstring			strTag = { strKnockBackFemaleSoundTag + to_wstring(i) + strExtTag };
+		KnockBackFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCKBACK_FEMALE, KnockBackFemaleSoundTags);
+
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Hit()
+HRESULT CZombie::Add_SoundTags_Stun_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strKnockBackMaleSoundTag = { TEXT("em_Stun_Male_") };
+	vector<wstring>				KnockBackMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STUN_MALE; ++i)
+	{
+		wstring			strTag = { strKnockBackMaleSoundTag + to_wstring(i) + strExtTag };
+		KnockBackMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STUN_MALE, KnockBackMaleSoundTags);
+
+
+	wstring						strKnockBackMaleBigSoundTag = { TEXT("em_Stun_Male_Big_") };
+	vector<wstring>				KnockBackMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STUN_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strKnockBackMaleBigSoundTag + to_wstring(i) + strExtTag };
+		KnockBackMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STUN_MALE_BIG, KnockBackMaleBigSoundTags);
+
+
+	wstring						strKnockBackFemaleSoundTag = { TEXT("em_Stun_Female_") };
+	vector<wstring>				KnockBackFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STUN_FEMALE; ++i)
+	{
+		wstring			strTag = { strKnockBackFemaleSoundTag + to_wstring(i) + strExtTag };
+		KnockBackFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STUN_FEMALE, KnockBackFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_StandUp_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strStandUpMaleSoundTag = { TEXT("em_StandUp_Male_") };
+	vector<wstring>				StandUpMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STAND_UP_MALE; ++i)
+	{
+		wstring			strTag = { strStandUpMaleSoundTag + to_wstring(i) + strExtTag };
+		StandUpMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STAND_UP_MALE, StandUpMaleSoundTags);
+
+
+	wstring						strStandUpMaleBigSoundTag = { TEXT("em_StandUp_Male_Big_") };
+	vector<wstring>				StandUpMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STAND_UP_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strStandUpMaleBigSoundTag + to_wstring(i) + strExtTag };
+		StandUpMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STAND_UP_MALE_BIG, StandUpMaleBigSoundTags);
+
+
+	wstring						strStandUpFemaleSoundTag = { TEXT("em_StandUp_Female_") };
+	vector<wstring>				StandUpFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_STAND_UP_FEMALE; ++i)
+	{
+		wstring			strTag = { strStandUpFemaleSoundTag + to_wstring(i) + strExtTag };
+		StandUpFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_STAND_UP_FEMALE, StandUpFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Hit_EF()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
@@ -1561,7 +1739,7 @@ HRESULT CZombie::Add_SoundTags_Hit()
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Bite_Reject()
+HRESULT CZombie::Add_SoundTags_Bite_Reject_Voice()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
@@ -1597,7 +1775,151 @@ HRESULT CZombie::Add_SoundTags_Bite_Reject()
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Hold()
+HRESULT CZombie::Add_SoundTags_Bite_Kill_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBiteKillMaleSoundTag = { TEXT("em_Bite_Kill_Male_") };
+	vector<wstring>				BiteKillMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_KILL_MALE; ++i)
+	{
+		wstring			strTag = { strBiteKillMaleSoundTag + to_wstring(i) + strExtTag };
+		BiteKillMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_KILL_MALE, BiteKillMaleSoundTags);
+
+
+	wstring						strBiteKillMaleBigSoundTag = { TEXT("em_Bite_Kill_Male_Big_") };
+	vector<wstring>				BiteKillMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_KILL_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strBiteKillMaleBigSoundTag + to_wstring(i) + strExtTag };
+		BiteKillMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_KILL_MALE_BIG, BiteKillMaleBigSoundTags);
+
+
+	wstring						strBiteKillFemaleSoundTag = { TEXT("em_Bite_Kill_Female_") };
+	vector<wstring>				BiteKillFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_KILL_FEMALE; ++i)
+	{
+		wstring			strTag = { strBiteKillFemaleSoundTag + to_wstring(i) + strExtTag };
+		BiteKillFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_KILL_FEMALE, BiteKillFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Bite_Creep_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBiteCreepMaleSoundTag = { TEXT("em_Bite_Creep_Male_") };
+	vector<wstring>				BiteCreepMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_MALE; ++i)
+	{
+		wstring			strTag = { strBiteCreepMaleSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_MALE, BiteCreepMaleSoundTags);
+
+
+	wstring						strBiteCreepMaleBigSoundTag = { TEXT("em_Bite_Creep_Male_Big_") };
+	vector<wstring>				BiteCreepMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strBiteCreepMaleBigSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_MALE_BIG, BiteCreepMaleBigSoundTags);
+
+
+	wstring						strBiteCreepFemaleSoundTag = { TEXT("em_Bite_Creep_Female_") };
+	vector<wstring>				BiteCreepFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_FEMALE; ++i)
+	{
+		wstring			strTag = { strBiteCreepFemaleSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_FEMALE, BiteCreepFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Bite_Creep_Reject_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBiteCreepRejectMaleSoundTag = { TEXT("em_Bite_Creep_Reject_Male_") };
+	vector<wstring>				BiteCreepRejectMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_REJECT_MALE; ++i)
+	{
+		wstring			strTag = { strBiteCreepRejectMaleSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepRejectMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_REJECT_MALE, BiteCreepRejectMaleSoundTags);
+
+
+	wstring						strBiteCreepRejectMaleBigSoundTag = { TEXT("em_Bite_Creep_Reject_Male_Big_") };
+	vector<wstring>				BiteCreepRejectMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_REJECT_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strBiteCreepRejectMaleBigSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepRejectMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_REJECT_MALE_BIG, BiteCreepRejectMaleBigSoundTags);
+
+
+	wstring						strBiteCreepRejectFemaleSoundTag = { TEXT("em_Bite_Creep_Reject_Female_") };
+	vector<wstring>				BiteCreepRejectFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_REJECT_FEMALE; ++i)
+	{
+		wstring			strTag = { strBiteCreepRejectFemaleSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepRejectFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_REJECT_FEMALE, BiteCreepRejectFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Bite_Creep_Kill_Voice()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBiteCreepKillMaleSoundTag = { TEXT("em_Bite_Creep_Kill_Male_") };
+	vector<wstring>				BiteCreepKillMaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_KILL_MALE; ++i)
+	{
+		wstring			strTag = { strBiteCreepKillMaleSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepKillMaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_KILL_MALE, BiteCreepKillMaleSoundTags);
+
+
+	wstring						strBiteCreepKillMaleBigSoundTag = { TEXT("em_Bite_Creep_Kill_Male_Big_") };
+	vector<wstring>				BiteCreepKillMaleBigSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_KILL_MALE_BIG; ++i)
+	{
+		wstring			strTag = { strBiteCreepKillMaleBigSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepKillMaleBigSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_KILL_MALE_BIG, BiteCreepKillMaleBigSoundTags);
+
+
+	wstring						strBiteCreepKillFemaleSoundTag = { TEXT("em_Bite_Creep_Kill_Female_") };
+	vector<wstring>				BiteCreepKillFemaleSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BITE_CREEP_KILL_FEMALE; ++i)
+	{
+		wstring			strTag = { strBiteCreepKillFemaleSoundTag + to_wstring(i) + strExtTag };
+		BiteCreepKillFemaleSoundTags.emplace_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BITE_CREEP_KILL_FEMALE, BiteCreepKillFemaleSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Hold_Voice()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
@@ -1633,12 +1955,12 @@ HRESULT CZombie::Add_SoundTags_Hold()
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Foot()
+HRESULT CZombie::Add_SoundTags_Foot_Foot()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 	wstring						strFootSoundTag = { TEXT("em_Foot_Normal_") };
 	vector<wstring>				FootSoundTags;
-	for (_uint i = 1; i <= 12; ++i)
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_FOOT; ++i)
 	{
 		wstring			strTag = { strFootSoundTag + to_wstring(i) + strExtTag };
 		FootSoundTags.push_back(strTag);
@@ -1648,26 +1970,113 @@ HRESULT CZombie::Add_SoundTags_Foot()
 	return S_OK;
 }
 
+HRESULT CZombie::Add_SoundTags_Foot_Creep_Foot()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+	wstring						strFootSoundTag = { TEXT("em_Foot_Creep_") };
+	vector<wstring>				FootSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_FOOT_CREEP; ++i)
+	{
+		wstring			strTag = { strFootSoundTag + to_wstring(i) + strExtTag };
+		FootSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_FOOT_CREEP, FootSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_Drop_Body_Foot()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+	wstring						strDropBodySoundTag = { TEXT("em_Drop_Body_") };
+	vector<wstring>				DropBodySoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_DROP_BODY; ++i)
+	{
+		wstring			strTag = { strDropBodySoundTag + to_wstring(i) + strExtTag };
+		DropBodySoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_DROP_BODY, DropBodySoundTags);
+
+	return S_OK;
+}
+
 HRESULT CZombie::Add_SoundTags_ETC()
 {
 	return S_OK;
 }
 
-HRESULT CZombie::Add_SoundTags_Interact()
-{
-	return S_OK;
-}
-
-HRESULT CZombie::Add_SoundTags_BreakHead()
+HRESULT CZombie::Add_SoundTags_Interact_Interact()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
 
-	wstring						strBreakHeadSoundTag = { TEXT("em_common_dmg_hit_media.bnk.2_") };
-	vector<wstring>				BreakHeadSoundTags;
-	wstring			strTag = { strBreakHeadSoundTag + to_wstring(24) + strExtTag };
-	BreakHeadSoundTags.push_back(strTag);
+	wstring						strKnockWindowSoundTag = { TEXT("em_Knock_Window_") };
+	vector<wstring>				KnockWindowSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_KNOCK_WINDOW; ++i)
+	{
+		wstring			strTag = { strKnockWindowSoundTag + to_wstring(i) + strExtTag };
+		KnockWindowSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCK_WINDOW, KnockWindowSoundTags);
 
-	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_HIT, BreakHeadSoundTags);
+	wstring						strKnockDoorSoundTag = { TEXT("em_Knock_Door_") };
+	vector<wstring>				KnockDoorTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_KNOCK_DOOR; ++i)
+	{
+		wstring			strTag = { strKnockDoorSoundTag + to_wstring(i) + strExtTag };
+		KnockDoorTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_KNOCK_DOOR, KnockDoorTags);
+
+
+	wstring						strBreakWindowSoundTag = { TEXT("em_Break_Window_") };
+	vector<wstring>				BreakWindowSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BREAK_WINDOW; ++i)
+	{
+		wstring			strTag = { strBreakWindowSoundTag + to_wstring(i) + strExtTag };
+		BreakWindowSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW, BreakWindowSoundTags);
+
+	wstring						strOpenDoorSoundTag = { TEXT("em_Open_Door_") };
+	vector<wstring>				OpenDoorSOundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_OPEN_DOOR; ++i)
+	{
+		wstring			strTag = { strOpenDoorSoundTag + to_wstring(i) + strExtTag };
+		OpenDoorSOundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_OPEN_DOOR, OpenDoorSOundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_BreakHead_Break()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBreakHeadSoundTag = { TEXT("em_Break_Head_") };
+	vector<wstring>				BreakHeadSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BREAK_HEAD; ++i)
+	{
+		wstring			strTag = { strBreakHeadSoundTag + to_wstring(i) + strExtTag };
+		BreakHeadSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BREAK_HEAD, BreakHeadSoundTags);
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_SoundTags_BreakOthers_Break()
+{
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	wstring						strBreakOtherSoundTag = { TEXT("em_Break_Other_") };
+	vector<wstring>				BreakOtherSoundTags;
+	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_BREAK_OTHER; ++i)
+	{
+		wstring			strTag = { strBreakOtherSoundTag + to_wstring(i) + strExtTag };
+		BreakOtherSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_BREAK_HEAD, BreakOtherSoundTags);
 
 	return S_OK;
 }
@@ -1685,6 +2094,78 @@ void CZombie::Play_Random_Hit_Sound()
 
 	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));	
+}
+
+void CZombie::Play_Random_Stun_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_STUN_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_STUN_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_STUN_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumStunSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumStunSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_STUN, ZOMBIE_MAX_VOLUME_STUN) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+}
+
+void CZombie::Play_Random_KnockBack_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_KNOCKBACK_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_KNOCKBACK_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_KNOCKBACK_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumKnockBackSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockBackSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_KNOCKBACK, ZOMBIE_MAX_VOLUME_KNOCKBACK) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+}
+
+void CZombie::Play_Random_StandUp_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_STAND_UP_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_STAND_UP_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_STAND_UP_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumStandUpSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumStandUpSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_STAND_UP, ZOMBIE_MAX_VOLUME_STAND_UP) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
 }
 
 void CZombie::Play_Random_Idle_Sound()
@@ -1761,6 +2242,26 @@ void CZombie::Play_Random_Hold_Sound()
 
 void CZombie::Play_Random_Bite_Sound()
 {
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBiteSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE, ZOMBIE_MAX_VOLUME_BITE) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
 }
 
 void CZombie::Play_Random_Bite_Reject_Sound()
@@ -1787,6 +2288,102 @@ void CZombie::Play_Random_Bite_Reject_Sound()
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
 }
 
+void CZombie::Play_Random_Bite_Kill_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_KILL_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_KILL_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_KILL_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBiteKillSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteKillSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_KILL, ZOMBIE_MAX_VOLUME_BITE_KILL) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+}
+
+void CZombie::Play_Random_Bite_Creep_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBiteCreepSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteCreepSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_CREEP, ZOMBIE_MAX_VOLUME_BITE_CREEP) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+}
+
+void CZombie::Play_Random_Bite_Creep_Reject_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_REJECT_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_REJECT_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_REJECT_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBiteCreepRejectSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteCreepRejectSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_CREEP_REJECT, ZOMBIE_MAX_VOLUME_BITE_CREEP_REJECT) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+}
+
+void CZombie::Play_Random_Bite_Creep_Kill_Sound()
+{
+	ZOMBIE_SOUND_TYPE			eSoundType = { ZOMBIE_SOUND_TYPE::_END };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_KILL_MALE;
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_KILL_FEMALE;
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID))
+		eSoundType = ZOMBIE_SOUND_TYPE::_BITE_CREEP_KILL_MALE_BIG;
+
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(eSoundType) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBiteCreepKillSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteCreepKillSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_CREEP_KILL, ZOMBIE_MAX_VOLUME_BITE_CREEP_KILL) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_VOICE));
+}
+
 void CZombie::Play_Random_Foot_Sound()
 {
 	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_FOOT) };
@@ -1803,20 +2400,124 @@ void CZombie::Play_Random_Foot_Sound()
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
 }
 
+void CZombie::Play_Random_Foot_Creep_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_FOOT_CREEP) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_FOOT, ZOMBIE_MAX_VOLUME_FOOT) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+}
+
+void CZombie::Play_Random_Drop_Body_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_DROP_BODY) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumDropBodySound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumDropBodySound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_DROP_BODY, ZOMBIE_MAX_VOLUME_DROP_BODY) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+}
+
 void CZombie::Play_Random_Broken_Head_Sound()
 {
 	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_HEAD) };
 	if (iter == m_SoundTags.end())
 		return;
 
-	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
-	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
-	iRandomIndex = 8;
+	_uint				iNumBreakHeadSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakHeadSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_BREAK_HEAD };
 
 	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
 	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
+}
+
+void CZombie::Play_Random_Broken_Part_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_OTHER) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBreakOthersSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakOthersSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_BREAK_OTHER };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_BREAK));
+}
+
+void CZombie::Play_Random_Knock_Window_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_KNOCK_WINDOW) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumKnockWindowSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockWindowSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+}
+
+void CZombie::Play_Random_Break_Window_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_BREAK_WINDOW) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumBreakWindowSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakWindowSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+}
+
+void CZombie::Play_Random_Knock_Door_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_KNOCK_DOOR) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumKnockDoorSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockDoorSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+}
+
+void CZombie::Play_Random_Open_Door_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_OPEN_DOOR) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumOpenDoorSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumOpenDoorSound) - 1) };
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
+	Set_Volume(fVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_INTERACT));
 }
 
 void CZombie::Play_Animations_Body(_float fTimeDelta)
@@ -1827,25 +2528,6 @@ void CZombie::Play_Animations_Body(_float fTimeDelta)
 void CZombie::Active_IK_Body(_bool isActive)
 {
 	static_cast<CBody_Zombie*>(m_PartObjects[PART_BODY])->Active_IK(isActive);
-}
-
-void CZombie::Update_Sounds()
-{
-	/*_float4			vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
-	memcpy(&m_SoundDesc.vPos, &vPosition, sizeof(_float3));
-
-	m_SoundDesc.fRange = _float2(3.f, 3.f);
-	m_SoundDesc.fVolume = 1.f;
-	m_SoundDesc.eMode = FMOD_3D | FMOD_3D_LINEARROLLOFF;
-	memcpy(&m_SoundDesc.vSpeedDir, &_float3(0.f, 0.f, 0.f), sizeof(_float3));
-
-	for (auto& Pair: m_SoundTags)
-	{	
-		_uint iChannelIndex = { Pair.first };
-		wstring strSoundTag = { Pair.second };
-
-		m_pGameInstance->Update_Sound(strSoundTag, m_SoundDesc);
-	}*/
 }
 
 _bool CZombie::Is_In_Location(LOCATION_MAP_VISIT eLocation)

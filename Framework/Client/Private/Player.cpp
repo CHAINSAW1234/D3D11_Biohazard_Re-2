@@ -107,6 +107,18 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
 
+	CModel* pModel = Get_Body_Model();
+
+
+	m_pL_Ball_Combined = pModel->Get_CombinedMatrix("l_leg_ball");
+	m_pR_Ball_Combined = pModel->Get_CombinedMatrix("r_leg_ball");
+	m_pRoot_Combined = pModel->Get_CombinedMatrix("root");
+
+	if (nullptr == m_pL_Ball_Combined ||
+		nullptr == m_pL_Ball_Combined ||
+		nullptr == m_pL_Ball_Combined)
+		return E_FAIL;
+
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 6);	// 일단 3개
 
 	m_pGameInstance->SetPlayer(this);
@@ -227,17 +239,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		if (PRESSING == m_pGameInstance->Get_KeyState('S'))
 		{
-			/*if (m_bTurnAround == false)
-			{
-				m_bTurnAround = true;
-
-				auto CamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
-				CamLook.x = -CamLook.x;
-				CamLook.z = -CamLook.z;
-				m_vTurnAround_Look_Vector = Float4_Normalize(CamLook);
-				m_fTurnAround_Time = 0.f;
-			}*/
-
 			m_bMove_Backward = true;
 			m_bMove = true;
 
@@ -340,9 +341,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	//if (UP == m_pGameInstance->Get_KeyState('Z'))
-	//	m_isCamTurn = !m_isCamTurn;
-
 	if (m_pCamera && false == m_isCamTurn)
 	{
 		Calc_Camera_LookAt_Point(fTimeDelta);
@@ -381,60 +379,14 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region 현진 추가
 
-#pragma region TEST
-
-	/*if (m_pGameInstance->Get_KeyState('T') == DOWN) {
-		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
-		Request_NextBiteAnimation(1);
-
-	}*/
-
-
-	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
-	//	Swap_Camera();
-	//	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-	//}
-
-	//static _int Test = -1;
-
-	//if (m_pGameInstance->Get_KeyState('Q') == DOWN) {
-	//	Test = 0;
-	//	Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 6);
-
-	//	if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2030")))) {
-	//		_float4x4 vWorldMatrix = m_pCamera->Get_Transform()->Get_WorldFloat4x4();
-	//		//vWorldMatrix.m[3][1] -= 2.f;
-	//		m_pCamera_Event->Get_Transform()->Set_WorldMatrix(vWorldMatrix);
-	//		Swap_Camera();
-	//	}
-	//	//if (ANIMSET_MOVE((_int)m_eAnimSet_Move + 1) >= COMMON)
-	//	//	Change_AnimSet_Move(FINE);
-	//	//else
-	//	//	Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
-	//}
-	//
-	//if (Test!= -1) {
-	//	if (m_pCamera_Event->m_isActive == false) {
-	//		if (Test == 0) {
-	//			Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 27);
-	//			Test = -1;
-	//			if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2610")))) {
-	//				//m_pCamera_Event->Get_Transform()->Set_WorldMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-	//				Swap_Camera();
-	//			}
-	//		}
-	//	}
-	//}
-
-#pragma endregion
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
 
-
 	Update_KeyInput_Reload();
 	Update_LightCondition();
 	Update_Equip();
+	Update_FootStep_Sound();
 
 #pragma endregion
 
@@ -446,8 +398,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	Tick_Effect(fTimeDelta);
 #pragma endregion
 
-	//cout << m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
+	m_pGameInstance->Set_Player_Collider(m_iCurCol);
 
+	m_pGameInstance->Set_Player_Dir(m_iDir);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -666,7 +619,6 @@ void CPlayer::Player_First_Behavior()
 	}
 }
 
-/* 쓸 Selector를 선택한다 */
 CGameObject* CPlayer::Create_Selector_UI()
 {
 	for (auto& iter : m_SelectorVec)
@@ -684,22 +636,7 @@ CGameObject* CPlayer::Create_Selector_UI()
 
 void CPlayer::Player_Mission_Timer(_float fTimeDelta)
 {
-	if (false == m_isFlod_EntranceDoor)
-	{
-		m_isMissionTimer += fTimeDelta;
-
-		if(m_isMissionTimer >= 2.f)
-		{
-			if(false == m_MissionCollection[MISSION_TYPE::FOLD_ENTRANCE_MISSION])
-			{
-				MissionClear_Font(TEXT("경찰서로 이동하기"), static_cast<_ubyte>(MISSION_TYPE::FOLD_ENTRANCE_MISSION));
-				
-				m_isMissionTimer = 0.f;
-			}
-		}
-	}
-
-	else if (true == m_isFlod_EntranceDoor)
+	if (true == m_isFlod_EntranceDoor)
 	{
 		if (false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
 		{
@@ -977,8 +914,6 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-		//m_pGameInstance->PlaySoundEffect_2D(폴더명, 파일명, 체널, 볼륨); 이 체널에 넣어주세요
-		//m_pGameInstance->PlaySoundEffect_2D(폴더명, 파일명, 볼륨); 체널 상관없이 알아서 넣어주세요
 		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
@@ -1000,7 +935,7 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
-		Change_Sound_3D(TEXT("Sound_Player_STG_Shot"), 0, 0);
+		Change_Sound_3D(TEXT("Sound_Player_STG_Shot"), 2, 0);
 		break;
 	}
 	}
@@ -1479,22 +1414,7 @@ void CPlayer::Update_Equip()
 					}
 				}
 			}
-
-
 		}
-
-		//// test
-		//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-		//	Requst_Change_Equip(HG);
-		//}
-
-		//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-		//	Requst_Change_Equip(STG);
-		//}
-
-		//if (m_pGameInstance->Get_KeyState('6') == DOWN) {
-		//	Requst_Change_Equip(NONE);
-		//}
 	}
 }
 
@@ -1593,6 +1513,58 @@ void CPlayer::Update_Direction()
 		dwDirection |= DIRECTION_RIGHT;
 
 	m_dwDirection = dwDirection;
+}
+
+void CPlayer::Update_FootStep_Sound()
+{
+	if (m_eState == BITE)
+		return ;
+
+	_float4				vL_Ball_Position_Local_Float3 = { *(_float4*)(&m_pL_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
+	_float4				vR_Ball_Position_Local_Float3 = { *(_float4*)(&m_pR_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
+	_float4				vRoot_Position_Local_Float3 = { *(_float4*)(&m_pRoot_Combined->m[CTransform::STATE_POSITION][0]) };
+
+	_float				fL_Ball_Height = { vL_Ball_Position_Local_Float3.y };
+	_float				fR_Ball_Height = { vR_Ball_Position_Local_Float3.y };
+	_float				fRootHeight = { vRoot_Position_Local_Float3.y };
+
+	_float				fDistanceYToLBall = { fL_Ball_Height - fRootHeight };
+	_float				fDistanceYToRBall = { fR_Ball_Height - fRootHeight };
+
+	_float				fRange = { 12.f };
+
+	static _bool m_isUp_L_Leg = false;
+	static _bool m_isUp_R_Leg = false;
+
+	static _float fPrevDistanceYToLBall = {};
+	static _float fPrevDistanceYToRBall = {};
+
+	if (fRange < fDistanceYToLBall &&
+		fRange >= fPrevDistanceYToLBall)
+	{
+		m_isUp_L_Leg = true;
+	}
+
+	if (fRange < fDistanceYToRBall &&
+		fRange >= fPrevDistanceYToRBall)
+	{
+		m_isUp_R_Leg = true;
+	}
+
+	if (fRange > fDistanceYToLBall && true == m_isUp_L_Leg)
+	{
+		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 9, 4);
+		m_isUp_L_Leg = false;
+	}
+
+	if (fRange > fDistanceYToRBall && true == m_isUp_R_Leg)
+	{
+		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 9, 4);
+		m_isUp_R_Leg = false;
+	}
+
+	fPrevDistanceYToLBall = fDistanceYToLBall;
+	fPrevDistanceYToRBall = fDistanceYToRBall;
 }
 
 void CPlayer::Turn_Spine_Default(_float fTimeDelta)
@@ -1944,14 +1916,6 @@ void CPlayer::Interact_Props(CGameObject* pPickedUp_Item)
 	m_isCamTurn = true;
 }
 
-
-//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
-//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
-//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
-// 
-//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
-//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
-
 void CPlayer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
 {
 	switch (eCallItemType)
@@ -2007,6 +1971,8 @@ void CPlayer::RayCast_Shoot()
 	_float4 vBlockNormal;
 	_bool	bHit_Props = false;
 
+	_bool isHit = false; // 사운드 재생용 Hit 성공 체크
+
 	if (m_eEquip == STG)
 	{
 		auto vCamPos = m_pCamera->GetPosition();
@@ -2035,7 +2001,7 @@ void CPlayer::RayCast_Shoot()
 		}
 		else
 		{
-			m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, true, true, &bHit_Props);
+			isHit = m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, true, true, &bHit_Props);
 		}
 
 		for (size_t i = 0; i < SHOTGUN_BULLET_COUNT; ++i)
@@ -2105,10 +2071,35 @@ void CPlayer::RayCast_Shoot()
 			return;
 		}
 
-		if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props))
-		{
-		}
+		isHit = m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props);
+
 	}
+
+	if (1 &&		// 조건 들어갈 예정 : 형준형의 변수 들어감
+		!isHit) {
+		wstring strSoundTag;
+		_int iRandCnt;
+		switch (m_iHp) {
+		case 5:
+			strSoundTag = TEXT("Fine");
+			iRandCnt = 6;
+			break;
+		case 4:
+		case 3:
+			strSoundTag = TEXT("Caution");
+			iRandCnt = 5;
+			break;
+		case 2:
+		case 1:
+			strSoundTag = TEXT("Danger");
+			iRandCnt = 6;
+			break;
+		}
+
+		strSoundTag = TEXT("Sound_Player_Abuse_") + strSoundTag;
+		Change_Sound_3D(strSoundTag, iRandCnt, 3);
+	}
+
 }
 
 #pragma endregion

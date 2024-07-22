@@ -40,6 +40,7 @@ public:
 	{
 		m_FrameDelay = Rate;
 	}
+	virtual void			PlaySound() {}
 protected:
 	_float					m_fSizeX = { 0.f };
 	_float					m_fSizeY = { 0.f };
@@ -75,6 +76,8 @@ protected:
 	_float					m_fDissolveAmount = { 0.f };
 	_bool					m_bDissolving = { false };
 	_float					m_fDissolveSpeed = { 0.f };
+
+	_bool					m_bPlaySound = { false };
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

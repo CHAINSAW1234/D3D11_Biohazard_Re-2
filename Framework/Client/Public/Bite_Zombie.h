@@ -90,6 +90,8 @@ private:
 
 	_bool							m_isFrontFromPlayer = { false };
 
+	ANIM_BITE_DEFAULT_FRONT			m_eFront_Bite_Type;
+
 public:
 	static CBite_Zombie* Create(void* pArg = nullptr);
 

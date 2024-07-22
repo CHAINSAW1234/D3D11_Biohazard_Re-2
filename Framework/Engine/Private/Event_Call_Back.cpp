@@ -1,13 +1,14 @@
 #include "Event_Call_Back.h"
 #include "Rigid_Dynamic.h"
 #include "Character_Controller.h"
+#include "RagDoll_Physics.h"
 
 void CEventCallBack::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
 	for (physx::PxU32 i = 0; i < nbPairs; i++) {
 		const physx::PxContactPair& cp = pairs[i];
 
-		if (cp.events/* & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND*/) {
+		if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND) {
 			// 충돌한 첫 번째 객체
 			const PxRigidActor* actor0 = pairHeader.actors[0]->is<PxRigidActor>();
 			// 충돌한 두 번째 객체
@@ -29,31 +30,51 @@ void CEventCallBack::onContact(const PxContactPairHeader& pairHeader, const PxCo
 
 					auto GameInstance = CGameInstance::Get_Instance();
 
-					if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::COLLIDER))
-					{
-						auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData0.word3);
-
-						/*if (Rigid_Dynamic != nullptr)
-						{
-							auto Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetPosition(physx::PxVec3(0, 5, 0));
-							Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetUpdated(true);
-						}*/
-					}
-
-					if ((filterData0.word1 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::COLLIDER))
+#pragma region 탄피 소리
+					if ((filterData0.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 == (int)COLLISION_CATEGORY::EFFECT))
 					{
 						auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData1.word3);
 
-						/*if (Rigid_Dynamic != nullptr)
+						if (Rigid_Dynamic != nullptr)
 						{
-							auto Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetPosition(physx::PxVec3(0, 5, 0));
-							Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetUpdated(true);
-						}*/
+							Rigid_Dynamic->SetbPlaySound(true);
+						}
 					}
+
+					if ((filterData1.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 == (int)COLLISION_CATEGORY::EFFECT))
+					{
+						auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData0.word3);
+
+						if (Rigid_Dynamic != nullptr)
+						{
+							Rigid_Dynamic->SetbPlaySound(true);
+						}
+					}
+#pragma endregion
+
+#pragma region Ragdoll 소리
+					if ((filterData0.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 == (int)COLLISION_CATEGORY::RAGDOLL))
+					{
+						auto pRagdoll = GameInstance->Get_Ragdoll(filterData1.word2);
+
+						if (pRagdoll != nullptr)
+						{
+							COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData1.word3;
+							pRagdoll->PlaySound_Ragdoll(eType);
+						}
+					}
+
+					if ((filterData1.word0 == (int)COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 == (int)COLLISION_CATEGORY::RAGDOLL))
+					{
+						auto pRagdoll = GameInstance->Get_Ragdoll(filterData0.word2);
+
+						if (pRagdoll != nullptr)
+						{
+							COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData0.word3;
+							pRagdoll->PlaySound_Ragdoll(eType);
+						}
+					}
+#pragma endregion
 				}
 			}
 		}

@@ -137,6 +137,8 @@ public: /* For.Timer_Manager */
 #pragma region PipeLine
 public: /* For.PipeLine */
 	void									Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	void 									Set_Player_Collider(_int iCol);
+	void									Set_Player_Dir(_int iDir);
 	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight);
 	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, const wstring& strLightTag);
 	void									Set_CubeMap(CTexture* pTexture, _uint iIndex = 0);
@@ -159,6 +161,8 @@ public: /* For.PipeLine */
 	HRESULT									Bind_PrevCubeMapTexture(CShader* pShader, const _char* pConstantName);
 	HRESULT									Bind_CurCubeMapTexture(CShader* pShader, const _char* pConstantName);
 	_float*									Get_PBRLerpTime();
+	_int									Get_Player_Collider();
+	_int									Get_Player_Dir();
 #pragma endregion
 
 #pragma region Light_Manager
@@ -350,7 +354,7 @@ public:/*For Physics Controller*/
 	void									Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
-	void									Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,_int iId,PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
@@ -361,7 +365,8 @@ public:/*For Physics Controller*/
 	_bool									RayCast_Effect(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal,_bool bBigAttack,_bool* pDynamic, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
+	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform,ID3D11Device* pDevice,ID3D11DeviceContext* pContext, const string& name);
+	class CRagdoll_Physics*					Get_Ragdoll(_uint iId);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll, _uint iId);
 	void									Start_PartialRagdoll(class CRagdoll_Physics* pRagdoll, _uint iId, COLLIDER_TYPE eType);
 	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);

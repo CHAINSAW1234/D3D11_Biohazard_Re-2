@@ -14,6 +14,11 @@ public:
 	HRESULT										Initialize();
 	
 private:
+	HRESULT										SetUp_Effect_Doppler();
+	HRESULT										SetUp_Effect_HRTF();
+	HRESULT										SetUp_Effect_CrossFade();
+
+private:
 	HRESULT										Initialize_SoundDesc_2D();
 
 public:
@@ -21,7 +26,6 @@ public:
 	HRESULT										Update_Listener(class CTransform* pTransform, _float3 vVelocity);
 	HRESULT										Stop_Sound_3D(class CTransform* pTransform, _uint iSoundIndex);
 	HRESULT										Stop_All();
-
 
 public:
 	void										Change_Sound_3D(class CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex, _bool isCullSameSound = false);
