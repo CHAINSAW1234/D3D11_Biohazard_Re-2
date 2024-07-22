@@ -53,12 +53,12 @@ namespace Client
 		INCIDENT_LOG_NOTE,		//사건 일지
 		OPERATE_REPORT_NOTE,	//작전 보고서
 		TASK_NOTE,				//신입의 첫 번째 과제
-		MEDICINAL_NOTE, //약초의 의학적 효능
+		MEDICINAL_NOTE,			//약초의 의학적 효능
 		OFFICER_NOTE,			//경관의 노트
-		GUNPOWDER_NOTE, //화약 사용
-		FIX_LOCKER_NOTE, //물품 보관함 단말기 관련 쪽지
-		HAND_HELD_SAFE_NOTE, //휴대용 금고 지침
-		RICKER_NOTE, //만일의 생존자에게
+		GUNPOWDER_NOTE,			//화약 사용
+		FIX_LOCKER_NOTE,		//물품 보관함 단말기 관련 쪽지
+		HAND_HELD_SAFE_NOTE,	//휴대용 금고 지침
+		RICKER_NOTE,			 //만일의 생존자에게
 		SAFE_PASSWARD_NOTE, //내부용 쪽지
 		PAMPHLET_NOTE, //가이드 책자
 		EXAMIN_ITEM, //아이템 검사

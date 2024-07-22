@@ -24,12 +24,6 @@ HRESULT CLoading_UI::Initialize_Prototype()
 
 HRESULT CLoading_UI::Initialize(void* pArg)
 {
-    /* 
-    부모 : BackGround
-    자식 : 타자기 BackGround
-    의 자식 : 타자기 몸체, 타자기 머리
-    의 자식 : 타자기 머리에 텍스쳐
-    */
     wstring fileName = {};
 
     if (pArg != nullptr)
@@ -52,12 +46,6 @@ HRESULT CLoading_UI::Initialize(void* pArg)
     else if (fileName == TEXT("UI_Loading_bar"))
     {
         m_eLoadingType = LOADING_UI_TYPE::BAR_LOADING_UI;
-
-        _float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        fPos.y -= 10.f;
-
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, fPos);
     }
 
     else
@@ -115,6 +103,14 @@ HRESULT CLoading_UI::Initialize(void* pArg)
         }
     }
 
+    if (!m_vecTextBoxes.empty())
+    {
+        if (TEXT("100") == m_vecTextBoxes.back()->Get_Text())
+        {
+            m_isPercent = true;
+        }
+    }
+
     if (FAILED(Change_Tool()))
         return E_FAIL;
 
@@ -149,6 +145,21 @@ HRESULT CLoading_UI::Render()
 
 HRESULT CLoading_UI::Change_Tool()
 {
+    if (LOADING_UI_TYPE::BAR_LOADING_UI == m_eLoadingType)
+    {
+        _float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+       
+        fPos.x += 1.5f;
+        fPos.y -= 4.f;
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, fPos);
+
+        m_SavePos[0]._41 = fPos.x;
+        m_SavePos[0]._42 = fPos.y;
+        m_SavePos[0]._43 = fPos.z;
+        m_SavePos[0]._44 = fPos.w;
+    }
+
     return S_OK;
 }
 
@@ -179,12 +190,15 @@ void CLoading_UI::Typing_Head_Moving(_float fTimeDelta)
     if (m_fLoading_Timer <= TYPING_RETURN)
     {
         _float4 vPosition = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+        
         vPosition.x += 2.f;
+
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
 
         if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x >= m_fBody_Position.x)
         {
             vPosition.x = m_fBody_Position.x;
+           
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
         }
     }
@@ -192,13 +206,17 @@ void CLoading_UI::Typing_Head_Moving(_float fTimeDelta)
     else
     {
         _float4 vPosition = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+       
         vPosition.x -= 1.4f;
+        
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
 
         if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x <= m_vOrigin_Position.x)
         {
             m_fLoading_Timer = 0.f;
+            
             vPosition.x = m_vOrigin_Position.x;
+           
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
         }
     }
@@ -227,7 +245,9 @@ void CLoading_UI::Render_Text(_float fTimeDelta)
     if (m_fText_Timer >= TEXT_LIFE)
     {
         m_vecTextBoxes[m_iTextCnt]->Set_FontColor(m_vOriginTextColor);
+       
         m_iTextCnt++;
+        
         m_fText_Timer = 0.f;
     }
 }

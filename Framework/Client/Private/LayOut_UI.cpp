@@ -223,7 +223,7 @@ void CLayOut_UI::Typing_Menu_LayOut()
             switch ((MENU_HOVER_TYPE)m_iMenu_HoverType)
             {
             case MENU_HOVER_TYPE::UNMOUNTED_MENU :
-                iter->Set_Text(TEXT("장착된 무기를 해제합니다."));
+                iter->Set_Text(TEXT("아이템을 사용합니다."));
                 break;
 
             case MENU_HOVER_TYPE::INSPECTION_MENU:
@@ -235,11 +235,15 @@ void CLayOut_UI::Typing_Menu_LayOut()
                 break;
 
             case MENU_HOVER_TYPE::SHORTCUTS_MENU:
-                iter->Set_Text(TEXT("단축키를 등록합니다."));
+                iter->Set_Text(TEXT("아이템을 폐기합니다."));
                 break;
 
             case MENU_HOVER_TYPE::END_MENU:
                 iter->Set_Text(TEXT(""));
+                break;
+
+            default :
+                iter->Set_Text(TEXT("아이템을 사용합니다."));
                 break;
 
             }

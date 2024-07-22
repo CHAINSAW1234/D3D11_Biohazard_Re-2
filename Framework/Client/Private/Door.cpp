@@ -724,7 +724,14 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-		Opreate_Selector_UI(false, Get_Object_Pos());
+
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
+
 
 	}
 
@@ -1029,6 +1036,13 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
 
 	}
 

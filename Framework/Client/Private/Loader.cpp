@@ -180,7 +180,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 HRESULT CLoader::Start()
 {
 	EnterCriticalSection(&m_Critical_Section);
-
+	
 	HRESULT		hr = { 0 };
 
 	static int isStart = true;
@@ -197,11 +197,14 @@ HRESULT CLoader::Start()
 		g_Level = LEVEL_LOGO;
 		hr = Loading_For_Logo();
 		break;
+
 	case LEVEL_GAMEPLAY:
 		g_Level = LEVEL_GAMEPLAY;
 
 		if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 			return E_FAIL;
+
+		m_fPercent = 0.f;
 
 		hr = Loading_For_GamePlay();
 		break;
@@ -240,7 +243,6 @@ HRESULT CLoader::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	
 	return S_OK;
-
 }
 
 void CLoader::UI_Distinction(wstring& selectedFilePath)
@@ -387,7 +389,13 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 		MSG_BOX(TEXT("Failed to Add Clone"));
 
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
+	
 	CLoading_UI* pLoading = static_cast<CLoading_UI*>(pGameObj);
+
+	if (true == pLoading->Get_IsPercent())
+	{
+		pLoading->Set_Percent_Count(&m_fPercent);
+	}
 
 	m_eLoadingList.push_back(pLoading);
 
@@ -1396,6 +1404,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 
 	/* Read Texture*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadMap"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Map.png")))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document1"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/document01a.png")))))
 		return E_FAIL;
@@ -1429,7 +1441,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/rpddocument01a.png")))))
 		return E_FAIL;
-
 
 	/* TEXT TYPE */
 	/* 사건 일지 A INCIDENT_LOG_NOTE*/
@@ -2631,6 +2642,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #endif 
 #pragma endregion
+	m_fPercent = 100.f;
 
 	m_strLoadingText = TEXT("Loading Complete.");
 

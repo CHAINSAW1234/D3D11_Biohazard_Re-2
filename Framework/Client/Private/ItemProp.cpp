@@ -45,6 +45,7 @@ void CItemProp::Tick(_float fTimeDelta)
 	if (m_bDead)
 	{
 		m_bItemDead = true;
+
 		return;
 	}
 
@@ -74,10 +75,26 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (m_bDead)
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+			m_pSelector = nullptr;
+		}
+
 		return;
+	}
 
 	if (!Visible())
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+			m_pSelector = nullptr;
+		}
 		return;
+	}
+
 	if (m_bRender == false)
 		return;
 	else
@@ -125,7 +142,6 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 		}
 	}
-	
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -206,10 +222,15 @@ HRESULT CItemProp::Bind_ShaderResources()
 
 _float4 CItemProp::Get_Object_Pos()
 {
+	//if (!m_bDead)
+	//	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+	//else
+	//	return _float4();
+
 	if (!m_bDead)
-		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+		return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	else
-		return _float4();
+		return  _float4();
 }
 
 void CItemProp::Active()
