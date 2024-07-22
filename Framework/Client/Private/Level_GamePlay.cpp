@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Public\Level_GamePlay.h"
+#include "Level_GamePlay.h"
 
 #include "Camera_Free.h"
 #include "Zombie.h"
@@ -20,6 +20,10 @@
 #include"EnvCube.h"
 #include "ImGui_Manager.h"
 
+/*Sound*/
+#include"EnvSound.h"
+
+
 /* Manager */
 #include "Call_Center.h"
 
@@ -38,6 +42,9 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 	
 	if (FAILED(Ready_Lights()))
+		return E_FAIL;
+
+	if (FAILED(Ready_EnvSounds()))
 		return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Camera(g_strCameraTag)))
@@ -156,7 +163,15 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_EnvSounds()
+{
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_EnvSounds"), TEXT("Prototype_GameObject_EnvSound"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1671,6 +1686,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 	CloseHandle(hFile);
 	return S_OK;
 }
+
 
 HRESULT CLevel_GamePlay::SetUp_DeadMonsters()
 {

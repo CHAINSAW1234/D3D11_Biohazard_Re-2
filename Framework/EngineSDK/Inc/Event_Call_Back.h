@@ -105,18 +105,6 @@ static physx::PxFilterFlags MegamotionFilterShader(
 
 class CEventCallBack : public PxSimulationEventCallback {
 public:
-	/*virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override {
-		for (physx::PxU32 i = 0; i < nbPairs; i++)
-		{
-			const physx::PxContactPair& cp = pairs[i];
-
-			if (cp.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				int a = 0;
-			}
-		}
-	}*/
-
 	virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override;
 	// 다른 이벤트 콜백 함수들은 사용하지 않으므로 빈 구현으로 남겨둡니다.
 	virtual void onTrigger(PxTriggerPair*, PxU32) override {}

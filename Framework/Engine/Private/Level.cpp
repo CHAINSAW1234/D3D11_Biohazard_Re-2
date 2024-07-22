@@ -364,7 +364,27 @@ HRESULT CLevel::Load_Light(const wstring& strFilePath, _uint iLevel)
 				CloseHandle(hLightLayerFile);
 				return E_FAIL;
 			}
+			//¹æÄÃ¸µ
+			_uint iSize;
+			if (!ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, NULL))
+			{
+				CloseHandle(hFile);
 
+				return E_FAIL;
+			}
+			tagLight_desc.BelongNumVec.resize(iSize);
+			for (size_t i = 0; i < iSize; i++)
+			{
+				_int iNum = { 0 };
+
+				if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
+				{
+					CloseHandle(hFile);
+
+					return E_FAIL;
+				}
+				tagLight_desc.BelongNumVec[i] = iNum;
+			}
 
 			switch (tagLight_desc.eType)
 			{
