@@ -158,14 +158,20 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 		{
 			switch (m_eContextType)
 			{
+			case Client::FULL_SLOT_COMBINABLE_PICKED_UP:
+			case Client::HOTKEY:
+			case Client::DOCUMENT:
+			case Client::UNCOMBINABLE_PICKED_UP:
+			case Client::COMBINABLE_PICKED_UP:
 			case Client::EQUIPABLE:
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
-				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
-				break;
 			case Client::CONSUMABLE_EQUIPABLE:
+			case Client::CONSUMABLE:
+			case Client::QUEST:
 				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
 				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
 				break;
+
+			case Client::INTERACT:
 			case Client::USEABLE:
 				if (true == m_isActive) {
 					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
@@ -175,20 +181,10 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Denied.mp3"), 0.5f);
 				}
 				break;
-			case Client::CONSUMABLE:
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
-				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
-				break;
-			case Client::QUEST:
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
-				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
-				break;
 
 			default:
 				break;
 			}
-
-
 		}
 
 #pragma region ³ª¿Ë
