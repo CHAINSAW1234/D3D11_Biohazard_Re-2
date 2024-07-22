@@ -63,6 +63,8 @@ private:
 
 	_bool				m_bStop = { true };
 
+	_float				m_fPreRadian = { 0.f };
+
 	_float4x4			m_matMoveCenter = {};
 
 private:
