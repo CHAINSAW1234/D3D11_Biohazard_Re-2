@@ -33,6 +33,8 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 
 	m_bRender = false;
 
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
+
 	return S_OK;
 }
 
@@ -93,6 +95,20 @@ void CDecal_SSD::LookAt(_float4 vDir)
 
 	m_vNormal = vDir;
 	m_pTransformCom->Look_At(XMLoadFloat4(&vPos));
+
+	PlaySound();
+}
+
+void CDecal_SSD::PlaySound()
+{
+	const wchar_t* str = L"Blood_";
+	wchar_t result[32];
+	_int inum = m_pGameInstance->GetRandom_Int(0, 10);
+
+	std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, 0);
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 0, 0.2f);
 }
 
 HRESULT CDecal_SSD::Add_Components()

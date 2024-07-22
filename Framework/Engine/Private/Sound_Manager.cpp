@@ -20,10 +20,47 @@ HRESULT CSound_Manager::Initialize()
 
 	ZeroMemory(m_pChannelArr, sizeof(FMOD_CHANNEL*) * SOUND_CHANNEL_MAX);
 
+	if (FAILED(SetUp_Effect_Doppler()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_Effect_HRTF()))
+		return E_FAIL;	
+
 	LoadSoundFile();
 	//LoadSoundFile_Zombie();
 
 	return S_OK;
+}
+
+HRESULT CSound_Manager::SetUp_Effect_Doppler()
+{
+	FMOD_RESULT eResult = { FMOD_OK };
+
+	_float				fDopplerScale = { 1.f };
+	_float				fDistanceFactor = { 1.f };
+	_float				fRolloffScale = { 1.f };
+	eResult = FMOD_System_Set3DSettings(m_pSystem, fDopplerScale, fDistanceFactor, fRolloffScale);
+	if (eResult != FMOD_OK)
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSound_Manager::SetUp_Effect_HRTF()
+{
+
+	//// Advanced Settings Àû¿ë
+	//eResult = FMOD_System_SetAdvancedSettings(m_pSystem, &advSettings);
+	//if (eResult != FMOD_OK) {
+	//	printf("FMOD Error: %s\n", FMOD_ErrorString(eResult));
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSound_Manager::SetUp_Effect_CrossFade()
+{
+	return E_NOTIMPL;
 }
 
 

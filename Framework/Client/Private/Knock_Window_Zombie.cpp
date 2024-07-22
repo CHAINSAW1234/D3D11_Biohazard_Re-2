@@ -128,6 +128,7 @@ _bool CKnock_Window_Zombie::Execute(_float fTimeDelta)
 	{
 		m_fAccKnockTime -= ZOMBIE_ATTACK_WINDOW_NEED_TIME;
 		pWindow->Attack_Prop();
+		m_pBlackBoard->Get_AI()->Play_Random_Knock_Window_Sound();
 	}
 
 	if (m_fAccLinearInterpolateTime < ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME)

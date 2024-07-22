@@ -95,7 +95,7 @@ public://For Mesh Cooking
 	void												Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
-	void												Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
+	void												Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,_int iId,PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void												Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void												Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,_bool bHasCollider);
@@ -188,12 +188,13 @@ private:
 
 #pragma region Ragdoll
 public:
-	class CRagdoll_Physics*								Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
+	class CRagdoll_Physics*								Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name);
 	void												Start_Ragdoll(class CRagdoll_Physics* pRagdoll,_uint iId);
 	void												Start_PartialRagdoll(class CRagdoll_Physics* pRagdoll,_uint iId,COLLIDER_TYPE eType);
 	void												SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void												SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);
 	void												SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix);
+	class CRagdoll_Physics*								GetRagdoll(_uint iId);
 private://RagDoll
 	_bool												m_bRagdoll = { false };
 	vector<class CRagdoll_Physics*>						m_vecRagdoll = { nullptr };

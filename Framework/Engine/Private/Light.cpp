@@ -8,7 +8,9 @@ CLight::CLight()
 
 HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
-	LIGHT_DESC* pNewDesc = new LIGHT_DESC;
+	LIGHT_DESC* pNewDesc = new LIGHT_DESC();
+	//ZeroMemory(pNewDesc, sizeof(LIGHT_DESC));
+
 	pNewDesc->bRender = desc.bRender;
 	pNewDesc->bShadow = desc.bShadow;
 	pNewDesc->eType = desc.eType;
@@ -20,8 +22,8 @@ HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _fl
 	pNewDesc->vDirection = desc.vDirection;
 	pNewDesc->vPosition = desc.vPosition;
 	pNewDesc->vSpecular = desc.vSpecular;
-	pNewDesc->BelongNumVec = desc.BelongNumVec; //vec로 받고
-
+	pNewDesc->BelongNumVec = vector<_int>(desc.BelongNumVec); //vec로 받고
+	
 	for (auto iter : pNewDesc->BelongNumVec) // 실제로 사용할 배열에 넣는다.
 	{
 		pNewDesc->BelongNum[iter] = true;
@@ -179,6 +181,79 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 		pVIBuffer->Render();
 	}
+	return S_OK;
+}
+
+HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer, _uint iIndex)
+{
+	if (iIndex >= m_Lights.size())
+		return E_FAIL;
+	
+	auto iter = m_Lights.begin();
+	advance(iter, iIndex);
+
+	LIGHT_DESC eDesc = **iter;
+
+	if (eDesc.bRender == false)
+		return S_OK;
+
+	_uint		iPassIndex = { 0 };
+
+	if (LIGHT_DESC::TYPE_DIRECTIONAL == eDesc.eType)
+	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_DIRECTIONAL;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &eDesc.vDirection, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &eDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+	}
+
+	else if (LIGHT_DESC::TYPE_POINT == eDesc.eType)
+	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_POINT;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &eDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &eDesc.fRange, sizeof(_float))))
+			return E_FAIL;
+
+	}
+	else if (LIGHT_DESC::TYPE_SPOT == eDesc.eType)
+	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_SPOT;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &eDesc.vDirection, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &eDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &eDesc.fRange, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fCutOff", &eDesc.fCutOff, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fOutCutOff", &eDesc.fOutCutOff, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &eDesc.vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_RawValue("g_vLightAmbient", &eDesc.vAmbient, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_RawValue("g_vLightSpecular", &eDesc.vSpecular, sizeof(_float4))))
+		return E_FAIL;
+
+
+	if(FAILED(pShader->Begin(iPassIndex)))
+		return E_FAIL;
+
+	if (FAILED(pVIBuffer->Render()))
+		return E_FAIL;
+
 	return S_OK;
 }
 

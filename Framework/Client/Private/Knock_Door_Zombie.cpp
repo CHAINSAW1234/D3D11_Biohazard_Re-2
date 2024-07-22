@@ -183,6 +183,7 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 				{
 					m_LoopTrack_Event_Level = LOOP_TRACK_EV_LEVEL::_HIT_1;
 					pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+					m_pBlackBoard->Get_AI()->Play_Random_Knock_Door_Sound();
 				}
 			}
 
@@ -192,6 +193,7 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 				{
 					m_LoopTrack_Event_Level = LOOP_TRACK_EV_LEVEL::_HIT_2;
 					pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+					m_pBlackBoard->Get_AI()->Play_Random_Knock_Door_Sound();
 				}
 			}
 		}
@@ -202,6 +204,7 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 			{
 				m_eAnimState = ANIM_STATE::_END;
 				pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+				m_pBlackBoard->Get_AI()->Play_Random_Knock_Door_Sound();
 				return false;
 			}
 		}

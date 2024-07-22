@@ -30,8 +30,7 @@ public:
 			return nullptr;
 
 		return m_Callers[static_cast<_uint>(eCaller)];
-	}
-	
+	}	
 	HRESULT							Add_Caller(CGameObject* pGameObject, CALLER eCaller)
 	{
 		if (eCaller >= CALLER::_END)
@@ -46,9 +45,15 @@ public:
 
 		return S_OK;
 	}
+
+public:
+	_bool							Is_Focus_Player();
+
+	void							Set_Focus_Player() { m_isFocusPlayer = true; }
 	
 private:
 	vector<CGameObject*>			m_Callers;
+	_bool							m_isFocusPlayer = { false };
 
 public:
 	virtual void Free() override;

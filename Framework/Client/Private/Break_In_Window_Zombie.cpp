@@ -144,6 +144,8 @@ void CBreak_In_Window_Zombie::Exit()
 	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 	m_pBlackBoard->Get_AI()->Set_OutDoor(false);
 	m_pBlackBoard->Release_Nearest_Window();
+
+	m_pBlackBoard->Get_AI()->Play_Random_Drop_Body_Sound();
 }
 
 void CBreak_In_Window_Zombie::Change_Animation()

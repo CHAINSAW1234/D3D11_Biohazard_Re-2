@@ -56,6 +56,9 @@ void COpen_Door_Zombie::Enter()
 
 	pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
 	Change_Animation();
+
+	m_pBlackBoard->Get_AI()->Play_Random_Open_Door_Sound();
+
 	m_isDummyDoor = false;
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 	//	m_fAccLinearInterpolateTime = 0.f;

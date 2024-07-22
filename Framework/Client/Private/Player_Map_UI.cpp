@@ -149,7 +149,7 @@ void CPlayer_Map_UI::Rendering()
     Map_Player_Setting();
 }
 
-/* Map Player와 Main Map 객체들의 거리를 재는 것을 전부 끝냈느냐? */
+/* 거리 재기 */
 _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
 {
     list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
@@ -161,7 +161,7 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
 
         if (nullptr != pMapMain)
         {
-            if (true == _find) /* 거리 재기 끝 */
+            if (true == _find)
             {
                 if (*pMapMain->Distance_End_Ptr() == false)
                     return false;
@@ -174,7 +174,7 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
 
         else if (nullptr != pMapItem)
         {
-            if (true == _find) /* 거리 재기 끝 */
+            if (true == _find)
             {
                 if (*pMapItem->Distance_ItemEnd() == false)
                     return false;

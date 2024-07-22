@@ -9,6 +9,15 @@ CCall_Center::CCall_Center()
 	m_Callers.resize(static_cast<_uint>(CALLER::_END));
 }
 
+_bool CCall_Center::Is_Focus_Player()
+{
+	_bool			isFocusPlayer = { m_isFocusPlayer };
+	
+	m_isFocusPlayer = false;
+
+	return isFocusPlayer;
+}
+
 void CCall_Center::Free()
 {
 	__super::Free();

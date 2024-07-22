@@ -38,6 +38,8 @@ HRESULT CSG_Cartridge::Initialize(void* pArg)
 	m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic(m_pModelCom, m_pTransformCom, &m_iIndex_RigidBody, this);
 	m_pRigid_Dynamic->SetKinematic(true);
 
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
+
 	return S_OK;
 }
 
@@ -46,6 +48,15 @@ void CSG_Cartridge::Tick(_float fTimeDelta)
 	if (m_pGameInstance->IsPaused())
 	{
 		return;
+	}
+
+	if (m_bPlaySound == false)
+	{
+		if (m_pRigid_Dynamic->GetbPlaySound())
+		{
+			m_bPlaySound = true;
+			PlaySound();
+		}
 	}
 
 	if (m_bRender == false)
@@ -120,6 +131,17 @@ HRESULT CSG_Cartridge::Render()
 	return S_OK;
 }
 
+void CSG_Cartridge::PlaySound()
+{
+	const wchar_t* str = L"HG_Cartridge_";
+	wchar_t result[32];
+	_int inum = m_pGameInstance->GetRandom_Int(0, 10);
+
+	std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, 0);
+}
+
 void CSG_Cartridge::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 {
 	
@@ -163,6 +185,10 @@ void CSG_Cartridge::Initiate(_float4 vPos, _float4 vDir, _float4 vLook)
 
 	m_pRigid_Dynamic->SetKinematic(false);
 	m_pRigid_Dynamic->AddForce(m_vDir);
+
+	m_bPlaySound = false;
+
+	m_pRigid_Dynamic->SetbPlaySound(false);
 }
 
 HRESULT CSG_Cartridge::Add_Components()

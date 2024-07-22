@@ -35,12 +35,9 @@ _bool CFoot_Sound_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion	
 
-	if (CZombie::POSE_STATE::_UP != m_pBlackBoard->Get_AI()->Get_PoseState())
-		return true;
-
 	if (false == m_isStart)
 	{
-		CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 		if (nullptr == pBody_Model)
 			return false;
 
@@ -60,43 +57,68 @@ _bool CFoot_Sound_Zombie::Execute(_float fTimeDelta)
 		m_isStart = true;
 	}
 
-	_float4				vL_Ball_Position_Local_Float3 = { Get_Current_L_Ball_Position_Local() };
-	_float4				vR_Ball_Position_Local_Float3 = { Get_Current_R_Ball_Position_Local() };
-	_float4				vRoot_Position_Local_Float3 = { Get_Current_Root_Position_Local()};
-
-	_float				fL_Ball_Hegiht = { vL_Ball_Position_Local_Float3.y };
-	_float				fR_Ball_Hegiht = { vR_Ball_Position_Local_Float3.y };
-	_float				fRootHeight = { vRoot_Position_Local_Float3.y };
-
-	_float				fDistanceYToLBall = { fL_Ball_Hegiht - fRootHeight };
-	_float				fDistanceYToRBall = { fR_Ball_Hegiht - fRootHeight };
-
-	_float				fRange = { 6.f };
-
-	if (fRange < fDistanceYToLBall)
+	if (CZombie::POSE_STATE::_UP != m_pBlackBoard->Get_AI()->Get_PoseState())
 	{
-		m_isUp_L_Leg = true;
+		_float4				vL_Ball_Position_Local_Float3 = { Get_Current_L_Ball_Position_Local() };
+		_float4				vR_Ball_Position_Local_Float3 = { Get_Current_R_Ball_Position_Local() };
+		_float4				vRoot_Position_Local_Float3 = { Get_Current_Root_Position_Local() };
+
+		_float				fL_Ball_Hegiht = { vL_Ball_Position_Local_Float3.y };
+		_float				fR_Ball_Hegiht = { vR_Ball_Position_Local_Float3.y };
+		_float				fRootHeight = { vRoot_Position_Local_Float3.y };
+
+		_float				fDistanceYToLBall = { fL_Ball_Hegiht - fRootHeight };
+		_float				fDistanceYToRBall = { fR_Ball_Hegiht - fRootHeight };
+
+		_float				fRange = { 6.f };
+
+		if (fRange < fDistanceYToLBall)
+		{
+			m_isUp_L_Leg = true;
+		}
+
+		if (fRange < fDistanceYToRBall)
+		{
+			m_isUp_R_Leg = true;
+		}
+
+		if (fRange > fDistanceYToLBall && true == m_isUp_L_Leg)
+		{
+			m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
+			m_isUp_L_Leg = false;
+		}
+
+		if (fRange > fDistanceYToRBall && true == m_isUp_R_Leg)
+		{
+			m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
+			m_isUp_R_Leg = false;
+		}
+
+		m_vPre_L_Ball_Position_Local = vL_Ball_Position_Local_Float3;
+		m_vPre_R_Ball_Position_Local = vR_Ball_Position_Local_Float3;
 	}
 
-	if (fRange < fDistanceYToRBall)
+	else
 	{
-		m_isUp_R_Leg = true;
+		MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+		if (eMonsterState == MONSTER_STATE::MST_WALK_LOST)
+		{
+			m_fAccCreepFootSoundCool += fTimeDelta;
+			if (m_fAccCreepFootSoundCool >= m_fTotalCreepFootSoundTime)
+			{
+				m_fAccCreepFootSoundCool = 0.f;
+				m_fTotalCreepFootSoundTime = m_pGameInstance->GetRandom_Real(2.f, 3.f);
+				m_pBlackBoard->Get_AI()->Play_Random_Foot_Creep_Sound();
+			}
+		}
+		else
+		{
+			m_fAccCreepFootSoundCool = 0.f;
+		}
 	}
+	
 
-	if (fRange > fDistanceYToLBall && true == m_isUp_L_Leg)
-	{
-		m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
-		m_isUp_L_Leg = false;
-	}
-
-	if (fRange > fDistanceYToRBall && true == m_isUp_R_Leg)
-	{
-		m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
-		m_isUp_R_Leg = false;
-	}
-
-	m_vPre_L_Ball_Position_Local = vL_Ball_Position_Local_Float3;
-	m_vPre_R_Ball_Position_Local = vR_Ball_Position_Local_Float3;
+	
 
 	return true;
 }

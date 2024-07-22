@@ -304,7 +304,7 @@ void CHPBar_UI::Change_HP(HP_TYPE _type)
     }
     else if (HP_TYPE::CAUTION == _type)
     {
-        m_vCurrentColor = _float4(0.714f, 0.404f, 0.071f, 0.f);
+        m_vCurrentColor = _float4(1.f, 0.618f, 0.2f, 0.f);
         m_vLightMask_Color = _float4(1.f, 0.518f, 0.f, 0.f);
 
         if (nullptr != pText)
@@ -321,8 +321,8 @@ void CHPBar_UI::Change_HP(HP_TYPE _type)
     }
     else if (HP_TYPE::DANGER == _type)
     {
-        m_vCurrentColor = _float4(0.651f, 0.11f, 0.11f, 0.f);
-        m_vLightMask_Color = _float4(1.f, 0.f, 0.f, 0.f);
+        m_vCurrentColor = _float4(1.0f, 0.f, 0.0f, 0.0f);
+        m_vLightMask_Color = _float4(0.8f, 0.f, 0.f, 0.f);
 
         if (nullptr != pText)
         {

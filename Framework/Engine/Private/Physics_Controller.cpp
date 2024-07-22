@@ -12,6 +12,9 @@
 #include "SoftBody.h"
 #include "Rigid_Static.h"
 
+//#define OLD_RAYCAST
+#define NEW_RAYCAST
+
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
 	Safe_AddRef(m_pGameInstance);
@@ -54,33 +57,12 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
 #pragma endregion
 
-#pragma region GPU 가속 설정 - SoftBody
-	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
-	//sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
-	//sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
-
-	//sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
-	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
-	//sceneDesc.gpuMaxNumPartitions = 8;
-
-	//PxCudaContextManagerDesc cudaContextManagerDesc;
-	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
-	//if (!m_CudaContextManager->contextIsValid())
-	//{
-	//	m_CudaContextManager->release();
-	//	m_CudaContextManager = NULL;
-	//}
-
-	//sceneDesc.solverType = PxSolverType::ePGS;
-	//sceneDesc.cudaContextManager = m_CudaContextManager;
-#pragma endregion
-
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
 	m_FilterCallBack = new CFilterCallBack();
 	sceneDesc.filterCallback = m_FilterCallBack;
+	sceneDesc.simulationEventCallback = m_EventCallBack;
 	m_Scene = m_Physics->createScene(sceneDesc);
-	m_Scene->setSimulationEventCallback(m_EventCallBack);
 
 	//Init - For Pvd
 	m_PvdClient = m_Scene->getScenePvdClient();
@@ -103,35 +85,6 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
 	m_vecRagdoll.clear();
-
-
-#pragma region SoftBody 생성 임시 코드
-	/*PxCookingParams cookingParams(m_Physics->getTolerancesScale());
-	cookingParams.meshWeldTolerance = 0.001f;
-	cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES);
-	cookingParams.buildTriangleAdjacencies = false;
-	cookingParams.buildGPUData = true;
-
-	PxArray<PxVec3> triVerts;
-	PxArray<PxU32> triIndices;
-	PxReal maxEdgeLength = 1;
-
-	createCube(triVerts, triIndices, PxVec3(0, 9.5, 0), 2.5);
-	PxRemeshingExt::limitMaxEdgeLength(triIndices, triVerts, maxEdgeLength);
-	PxSoftBody* softBodyCube = Create_SoftBody_Debug(cookingParams, triVerts, triIndices);
-
-	createSphere(triVerts, triIndices, PxVec3(0, 4.5, 0), 2.5, maxEdgeLength);
-	PxSoftBody* softBodySphere = Create_SoftBody_Debug(cookingParams, triVerts, triIndices);
-
-	PxReal halfExtent = 1;
-	PxVec3 cubePosA(0, 7.25, 0);
-	PxVec3 cubePosB(0, 11.75, 0);
-	PxRigidDynamic* rigidCubeA = Create_RigidCube(halfExtent, cubePosA);
-	PxRigidDynamic* rigidCubeB = Create_RigidCube(halfExtent, cubePosB);
-
-	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodySphere);
-	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);*/
-#pragma endregion
 
 	m_vecBlockNormals_Props.clear();
 	m_vecBlockPoints_Props.clear();
@@ -247,7 +200,7 @@ CRigid_Dynamic* CPhysics_Controller::Create_Rigid_Dynamic(CModel* pModel, CTrans
 	pRigid_Dynamic->SetIndex(m_iRigid_Dynamic_Count);
 	pRigid_Dynamic->SetObject(pObj);
 	m_vecRigid_Dynamic.push_back(pRigid_Dynamic);
-	pModel->Convex_Mesh_Cooking_RigidDynamic(pRigid_Dynamic->GetRigidDynamic_DoublePtr(), pTransform);
+	pModel->Convex_Mesh_Cooking_RigidDynamic(pRigid_Dynamic->GetRigidDynamic_DoublePtr(), m_iRigid_Dynamic_Count, pTransform);
 
 	if (m_vecRigid_Dynamic.size() >= 2)
 	{
@@ -607,7 +560,7 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 	pTransforms->push_back(transform);
 }
 
-void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, PxRigidDynamic** pCollider, CTransform* pTransform)
+void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, _int iId,PxRigidDynamic** pCollider, CTransform* pTransform)
 {
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
 
@@ -662,8 +615,8 @@ void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uin
 	PxShape* shape = m_Physics->createShape(geometry, *material);
 
 	PxFilterData StaticMeshFilter;
-	StaticMeshFilter.word0 = COLLISION_CATEGORY::COLLIDER;
-	StaticMeshFilter.word3 = IndexNum;
+	StaticMeshFilter.word0 = COLLISION_CATEGORY::EFFECT;
+	StaticMeshFilter.word3 = iId;
 	shape->setSimulationFilterData(StaticMeshFilter);
 
 	body->attachShape(*shape);
@@ -951,7 +904,7 @@ void CPhysics_Controller::Config_SoftBody(PxSoftBody* softBody, const PxFEMParam
 	PX_PINNED_HOST_FREE(m_CudaContextManager, restPositionPinned);
 }
 
-CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
+CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name)
 {
 	//Ragdoll Init
 	auto pRagdoll = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
@@ -959,7 +912,7 @@ CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecB
 
 	pRagdoll->SetBone_Ragdoll(vecBone);
 	pRagdoll->SetTransform(pTransform);
-	pRagdoll->Init(name);
+	pRagdoll->Init(name,pDevice,pContext);
 
 	m_vecRagdoll.push_back(pRagdoll);
 
@@ -1012,6 +965,11 @@ void CPhysics_Controller::SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix)
 {
 	/*if (nullptr != m_pRagdoll_Physics)
 		m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);*/
+}
+
+CRagdoll_Physics* CPhysics_Controller::GetRagdoll(_uint iId)
+{
+	return m_vecRagdoll[iId-1];
 }
 
 CRigid_Static* CPhysics_Controller::Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh)
@@ -1295,7 +1253,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxRaycastBufferN<maxHits> hit;
 
 	PxQueryFilterData filterData;
-	filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+	filterData.flags = PxQueryFlag::eDYNAMIC /*| PxQueryFlag::eSTATIC*/;
 
 	auto Filter = QueryFilterCallback_Ray();
 
@@ -1303,6 +1261,8 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 	_vector OriginVector = XMLoadFloat4(&vOrigin);
 
+#ifdef NEW_RAYCAST
+#pragma region 신버전 (거리 비교)
 	if (Status)
 	{
 		for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
@@ -1490,6 +1450,10 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	m_bRagdollHit = false;
 	return false;
 
+#pragma endregion
+#endif
+
+#ifdef OLD_RAYCAST
 #pragma region 구버전
 	if (Status)
 	{
@@ -1617,6 +1581,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 		return false;
 	}
 #pragma endregion
+#endif
 
 	return false;
 }

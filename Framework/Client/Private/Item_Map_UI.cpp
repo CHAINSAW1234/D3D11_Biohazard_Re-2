@@ -72,13 +72,12 @@ HRESULT CItem_Map_UI::Change_Tool()
     return S_OK;
 }
 
-/* 몇 층에 어떤 지역의 어떤 아이템을 삭제할 것인가? */
 void CItem_Map_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType)
 {
     CGameObject* pItem = Search_Item(_floorType, _locationType, _ItemType);
 
     if (nullptr == pItem)
-        MSG_BOX(TEXT("나옹이가 아직 지정하지 않은 ENUM이거나 안 되는 READ ITEM 입니당.")); // 경관의 수첩은 잠시 막아놓음
+        ; // MSG_BOX(TEXT("나옹이가 아직 지정하지 않은 ENUM이거나 안 되는 READ ITEM 입니당.")); // 경관의 수첩은 잠시 막아놓음
 
     else
     {
@@ -96,14 +95,10 @@ void CItem_Map_UI::Rendering()
         m_isPrevRender = m_pTab_Window->Get_Dead();
     }
 
-
-    /* 과거에 온 지역이랑 현재의 지역이 맞지 않는다면.*/
     if (m_ePrevRegion != (LOCATION_MAP_VISIT)m_pPlayer->Get_Player_Region())
     {
-        /* 과거의 지역에 현재의 지역을 집어넣고*/
         m_ePrevRegion = (LOCATION_MAP_VISIT)m_pPlayer->Get_Player_Region();
 
-        /* 렌더 상태가 아닐 때, 현재의 지역과 아이템대상의 지역이 맞다면, */
         if (false == m_isItemRender && (LOCATION_MAP_VISIT)m_pPlayer->Get_Player_Region() == m_eMap_Location)
             m_isItemRender = true;
 
@@ -113,20 +108,16 @@ void CItem_Map_UI::Rendering()
 
     if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
     {
-        /* 2. Map을 켰는 지 확인했다면,  */
         if (m_isPrevRender != m_pTab_Window->Get_Dead())
         {
-            /* 3. 플레이어와 객체의 거리를 구한다  */
             _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
             _float4 vPlayertrans = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
 
             _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
             _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
 
-            /* 거리를 구할 때 player는 해당 위치에서부터 자유자재로 이동 */
             m_vMapOpen_Player_Distance = Main - Player;
 
-            /* 모든 객체와의 거리를 구한 것을 확인하기 위해 사용할 것이다. */
             m_isItemEnd = true;
         }
     }
@@ -148,15 +139,12 @@ void CItem_Map_UI::Rendering()
 
 void CItem_Map_UI::Player_BetweenDistance()
 {
-    /* Map Inventory를 오픈할 때만 사용할 것이다.  */
     if (false == m_pTab_Window->Get_MinMapRender())
         m_isPrevRender = m_pTab_Window->Get_MinMapRender();
 
-    /* ▶ Map Player와 Main의 모듣 객체와의 거리를 구하는 함수  */
-    /* 1. Player가 몇 층에 있는 지 확인했다면,  */
+    /* 1. Player가 몇 층에 있는 지 확인,  */
     if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
     {
-        /* 2. Map을 켰는 지 확인했다면, 내가 존재했던 view와 과거 view가 같지 않다면*/
         if (m_isPrevRender != m_pTab_Window->Get_MinMapRender() || *m_pMapPlayer->Get_ViewFloor_Type() != m_ePrevViewFloor)
         {
             m_ePrevViewFloor = *m_pMapPlayer->Get_ViewFloor_Type();
@@ -168,10 +156,8 @@ void CItem_Map_UI::Player_BetweenDistance()
             _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
             _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
 
-            /* 거리를 구할 때 player는 해당 위치에서부터 자유자재로 이동 */
             m_vMapOpen_Player_Distance = Main - Player;
 
-            /* 모든 객체와의 거리를 구0한0 것을0 확인하기 위해 사용할 것이다. */
             m_isItemEnd = true;
         }
     }

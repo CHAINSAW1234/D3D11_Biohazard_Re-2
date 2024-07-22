@@ -19,6 +19,9 @@ namespace Engine
 		vector<_int> BelongNumVec;
 		_int		BelongNum[50];
 
+		vector<_int> BelongNumVec;
+		_int      BelongNum[50];
+
 		float		fRange;
 		float 		fCutOff;
 		float 		fOutCutOff;

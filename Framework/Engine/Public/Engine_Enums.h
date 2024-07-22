@@ -62,6 +62,7 @@ namespace Engine
 		COLLIDER = 1 << 2,
 		STATIC_MESH = 1 << 3,
 		RAY = 1 << 4,
+		EFFECT = 1 << 5,
 	};
 
 	enum COLLIDER_TYPE 

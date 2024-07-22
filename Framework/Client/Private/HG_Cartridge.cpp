@@ -40,6 +40,8 @@ HRESULT CHG_Cartridge::Initialize(void* pArg)
 
 	m_pModelCom->Release_Decal_Dump();
 
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
+
 	return S_OK;
 }
 
@@ -48,6 +50,15 @@ void CHG_Cartridge::Tick(_float fTimeDelta)
 	if (m_pGameInstance->IsPaused())
 	{
 		return;
+	}
+
+	if(m_bPlaySound == false)
+	{
+		if (m_pRigid_Dynamic->GetbPlaySound())
+		{
+			m_bPlaySound = true;
+			PlaySound();
+		}
 	}
 
 	if (m_bRender == false)
@@ -122,6 +133,17 @@ HRESULT CHG_Cartridge::Render()
 	return S_OK;
 }
 
+void CHG_Cartridge::PlaySound()
+{
+	const wchar_t* str = L"HG_Cartridge_";
+	wchar_t result[32];
+	_int inum = m_pGameInstance->GetRandom_Int(0, 10);
+
+	std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, 0);
+}
+
 void CHG_Cartridge::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 {
 	
@@ -164,6 +186,10 @@ void CHG_Cartridge::Initiate(_float4 vPos, _float4 vDir,_float4 vLook)
 
 	m_pRigid_Dynamic->SetKinematic(false);
 	m_pRigid_Dynamic->AddForce(m_vDir);
+
+	m_bPlaySound = false;
+
+	m_pRigid_Dynamic->SetbPlaySound(false);
 }
 
 HRESULT CHG_Cartridge::Add_Components()

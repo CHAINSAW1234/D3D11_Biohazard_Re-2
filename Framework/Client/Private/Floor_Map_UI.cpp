@@ -4,7 +4,7 @@
 #include "Tab_Window.h"
 
 #define ALPHA_ZERO				_float4(0.f, 0.f, 0.f, 0.f)
-#define FLOOR_TYPE_BLENDING     0.244f /* Floor 선택 시 블렌딩할 값*/
+#define FLOOR_TYPE_BLENDING     0.244f 
 
 CFloor_Map_UI::CFloor_Map_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMap_Manager{ pDevice, pContext }
@@ -42,6 +42,7 @@ void CFloor_Map_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     Rendering();
+
     Floor_Select();
 }
 
@@ -88,7 +89,6 @@ void CFloor_Map_UI::Floor_Select()
     /* ▶ 직접 Select 해서 이동할 Floor */
     if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
     {
-        /*1. 만약 Hovering 시에 플레이어가 가지고 있는 현재 플로어에 넣어준다. */
         if (true == IsMouseHover())
         {
             if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -105,7 +105,7 @@ void CFloor_Map_UI::Rendering()
     /* 1. Map Open */
     if (true == m_pTab_Window->Get_MinMapRender())
     {
-         /* Plyaer가 가지고 있는 플로어와 Select된 플로어가 같다면 Floor Texture Render를 바꿔준다. */
+         /* Plyaer가 가지고 있는 플로어와 Select된 플로어가 같다 */
          if (*m_pMapPlayer->Get_ViewFloor_Type() == m_eSelect_Floor)
          {
              if (!m_vecTextBoxes.empty())
@@ -120,9 +120,10 @@ void CFloor_Map_UI::Rendering()
          }
          else
          {
-             if (m_fBlending != 0.f)
+             if (m_fBlending < 0.f)
              {
                  m_vecTextBoxes.back()->Set_FontColor(m_vOriginTextColor);
+
                  m_fBlending = 0.f;
              }
          }
@@ -131,12 +132,13 @@ void CFloor_Map_UI::Rendering()
     else if (false == m_pTab_Window->Get_MinMapRender())
     {
         m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
+
         m_fBlending = 0.f;
     }
 
 }
 
-/* Floor를 Sotring 해서 구분해 준다.  */
+/* Floor 구분.  */
 void CFloor_Map_UI::Floor_Sort()
 {
     list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
