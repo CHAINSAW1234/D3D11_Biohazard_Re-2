@@ -150,8 +150,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(Add_RagDoll_OtherParts()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, static_cast<_uint>(ZOMBIE_SOUND_CH::_END))))
+	if (FAILED(Initialize_Sounds()))
 		return E_FAIL;
+
 
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
@@ -1412,6 +1413,19 @@ HRESULT CZombie::Initialize_PartBreaker()
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CZombie::Initialize_Sounds()
+{
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, static_cast<_uint>(ZOMBIE_SOUND_CH::_END))))
+		return E_FAIL;
+
+	for (_uint i = 0; i < static_cast<_uint>(ZOMBIE_SOUND_CH::_END); ++i)
+	{
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom, i, 0.f, 6.f);
+	}
 
 	return S_OK;
 }
