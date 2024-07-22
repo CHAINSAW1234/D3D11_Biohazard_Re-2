@@ -1357,11 +1357,18 @@ _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPo
 
 	return false;
 }
-CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, const string& name)
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,pDevice,pContext,name);
 	
+	return nullptr;
+}
+CRagdoll_Physics* CGameInstance::Get_Ragdoll(_uint iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->GetRagdoll(iId);
+
 	return nullptr;
 }
 void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)

@@ -147,7 +147,7 @@ public:
     virtual HRESULT                     Initialize(void* pArg);
 
 public:
-    _bool                               Init(const string& name);
+    _bool                               Init(const string& name, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void                                create_ragdoll();
     void                                create_partial_ragdoll(COLLIDER_TYPE eType);
     void                                Update(_float fTimeDelta);
@@ -476,6 +476,7 @@ public:
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_L(_uint iIndex);
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex);
     void                          WakeUp();
+    void                          PlaySound_Ragdoll(COLLIDER_TYPE eType);
 #pragma endregion
 
 private:
@@ -544,7 +545,7 @@ private:
     std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth_Leg_R;
 
     PxFilterData                                    m_FilterData;
-    class CTransform* m_pTransform = { nullptr };
+    class CTransform*                               m_pTransform = { nullptr };
 
     _bool                                           m_bRagdoll_AddForce = { false };
     _bool                                           m_bCulling = { false };
@@ -747,6 +748,11 @@ private:
     _float4x4           m_BoneMatrices_Cloth_Arm_R[MAX_COUNT_BONE];
     _float4x4           m_BoneMatrices_Cloth_Leg_L[MAX_COUNT_BONE];
     _float4x4           m_BoneMatrices_Cloth_Leg_R[MAX_COUNT_BONE];
+
+    vector<_bool>       m_vecRagdollSound_Filter;
+    class CTransform*   m_pTransformCom_Sound = { nullptr };
+protected:
+    class CGameInstance* m_pGameInstance = { nullptr };
 
 public:
     virtual void Free() override;
