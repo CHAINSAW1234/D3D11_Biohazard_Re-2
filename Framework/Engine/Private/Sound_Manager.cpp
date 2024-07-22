@@ -168,8 +168,6 @@ void CSound_Manager::Set_Distance_3D(CTransform* pTransform, _uint iSoundIndex, 
 
 HRESULT CSound_Manager::Update_Sounds()
 {
-	return S_OK;
-
 	if (FAILED(Update_Listener_Camera()))
 	{
 		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));

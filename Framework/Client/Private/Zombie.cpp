@@ -1424,7 +1424,7 @@ HRESULT CZombie::Initialize_Sounds()
 
 	for (_uint i = 0; i < static_cast<_uint>(ZOMBIE_SOUND_CH::_END); ++i)
 	{
-		m_pGameInstance->Set_Distance_3D(m_pTransformCom, i, 0.f, 6.f);
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom, i, 0.f, 7.f);
 	}
 
 	return S_OK;
