@@ -472,11 +472,15 @@ void CTab_Window::PICK_UP_ITEM_SoundPlay(ITEM_NUMBER eItemNum)
 	case Client::emergencyspray01a:
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_emergencyspray.mp3"), 0.5f);
 		break;
+
+	case Client::greenherb01a:
+	case Client::redherb01a:
+	case Client::blueherb01a:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Herb.mp3"), 0.8f);
+		break;
 	case Client::herbsgg01a:
 	case Client::herbsgr01a:
 	case Client::herbsgb01a:
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Herb.mp3"), 0.5f);
-		break;
 	case Client::herbsggb01a:
 	case Client::herbsggg01a:
 	case Client::herbsgrb01a:

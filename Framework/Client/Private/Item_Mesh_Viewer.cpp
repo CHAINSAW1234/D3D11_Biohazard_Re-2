@@ -88,6 +88,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Scaled(m_fCurSize, m_fCurSize, m_fCurSize);
 
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+	
 	_vector vCamRight = m_pCameraFree->Get_Transform()->Get_State_Vector(CTransform::STATE_RIGHT);
 	vCamRight *= m_fDistCamX;
 	vFrontCamPos += vCamRight;
@@ -99,7 +100,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 	case Client::POP_UP: {
 		PopUp_Operation(fTimeDelta);
 		break;
-	}
+	}	
 
 	case Client::UI_IDLE: {
 		Idle_Operation(fTimeDelta);
@@ -207,17 +208,28 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 		m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
-		_float fRadian = m_pGameInstance->Get_Ease(Ease_InSine, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_Linear, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
+		_float fResultRadian = fRadian - m_fPreRadian;
+		
+		fResultRadian /= XMConvertToRadians(360.0f);
 
 		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Rotation(MyUp, fRadian);
+		m_pTransformCom->Turn(MyUp, fResultRadian);
+		
+		// 1. ÀÌ¹ø Tick ÀÇ Radian  - ÀÌÀü Radian
+		// 2. CTransformÀÌ °®°í ÀÖ´Â m_fRotationPerSec¸¦ ³ª´²Áà¾ßµÊ  
+
+		//m_pTransformCom->Rotation(MyUp, fRadian);
 
 		//_vector CamUp = m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_UP);
 		//m_pTransformCom->Rotation(CamUp, fRadian);
 		// 
 		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
+
+		m_fPreRadian = fRadian;
+		
 	}
 }
 
@@ -227,13 +239,21 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	switch (m_eOperType)
 	{
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eOperType = EXAMIN_PUZZLE;
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			break;
+		}
+
+
 		if (true == m_pGameInstance->Check_Wheel_Down())
 		{
-			m_fDistCamZ -= 0.001f;
+			m_fDistCamZ -= 0.0001f;
 		}
 		else if (true == m_pGameInstance->Check_Wheel_Up())
 		{
-			m_fDistCamZ += 0.001f;
+			m_fDistCamZ += 0.0001f;
 		}
 
 		static		_float2			vSpeed = { 0.f, 0.f };
@@ -276,12 +296,11 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 				vSpeed.y = 0.f;
 		}
 
-		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
-		m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
 
 		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
-
 
 		break;
 	}
@@ -315,6 +334,23 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM: {
 		break;
 	}
+
+	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
+			m_eOperType = EXAMIN;
+			break;
+		}
+		
+		break;
+	}
+
+
+
+
+
+
+
 
 	default:
 		break;
@@ -386,8 +422,16 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
 		m_matMoveCenter *= TempMat;
 		_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+		
+		_float3 vScaled = m_pTransformCom->Get_Scaled();
+		m_pTransformCom->Set_WorldMatrix(m_pCameraFree->Get_Transform()->Get_WorldMatrix());
+		m_pTransformCom->Set_Scaled(vScaled.x, vScaled.y, vScaled.z);
+
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
 		m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+		
+		m_fPreRadian = 0.f;
+
 		break;
 	}
 
@@ -419,7 +463,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 			m_matMoveCenter *= TempMat;
 			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
 			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-			m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+			//m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		}
 		
 		break;
