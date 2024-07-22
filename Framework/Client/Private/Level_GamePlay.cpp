@@ -653,6 +653,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* 10. UI_Item_Read_Write */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_ReadUI_ItemType.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
 	/* 11. UI_Item_Read_Arrow */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Item_Read_Arrow.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -920,7 +926,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* Read_Item_UI */
-	else if ( TEXT("UI_Item_Introduce") == fileName || TEXT("UI_Item_Read") == fileName || TEXT("UI_Item_Read_Arrow") == fileName)
+	else if ( TEXT("UI_Item_Introduce") == fileName || TEXT("UI_Item_Read") == fileName || TEXT("UI_Item_Read_Arrow") == fileName || TEXT("UI_ReadUI_ItemType") == fileName)
 	{
 		CustomizeUIDesc.wstrFileName = fileName;
 

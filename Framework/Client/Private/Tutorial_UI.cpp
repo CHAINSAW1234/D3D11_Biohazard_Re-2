@@ -53,6 +53,7 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
         Find_Player();
 
         m_pisTutorial_Notify = m_pPlayer->Get_Tutorial_Notify();
+
         m_eTutorial_Type = m_pPlayer->Get_Tutorial_Type();
     }
 
@@ -75,6 +76,13 @@ void CTutorial_UI::Tick(_float fTimeDelta)
         Find_TextBox();
 
         First_Behaivor(fTimeDelta);
+    }
+    else
+    {
+        if (true == m_pTutorial_Supervise->m_isRender)
+            m_isRender = true;
+        else if (false == m_pTutorial_Supervise->m_isRender)
+            m_isRender = false;
     }
 
     Player_First_Interact();
@@ -232,12 +240,16 @@ void CTutorial_UI::Find_TextBox()
     if (pTutorial_TextBox[0]->GetPosition().y > pTutorial_TextBox[1]->GetPosition().y)
     {
         CTextBox* pTemp = pTutorial_TextBox[0];
-       pTutorial_TextBox[0] = pTutorial_TextBox[1];
-       pTutorial_TextBox[1] = pTemp;
+
+        pTutorial_TextBox[0] = pTutorial_TextBox[1];
+
+        pTutorial_TextBox[1] = pTemp;
     }
 
     _float4 fPosX = pTutorial_TextBox[1]->GetPosition();
+
     fPosX.x += 3.5f;
+
     pTutorial_TextBox[1]->Set_Position(fPosX);
 }
 
@@ -288,6 +300,7 @@ void CTutorial_UI::Operation_Tutorial(_float fTimeDelta)
         if (m_fBlending > 1.f)
         {
             *m_pTutorial_Supervise->m_pisTutorial_Notify = false;
+
             m_isTutorial_Start = false;
 
             m_fBlending = 1.f;

@@ -26,7 +26,7 @@ public :
 	void										Set_SearchFor_Verification_MapType(_byte _eFloor, _byte _eLocation)
 	{ 
 		m_eLocationVerification = _eLocation;
-		m_eFloorVerification = _eFloor;
+		m_eFloorVerification = _eFloor - 2;
 		m_isSearchForVerification = true; 
 	}
 

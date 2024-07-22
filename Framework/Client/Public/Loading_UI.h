@@ -36,8 +36,15 @@ private :
 	void				Ending_Notification();
 	void				Find_Loading_BackGround();
 
+
 private :
 	LOADING_UI_TYPE		m_eLoadingType	= { LOADING_UI_TYPE::END_LOADING_UI };
+
+
+public :
+	_bool				Get_IsPercent()							{ return m_isPercent;  }
+	void				Set_Percent_Count(_float* pPercent)		{ m_pPercent = pPercent; }
+
 
 private : 
 	_float4				m_fBody_Position			= {};
@@ -53,6 +60,10 @@ private :/* Loading Text */
 	CLoading_UI*		m_pBackGroundUI				= { nullptr };
 	_bool				m_isLoadingEnd				= { false };
 	_bool				m_isLoading_Notification	= { false };
+
+	/* 퍼센테이지가 들어있는 texture*/
+	_bool				m_isPercent					= { false };
+	_float*				m_pPercent					= { nullptr };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

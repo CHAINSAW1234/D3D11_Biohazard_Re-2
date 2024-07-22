@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "Read_Item_UI.h"
 #include "Player.h"
-
-#include "Player.h"
+#include "Cursor_UI.h"
 
 #define ARROW_DISTANCE  30.f
 #define INTRO_LIFE      1.5f
@@ -59,11 +58,6 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 
             /* Intro 부모 */
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
-
-            if (nullptr != m_pIntro_UI)
-            {
-                //Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
-            }
 
             if (true == m_IsChild)
             {
@@ -124,6 +118,16 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             else
                 MSG_BOX(TEXT("Read Item UI 사용 중임에도 [ Arrow ] 가 설정되지 않았습니다"));
         }
+
+        else if (TEXT("UI_ReadUI_ItemType") == CustomUIDesc->wstrFileName)
+        {
+            m_eRead_type = READ_UI_TYPE::ITEM_TYPE_READ;
+
+            if (true == m_IsChild)
+            {
+                m_vOrigionTexturePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            }
+        }
     }
 
     if (READ_UI_TYPE::MAIN_READ == m_eRead_type)
@@ -141,9 +145,15 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         m_BookText[ITEM_READ_TYPE::PAMPHLET_NOTE]            = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_PamphletNote1"), TEXT("Prototype_Component_Texture_PamphletNote2"), TEXT("Prototype_Component_Texture_PamphletNote3"), TEXT("Prototype_Component_Texture_PamphletNote4") };
        
         m_BookText[ITEM_READ_TYPE::OFFICER_NOTE]        = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note2") };
+        m_BookText[ITEM_READ_TYPE::ABOUT_MAP]           = { TEXT("Prototype_Component_Texture_ReadMap"), };
+        
     }
     
     m_isRender = false;
+
+    Find_Cursor();
+
+    Find_Player();
 
     return S_OK;
 }
@@ -151,6 +161,14 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 void CRead_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if(nullptr == m_pCursor)
+    {
+        Find_Cursor();
+
+        if (nullptr == m_pCursor)
+            MSG_BOX(TEXT("CRead_Item_UI() : Cursor를 찾을 수 없습니다."));
+    }
 
     Operate_ReadUI(fTimeDelta);
    
@@ -177,9 +195,6 @@ HRESULT CRead_Item_UI::Change_Tool()
 
 void CRead_Item_UI::Render_Destory(_bool _render)
 {
-   /* if (READ_UI_TYPE::TEXT_READ != m_eRead_type)
-        return;*/
-
     /* 텍스트를 삭제한다*/
     if (true == _render)
     {
@@ -195,41 +210,93 @@ void CRead_Item_UI::Render_Destory(_bool _render)
 
 void CRead_Item_UI::Operate_ReadUI(_float fTimeDelta)
 {
-    if (true == m_isReadCall)
+    if (READ_UI_TYPE::ITEM_TYPE_READ == m_eRead_type) 
     {
-        m_isRender = true;
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                if (false == m_isRender)
+                {
+                    iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+                }
 
-        Reset();
+                else if (true == m_isRender)
+                {
+                    iter->Set_FontColor(_float4(1.f, 1.f, 1.f, 1.f));
+                }
+            }
 
-        m_isReadCall = false;
+        }
     }
 
-    Render_Condition();
+    if (ITEM_READ_TYPE::ABOUT_MAP == m_eBook_Type)
+    {
+        if (READ_UI_TYPE::ITEM_TYPE_READ == m_eRead_type)
+        {
+            if (true == m_isReadCall)
+            {
+                m_isRender = true;
 
-    /* 분기점 */
-    if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
-        Introduce_Read(fTimeDelta);
+                Reset();
 
-    else if (READ_UI_TYPE::ARROW_READ == m_eRead_type)
-        Arrow_Read();
+                m_isReadCall = false;
+            }
 
-    else if (READ_UI_TYPE::TEXTURE_READ == m_eRead_type)
-        Texture_Read();
+            if (true == m_IsChild)
+            {
+                if (m_vOrigionTexturePos.y <= m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
+                {
+                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vOrigionTexturePos);
+                }
+                else
+                    m_pTransformCom->Go_Up(2.f);
+            }
+        }
+    }
+    
+    else
+    {
+        if (true == m_isReadCall)
+        {
+            m_isRender = true;
 
-    else if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type || READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
-        Text_Read(fTimeDelta);
+            Reset();
+
+            m_isReadCall = false;
+        }
+
+
+        Render_Condition();
+
+        /* 분기점 */
+        if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+            Introduce_Read(fTimeDelta);
+
+        else if (READ_UI_TYPE::ARROW_READ == m_eRead_type)
+            Arrow_Read();
+
+        else if (READ_UI_TYPE::TEXTURE_READ == m_eRead_type)
+            Texture_Read();
+
+        else if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type || READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
+            Text_Read(fTimeDelta);
+    }
 }
 
 void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
 {
-    if (false == m_isRender || true == m_isRead_Start)
+    if (false == m_isRender)
     {
         m_fBlending = 1.f;
+
         m_vCurrentColor.w = 0.f;
+
         return;
     }
 
     m_fIntro_Timer += fTimeDelta;
+
     m_vCurrentColor.w = 0.f;
 
     if (INTRO_LIFE <= m_fIntro_Timer)
@@ -239,8 +306,8 @@ void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
         if (m_fBlending >= 1.f)
         {
             m_fBlending = 1.f;
+
             m_isRead_Start = true;
-            m_isRender = false;
         }
     }
 
@@ -248,6 +315,7 @@ void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
     if (!m_vecTextBoxes.empty())
     {
         _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending * 1.5f) * WHITE_COLOR;
+
         m_vecTextBoxes.back()->Set_FontColor(result);
     }
 }
@@ -265,7 +333,9 @@ void CRead_Item_UI::Texture_Read()
             return;
 
         m_isPrevRender = true;
+
         vector<wstring> incidentLogNotes = m_pRead_Supervise->m_BookText[m_pIntro_UI->m_eBook_Type];
+
         Change_Texture(incidentLogNotes[0], TEXT("Com_DefaultTexture"));
     }
 }
@@ -287,6 +357,13 @@ void CRead_Item_UI::Arrow_Read()
             m_pRead_Supervise->m_iBookCnt = 1;
 
             m_isChange = true;
+
+            if (nullptr != m_pCursor && nullptr != m_pPlayer)
+            {
+                m_pCursor->Set_Inven_Open(true);
+
+                m_pPlayer->Set_isCamTurn(true);
+            }
         }
 
         if (true == IsMouseHover())
@@ -298,10 +375,11 @@ void CRead_Item_UI::Arrow_Read()
                 {
                     --m_pRead_Supervise->m_iBookCnt;
 
+                    m_pRead_Supervise->m_isChange = true;
+
                     if (1 >= m_pRead_Supervise->m_iBookCnt)
                     {
                         m_pRead_Supervise->m_iBookCnt = 1;
-                        m_pRead_Supervise->m_isChange = true;
                     }
                 }
 
@@ -309,8 +387,8 @@ void CRead_Item_UI::Arrow_Read()
                 else if (READ_ARROW_TYPE::RIGHT_ARROW == m_eRead_Arrow_Type)
                 {
                     ++m_pRead_Supervise->m_iBookCnt;
-                    m_pRead_Supervise->m_isChange = true;
 
+                    m_pRead_Supervise->m_isChange = true;
                 }
             }
         }
@@ -360,7 +438,7 @@ void CRead_Item_UI::Set_ReadItem_Type(ITEM_READ_TYPE _readType)
 
 void CRead_Item_UI::Text_Read(_float fTimeDelta)
 {
-    if (nullptr == m_pIntro_UI || true != m_pIntro_UI->m_isRead_Start)
+    if (nullptr == m_pIntro_UI/* || true != m_pIntro_UI->m_isRead_Start*/)
         return;
 
     if (false == m_pRead_Supervise->m_isChange)
@@ -434,6 +512,26 @@ CRead_Item_UI* CRead_Item_UI::Find_ReadUI(READ_UI_TYPE _readType, _bool _child)
     return nullptr;
 }
 
+void CRead_Item_UI::Find_Cursor()
+{
+    list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUILayer)
+    {
+        CCursor_UI* pCursor = dynamic_cast<CCursor_UI*>(iter);
+
+        if (nullptr != pCursor)
+        {
+            if (true == pCursor->Get_IsChild())
+            {
+                m_pCursor = pCursor;
+
+                return;
+            }
+        }
+    }
+}
+
 void CRead_Item_UI::Render_Condition()
 {
     if (false == m_isRender)
@@ -450,11 +548,21 @@ void CRead_Item_UI::Render_Condition()
         m_isPrevRender = false;
         m_isChange = false;
 
+        if (nullptr != m_pCursor)
+        {
+            m_pCursor->Set_Inven_Open(false);
+
+            m_pPlayer->Set_isCamTurn(false);
+        }
+
         CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
         pPlayer->Set_isCamTurn(false);
+
         m_pGameInstance->Set_IsPaused(false);
 
-        m_eReadUI_Using[static_cast<_int>(m_pIntro_UI->m_eBook_Type)] = true;
+        if(nullptr != m_pIntro_UI)
+            m_eReadUI_Using[static_cast<_int>(m_pIntro_UI->m_eBook_Type)] = true;
 
         if (nullptr != m_pIntro_UI)
             m_pIntro_UI->m_isRead_Start = false;
@@ -464,19 +572,31 @@ void CRead_Item_UI::Render_Condition()
     }
 }
 
-void CRead_Item_UI::Reset()
+void CRead_Item_UI::Reset(_bool isItem)
 {
-    m_fIntro_Timer = 0.f;
+    if(false == isItem)
+    {
+        m_fIntro_Timer = 0.f;
 
-    m_fBlending = MAX_BLENDING;
+        m_fBlending = MAX_BLENDING;
 
-    m_vCurrentColor = m_vOriginColor;
+        m_vCurrentColor = m_vOriginColor;
 
-    if (nullptr != m_pRead_Supervise)
-        m_pRead_Supervise->m_iBookCnt = 0;
+        if (nullptr != m_pRead_Supervise)
+            m_pRead_Supervise->m_iBookCnt = 0;
 
-    if (nullptr != m_pIntro_UI)
-        m_pIntro_UI->m_isRead_Start = false;
+        if (nullptr != m_pIntro_UI)
+            m_pIntro_UI->m_isRead_Start = false;
+    }
+
+    else if (true == isItem)
+    {
+        _float4 m_vTransform = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        m_vTransform.y -= 300.f;
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vTransform);
+    }
 }
 
 CCustomize_UI* CRead_Item_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

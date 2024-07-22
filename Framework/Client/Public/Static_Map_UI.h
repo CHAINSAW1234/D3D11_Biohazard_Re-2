@@ -21,6 +21,9 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Change_Tool() override;
 
+public :
+	_bool*				Get_Map_Ptr() { return &m_isGetMap;  }
+
 private :
 	void				Rendering();
 
@@ -29,8 +32,10 @@ public :
 
 
 private :
-	STATIC_MAP_TYPE		m_eStatic_Type = { STATIC_MAP_TYPE::END_MAP_TYPE };
-	
+	STATIC_MAP_TYPE		m_eStatic_Type	= { STATIC_MAP_TYPE::END_MAP_TYPE };
+
+	_bool				m_isGetMap		= { false };
+
 public:
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

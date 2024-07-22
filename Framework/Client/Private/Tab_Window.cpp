@@ -74,7 +74,7 @@ void CTab_Window::Start()
 		Find_Cursor();
 
 		if (nullptr == m_pCursor)
-			MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
+			MSG_BOX(TEXT("CTab_Window() : Inventory를 위한 Cursor 생성 불가능"));
 	}
 
 	m_pInventory_Manager->FirstTick_Seting();
@@ -139,6 +139,8 @@ void CTab_Window::Tick(_float fTimeDelta)
 	ItemIven_EventHandle(fTimeDelta);
 
 	Button_Act(fTimeDelta);
+
+	m_isPickUp_Item = false;
 
 	switch (m_eWindowType)
 	{
@@ -342,6 +344,8 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 
 void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 {
+	m_isPickUp_Item = true;
+
 	switch (m_eSequence)
 	{
 	case Client::POP_UP: {
@@ -704,13 +708,32 @@ _bool CTab_Window::IsInputTab()
 	_bool isInputTab = false;
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
+	{
+		m_isMapOpen = false;
+
 		isInputTab = true;
+	}
 
 	if (PICK_UP_ITEM_WINDOW == m_eWindowType)
+	{
+		m_isMapOpen = false;
+
 		isInputTab = false;
+	}
 
 	if(INTERACT_PROPS == m_eWindowType)
+	{
+		m_isMapOpen = false;
+
 		isInputTab = false;
+	}
+
+	if(DOWN == m_pGameInstance->Get_KeyState('M'))
+	{
+		m_isMapOpen = true;
+
+		isInputTab = true;
+	}
 
 	return isInputTab;
 }
@@ -738,13 +761,26 @@ void CTab_Window::OnOff_EventHandle()
 
 	else
 	{
-		m_bDead = false;
-		m_pHintButton->Set_Dead(m_bDead);
-		m_pInvenButton->Set_Dead(m_bDead);
-		m_pMapButton->Set_Dead(m_bDead);
-		m_eWindowType = INVENTORY;
-		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
-		m_pHotKey->Set_Dead(m_bDead);
+		if(false == m_isMapOpen)
+		{
+			m_bDead = false;
+			m_pHintButton->Set_Dead(m_bDead);
+			m_pInvenButton->Set_Dead(m_bDead);
+			m_pMapButton->Set_Dead(m_bDead);
+			m_eWindowType = INVENTORY;
+			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
+			m_pHotKey->Set_Dead(m_bDead);
+		}
+
+		else if (true == m_isMapOpen)
+		{
+			m_bDead = false;
+			m_pHintButton->Set_Dead(m_bDead);
+			m_pInvenButton->Set_Dead(m_bDead);
+			m_pMapButton->Set_Dead(m_bDead);
+			m_eWindowType = MINIMAP;
+			m_isMapRender = true;
+		}
 
 		if (nullptr != m_pCursor[1])
 		{

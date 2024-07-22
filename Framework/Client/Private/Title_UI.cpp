@@ -57,7 +57,7 @@ HRESULT CTitle_UI::Initialize(void* pArg)
                 if(false == pParentTitle->m_IsChild)
                 {
                     _float3 fSize = m_pTransformCom->Get_Scaled();
-
+                    
                     fSize.y -= 50.f;
 
                     m_pTransformCom->Set_Scaled(fSize.x, fSize.y, fSize.z);

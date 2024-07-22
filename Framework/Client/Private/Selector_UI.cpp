@@ -84,6 +84,9 @@ HRESULT CSelector_UI::Render()
     if (false == *m_pTab_Window->Get_MainRender_Ptr())
         return E_FAIL;
 
+    if (true == m_pTab_Window->Get_PickUp_ItemRender())
+        return E_FAIL;
+
     if (FAILED(__super::Render()))
         return E_FAIL;
 
@@ -166,8 +169,7 @@ void CSelector_UI::Calc_Position()
 
 
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(XMVectorGetX(vOrthoWorldPosition), XMVectorGetY(vOrthoWorldPosition), 0.5f, 1.f));
-
-
+    
     if (false == m_isCull)
     {
         m_pTransformCom->Set_Scaled(40.f, 40.f, 1.f);
@@ -219,6 +221,7 @@ void CSelector_UI::Rendering(_float fTimeDelta)
                 m_isRender = true;
 
                 _float4 a = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
                 m_fBlending = 0.f;
             }
         }
@@ -227,11 +230,13 @@ void CSelector_UI::Rendering(_float fTimeDelta)
     else if (true == m_IsChild)
     {
         CTransform* pTransform = static_cast<CTransform*>(m_pSelectorParent->Get_Component(g_strTransformTag));
+        
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTransform->Get_State_Float4(CTransform::STATE_POSITION));
 
         if (true == m_pSelectorParent->m_isRender)
         {
             m_fBlending = m_pSelectorParent->m_fBlending;
+
             m_isRender = true;
         }
 

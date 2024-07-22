@@ -125,7 +125,7 @@ void CMain_Map_UI::Region_State()
         return;
 
     /* 2. 아이템을 전부 먹었을 때  */
-    if (false == m_isEnd_OnesRole && true == m_isMapSearch_Clear && MAP_STATE_TYPE::SEARCH_STATE == m_eMapState)
+    if (false == m_isEnd_OnesRole && true == m_isMapSearch_Clear/* && MAP_STATE_TYPE::SEARCH_STATE == m_eMapState*/)
     {
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, m_eMap_Location);
 
