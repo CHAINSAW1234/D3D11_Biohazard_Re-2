@@ -488,7 +488,9 @@ void CZombie::Tick(_float fTimeDelta)
 								if (eType != COLLIDER_TYPE::HEAD)
 								{
 									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));									
+									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+									m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
+									m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
 								}
 
 								if (eType == COLLIDER_TYPE::HEAD)
