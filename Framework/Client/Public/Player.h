@@ -187,7 +187,7 @@ private:
 	HRESULT										Add_FSM_States();
 
 	class CCamera_Event* m_pEventCamera;
-
+	
 private:
 	_int										m_iMaxHp = { 5 };
 	_int										m_iHp = { 5 };

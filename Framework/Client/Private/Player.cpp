@@ -1553,13 +1553,13 @@ void CPlayer::Update_FootStep_Sound()
 
 	if (fRange > fDistanceYToLBall && true == m_isUp_L_Leg)
 	{
-		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 9, 4);
+		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 15, 4);
 		m_isUp_L_Leg = false;
 	}
 
 	if (fRange > fDistanceYToRBall && true == m_isUp_R_Leg)
 	{
-		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 9, 4);
+		Change_Sound_3D(TEXT("Sound_Player_FootStep_Stone"), 15, 4);
 		m_isUp_R_Leg = false;
 	}
 
@@ -2074,30 +2074,39 @@ void CPlayer::RayCast_Shoot()
 		isHit = m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props);
 
 	}
+	static _int iMissCnt = 0;
 
-	if (1 &&		// 조건 들어갈 예정 : 형준형의 변수 들어감
-		!isHit) {
-		wstring strSoundTag;
-		_int iRandCnt;
-		switch (m_iHp) {
-		case 5:
-			strSoundTag = TEXT("Fine");
-			iRandCnt = 6;
-			break;
-		case 4:
-		case 3:
-			strSoundTag = TEXT("Caution");
-			iRandCnt = 5;
-			break;
-		case 2:
-		case 1:
-			strSoundTag = TEXT("Danger");
-			iRandCnt = 6;
-			break;
+	if (CCall_Center::Get_Instance()->Is_Focus_Player()) {		// 조건 들어갈 예정 : 형준형의 변수 들어감
+		if (!isHit &&
+			(rand() % (5 - iMissCnt ) == 0)
+			) {
+			wstring strSoundTag;
+			_int iRandCnt;
+			switch (m_iHp) {
+			case 5:
+				strSoundTag = TEXT("Fine");
+				iRandCnt = 6;
+				break;
+			case 4:
+			case 3:
+				strSoundTag = TEXT("Caution");
+				iRandCnt = 5;
+				break;
+			case 2:
+			case 1:
+				strSoundTag = TEXT("Danger");
+				iRandCnt = 6;
+				break;
+			}
+
+			strSoundTag = TEXT("Sound_Player_Abuse_") + strSoundTag;
+			Change_Sound_3D(strSoundTag, iRandCnt, 3);
+
+			iMissCnt = 0;
 		}
-
-		strSoundTag = TEXT("Sound_Player_Abuse_") + strSoundTag;
-		Change_Sound_3D(strSoundTag, iRandCnt, 3);
+		else {
+			++iMissCnt;
+		}
 	}
 
 }
