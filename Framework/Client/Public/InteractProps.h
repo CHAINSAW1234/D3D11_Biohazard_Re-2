@@ -24,7 +24,12 @@ public:
 		INTER_COL_TRIPLE,
 		INTER_COL_END
 	};
-
+	enum PROPS_DISTANCE_RANGE
+	{
+		RANGE_MAX,
+		RANGE_MIN,
+		RANGE_END,
+	};
 	enum INTERACTPROPS_COL_STEP
 	{
 		COL_STEP0, // 인지 가능 표시 UI를 띄울 범위
@@ -212,6 +217,7 @@ protected:
 	_int												m_iItemIndex = { -1 };
 	_float												m_fTimeDelay = { 0.f };
 	_float												m_fDistance = { 0.f };
+	_float											m_fVolumeRangeDistance[RANGE_END];
 	CModel*												m_pModelCom = { nullptr };
 	CShader*											m_pShaderCom = { nullptr };
 	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };

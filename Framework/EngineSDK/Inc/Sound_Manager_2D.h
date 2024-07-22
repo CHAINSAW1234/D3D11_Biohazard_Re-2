@@ -27,6 +27,7 @@ public:
 	int  VolumeUp_2D(_int eID, _float _vol);
 	int  VolumeDown_2D(_int eID, _float _vol);
 	int  BGMVolumeUp_2D(_float _vol, _int _CHID);
+	int  BGMVolume_2D(_float _vol, _int _CHID);
 	int  BGMVolumeDown_2D(_float _vol, _int _CHID);
 	int  Pause_2D(_int eID, _bool bPause);
 	void PauseAll_2D();
