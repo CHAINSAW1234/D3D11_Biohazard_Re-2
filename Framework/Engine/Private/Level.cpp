@@ -381,103 +381,104 @@ HRESULT CLevel::Load_Light(const wstring& strFilePath, _uint iLevel)
 				{
 					CloseHandle(hFile);
 
-			_uint iSize;
-			if (!ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, NULL))
-			{
-				CloseHandle(hFile);
+					_uint iSize;
+					if (!ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, NULL))
+					{
+						CloseHandle(hFile);
 
-				return E_FAIL;
+						return E_FAIL;
+					}
+					tagLight_desc.BelongNumVec.resize(iSize);
+					for (size_t i = 0; i < iSize; i++)
+					{
+						_int iNum = { 0 };
+
+						if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
+						{
+							CloseHandle(hFile);
+
+							return E_FAIL;
+						}
+						tagLight_desc.BelongNumVec[i] = iNum;
+					}
+					switch (tagLight_desc.eType)
+					{
+					case LIGHT_DESC::TYPE_DIRECTIONAL:
+						if (!ReadFile(hFile, &tagLight_desc.vDirection, sizeof(_float4), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+
+
+						break;
+					case LIGHT_DESC::TYPE_POINT:
+						if (!ReadFile(hFile, &tagLight_desc.vPosition, sizeof(_float4), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						if (!ReadFile(hFile, &tagLight_desc.fRange, sizeof(_float), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						break;
+					case LIGHT_DESC::TYPE_SPOT:
+						if (!ReadFile(hFile, &tagLight_desc.vDirection, sizeof(_float4), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						if (!ReadFile(hFile, &tagLight_desc.vPosition, sizeof(_float4), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						if (!ReadFile(hFile, &tagLight_desc.fRange, sizeof(_float), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						if (!ReadFile(hFile, &tagLight_desc.fCutOff, sizeof(_float), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						if (!ReadFile(hFile, &tagLight_desc.fOutCutOff, sizeof(_float), &dwByte, nullptr))
+						{
+							CloseHandle(hFile);
+							CloseHandle(hLightLayerFile);
+							return E_FAIL;
+						}
+						break;
+
+					}
+
+					m_pGameInstance->Add_Light(wszLightTag, tagLight_desc);
+
+
+				}
+
+
+
+
+
+
 			}
-			tagLight_desc.BelongNumVec.resize(iSize);
-			for (size_t i = 0; i < iSize; i++)
-			{
-				_int iNum = { 0 };
 
-				if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
-				{
-					CloseHandle(hFile);
-
-					return E_FAIL;
-				}
-				tagLight_desc.BelongNumVec[i] = iNum;
-			}
-			switch (tagLight_desc.eType)
-			{
-			case LIGHT_DESC::TYPE_DIRECTIONAL:
-				if (!ReadFile(hFile, &tagLight_desc.vDirection, sizeof(_float4), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-
-
-				break;
-			case LIGHT_DESC::TYPE_POINT:
-				if (!ReadFile(hFile, &tagLight_desc.vPosition, sizeof(_float4), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				if (!ReadFile(hFile, &tagLight_desc.fRange, sizeof(_float), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				break;
-			case LIGHT_DESC::TYPE_SPOT:
-				if (!ReadFile(hFile, &tagLight_desc.vDirection, sizeof(_float4), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				if (!ReadFile(hFile, &tagLight_desc.vPosition, sizeof(_float4), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				if (!ReadFile(hFile, &tagLight_desc.fRange, sizeof(_float), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				if (!ReadFile(hFile, &tagLight_desc.fCutOff, sizeof(_float), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				if (!ReadFile(hFile, &tagLight_desc.fOutCutOff, sizeof(_float), &dwByte, nullptr))
-				{
-					CloseHandle(hFile);
-					CloseHandle(hLightLayerFile);
-					return E_FAIL;
-				}
-				break;
-
-			}
-
-			m_pGameInstance->Add_Light(wszLightTag, tagLight_desc);
-
+			CloseHandle(hLightLayerFile);
 
 		}
 
-
-
-
-
-
 	}
-
-	CloseHandle(hLightLayerFile);
-
-
-
 	CloseHandle(hFile);
 
 

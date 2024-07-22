@@ -49,9 +49,9 @@ private:
 	_int							m_iPreRegion = { 0 };
 	_float						m_fRegionChangeTimeDelay = { 0.f };
 	_float						m_fRegionChangeTimeDelay2 = { 0.f };
-	_float						m_fMaxSound = { 0.6f }; // 지역이 바뀔때 이 둘을 보간한다.
-	_float						m_fMinSound = { 0.3f }; //
-	_float						m_fCurSound = { 0.5f }; //
+	_float						m_fMaxSound = { 0.4f }; // 지역이 바뀔때 이 둘을 보간한다.
+	_float						m_fMinSound = { 0.2f }; //
+	_float						m_fCurSound = { 0.4f }; //
 	_float						m_fSoundTime = {};
 
 	//map<wstring, vector<ENVSOUND_DESC>>		m_EnvSoundMap; // 사운드 제목, <속한 구역, 위치들> -> 특정 구역에 소리가 난다.
