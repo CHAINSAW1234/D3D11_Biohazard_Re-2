@@ -66,7 +66,9 @@ void CBody_Lever::Late_Tick(_float fTimeDelta)
 	case CLever::LEVER_DOWN:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		if(m_pModelCom->Get_TrackPosition(0)>=20.f)
+		if (m_pModelCom->Get_TrackPosition(0) >= 21.f)
+			;
+		else if(m_pModelCom->Get_TrackPosition(0)>=20.f&&!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform,0))
 			Change_Sound(TEXT("sound_Map_sm42_shutter_lever2_1.mp3"), 0);
 
 		break;

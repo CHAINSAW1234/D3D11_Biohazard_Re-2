@@ -318,8 +318,11 @@ void CBody_Shutter::Shutter_Normal_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
 		
 		if(m_pModelCom->isFinished(0))
-			Change_Sound(TEXT("sound_Map_sm42_hall_pipe_shutter2_7.mp3"), 0);
-		else
+		{
+			if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0) && !m_pModelCom->isFinished(0))
+				Change_Sound(TEXT("sound_Map_sm42_hall_pipe_shutter2_7.mp3"), 0);
+		}
+		else if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0) &&m_pModelCom->Get_TrackPosition(0)>1.f)
 			Change_Sound(TEXT("sound_Map_sm42_hall_pipe_shutter2_5.mp3"), 0);
 
 		break;
