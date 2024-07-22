@@ -9,7 +9,7 @@ CLight::CLight()
 HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
 	LIGHT_DESC* pNewDesc = new LIGHT_DESC();
-	ZeroMemory(pNewDesc, sizeof(LIGHT_DESC));
+	//ZeroMemory(pNewDesc, sizeof(LIGHT_DESC));
 
 	pNewDesc->bRender = desc.bRender;
 	pNewDesc->bShadow = desc.bShadow;
