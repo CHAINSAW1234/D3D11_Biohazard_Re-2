@@ -52,6 +52,12 @@ HRESULT CLoading_UI::Initialize(void* pArg)
     else if (fileName == TEXT("UI_Loading_bar"))
     {
         m_eLoadingType = LOADING_UI_TYPE::BAR_LOADING_UI;
+
+        _float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        fPos.y -= 10.f;
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, fPos);
     }
 
     else

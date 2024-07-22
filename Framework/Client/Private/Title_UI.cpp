@@ -5,6 +5,7 @@
 #define ALPHA_ZERO           _float4(0, 0, 0, 0)
 #define FONT_LIGHT_COLOR    _float4(1, 1, 1, 0)
 #define OPTION_MOVE_DISTANCE     30.f
+#define START_TIMER             1.5f
 
 CTitle_UI::CTitle_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CCustomize_UI{ pDevice, pContext }
@@ -203,7 +204,7 @@ void CTitle_UI::TitleGame_Start(_float fTimeDelta)
     {
         m_fLogoStart_Timer += fTimeDelta;
 
-        if (m_fLogoStart_Timer >= 2.f)
+        if (m_fLogoStart_Timer >= START_TIMER)
         {
             if (nullptr != m_pText && true == m_pText->IsMouseHover())
             {
