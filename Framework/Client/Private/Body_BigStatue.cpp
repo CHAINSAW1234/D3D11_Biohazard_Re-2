@@ -34,6 +34,8 @@ HRESULT CBody_BigStatue::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
+	m_pModelCom->Change_Animation(0, TEXT("Default"), 0); //static상태 유지
+
 #ifndef NON_COLLISION_PROP
 
 	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
@@ -51,9 +53,6 @@ void CBody_BigStatue::Tick(_float fTimeDelta)
 
 void CBody_BigStatue::Late_Tick(_float fTimeDelta)
 {
-	
-	m_pModelCom->Change_Animation(0, TEXT("Default"), 0); //static상태 유지
-
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);

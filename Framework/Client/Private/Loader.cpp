@@ -29,6 +29,7 @@
 
 #include "Effect.h"
 #include "Sky.h"
+#include "EnvSound.h"
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
 
@@ -497,6 +498,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnvSound */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvSound"),
+		CEnvSound::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma region SSD_DECAL

@@ -2549,6 +2549,7 @@ void CPlayer::Load_CameraPosition()
 	m_fLook_Dist_Look_Default = m_fLook_Dist_Look;
 
 	m_fUp_Dist_Look -= CONTROLLER_GROUND_GAP;
+	m_fUp_Dist_Look_Default -= CONTROLLER_GROUND_GAP;
 
 	m_fLook_Dist_Pos = m_vCameraPosition.z;
 	m_fRight_Dist_Pos = m_vCameraPosition.x;

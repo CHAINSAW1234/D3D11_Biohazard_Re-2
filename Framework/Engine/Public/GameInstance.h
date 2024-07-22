@@ -271,6 +271,7 @@ public: /* For.m_pSound_Manager */
 	int										VolumeUp_2D(_int eID, _float _vol);
 	int										VolumeDown_2D(_int eID, _float _vol);
 	int										BGMVolumeUp_2D(_float _vol, _int eID);
+	int										BGMVolume_2D(_float _vol, _int eID);
 	int										BGMVolumeDown_2D(_float _vol, _int eID);
 	int										Pause_2D(_int eID, _bool bPause);
 	void									PlayMySound_2D(wstring TypeKey, wstring FileKey, _int eID, _float _vol);

@@ -132,6 +132,15 @@ int CSound_Manager_2D::BGMVolumeDown_2D(_float _vol, _int _CHID)
 }
 
 
+int CSound_Manager_2D::BGMVolume_2D(_float _vol, _int _CHID)
+{
+
+	FMOD_Channel_SetVolume(m_pChannelArr[_CHID], m_BGMvolume);
+
+	return 0;
+}
+
+
 int CSound_Manager_2D::Pause_2D(_int eID, _bool bPause)
 {
 	//m_bPause = !m_bPause;

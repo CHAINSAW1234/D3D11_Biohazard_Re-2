@@ -76,13 +76,10 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 		//if ((!*m_pSoundCue) && m_pModelCom->isFinished(0) != true)
 		//	*m_pSoundCue = true;
 		//sound_Map_sm40_door_handle2_1
-		if (iRand)
-		{
-			if (!m_pModelCom->isFinished(0))
-				Change_Same_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
-		}
-		else if (!m_pModelCom->isFinished(0))
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
+		
+		if (!m_pModelCom->isFinished(0)&&!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform,0))
+			Change_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
+		
 		break;
 		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_2 
 		(emblem이 두번 돌아가는데 소리는 한 번만 나오고 총 두번 나와야 함)*/
@@ -188,8 +185,20 @@ HRESULT CEmblem_Door::Render()
 				return E_FAIL;
 		}
 
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			_bool isEmissive = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
@@ -260,8 +269,20 @@ HRESULT CEmblem_Door::Render()
 				return E_FAIL;
 		}
 
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			_bool isEmissive = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
