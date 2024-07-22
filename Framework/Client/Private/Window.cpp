@@ -115,10 +115,7 @@ void CWindow::Tick(_float fTimeDelta)
 			m_bCamera = false;
 		}
 	}
-	if (m_bCamera)
-		Camera_Active(PART_BODY, _float3(0.2f, 0.5f, -1.f), INTERACT_GIMMICK_TYPE::KEY_GIMMICK, _float4(0.f,1.5f,0.f,1.f));
 	
-
 	if (m_iHP[PART_BODY] <= 0)
 		m_eState = WINDOW_BREAK;
 
@@ -143,6 +140,8 @@ void CWindow::Tick(_float fTimeDelta)
 		if ((*m_pPlayerInteract))
 			Active();
 
+	if (m_bCamera)
+		Camera_Active(PART_BODY, _float3(0.1f, 0.15f, -1.f), INTERACT_GIMMICK_TYPE::KEY_GIMMICK, _float4(0.f, 1.5f, 0.f, 1.f));
 
 	__super::Tick(fTimeDelta);
 }

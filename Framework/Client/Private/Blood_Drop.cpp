@@ -42,6 +42,7 @@ HRESULT CBlood_Drop::Initialize(void* pArg)
 	for (size_t i = 0; i < DECAL_COUNT; ++i)
 	{
 		auto pDecal = new CDecal_SSD(m_pDevice, m_pContext);
+		pDecal->SetUsingSound(true);
 		pDecal->Initialize(nullptr);
 		m_vecDecal.push_back(pDecal);
 	}
@@ -755,6 +756,8 @@ void CBlood_Drop::PlaySound()
 
 void CBlood_Drop::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 {
+	m_bDecalSound = false;
+
 	switch (m_iType)
 	{
 	case 0:
@@ -912,6 +915,8 @@ void CBlood_Drop::RayCast_Decal()
 			{
 				m_iDecalCount = 0;
 			}
+
+			m_bDecalSound = true;
 		}
 	}
 }

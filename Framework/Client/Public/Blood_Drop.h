@@ -37,6 +37,14 @@ public:
 	virtual void			SetPosition(_float4 Pos) override;
 	void					RayCast_Decal();
 	virtual void			Start() override;
+	_bool					GetbDecalSound()
+	{
+		return m_bDecalSound;
+	}
+	void					SetbDecalSound(_bool boolean)
+	{
+		m_bDecalSound = boolean;
+	}
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
@@ -69,6 +77,8 @@ private:
 
 	_bool					m_bDecal = { false };
 	_int					m_iDecalCount = { 0 };
+
+	_bool					m_bDecalSound = { false };
 public:
 	static CBlood_Drop* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
