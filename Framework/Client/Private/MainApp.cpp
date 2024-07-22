@@ -31,7 +31,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototype_Component_For_Static()))
 		return E_FAIL;
 	
-	if (FAILED(Open_Level(LEVEL_GAMEPLAY)))
+	if (FAILED(Open_Level(LEVEL_LOGO)))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -67,7 +67,7 @@ HRESULT CMainApp::Render()
 	}
 #endif
 
-	m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 1.f, 1.f));
+	m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 0.f, 0.f));
 
 	//	m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
 

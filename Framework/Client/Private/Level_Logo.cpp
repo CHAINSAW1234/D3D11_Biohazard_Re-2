@@ -45,10 +45,10 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* UI_Title_Select */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Title_Select.dat");
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Title_Select.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);*/
 
 	return S_OK;
 
