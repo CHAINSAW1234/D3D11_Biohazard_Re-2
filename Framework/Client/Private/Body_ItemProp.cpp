@@ -239,7 +239,8 @@ _float4 CBody_ItemProp::Get_Pos(_int iArg)
 		_float4x4 WorldMatrix = (Local_Mesh_Matrix)*TransformationMatrix;
 
 		_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
-		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
+		if(m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos)
+			m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 #ifdef _DEBUG
 #ifdef UI_POS
 		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
@@ -260,7 +261,8 @@ _float4 CBody_ItemProp::Get_Pos(_int iArg)
 		_float4x4 WorldMatrix = (Local_Mesh_Matrix)*XMLoadFloat4x4(m_pSocketMatrix) *TransformationMatrix;
 
 		_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
-		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
+		if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos)
+			m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 #ifdef _DEBUG
 #ifdef UI_POS
 		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);

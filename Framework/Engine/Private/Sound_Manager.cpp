@@ -116,6 +116,12 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	if (nullptr == pSoundDesc || nullptr == pSound)
 		return;
 
+	if (isCull)
+	{
+		if (pSound == pSoundDesc->pSound)
+			return;
+	}
+
 	pSoundDesc->pSound = pSound;
 	pSoundDesc->isChange = true;
 }

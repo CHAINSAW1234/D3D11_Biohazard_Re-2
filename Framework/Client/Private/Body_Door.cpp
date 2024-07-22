@@ -73,7 +73,6 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Active_RootMotion_Rotation(false);
-
 	/* Hide Emblem */
 	if(true == m_isEmblem)
 	{
