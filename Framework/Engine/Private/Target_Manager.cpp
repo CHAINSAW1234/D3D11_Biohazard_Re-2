@@ -62,9 +62,11 @@ HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, 
 
 HRESULT CTarget_Manager::Clear_RenderTarget_All()
 {
-	for (auto& pRenderTarget : m_RenderTargets)
-		if(pRenderTarget.second->Get_isTickClear())
+	for (auto& pRenderTarget : m_RenderTargets) {
+		if (pRenderTarget.second->Get_isTickClear())
 			pRenderTarget.second->Clear();
+	}
+
 	return S_OK;
 }
 

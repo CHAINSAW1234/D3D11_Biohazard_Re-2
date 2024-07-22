@@ -1407,7 +1407,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
     vector vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
     float4 vViewPosition = mul(ConvertoTexcoordToWorldPosition(In.vTexcoord), g_CamViewMatrix);
     
-    float3 vDir = -vViewPosition.xyz;
+    float3 vDir = vViewPosition.xyz;
     float fCameraDistance = length(vViewPosition.xyz);
     vDir /= fCameraDistance;
     
@@ -1429,11 +1429,14 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
             ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
             ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
         
-            if (saturate(ShadowMapCoord.x) == ShadowMapCoord.x &&
-            saturate(ShadowMapCoord.y) == ShadowMapCoord.y)
+            if ((saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
+            (saturate(ShadowMapCoord.y) == ShadowMapCoord.y) )
             {
-                float fDepth = g_DirLightFieldDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
-            
+                float fDepth1 = g_DirLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
+                float fDepth2 = g_DirLightFieldDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
+                
+                float fDepth = min(fDepth1, fDepth2);
+                
                 if (ShadowMapCoord.w < fDepth * 1000)
                     ++accumulation_Dir;
             
