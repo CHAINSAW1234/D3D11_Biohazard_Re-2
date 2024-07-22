@@ -346,6 +346,7 @@ HRESULT CKey_Door::Render_LightDepth_Point()
 
 		++iIndex;
 	}
+	return S_OK;
 }
 
 HRESULT CKey_Door::Render_LightDepth_Spot()
