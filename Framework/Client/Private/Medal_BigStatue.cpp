@@ -26,7 +26,7 @@ HRESULT CMedal_BigStatue::Initialize(void* pArg)
 	if (pArg != nullptr)
 	{
 		MEDAL_BIGSTATUE_DESC* desc = (MEDAL_BIGSTATUE_DESC*)pArg;
-		
+
 		m_eMedelType = desc->eMedelType;
 
 		m_pParentWorldMatrix = desc->pParentWorldMatrix;
@@ -42,41 +42,42 @@ HRESULT CMedal_BigStatue::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 	
+	m_pTransformCom->Set_WorldMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
+
 	m_pTransformCom->Set_Scaled(100, 100, 100);
-	
+
 	return S_OK;
 }
 
 void CMedal_BigStatue::Tick(_float fTimeDelta)
 {
-	if(m_eMedelType == MEDAL_TYPE::MEDAL_UNICORN)
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	//if (m_eMedelType == MEDAL_TYPE::MEDAL_UNICORN)
+	//	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 
-	else if (m_eMedelType == MEDAL_TYPE::MEDAL_LION)
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(0.f));
+	//else if (m_eMedelType == MEDAL_TYPE::MEDAL_LION)
+	//	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(0.f));
 
-	else
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	//else
+	//	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 }
 
 void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 {
 	if (m_bDead)
 		return;
-
-	m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
-
+	
+	
 	_float4x4 vMedalpos = m_pTransformCom->Get_WorldMatrix();
-	vMedalpos._43 += 1.f;
+	vMedalpos._43 -= 1.f;
 
-	if(nullptr != m_isMedalAnim)
+	if (nullptr != m_isMedalAnim)
 	{
 		if (true == *m_isMedalAnim)
 		{
 			/* LN : 키 클리어 : sound_Map_sm41_wisdom_statue2_1 */
-			if (m_fStore_ZPos + 2.5f > m_pTransformCom->Get_WorldFloat4x4()._43)
+			if (m_fStore_ZPos - 2.5f < m_pTransformCom->Get_WorldFloat4x4()._43)
 			{
-				vMedalpos._43 += fTimeDelta * 1.5f;
+				vMedalpos._43 -= fTimeDelta * 1.5f;
 				m_pTransformCom->Set_WorldMatrix(vMedalpos);
 			}
 		}
@@ -205,7 +206,7 @@ HRESULT CMedal_BigStatue::Initialize_Model()
 		if ((strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
 			m_strMeshTag = strMeshTag;
 	}
-	
+
 	return S_OK;
 }
 
