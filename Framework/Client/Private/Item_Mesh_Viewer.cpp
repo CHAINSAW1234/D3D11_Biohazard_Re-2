@@ -88,6 +88,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Scaled(m_fCurSize, m_fCurSize, m_fCurSize);
 
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+	
 	_vector vCamRight = m_pCameraFree->Get_Transform()->Get_State_Vector(CTransform::STATE_RIGHT);
 	vCamRight *= m_fDistCamX;
 	vFrontCamPos += vCamRight;
@@ -227,13 +228,21 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	switch (m_eOperType)
 	{
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eOperType = EXAMIN_PUZZLE;
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			break;
+		}
+
+
 		if (true == m_pGameInstance->Check_Wheel_Down())
 		{
-			m_fDistCamZ -= 0.001f;
+			m_fDistCamZ -= 0.0001f;
 		}
 		else if (true == m_pGameInstance->Check_Wheel_Up())
 		{
-			m_fDistCamZ += 0.001f;
+			m_fDistCamZ += 0.0001f;
 		}
 
 		static		_float2			vSpeed = { 0.f, 0.f };
@@ -276,9 +285,9 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 				vSpeed.y = 0.f;
 		}
 
-		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
-		m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
 
 		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
 
@@ -315,6 +324,23 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM: {
 		break;
 	}
+
+	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
+			m_eOperType = EXAMIN;
+			break;
+		}
+		
+		break;
+	}
+
+
+
+
+
+
+
 
 	default:
 		break;
