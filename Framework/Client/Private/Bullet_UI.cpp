@@ -3,6 +3,8 @@
 #include "Crosshair_UI.h"
 #include "Tab_Window.h"
 #include "Player.h"
+#include "Camera_Gimmick.h"
+#include "InteractProps.h"
 
 #define MAX_BULLET_COLOR _float4(0.5, 1.0, 0.0, 0.f)
 #define MIN_BULLET_COLOR _float4(1.0, 0.0, 0.0, 0.f)
@@ -119,8 +121,11 @@ HRESULT CBullet_UI::Initialize(void* pArg)
 
     Find_Player();
 
+    Find_GimmickCamera();
+
     if (FAILED(Change_Tool()))
         return E_FAIL;
+
 
     return S_OK;
 }
@@ -128,27 +133,59 @@ HRESULT CBullet_UI::Initialize(void* pArg)
 void CBullet_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+    
+    Operation_BulletUI(fTimeDelta);
+}
+
+void CBullet_UI::Find_GimmickCamera()
+{
+    CCamera_Gimmick* pCameraGimmick = static_cast<CCamera_Gimmick*>(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 2));
+
+    m_isGimmickCamera_Layout_Type = pCameraGimmick->Get_Layout_Type_Ptr();
+
+    if (nullptr == m_isGimmickCamera_Layout_Type)
+    {
+        MSG_BOX(TEXT("Gimmick Camera를 찾을 수 없음 "));
+    }
+}
+
+void CBullet_UI::Operation_BulletUI(_float fTimeDelta)
+{
+    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK) ||
+        *m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK))
+    {
+        m_fBulletTimer = 0.f;
+
+        m_fBlending = 1.f;
+
+        m_isRender = m_isKeepCross = false;
+
+        Bullet_Font();
+
+        return;
+    }
+
 
     CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0));
 
     if (*pTabWindow->Get_MainRender_Ptr() == false)
     {
         m_fBulletTimer = 0.f;
-        
+
         m_fBlending = 1.f;
-        
+
         m_isRender = m_isKeepCross = false;
-       
-        if(m_iEqipType == CPlayer::EQUIP::HG)
+
+        if (m_iEqipType == CPlayer::EQUIP::HG)
         {
-            if(nullptr != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText && 
+            if (nullptr != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText &&
                 nullptr != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText)
             {
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_FontColor(ALPHA_ZERO);
             }
         }
-        else if(m_iEqipType == CPlayer::EQUIP::GRENADE)
+        else if (m_iEqipType == CPlayer::EQUIP::GRENADE)
         {
             if (!m_vecTextBoxes.empty())
             {
@@ -189,7 +226,7 @@ void CBullet_UI::Tick(_float fTimeDelta)
         }
     }
 
-    else if(CPlayer::EQUIP::NONE == m_pPlayer->Get_Equip())
+    else if (CPlayer::EQUIP::NONE == m_pPlayer->Get_Equip())
     {
         if (m_fBlending >= 1.f)
             m_fBlending = 1.f;
@@ -200,11 +237,10 @@ void CBullet_UI::Tick(_float fTimeDelta)
 
     Bullet_Font();
 
-
     if (m_iCurrentBullet < 1)
         Mission_Complete();
-
 }
+
 
 void CBullet_UI::Late_Tick(_float fTimeDelta)
 {

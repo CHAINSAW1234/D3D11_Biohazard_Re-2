@@ -22,10 +22,10 @@ public:
 	virtual HRESULT Change_Tool() override;
 
 private :
-	void				TitleGame_Start();
+	void				TitleGame_Start(_float fTimeDelta);
 	void				InGame_Start(_float fTimeDelta);
 	void				Option_Click(_float fTimeDelta);
-
+	void				Color_Rendering(_float fTimeDetla);
 	void				Find_Logo();
 
 private :
@@ -49,10 +49,20 @@ private :
 	_bool				m_isGameStart_Text			= { false };
 	_float4				m_vOriginTextColor			= {};
 
+	_float				m_fLogoStart_Timer			= { 0.f };
 
 private :
 	_float4				m_vOriginOption_Pos			= {};
 	_bool				m_isSelectCharector			= { false };
+
+private :
+	_float				m_fColorTimer = { 0.f };
+	_bool				m_isColorLight = { false };
+	_bool				m_isColorLightType = { false };
+	_uint				m_iLightCnt = { 0 };
+
+	_bool				m_isSound = { false };
+	_bool				m_isCheckSound = { false };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

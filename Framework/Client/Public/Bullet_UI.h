@@ -42,6 +42,9 @@ private: /* Hand Gun */
 	void					Render_Bullet_UI(_float fTimeDelta);
 	void					Mission_Complete();
 	void					Bullet_Font();
+	void					Find_GimmickCamera();
+
+	void					Operation_BulletUI(_float fTimeDelta);
 
 private : /* Grenade */
 	void					Change_Grenade(_float fTimeDelta, _int _grenadeType);
@@ -75,6 +78,8 @@ private:
 	_bool					m_isTutiorial = { false };
 
 	_int					m_iEqipType = { 0 };
+
+	_ubyte*					m_isGimmickCamera_Layout_Type = { nullptr };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

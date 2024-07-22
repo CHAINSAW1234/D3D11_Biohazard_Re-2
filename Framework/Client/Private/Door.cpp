@@ -1001,7 +1001,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
 
-				Opreate_Selector_UI(true, Get_Object_Pos());
+				Opreate_Selector_UI(true, Get_Object_Pos()); 
 			}
 			else
 			{
