@@ -2792,7 +2792,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2821,7 +2824,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2850,7 +2856,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2879,7 +2888,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2894,7 +2906,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 		{
 			const wchar_t* str = L"Break_Drop_";
 			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+			_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+			if (inum == 11)
+				inum = 12;
 
 			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2908,7 +2923,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 		{
 			const wchar_t* str = L"Break_Drop_";
 			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+			_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+			if (inum == 11)
+				inum = 12;
 
 			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2936,7 +2954,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2965,7 +2986,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3,12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2994,7 +3018,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -3023,7 +3050,10 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			{
 				const wchar_t* str = L"Break_Drop_";
 				wchar_t result[32];
-				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+				_int inum = m_pGameInstance->GetRandom_Int(3, 12);
+
+				if (inum == 11)
+					inum = 12;
 
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 

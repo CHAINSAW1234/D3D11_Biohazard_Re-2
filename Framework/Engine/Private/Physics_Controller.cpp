@@ -12,8 +12,8 @@
 #include "SoftBody.h"
 #include "Rigid_Static.h"
 
-#define OLD_RAYCAST
-//#define NEW_RAYCAST
+//#define OLD_RAYCAST
+#define NEW_RAYCAST
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
