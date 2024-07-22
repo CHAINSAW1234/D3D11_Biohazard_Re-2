@@ -36,7 +36,12 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.fCutOff = XMConvertToRadians(20.f);
 	eDesc.fOutCutOff = XMConvertToRadians(50.f);
 
-	eDesc.BelongNumVec = vector<_int>(50, 1);
+	eDesc.BelongNumVec = vector<_int>(50);
+
+	for (size_t i = 0; i < 50; i++)
+	{
+		eDesc.BelongNumVec[i] = i;
+	}
 
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
