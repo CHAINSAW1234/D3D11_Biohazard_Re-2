@@ -3,6 +3,7 @@
 #include "Light.h"
 #include "Bone.h"
 #include "Player.h"
+#include "Call_Center.h"
 
 CFlashLight::CFlashLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -55,6 +56,8 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	//m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
 	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.8f, 0.f, 0.f, 1.f));
 
+	CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_WP_4530);
+
 	return S_OK;
 }
 
@@ -79,7 +82,7 @@ void CFlashLight::Tick(_float fTimeDelta)
 
 void CFlashLight::Late_Tick(_float fTimeDelta)
 {
-	if (m_bRender) {
+	if (true) {
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
@@ -89,15 +92,44 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 	_float3				vDirection = { };
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 
-	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	if (true == m_isOrigin)
+	{
+		_matrix			WorldMatrix;
+		if (true == m_isRightHand)
+		{
+			_matrix			RotationMatrix = { XMMatrixRotationY(XMConvertToRadians(40.f)) };
+			WorldMatrix = { RotationMatrix * m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * XMMatrixScaling(0.01f, 0.01f, 0.01f) };
+		}
+		else
+		{
+			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * XMMatrixScaling(0.01f, 0.01f, 0.01f) };
+		}
+
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+	else
+	{
+		_matrix			WorldMatrix;
+		if (true == m_isRightHand)
+		{
+			_matrix			RotationMatrix = { XMMatrixRotationY(XMConvertToRadians(40.f)) };
+			WorldMatrix = { RotationMatrix * m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
+		}
+		else
+		{
+			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
+		}
+
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+	
 	
 	const LIGHT_DESC* eDesc = m_pGameInstance->Get_LightDesc(m_strLightTag, 0);
 
 	LIGHT_DESC eNewDesc = *eDesc;
 
 
-	if (m_bRender) {
+	if (true) {
 
 		const _float4x4 pMatrix = m_pModelCom->Get_BonePtr(0)->Get_CombinedTransformationMatrix_Var();
 

@@ -16,6 +16,8 @@
 #include "Shutter.h"
 #include "Camera_Event.h"
 
+#include "FlashLight.h"
+
 CCut_Scene_CF92::CCut_Scene_CF92(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
 {
@@ -38,6 +40,9 @@ HRESULT CCut_Scene_CF92::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+
+	CTransform* pPL00Transform = { m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_Transform() };
+	m_pGameInstance->Add_Object_Sound(pPL00Transform, 5);
 
 	return S_OK;
 }
@@ -99,11 +104,43 @@ void CCut_Scene_CF92::Start_CutScene()
 {
 	__super::Start_CutScene();
 
-	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
-	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
+	CProp_Controller*		pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
+	CShutter*				pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
 
 	if (nullptr == pShutter)
 		return;
+
+	CTransform*				pPL00Transform = { m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_Transform() };
+	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_dialogue.bnk.2.x64_2_00000001.mp3"), 0);
+	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_1.mp3"), 1);
+	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_2.mp3"), 2);
+	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_3.mp3"), 3);
+	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_4.mp3"), 4);
+
+	m_pGameInstance->PlaySoundEffect_2D(TEXT("BGM"), TEXT("cf092_music_en.bnk.2_1.mp3"), 0.5f);
+
+
+	CGameObject*			pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	CFlashLight*			pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+
+	_float4x4*				pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
+	
+	CModel*					pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+	_float4x4*				pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("l_weapon")) };
+
+	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
+	pFlashLight->Set_Origin_Translation(true);
+
+	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
+
+	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	if (nullptr == pGameObject)
+		return;
+
+	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
+	pPlayer->Set_Render(false);
+
+	pPlayer->Set_Spotlight(true);
 
 	pShutter->Set_OutOfControll(true);
 }
@@ -117,31 +154,7 @@ void CCut_Scene_CF92::Finish_CutScene()
 		return;
 
 	CPlayer*				pPlayer = { static_cast<CPlayer*>(pGameObject) };
-	CTransform*				pPlayerTransform = { pPlayer->Get_Transform() };
-	if (nullptr == pPlayerTransform)
-		return;
-
-	_vector					vWorldScale = { XMLoadFloat3(&pPlayerTransform->Get_Scaled()) };
-
-	pPlayerTransform->Get_WorldMatrix();
-	
-	CModel*					pPL00_Model = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-	if (nullptr == pPL00_Model)
-		return;
-
-	_matrix					CurrentCombinedMatrix = { pPL00_Model->Get_CurrentKeyFrame_Root_CombinedMatrix(0) };
-	_matrix					ModelTransformationMtarix = { XMLoadFloat4x4(&pPL00_Model->Get_TransformationMatrix()) };
-	_vector					vScaleLocal, vQuaternionLocal, vTranslationLocal;
-	XMMatrixDecompose(&vScaleLocal, &vQuaternionLocal, &vTranslationLocal, CurrentCombinedMatrix);
-
-	vTranslationLocal = XMVector3TransformCoord(vTranslationLocal, ModelTransformationMtarix);
-	_matrix					ResultCombiendMatrix = { XMMatrixAffineTransformation(vScaleLocal, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternionLocal, vTranslationLocal) };
-	_matrix					ScaleMatrix = XMMatrixScalingFromVector(vWorldScale);
-
-	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
-	pPlayer->Move_Manual(ResultMatrix);
 	pPlayer->Set_Render(true);
-
 
 	CProp_Controller*		pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
 	CShutter*				pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
@@ -150,6 +163,14 @@ void CCut_Scene_CF92::Finish_CutScene()
 		return;
 
 	pShutter->Set_OutOfControll(false);
+
+	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+
+	pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
+	pFlashLight->Set_Origin_Translation(false);
+
+	m_pOrigin_SocketMatrix = nullptr;
 }
 
 HRESULT CCut_Scene_CF92::Add_Actors()
@@ -236,3 +257,4 @@ void CCut_Scene_CF92::Free()
 {
 	__super::Free();
 }
+

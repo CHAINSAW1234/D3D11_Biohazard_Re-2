@@ -141,7 +141,9 @@ void CActor_PL00::Move_Player()
 	_matrix					ScaleMatrix = XMMatrixScalingFromVector(vWorldScale);
 
 	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
+
 	pPlayer->Move_Manual(ResultMatrix);
+	pPlayer->ResetCamera();
 }
 
 void CActor_PL00::Render_Off_RealPlayer()

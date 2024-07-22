@@ -82,6 +82,11 @@ HRESULT CAnimTestPartObject::Render()
 	/*	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;*/
 
+
+		_bool		isDecal = { false };
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &isDecal, sizeof(_bool))))
+			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
 			if (FAILED(m_pShaderCom->Begin(0)))
 				return E_FAIL;

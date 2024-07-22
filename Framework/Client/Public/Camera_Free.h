@@ -52,7 +52,6 @@ private:
 
 	_bool						m_isLockPlayer = { false };
 
-
 private:
 	_float EaseInQuint(_float start, _float end, _float value);
 

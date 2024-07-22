@@ -33,6 +33,7 @@ HRESULT CCamera_Event::Initialize(void* pArg)
 void CCamera_Event::Tick(_float fTimeDelta)
 {
 	//Reset_CamPosition();
+	__super::Tick(fTimeDelta);
 
 	if (m_isPlay) {
 		Play_MCAM(fTimeDelta);
@@ -45,6 +46,7 @@ void CCamera_Event::Tick(_float fTimeDelta)
 
 void CCamera_Event::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CCamera_Event::Render()
@@ -84,6 +86,9 @@ void CCamera_Event::Reset()
 	m_isAllFinished = false;
 	m_pGameInstance->Active_Camera(g_Level,
 		(CCamera*)(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 0)));
+
+	m_pGameInstance->Set_Interpolation_Camera(g_Level,
+		(CCamera*)(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 0)), m_fFovy);
 }
 
 void CCamera_Event::Change_to_Next(_float fTimeDelta)
@@ -104,7 +109,7 @@ void CCamera_Event::Change_to_Next(_float fTimeDelta)
 
 HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
 {
-	vector<MCAM>* pMCAMList = Find_MCAMList(strCamTag);
+	vector<MCAM>*		pMCAMList = Find_MCAMList(strCamTag);
 	if (nullptr == pMCAMList)
 		return E_FAIL;
 
@@ -116,6 +121,8 @@ HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
 	m_isFinished = false;
 	m_isPlay = true;
 	m_fTrackPosition = 0.f;
+
+	Set_Interpolation(XMConvertToRadians(60.0f));
 
 	m_pGameInstance->Active_Camera(g_Level, this);
 	return S_OK;
@@ -409,7 +416,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / ((_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1] - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame])));
 	}
 
-	m_fFovy = XMConvertToRadians(60.f) * vZoom;
+	m_fFovy = XMConvertToRadians(60.f) / vZoom;
 
 #pragma region 축회전 해봣는데 안댐
 	_vector				vTransaltionWorld = { XMVectorSetW(XMLoadFloat3(&vTranslation), 1.f)};
@@ -436,6 +443,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	WorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
 	//	_matrix					WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(0.01f, 0.01f, 0.01f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),  vQuaternion, vTransaltionWorld)};
 	//	WorldMatrix = WorldMatrix* TransformationMatrix;
+
 	m_pTransformCom->Set_WorldMatrix(WorldMatrix);
 #pragma endregion
 	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),

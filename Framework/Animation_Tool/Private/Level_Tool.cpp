@@ -14,7 +14,6 @@ HRESULT CLevel_Tool::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
@@ -38,6 +37,10 @@ HRESULT CLevel_Tool::Initialize()
 void CLevel_Tool::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pGameInstance->Set_Player_Dir(0);
+
+	m_pGameInstance->Set_Player_Collider(0);
 
 	if (GetAsyncKeyState('T') & 0x0001)
 	{
@@ -65,6 +68,13 @@ HRESULT CLevel_Tool::Ready_Lights()
 	//LightDesc.vDirection = _float4(0.f,-1.f,0.f,0.f);
 	LightDesc.vPosition = _float4(0.f, 100000.f, 0.f, 1.f);
 	LightDesc.fRange = 1000000.f;
+	
+	LightDesc.BelongNumVec = vector<_int>(50);
+	for (size_t i = 0; i < 50; i++)
+	{
+		LightDesc.BelongNumVec[i] = i;
+	}
+
 
 	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
 	LightDesc.vAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);

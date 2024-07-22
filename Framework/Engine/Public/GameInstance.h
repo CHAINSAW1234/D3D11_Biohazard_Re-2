@@ -120,6 +120,7 @@ public: /* For.Object_Manager */
 	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
 	void									Start();
 	void									Active_Camera(_uint iLevelIndex, class CCamera* pCamera);
+	void									Set_Interpolation_Camera(_uint iLevelIndex, class CCamera* pCamera, _float fStartFovY);
 #pragma endregion
 
 #pragma region Component_Manager

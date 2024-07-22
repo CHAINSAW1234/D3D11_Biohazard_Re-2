@@ -38,25 +38,72 @@ HRESULT CCamera::Initialize(void * pArg)
 
 void CCamera::Tick(_float fTimeDelta)
 {
+	if (true == m_isInterpolate)
+	{
+		m_fAccInterpoaltionTime += fTimeDelta;
+		if (1.f <= m_fAccInterpoaltionTime)
+			m_isInterpolate = false;
+	}
 }
 
 void CCamera::Late_Tick(_float fTimeDelta)
 {
 }
 
+void CCamera::Set_Interpolation(_float fStartFovY)
+{
+	m_isInterpolate = true;
+	m_fPreFovY = fStartFovY;
+	m_fAccInterpoaltionTime = 0.f;
+	m_PreCamWorldMatrix = m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_VIEW);
+}
+
+
 HRESULT CCamera::Bind_PipeLines()
 {	
 	if (!m_isActive)
 		return E_FAIL;
 
-	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
-	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_fFovy, m_fAspect, m_fNear, m_fFar));
+	_float			fFovY = { m_fFovy };
+
+	if (true == m_isInterpolate)
+	{
+		_float				fRatio = { fminf(m_fAccInterpoaltionTime / 1.f, 1.f) };
+		if (fRatio < 1.f)
+		{
+			_matrix				WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+			_matrix				LastWorldMatrix = { XMLoadFloat4x4(&m_PreCamWorldMatrix) };
+			_matrix				ResultWorldMatrix;
+
+			_vector				vLastScale, vLastQuaternion, vLastTranslation;
+			XMMatrixDecompose(&vLastScale, &vLastQuaternion, &vLastTranslation, LastWorldMatrix);
+
+			_vector				vEventScale, vEventQuaternion, vEventTranslation;
+			XMMatrixDecompose(&vEventScale, &vEventQuaternion, &vEventTranslation, WorldMatrix);
+
+			_vector				vResultScale = { XMVectorLerp(vLastScale,vEventScale, fRatio) };
+			_vector				vResultQuaternion = { XMQuaternionSlerp(vLastQuaternion,vEventQuaternion, fRatio) };
+			_vector				vResultTranslation = { XMVectorLerp(vLastTranslation,vEventTranslation, fRatio) };
+
+			WorldMatrix = XMMatrixAffineTransformation(vResultScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation);
+			_matrix				WorldMatrixInv = { XMMatrixInverse(nullptr, WorldMatrix) };
+			m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, WorldMatrixInv);
+
+			fFovY = fFovY * fRatio + (1.f - fRatio) * m_fPreFovY;
+		}
+	}
+	else
+	{
+		m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
+	}
+
+	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(fFovY, m_fAspect, m_fNear, m_fFar));
 	
 	CPipeLine::FRUSTUM_DESC FrustumDesc = {};
 	FrustumDesc.fAspect = m_fAspect;
 	FrustumDesc.fFar = m_fFar;
 	FrustumDesc.fNear = m_fNear;
-	FrustumDesc.fFovy = m_fFovy;
+	FrustumDesc.fFovy = fFovY;
 	//m_pGameInstance->Set_Frustum(FrustumDesc);
 
 	return S_OK;

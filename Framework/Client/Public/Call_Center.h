@@ -18,6 +18,7 @@ public:
 		/* For.CutScene */
 		_PL00, 
 		_SM60_033, _SM60_034,
+		_WP_4530,
 		_END };	
 
 private:

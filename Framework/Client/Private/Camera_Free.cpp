@@ -37,6 +37,8 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 
 void CCamera_Free::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 	__super::Bind_PipeLines();
 }
 
@@ -49,7 +51,7 @@ _float CCamera_Free::EaseInQuint(_float start, _float end, _float value)
 
 
 void CCamera_Free::Late_Tick(_float fTimeDelta)
-{
+{	
 }
 
 void CCamera_Free::SetPosition(_float4 vPosition)

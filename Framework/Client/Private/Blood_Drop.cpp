@@ -46,7 +46,7 @@ HRESULT CBlood_Drop::Initialize(void* pArg)
 		m_vecDecal.push_back(pDecal);
 	}
 
-	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
+	//	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
 
 	return S_OK;
 }

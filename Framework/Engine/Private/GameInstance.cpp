@@ -616,6 +616,10 @@ void CGameInstance::Active_Camera(_uint iLevelIndex, CCamera* pCamera)
 {
 	return m_pObject_Manager->Active_Camera(iLevelIndex, pCamera);
 }
+void CGameInstance::Set_Interpolation_Camera(_uint iLevelIndex, CCamera* pCamera, _float fStartFovY)
+{
+	return m_pObject_Manager->Set_Interpolation_Camera(iLevelIndex, pCamera, fStartFovY);
+}
 #pragma endregion
 
 #pragma region Component_Manager

@@ -36,6 +36,9 @@ private:
 	virtual HRESULT								Add_Props() override;
 	virtual	HRESULT								Add_Camera_Event() override;
 
+private:
+	_float4x4*									m_pOrigin_SocketMatrix = { nullptr };
+
 public:
 	static CCut_Scene_CF95* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

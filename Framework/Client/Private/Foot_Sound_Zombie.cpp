@@ -57,7 +57,7 @@ _bool CFoot_Sound_Zombie::Execute(_float fTimeDelta)
 		m_isStart = true;
 	}
 
-	if (CZombie::POSE_STATE::_UP != m_pBlackBoard->Get_AI()->Get_PoseState())
+	if (CZombie::POSE_STATE::_UP == m_pBlackBoard->Get_AI()->Get_PoseState())
 	{
 		_float4				vL_Ball_Position_Local_Float3 = { Get_Current_L_Ball_Position_Local() };
 		_float4				vR_Ball_Position_Local_Float3 = { Get_Current_R_Ball_Position_Local() };

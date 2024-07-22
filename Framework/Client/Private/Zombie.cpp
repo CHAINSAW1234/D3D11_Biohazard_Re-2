@@ -1956,7 +1956,7 @@ HRESULT CZombie::Add_SoundTags_Hold_Voice()
 HRESULT CZombie::Add_SoundTags_Foot_Foot()
 {
 	wstring						strExtTag = { TEXT(".mp3") };
-	wstring						strFootSoundTag = { TEXT("em_Foot_Normal_") };
+	wstring						strFootSoundTag = { TEXT("em_Foot_") };
 	vector<wstring>				FootSoundTags;
 	for (_uint i = 1; i <= ZOMBIE_NUM_SOUND_FOOT; ++i)
 	{
@@ -2086,6 +2086,9 @@ void CZombie::Play_Random_Hit_Sound()
 		return;
 
 	_uint				iNumHitSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumHitSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumHitSound) -1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_HIT, ZOMBIE_MAX_VOLUME_HIT) };
@@ -2110,6 +2113,9 @@ void CZombie::Play_Random_Stun_Sound()
 		return;
 
 	_uint				iNumStunSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumStunSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumStunSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_STUN, ZOMBIE_MAX_VOLUME_STUN) };
@@ -2134,6 +2140,9 @@ void CZombie::Play_Random_KnockBack_Sound()
 		return;
 
 	_uint				iNumKnockBackSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumKnockBackSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockBackSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_KNOCKBACK, ZOMBIE_MAX_VOLUME_KNOCKBACK) };
@@ -2158,6 +2167,9 @@ void CZombie::Play_Random_StandUp_Sound()
 		return;
 
 	_uint				iNumStandUpSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumStandUpSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumStandUpSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_STAND_UP, ZOMBIE_MAX_VOLUME_STAND_UP) };
@@ -2182,6 +2194,9 @@ void CZombie::Play_Random_Idle_Sound()
 		return;
 
 	_uint				iNumIdleSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumIdleSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumIdleSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_IDLE, ZOMBIE_MAX_VOLUME_IDLE) };
@@ -2206,6 +2221,9 @@ void CZombie::Play_Random_Move_Sound()
 		return;
 
 	_uint				iNumMoveSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumMoveSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumMoveSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_MOVE, ZOMBIE_MAX_VOLUME_MOVE) };
@@ -2230,6 +2248,9 @@ void CZombie::Play_Random_Hold_Sound()
 		return;
 
 	_uint				iNumHoldSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumHoldSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumHoldSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_HOLD, ZOMBIE_MAX_VOLUME_HOLD) };
@@ -2254,6 +2275,9 @@ void CZombie::Play_Random_Bite_Sound()
 		return;
 
 	_uint				iNumBiteSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBiteSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE, ZOMBIE_MAX_VOLUME_BITE) };
@@ -2278,6 +2302,9 @@ void CZombie::Play_Random_Bite_Reject_Sound()
 		return;
 
 	_uint				iNumBiteRejectSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBiteRejectSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteRejectSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_REJECT, ZOMBIE_MAX_VOLUME_BITE_REJECT) };
@@ -2302,6 +2329,9 @@ void CZombie::Play_Random_Bite_Kill_Sound()
 		return;
 
 	_uint				iNumBiteKillSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBiteKillSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteKillSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_KILL, ZOMBIE_MAX_VOLUME_BITE_KILL) };
@@ -2326,6 +2356,9 @@ void CZombie::Play_Random_Bite_Creep_Sound()
 		return;
 
 	_uint				iNumBiteCreepSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBiteCreepSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteCreepSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_CREEP, ZOMBIE_MAX_VOLUME_BITE_CREEP) };
@@ -2350,6 +2383,9 @@ void CZombie::Play_Random_Bite_Creep_Reject_Sound()
 		return;
 
 	_uint				iNumBiteCreepRejectSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBiteCreepRejectSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteCreepRejectSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_CREEP_REJECT, ZOMBIE_MAX_VOLUME_BITE_CREEP_REJECT) };
@@ -2374,6 +2410,9 @@ void CZombie::Play_Random_Bite_Creep_Kill_Sound()
 		return;
 
 	_uint				iNumBiteCreepKillSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBiteCreepKillSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBiteCreepKillSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_BITE_CREEP_KILL, ZOMBIE_MAX_VOLUME_BITE_CREEP_KILL) };
@@ -2389,8 +2428,10 @@ void CZombie::Play_Random_Foot_Sound()
 		return;
 
 	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumFootSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
-	iRandomIndex = 8;
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_FOOT, ZOMBIE_MAX_VOLUME_FOOT) };
 
@@ -2405,6 +2446,9 @@ void CZombie::Play_Random_Foot_Creep_Sound()
 		return;
 
 	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumFootSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_FOOT, ZOMBIE_MAX_VOLUME_FOOT) };
@@ -2420,6 +2464,9 @@ void CZombie::Play_Random_Drop_Body_Sound()
 		return;
 
 	_uint				iNumDropBodySound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumDropBodySound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumDropBodySound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_DROP_BODY, ZOMBIE_MAX_VOLUME_DROP_BODY) };
@@ -2435,6 +2482,9 @@ void CZombie::Play_Random_Broken_Head_Sound()
 		return;
 
 	_uint				iNumBreakHeadSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBreakHeadSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakHeadSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_BREAK_HEAD };
@@ -2450,6 +2500,9 @@ void CZombie::Play_Random_Broken_Part_Sound()
 		return;
 
 	_uint				iNumBreakOthersSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBreakOthersSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakOthersSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_BREAK_OTHER };
@@ -2465,6 +2518,9 @@ void CZombie::Play_Random_Knock_Window_Sound()
 		return;
 
 	_uint				iNumKnockWindowSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumKnockWindowSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockWindowSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
@@ -2480,6 +2536,9 @@ void CZombie::Play_Random_Break_Window_Sound()
 		return;
 
 	_uint				iNumBreakWindowSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumBreakWindowSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumBreakWindowSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
@@ -2495,6 +2554,9 @@ void CZombie::Play_Random_Knock_Door_Sound()
 		return;
 
 	_uint				iNumKnockDoorSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumKnockDoorSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumKnockDoorSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };
@@ -2510,6 +2572,9 @@ void CZombie::Play_Random_Open_Door_Sound()
 		return;
 
 	_uint				iNumOpenDoorSound = { static_cast<_uint>(iter->second.size()) };
+	if (iNumOpenDoorSound == 0)
+		return;
+
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumOpenDoorSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fVolume = { ZOMBIE_VOLUME_INTERACT };

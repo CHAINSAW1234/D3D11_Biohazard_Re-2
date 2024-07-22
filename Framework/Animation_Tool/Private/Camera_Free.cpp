@@ -93,11 +93,13 @@ void CCamera_Free::Tick(_float fTimeDelta)
 
 	//m_fFovy = XMConvertToRadians(120.f);
 
-	__super::Bind_PipeLines();
 }
 
 void CCamera_Free::Late_Tick(_float fTimeDelta)
 {
+
+
+	__super::Bind_PipeLines();
 }
 
 HRESULT CCamera_Free::Render()

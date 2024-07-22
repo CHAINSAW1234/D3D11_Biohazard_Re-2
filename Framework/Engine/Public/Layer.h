@@ -27,6 +27,7 @@ public:
 	list<class CGameObject*>*		Get_ObjectList_Ptr();
 
 	void							Active_Camera(class CCamera* pCamera);
+	void							Set_Interpolation_Camera(class CCamera* pCamera, _float fStartFovY);
 
 private:
 	list<class CGameObject*>		m_GameObjects;

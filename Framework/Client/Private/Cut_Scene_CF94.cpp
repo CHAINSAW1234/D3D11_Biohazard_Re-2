@@ -11,6 +11,7 @@
 #include "Actor_PartObject.h"
 
 #include "Camera_Event.h"
+#include "Prop_Controller.h"
 
 CCut_Scene_CF94::CCut_Scene_CF94(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
@@ -46,7 +47,18 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 
 		for (auto& pActor : m_Actors)
 		{
+			if (nullptr == pActor)
+				continue;
+
 			pActor->Reset_Animations();
+		}
+
+		for (auto& pProp : m_PropControllers)
+		{
+			if (nullptr == pProp)
+				continue;
+
+			pProp->Reset_Animations();
 		}
 
 		Start_CutScene();
@@ -86,11 +98,11 @@ void CCut_Scene_CF94::Start_CutScene()
 {
 	__super::Start_CutScene();
 
-	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	CGameObject*		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
 
-	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
+	CPlayer*			pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
 }
 
@@ -98,34 +110,11 @@ void CCut_Scene_CF94::Finish_CutScene()
 {
 	__super::Finish_CutScene();
 
-	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	CGameObject*		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
 
-	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
-	CTransform* pPlayerTransform = { pPlayer->Get_Transform() };
-	if (nullptr == pPlayerTransform)
-		return;
-
-	_vector					vWorldScale = { XMLoadFloat3(&pPlayerTransform->Get_Scaled()) };
-
-	pPlayerTransform->Get_WorldMatrix();
-
-	CModel* pPL00_Model = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-	if (nullptr == pPL00_Model)
-		return;
-
-	_matrix					CurrentCombinedMatrix = { pPL00_Model->Get_CurrentKeyFrame_Root_CombinedMatrix(0) };
-	_matrix					ModelTransformationMtarix = { XMLoadFloat4x4(&pPL00_Model->Get_TransformationMatrix()) };
-	_vector					vScaleLocal, vQuaternionLocal, vTranslationLocal;
-	XMMatrixDecompose(&vScaleLocal, &vQuaternionLocal, &vTranslationLocal, CurrentCombinedMatrix);
-
-	vTranslationLocal = XMVector3TransformCoord(vTranslationLocal, ModelTransformationMtarix);
-	_matrix					ResultCombiendMatrix = { XMMatrixAffineTransformation(vScaleLocal, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternionLocal, vTranslationLocal) };
-	_matrix					ScaleMatrix = XMMatrixScalingFromVector(vWorldScale);
-
-	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
-	pPlayer->Move_Manual(ResultMatrix);
+	CPlayer*			pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(true);
 }
 

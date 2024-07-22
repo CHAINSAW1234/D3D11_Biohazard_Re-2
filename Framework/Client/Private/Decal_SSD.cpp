@@ -33,7 +33,7 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
+	//	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
 
 	return S_OK;
 }

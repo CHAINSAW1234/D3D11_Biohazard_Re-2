@@ -36,6 +36,8 @@ public:
 			Bind_PipeLines();
 	}
 
+	void			Set_Interpolation(_float fStartFovY);
+
 public:
 	_bool			m_isActive = { false };
 
@@ -48,6 +50,12 @@ protected:
 protected:
 	_float4x4		m_ProjMatrix;
 	_float4x4		m_ViewMatrix;
+
+protected:
+	_float			m_fAccInterpoaltionTime = { 0.f };
+	_float4x4		m_PreCamWorldMatrix = {};
+	_float			m_fPreFovY = { 0.f };
+	_bool			m_isInterpolate = { false };
 
 protected:
 	HRESULT Bind_PipeLines();

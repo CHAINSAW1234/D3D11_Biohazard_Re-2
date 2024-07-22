@@ -115,6 +115,17 @@ void CLayer::Active_Camera(CCamera* pCamera)
 	}
 }
 
+void CLayer::Set_Interpolation_Camera(CCamera* pCamera, _float fStartFovY)
+{
+	for (auto& pGameObject : m_GameObjects)
+	{
+		CCamera* pCurCamera = static_cast<CCamera*>(pGameObject);
+		if (pCurCamera == pCamera) {
+			pCurCamera->Set_Interpolation(fStartFovY);
+		}
+	}
+}
+
 CLayer * CLayer::Create()
 {
 	CLayer*		pInstance = new CLayer();

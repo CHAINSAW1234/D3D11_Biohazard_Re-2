@@ -114,7 +114,13 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	FMOD_SOUND* pSound = { Find_Sound(strSoundTag) };
 
 	if (nullptr == pSoundDesc || nullptr == pSound)
+	{
+#ifdef _DEBUG
+		MSG_BOX(TEXT("Sound Can't Find "));
+		MSG_BOX(strSoundTag.c_str());
+#endif
 		return;
+	}
 
 	pSoundDesc->pSound = pSound;
 	pSoundDesc->isChange = true;
@@ -156,46 +162,48 @@ void CSound_Manager::Set_Distance_3D(CTransform* pTransform, _uint iSoundIndex, 
 
 HRESULT CSound_Manager::Update_Sounds()
 {
+	return S_OK;
+
 	if (FAILED(Update_Listener_Camera()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 
 	if (FAILED(Update_Sounds_Playing()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}	
 	if (FAILED(Update_Sounds_Mode()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 	if (FAILED(Update_Sounds_Position()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 	if (FAILED(Update_Sounds_Volume()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 	if (FAILED(Update_Sounds_Paused()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 	if (FAILED(Update_Sounds_Distance()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 
 	if (FAILED(Update_Sounds_System()))
 	{
-		MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
+		//	MSG_BOX(TEXT("Called : HRESULT CSound_Manager::Update_Sounds()"));
 		return E_FAIL;
 	}
 
@@ -279,6 +287,7 @@ _bool CSound_Manager::Is_Playing_Sound(CTransform* pTransform, _uint iSoundIndex
 	{
 		return true;
 	}
+
 	return false;
 }
 

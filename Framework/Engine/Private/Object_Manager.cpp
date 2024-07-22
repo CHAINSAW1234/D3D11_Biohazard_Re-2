@@ -223,6 +223,13 @@ void CObject_Manager::Active_Camera(_uint iLevelIndex, CCamera* pCamera)
 
 }
 
+void CObject_Manager::Set_Interpolation_Camera(_uint iLevelIndex, CCamera* pCamera, _float fStartFovY)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, g_strCameraTag);
+
+	pLayer->Set_Interpolation_Camera(pCamera, fStartFovY);
+}
+
 
 CObject_Manager* CObject_Manager::Create(_uint iNumLevels)
 {

@@ -31,13 +31,19 @@ public:
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
 public:
-	void							Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
+	inline _float4x4*				Get_Socket_Ptr() { return m_pSocketMatrix; }
+	inline void						Set_Socket_Ptr(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
+	inline void						Set_Origin_Translation(_bool isOrigin) { m_isOrigin = isOrigin; }
+	inline void						Set_Right_Handed(_bool isRight) { m_isRightHand = isRight; }
 
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CShader*						m_pShaderCom = { nullptr };
 	_float4x4*						m_pSocketMatrix = { nullptr };
 	wstring							m_strLightTag = { TEXT("Light_Flash") };
+
+	_bool							m_isOrigin = { false };
+	_bool							m_isRightHand = { false };
 
 private:
 	HRESULT							Add_Components();

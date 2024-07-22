@@ -9,8 +9,10 @@
 #include "Player.h"
 #include "Call_Center.h"
 #include "Actor_PartObject.h"
+#include "FlashLight.h"
 
 #include "Camera_Event.h"
+#include "Prop_Controller.h"
 
 CCut_Scene_CF95::CCut_Scene_CF95(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
@@ -46,7 +48,18 @@ void CCut_Scene_CF95::Priority_Tick(_float fTimeDelta)
 
 		for (auto& pActor : m_Actors)
 		{
+			if (nullptr == pActor)
+				continue;
+
 			pActor->Reset_Animations();
+		}
+
+		for (auto& pProp : m_PropControllers)
+		{
+			if (nullptr == pProp)
+				continue;
+
+			pProp->Reset_Animations();
 		}
 
 		Start_CutScene();
@@ -92,48 +105,50 @@ void CCut_Scene_CF95::Start_CutScene()
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
+
+	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+
+	_float4x4* pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
+
+	CModel* pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+	_float4x4* pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("r_weapon")) };
+
+	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
+	pFlashLight->Set_Origin_Translation(true);
+	pFlashLight->Set_Right_Handed(true);
+
+	pPlayer->Set_Spotlight(true);
+
+	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
 }
 
 void CCut_Scene_CF95::Finish_CutScene()
 {
 	__super::Finish_CutScene();
 
-	/*CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
-	CTransform* pPlayerTransform = { pPlayer->Get_Transform() };
-	if (nullptr == pPlayerTransform)
-		return;
+	pPlayer->Set_Render(true);
 
-	_vector					vWorldScale = { XMLoadFloat3(&pPlayerTransform->Get_Scaled()) };
+	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
 
-	pPlayerTransform->Get_WorldMatrix();
+	pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
+	pFlashLight->Set_Origin_Translation(false);
+	pFlashLight->Set_Right_Handed(false);
 
-	CModel* pPL00_Model = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-	if (nullptr == pPL00_Model)
-		return;
-
-	_matrix					CurrentCombinedMatrix = { pPL00_Model->Get_CurrentKeyFrame_Root_CombinedMatrix(0) };
-	_matrix					ModelTransformationMtarix = { XMLoadFloat4x4(&pPL00_Model->Get_TransformationMatrix()) };
-	_vector					vScaleLocal, vQuaternionLocal, vTranslationLocal;
-	XMMatrixDecompose(&vScaleLocal, &vQuaternionLocal, &vTranslationLocal, CurrentCombinedMatrix);
-
-	vTranslationLocal = XMVector3TransformCoord(vTranslationLocal, ModelTransformationMtarix);
-	_matrix					ResultCombiendMatrix = { XMMatrixAffineTransformation(vScaleLocal, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternionLocal, vTranslationLocal) };
-	_matrix					ScaleMatrix = XMMatrixScalingFromVector(vWorldScale);
-
-	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
-	pPlayer->Move_Manual(ResultMatrix);
-	pPlayer->Set_Render(true);*/
+	m_pOrigin_SocketMatrix = nullptr;
 }
 
 HRESULT CCut_Scene_CF95::Add_Actors()
 {
 	m_Actors.resize(static_cast<size_t>(CF95_ACTOR_TYPE::_END));
 
-	CActor::ACTOR_DESC			Actor_PL0000_Desc;
+	CActor::ACTOR_DESC						Actor_PL0000_Desc;
 	XMStoreFloat4x4(&Actor_PL0000_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
 	Actor_PL0000_Desc.iBasePartIndex = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY);
 	Actor_PL0000_Desc.iNumParts = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_END);

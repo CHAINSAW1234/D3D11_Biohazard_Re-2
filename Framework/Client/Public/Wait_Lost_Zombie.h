@@ -5,9 +5,6 @@
 #include "Zombie.h"
 #include "Body_Zombie.h"
 
-#define ZOMBIE_IDLE_SOUND_MAX_REMAIN		6.f
-#define ZOMBIE_IDLE_SOUND_MIN_REMAIN		4.f
-
 BEGIN(Client)
 
 class CWait_Lost_Zombie : public CTask_Node

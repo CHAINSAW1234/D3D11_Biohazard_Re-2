@@ -381,6 +381,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Update_Direction();
 	Update_FSM();
+	
 	m_pFSMCom->Update(fTimeDelta);
 
 	Update_KeyInput_Reload();
@@ -3166,7 +3167,7 @@ HRESULT CPlayer::Initialize_PartModels()
 #pragma region
 	CFlashLight* pFlashLight = dynamic_cast<CFlashLight*>(m_PartObjects[PART_LIGHT]);
 	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("l_weapon")) };
-	pFlashLight->Set_Socket(pLeftWeaponCombinedMatrix);
+	pFlashLight->Set_Socket_Ptr(pLeftWeaponCombinedMatrix);
 #pragma endregion
 
 	return S_OK;

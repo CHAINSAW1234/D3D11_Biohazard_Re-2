@@ -2951,6 +2951,10 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_PL5750"), "../Bin/Resources/Animations/CutScene/CF94/pl5750/")))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_EM0000"), "../Bin/Resources/Animations/CutScene/CF94/em0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_EM0050"), "../Bin/Resources/Animations/CutScene/CF94/em0050/")))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_SM60_033_00"), "../Bin/Resources/Animations/CutScene/CF94/sm60_033_00/")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_SM69_015_00"), "../Bin/Resources/Animations/CutScene/CF94/sm69_015_00/")))
