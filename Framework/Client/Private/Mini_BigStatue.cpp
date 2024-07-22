@@ -53,6 +53,14 @@ HRESULT CMini_BigStatue::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
+	m_pModelCom->Change_Animation(0, TEXT("Default"), (_int)m_eAnim); //static상태 유지
+
+	if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+	{
+		m_pTransformCom->Set_WorldMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
+	}
+
+
 #ifndef NON_COLLISION_PROP
 
 #endif
@@ -112,36 +120,26 @@ void CMini_BigStatue::Late_Tick(_float fTimeDelta)
 		} 
 	}
 
-	m_pModelCom->Change_Animation(0, TEXT("Default"), (_int)m_eAnim); //static상태 유지
-
-	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
-	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, 0);
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-
 	if (PARTS_TYPE::MINI_BODY == static_cast<PARTS_TYPE>(m_ePartsType))
 	{
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
-
 		_matrix WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
-		
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
-
 	}
 
 	else if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 	{
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(0.f));
-		 
-		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_ParentWorldMatrix) };
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, 0);
 
+		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_ParentWorldMatrix)};
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	}
+
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+
 }
 
 HRESULT CMini_BigStatue::Render()
@@ -163,9 +161,6 @@ HRESULT CMini_BigStatue::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
@@ -207,8 +202,18 @@ HRESULT CMini_BigStatue::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
-			return E_FAIL;
+		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType)) {
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
+				return E_FAIL;
+		}
+		else {
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_DEFAULT)))
+				return E_FAIL;
+		}
+
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
@@ -237,11 +242,19 @@ HRESULT CMini_BigStatue::Render_LightDepth_Dir()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
-				return E_FAIL;
+			if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType)) {
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
+					return E_FAIL;
+			}
+			else {
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
+					return E_FAIL;
+			}
+
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
@@ -276,11 +289,17 @@ HRESULT CMini_BigStatue::Render_LightDepth_Point()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType)) {
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
-				return E_FAIL;
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
+					return E_FAIL;
+			}
+			else {
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH_CUBE)))
+					return E_FAIL;
+			}
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
@@ -315,11 +334,17 @@ HRESULT CMini_BigStatue::Render_LightDepth_Spot()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType)) {
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
-				return E_FAIL;
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
+					return E_FAIL;
+			}
+			else {
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
+					return E_FAIL;
+			}
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
@@ -331,9 +356,18 @@ HRESULT CMini_BigStatue::Render_LightDepth_Spot()
 HRESULT CMini_BigStatue::Add_Components()
 {
 	/* For.Com_Body_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType)) {
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+			TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
+			return E_FAIL;
+	}
+	else {
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
+			TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
+			return E_FAIL;
+	}
+
+
 
 	/* For.Com_Body_Model */
 	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,

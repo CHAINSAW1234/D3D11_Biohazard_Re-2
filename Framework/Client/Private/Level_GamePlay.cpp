@@ -37,8 +37,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Managers()))
 		return E_FAIL;
 	
-	//if (FAILED(Ready_Lights()))
-	//	return E_FAIL;
+	if (FAILED(Ready_Lights()))
+		return E_FAIL;
 	//
 	if (FAILED(Ready_Layer_Camera(g_strCameraTag)))
 		return E_FAIL;
