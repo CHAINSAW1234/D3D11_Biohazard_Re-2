@@ -70,6 +70,12 @@ HRESULT CLevel_Tool::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
 	LightDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 1.f);
 
+	LightDesc.BelongNumVec = vector<_int>(50);
+	for (size_t i = 0; i < 50; i++)
+	{
+		LightDesc.BelongNumVec[i] = i;
+	}
+
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
