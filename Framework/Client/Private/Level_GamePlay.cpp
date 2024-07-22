@@ -254,8 +254,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT //- map
-		/*if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-			return E_FAIL;*/
+		//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		//	return E_FAIL;
 #endif
 
 #ifdef TEST_ZOMBIE_MAINHALL

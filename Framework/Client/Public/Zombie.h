@@ -282,14 +282,10 @@ public:
 	void								ResetBiteEffect();
 	_float4x4							GetDecalWorldMat();
 	void								SetBlood_HeadBlow();
+	void								PlayBloodSound(_uint iIndex);
 protected:
 	vector<class CBlood*>				m_vecBlood;
-	vector<class CBlood*>				m_vecBlood_STG;
 	vector<class CBlood_Drop*>			m_vecBlood_Drop;
-	vector<class CBlood_Drop*>			m_vecBlood_Drop_STG;
-	vector<class CBlood_Drop*>			m_vecBlood_Drop_STG_NoRay;
-	vector<class CBlood_Drop*>			m_vecBlood_Drop_HeadBlow;
-	vector<class CBlood*>				m_vecBlood_HeadBlow;
 
 	ULONGLONG							m_BloodTime;
 	ULONGLONG							m_BloodDelay;

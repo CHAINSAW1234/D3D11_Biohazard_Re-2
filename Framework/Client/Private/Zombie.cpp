@@ -42,7 +42,7 @@
 #define HEADBLOW_BLOOD_SIZE 8.f
 #define HEADBLOW_BLOOD_SIZE_DROP 8.f
 #define BLOOD_SOUND_COUNT 4
-
+#define BLOOD_SOUND_STARTINDEX 8
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
 {
@@ -218,6 +218,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	for (size_t i = 0; i < DECAL_COUNT; ++i)
 	{
 		auto pDecal = new CDecal_SSD(m_pDevice, m_pContext);
+		pDecal->SetUsingSound(false);
 		pDecal->Initialize(nullptr);
 		m_vecDecal_SSD.push_back(pDecal);
 	}
@@ -3067,27 +3068,15 @@ void CZombie::RayCast_Decal()
 
 void CZombie::Ready_Effect()
 {
+	m_vecBlood.clear();
+	m_vecBlood_Drop.clear();
+	m_vecHit.clear();
+
 	for (size_t i = 0; i < BLOOD_COUNT; ++i)
 	{
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
 		pBlood->SetSize(NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE);
 		m_vecBlood.push_back(pBlood);
-		pBlood->Start();
-	}
-
-	for (size_t i = 0; i < BLOOD_COUNT; ++i)
-	{
-		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
-		pBlood->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
-		m_vecBlood_HeadBlow.push_back(pBlood);
-		pBlood->Start();
-	}
-
-	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
-	{
-		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
-		pBlood->SetSize(BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE);
-		m_vecBlood_STG.push_back(pBlood);
 		pBlood->Start();
 	}
 
@@ -3099,34 +3088,9 @@ void CZombie::Ready_Effect()
 		pBlood_Drop->Start();
 	}
 
-	for (size_t i = 0; i < BLOOD_DROP_COUNT; ++i)
-	{
-		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
-		pBlood_Drop->SetSize(HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP);
-		m_vecBlood_Drop_HeadBlow.push_back(pBlood_Drop);
-		pBlood_Drop->Start();
-	}
-
-	for (size_t i = 0; i < BLOOD_DROP_COUNT_STG; ++i)
-	{
-		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
-		pBlood_Drop->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
-		m_vecBlood_Drop_STG.push_back(pBlood_Drop);
-		pBlood_Drop->Start();
-	}
-
-	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
-	{
-		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
-		pBlood_Drop->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
-		m_vecBlood_Drop_STG_NoRay.push_back(pBlood_Drop);
-		pBlood_Drop->Start();
-	}
-
 	m_pImpact = CImpact::Create(m_pDevice, m_pContext);
 	m_pImpact->SetSize(1.f, 1.f);
 
-	m_vecHit.clear();
 	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
 	{
 		auto pHit = CHit::Create(m_pDevice, m_pContext);
@@ -3142,16 +3106,6 @@ void CZombie::Release_Effect()
 		Safe_Release(m_vecBlood[i]);
 	}
 
-	for (size_t i = 0; i < m_vecBlood_HeadBlow.size(); ++i)
-	{
-		Safe_Release(m_vecBlood_HeadBlow[i]);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_STG.size(); ++i)
-	{
-		Safe_Release(m_vecBlood_STG[i]);
-	}
-
 	for (size_t i = 0; i < m_vecDecal_SSD.size(); ++i)
 	{
 		Safe_Release(m_vecDecal_SSD[i]);
@@ -3160,21 +3114,6 @@ void CZombie::Release_Effect()
 	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
 	{
 		Safe_Release(m_vecBlood_Drop[i]);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_HeadBlow.size(); ++i)
-	{
-		Safe_Release(m_vecBlood_Drop_HeadBlow[i]);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_STG.size(); ++i)
-	{
-		Safe_Release(m_vecBlood_Drop_STG[i]);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_STG_NoRay.size(); ++i)
-	{
-		Safe_Release(m_vecBlood_Drop_STG_NoRay[i]);
 	}
 
 	Safe_Release(m_pImpact);
@@ -3192,16 +3131,6 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 		m_vecBlood[i]->Tick(fTimeDelta);
 	}
 
-	for (size_t i = 0; i < m_vecBlood_HeadBlow.size(); ++i)
-	{
-		m_vecBlood_HeadBlow[i]->Tick(fTimeDelta);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_STG.size(); ++i)
-	{
-		m_vecBlood_STG[i]->Tick(fTimeDelta);
-	}
-
 	for (size_t i = 0; i < m_vecDecal_SSD.size(); ++i)
 	{
 		m_vecDecal_SSD[i]->Tick(fTimeDelta);
@@ -3210,21 +3139,11 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
 	{
 		m_vecBlood_Drop[i]->Tick(fTimeDelta);
-	}
 
-	for (size_t i = 0; i < m_vecBlood_Drop_HeadBlow.size(); ++i)
-	{
-		m_vecBlood_Drop_HeadBlow[i]->Tick(fTimeDelta);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_STG_NoRay.size(); ++i)
-	{
-		m_vecBlood_Drop_STG_NoRay[i]->Tick(fTimeDelta);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_STG.size(); ++i)
-	{
-		m_vecBlood_Drop_STG[i]->Tick(fTimeDelta);
+		if (m_vecBlood_Drop[i]->GetbDecalSound())
+		{
+			PlayBloodSound(i);
+		}
 	}
 
 	for (size_t i = 0; i < m_vecHit.size(); ++i)
@@ -3232,7 +3151,8 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 		m_vecHit[i]->Tick(fTimeDelta);
 	}
 
-	m_pImpact->Tick(fTimeDelta);
+	if(m_pImpact)
+		m_pImpact->Tick(fTimeDelta);
 }
 
 void CZombie::Late_Tick_Effect(_float fTimeDelta)
@@ -3242,29 +3162,9 @@ void CZombie::Late_Tick_Effect(_float fTimeDelta)
 		m_vecBlood[i]->Late_Tick(fTimeDelta);
 	}
 
-	for (size_t i = 0; i < m_vecBlood_HeadBlow.size(); ++i)
-	{
-		m_vecBlood_HeadBlow[i]->Late_Tick(fTimeDelta);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_STG.size(); ++i)
-	{
-		m_vecBlood_STG[i]->Late_Tick(fTimeDelta);
-	}
-
 	for (size_t i = 0; i < m_vecDecal_SSD.size(); ++i)
 	{
 		m_vecDecal_SSD[i]->Late_Tick(fTimeDelta);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_STG.size(); ++i)
-	{
-		m_vecBlood_Drop_STG[i]->Late_Tick(fTimeDelta);
-	}
-
-	for (size_t i = 0; i < m_vecBlood_Drop_STG_NoRay.size(); ++i)
-	{
-		m_vecBlood_Drop_STG_NoRay[i]->Late_Tick(fTimeDelta);
 	}
 
 	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
@@ -3272,17 +3172,13 @@ void CZombie::Late_Tick_Effect(_float fTimeDelta)
 		m_vecBlood_Drop[i]->Late_Tick(fTimeDelta);
 	}
 
-	for (size_t i = 0; i < m_vecBlood_Drop_HeadBlow.size(); ++i)
-	{
-		m_vecBlood_Drop_HeadBlow[i]->Late_Tick(fTimeDelta);
-	}
-
 	for (size_t i = 0; i < m_vecHit.size(); ++i)
 	{
 		m_vecHit[i]->Late_Tick(fTimeDelta);
 	}
 
-	m_pImpact->Late_Tick(fTimeDelta);
+	if(m_pImpact)
+		m_pImpact->Late_Tick(fTimeDelta);
 }
 
 void CZombie::SetBlood()
@@ -3357,10 +3253,11 @@ void CZombie::SetBlood()
 			{
 				m_vecBlood[m_iBloodCount]->SetSize(BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE);
 
-				m_vecBlood_Drop_STG[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-				m_vecBlood_Drop_STG[m_iBloodCount]->Set_Render(true);
-				m_vecBlood_Drop_STG[m_iBloodCount]->SetPosition(m_vHitPosition);
-				m_vecBlood_Drop_STG[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+				m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+				m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+				m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vHitPosition);
+				m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+				m_vecBlood_Drop[m_iBloodCount]->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
 
 			}
 			else
@@ -3371,6 +3268,7 @@ void CZombie::SetBlood()
 				m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
 				m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vHitPosition);
 				m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+				m_vecBlood_Drop[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
 
 			}
 		}
@@ -3389,10 +3287,11 @@ void CZombie::SetBlood()
 
 				if (m_iBloodCount < BLOOD_DROP_COUNT_STG)
 				{
-					m_vecBlood_Drop_STG[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-					m_vecBlood_Drop_STG[m_iBloodCount]->Set_Render(true);
-					m_vecBlood_Drop_STG[m_iBloodCount]->SetPosition(m_vecBlood[m_iBloodCount - 1]->GetPosition());
-					m_vecBlood_Drop_STG[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+					m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+					m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+					m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vecBlood[m_iBloodCount - 1]->GetPosition());
+					m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+					m_vecBlood_Drop[m_iBloodCount]->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
 				}
 			}
 			else
@@ -3405,6 +3304,7 @@ void CZombie::SetBlood()
 					m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
 					m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vecBlood[m_iBloodCount - 1]->GetPosition());
 					m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+					m_vecBlood_Drop[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
 				}
 			}
 		}
@@ -3463,6 +3363,7 @@ void CZombie::SetBiteBlood()
 			m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
 			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vMouthPos);
 			m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+			m_vecBlood_Drop[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
 		}
 		else
 		{
@@ -3481,6 +3382,7 @@ void CZombie::SetBiteBlood()
 				m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
 				m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vMouthPos);
 				m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+				m_vecBlood_Drop[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
 			}
 		}
 
@@ -3581,23 +3483,23 @@ void CZombie::SetBlood_STG()
 
 			if (m_pController->GetDead() == false)
 			{
-				m_vecBlood_STG[i]->SetHitPart((*pHitParts)[i]);
+				m_vecBlood[i]->SetHitPart((*pHitParts)[i]);
 			}
 			else
 			{
-				m_vecBlood_STG[i]->SetHitPart(pBody->Get_Ragdoll_RigidBody((*pColliderTypes)[i]));
+				m_vecBlood[i]->SetHitPart(pBody->Get_Ragdoll_RigidBody((*pColliderTypes)[i]));
 			}
 
-			m_vecBlood_STG[i]->Set_Render(true);
-			//m_vecBlood_STG[i]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-			m_vecBlood_STG[i]->SetPosition(vBlockPoint);
+			m_vecBlood[i]->Set_Render(true);
+			m_vecBlood[i]->SetPosition(vBlockPoint);
 			auto iType = m_pGameInstance->GetRandom_Int(1, 10);
-			m_vecBlood_STG[i]->SetType(iType);
+			m_vecBlood[i]->SetType(iType);
+			m_vecBlood[i]->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
 
-			//m_vecBlood_Drop_STG_NoRay[i]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-			m_vecBlood_Drop_STG_NoRay[i]->Set_Render(true);
-			m_vecBlood_Drop_STG_NoRay[i]->SetPosition(vBlockPoint);
-			m_vecBlood_Drop_STG_NoRay[i]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+			m_vecBlood_Drop[i]->Set_Render(true);
+			m_vecBlood_Drop[i]->SetPosition(vBlockPoint);
+			m_vecBlood_Drop[i]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+			m_vecBlood_Drop[i]->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
 
 			m_vecHit[i]->Set_Render(true);
 			m_vecHit[i]->SetPosition(vBlockPoint);
@@ -3630,7 +3532,7 @@ _float4x4 CZombie::GetDecalWorldMat()
 
 void CZombie::SetBlood_HeadBlow()
 {
-	if (m_iBloodCount_HeadBlow >= m_vecBlood_HeadBlow.size())
+	if (m_iBloodCount_HeadBlow >= m_vecBlood.size())
 	{
 		m_bHeadBlow = false;
 		m_iBloodCount_HeadBlow = 0;
@@ -3640,10 +3542,12 @@ void CZombie::SetBlood_HeadBlow()
 	if (m_HeadBlowEffectTime + m_HeadBlowEffectDelay < GetTickCount64())
 	{
 		m_HeadBlowEffectTime = GetTickCount64();
-		m_vecBlood_HeadBlow[m_iBloodCount_HeadBlow]->Set_Render(true);
-		m_vecBlood_HeadBlow[m_iBloodCount_HeadBlow]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-		m_vecBlood_HeadBlow[m_iBloodCount_HeadBlow]->SetHitPart(m_pController->GetHitPart());
-		m_vecBlood_HeadBlow[m_iBloodCount_HeadBlow]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+
+		m_vecBlood[m_iBloodCount_HeadBlow]->Set_Render(true);
+		m_vecBlood[m_iBloodCount_HeadBlow]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		m_vecBlood[m_iBloodCount_HeadBlow]->SetHitPart(m_pController->GetHitPart());
+		m_vecBlood[m_iBloodCount_HeadBlow]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+		m_vecBlood[m_iBloodCount_HeadBlow]->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
 
 		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
 		_float4 vHeadPos = pBody->GetRigidBodyPos(COLLIDER_TYPE::HEAD);
@@ -3653,25 +3557,40 @@ void CZombie::SetBlood_HeadBlow()
 			0.f);
 		vHeadPos += vDelta;
 
-		m_vecBlood_HeadBlow[m_iBloodCount_HeadBlow]->SetPosition(vHeadPos);
+		m_vecBlood[m_iBloodCount_HeadBlow]->SetPosition(vHeadPos);
 
 		if (m_iBloodCount_HeadBlow < BLOOD_DROP_COUNT)
 		{
-			m_vecBlood_Drop_HeadBlow[m_iBloodCount_HeadBlow]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-			m_vecBlood_Drop_HeadBlow[m_iBloodCount_HeadBlow]->Set_Render(true);
-			m_vecBlood_Drop_HeadBlow[m_iBloodCount_HeadBlow]->SetPosition(m_vecBlood_HeadBlow[m_iBloodCount_HeadBlow]->GetPosition());
-			m_vecBlood_Drop_HeadBlow[m_iBloodCount_HeadBlow]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+			m_vecBlood_Drop[m_iBloodCount_HeadBlow]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+			m_vecBlood_Drop[m_iBloodCount_HeadBlow]->Set_Render(true);
+			m_vecBlood_Drop[m_iBloodCount_HeadBlow]->SetPosition(m_vecBlood[m_iBloodCount_HeadBlow]->GetPosition());
+			m_vecBlood_Drop[m_iBloodCount_HeadBlow]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+			m_vecBlood_Drop[m_iBloodCount_HeadBlow]->SetSize(HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP);
 		}
 
 		++m_iBloodCount_HeadBlow;
 
-		if (m_iBloodCount_HeadBlow >= m_vecBlood_HeadBlow.size())
+		if (m_iBloodCount_HeadBlow >= m_vecBlood.size())
 		{
 			m_bHeadBlow = false;
 			m_iBloodCount_HeadBlow = 0;
 			return;
 		}
 	}
+}
+
+void CZombie::PlayBloodSound(_uint iIndex)
+{
+	const wchar_t* str = L"Blood_";
+	wchar_t result[32];
+	_int inum = m_pGameInstance->GetRandom_Int(0, 10);
+
+	std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, BLOOD_SOUND_STARTINDEX + iIndex);
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, BLOOD_SOUND_STARTINDEX + iIndex, 0.2f);
+
+	m_vecBlood_Drop[iIndex]->SetbDecalSound(false);
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)

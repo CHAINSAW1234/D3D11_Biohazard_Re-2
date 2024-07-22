@@ -91,7 +91,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.445f, m_pTransformCom,
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 20.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.445f, m_pTransformCom,
 		m_pBodyModel->GetBoneVector(), "None");
 
 	//For Camera.
@@ -100,8 +100,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	m_pTransformCom_Camera->SetRotationPerSec(0.75f);
 
-	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.f);
-	m_pTransformCom_Camera->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.f);
+	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.1f);
+	m_pTransformCom_Camera->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.1f);
 	//For Camera.
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
@@ -128,6 +128,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 	fill_n(m_SetProps, SETPROPS_NONE, -1);
 
 	m_MuzzleSmoke_Delay = 50;
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f, 20.f, 1.f));
+	m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f,20.f, 1.f));
+	m_pTransformCom->Look_At_ForLandObject(XMVectorSet(0.001f, 0.1f, 0.001f, 1.f));
+	ResetCamera();
 
 	return S_OK;
 }
