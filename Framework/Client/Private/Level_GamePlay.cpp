@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Public\Level_GamePlay.h"
+#include "Level_GamePlay.h"
 
 #include "Camera_Free.h"
 #include "Zombie.h"
@@ -20,6 +20,10 @@
 #include"EnvCube.h"
 #include "ImGui_Manager.h"
 
+/*Sound*/
+#include"EnvSound.h"
+
+
 /* Manager */
 #include "Call_Center.h"
 
@@ -38,6 +42,9 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 	
 	if (FAILED(Ready_Lights()))
+		return E_FAIL;
+
+	if (FAILED(Ready_EnvSounds()))
 		return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Camera(g_strCameraTag)))
@@ -82,47 +89,6 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-	
-	// 
-	///*(임시) 이벤트 처리 구간*/
-	//_bool bGoal = { false };
-	//_float4 vGoal = { 0.f,0.f,0.f,0.f };
-	//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	//iCurIndex = pPlayer->Get_Player_Region();
-	//if (iCurIndex!= iPreIndex)
-	//{
-	//	LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
-	//	LIGHT_DESC light_desc = *plight_desc;
-	//	if (iCurIndex == 2)
-	//	{
-	//		light_desc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 0.2f);
-	//		light_desc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 0.2f);
-	//		if (plight_desc->vDiffuse.x < 0.22f && plight_desc->vDiffuse.x > 0.18f)
-	//			iPreIndex = iCurIndex;
-	//		
-	//		m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
-	//	}
-	//	else if(iCurIndex == 10)
-	//	{
-	//		light_desc.vDiffuse = _float4(0.09f, 0.09f, 0.12f, 0.09f);
-	//		light_desc.vAmbient = _float4(0.09f, 0.09f, 0.12f, 0.09f);
-	//		if (plight_desc->vDiffuse.x < 0.11f && plight_desc->vDiffuse.x > 0.07f)
-	//			iPreIndex = iCurIndex;
-	//		
-	//		m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta*2.f);
-	//	}
-	//	else if (iCurIndex == 0)
-	//	{
-	//		light_desc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 0.4f);
-	//		light_desc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 0.4f);
-	//		if (plight_desc->vDiffuse.x < 0.42f && plight_desc->vDiffuse.x > 0.38f)
-	//			iPreIndex = iCurIndex;
-	//		
-	//		m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
-	//	}		
-	//}
-
-
 
 }
 
@@ -156,7 +122,15 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_EnvSounds()
+{
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_EnvSounds"), TEXT("Prototype_GameObject_EnvSound"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -270,38 +244,38 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
 	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };*/
-
-	ZOMBIE_FEMALE_SHIRTS::_END;
-	ZOMBIE_FEMALE_PANTS::_END;
-	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
-	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE};
-	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(3) };
-	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(0) };
-	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(4) };
-
-	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
-	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
-
-	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
-	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
-
-	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
-
-	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
-
-	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
+//
+//	ZOMBIE_FEMALE_SHIRTS::_END;
+//	ZOMBIE_FEMALE_PANTS::_END;
+//	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
+//	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE};
+//	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(3) };
+//	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(0) };
+//	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(4) };
+//
+//	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+//
+//	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+//
+//	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+//	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+//
+//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+//	   return E_FAIL;
+//
+//	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
+//	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+//
+//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+//	   return E_FAIL;
+//
+//	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
+//	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+//
+//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+//	   return E_FAIL;
 #endif
 
 	SetUp_DeadMonsters();
@@ -1671,6 +1645,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 	CloseHandle(hFile);
 	return S_OK;
 }
+
 
 HRESULT CLevel_GamePlay::SetUp_DeadMonsters()
 {

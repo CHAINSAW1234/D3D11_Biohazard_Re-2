@@ -38,13 +38,26 @@ HRESULT CLoading_UI::Initialize(void* pArg)
             return E_FAIL;
 
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
+
         m_iWhich_Child = CustomUIDesc->iWhich_Child;
+
         fileName = CustomUIDesc->wstrFileName;
     }
-
+    
     if (fileName == TEXT("UI_Loading_Text"))
     {
         m_eLoadingType = LOADING_UI_TYPE::BACKGROUND_TEXT;
+    }
+
+    else if (fileName == TEXT("UI_Loading_bar"))
+    {
+        m_eLoadingType = LOADING_UI_TYPE::BAR_LOADING_UI;
+
+        _float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        fPos.y -= 10.f;
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, fPos);
     }
 
     else
@@ -102,6 +115,9 @@ HRESULT CLoading_UI::Initialize(void* pArg)
         }
     }
 
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
+
     m_isPlay = false;
 
     return S_OK;
@@ -112,6 +128,7 @@ void CLoading_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
   
     Operate_Typing(fTimeDelta);
+
     Operate_Ending(fTimeDelta);
 }   
 

@@ -272,6 +272,7 @@ public: /* For.m_pSound_Manager */
 	int										VolumeUp_2D(_int eID, _float _vol);
 	int										VolumeDown_2D(_int eID, _float _vol);
 	int										BGMVolumeUp_2D(_float _vol, _int eID);
+	int										BGMVolume_2D(_float _vol, _int eID);
 	int										BGMVolumeDown_2D(_float _vol, _int eID);
 	int										Pause_2D(_int eID, _bool bPause);
 	void									PlayMySound_2D(wstring TypeKey, wstring FileKey, _int eID, _float _vol);
@@ -366,7 +367,8 @@ public:/*For Physics Controller*/
 	_bool									RayCast_Effect(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal,_bool bBigAttack,_bool* pDynamic, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
+	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform,ID3D11Device* pDevice,ID3D11DeviceContext* pContext, const string& name);
+	class CRagdoll_Physics*					Get_Ragdoll(_uint iId);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll, _uint iId);
 	void									Start_PartialRagdoll(class CRagdoll_Physics* pRagdoll, _uint iId, COLLIDER_TYPE eType);
 	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);

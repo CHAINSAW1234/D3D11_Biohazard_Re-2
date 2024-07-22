@@ -187,6 +187,9 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 		{
 			_int				iRandRejectAnimIndex = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT1), static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT3)) };
 			iResultAnimationIndex = iRandRejectAnimIndex;
+
+			m_eFront_Bite_Type = static_cast<ANIM_BITE_DEFAULT_FRONT>(iRandRejectAnimIndex);
+
 			m_pBlackBoard->Get_AI()->Play_Random_Bite_Reject_Sound();
 		}
 	}
@@ -951,6 +954,77 @@ void CBite_Zombie::Initiate_Effect()
 				}
 			}
 
+			if (Is_CurrentAnim_FinishAnim())
+			{
+				auto eBiteType = static_cast<ANIM_BITE_DEFAULT_FRONT>(m_eFront_Bite_Type);
+				switch (eBiteType)
+				{
+				case ANIM_BITE_DEFAULT_FRONT::_REJECT1:
+				{
+					_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+					if (abs(fTrackPosition - 100.f) < 1.3f)
+					{
+						const wchar_t* str = L"Break_Drop_";
+						wchar_t result[32];
+						_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+						std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+						m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+						if (inum == 11)
+						{
+							m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.4f);
+						}
+					}
+					break;
+				}
+				case ANIM_BITE_DEFAULT_FRONT::_REJECT2:
+				{
+					_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+					if (abs(fTrackPosition - 100.f) < 1.3f)
+					{
+						const wchar_t* str = L"Break_Drop_";
+						wchar_t result[32];
+						_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+						std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+						m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+						if (inum == 11)
+						{
+							m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.4f);
+						}
+					}
+					break;
+				}
+				case ANIM_BITE_DEFAULT_FRONT::_REJECT3:
+				{
+					_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+					if (abs(fTrackPosition - 70.f) < 1.3f)
+					{
+						const wchar_t* str = L"Break_Drop_";
+						wchar_t result[32];
+						_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+						std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+						m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+						if (inum == 11)
+						{
+							m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.4f);
+						}
+					}
+					break;
+				}
+				}
+			}
+
 			m_pBlackBoard->Get_AI()->SetBiteBlood();
 			m_pBlackBoard->Get_Player()->SetBiteType(BITE_TYPE_FOR_EFFECT::STAND_FRONT);
 		}
@@ -968,6 +1042,27 @@ void CBite_Zombie::Initiate_Effect()
 				{
 					m_pBlackBoard->Get_AI()->ResetBiteEffect();
 					m_pBlackBoard->Get_Player()->SetCalcDecalMap(true);
+				}
+			}
+
+			if (Is_CurrentAnim_FinishAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 90.f) < 1.3f)
+				{
+					const wchar_t* str = L"Break_Drop_";
+					wchar_t result[32];
+					_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+					std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+					m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+					if (inum == 11)
+					{
+						m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.2f);
+					}
 				}
 			}
 
@@ -1017,6 +1112,7 @@ void CBite_Zombie::Initiate_Effect()
 			}
 
 			m_pBlackBoard->Get_AI()->SetBiteBlood();
+
 			break;
 		}
 		}

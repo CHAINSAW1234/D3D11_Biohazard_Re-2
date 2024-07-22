@@ -29,6 +29,7 @@
 
 #include "Effect.h"
 #include "Sky.h"
+#include "EnvSound.h"
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
 
@@ -232,6 +233,12 @@ HRESULT CLoader::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	
+	/* UI_Loading_Text */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Loading_bar.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
 	return S_OK;
 
 }
@@ -255,9 +262,6 @@ void CLoader::UI_Distinction(wstring& selectedFilePath)
 void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
-
-	if(TEXT("UI_Loading_Text") != fileName)
-		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
 
@@ -378,6 +382,7 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 		CustomizeUIDesc.iWhich_Child = iWhich_Child;
 
 	CustomizeUIDesc.wstrFileName = fileName;
+
 	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Loading_UI"), &CustomizeUIDesc)))
 		MSG_BOX(TEXT("Failed to Add Clone"));
 
@@ -497,6 +502,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_EnvSound */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvSound"),
+		CEnvSound::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma region SSD_DECAL

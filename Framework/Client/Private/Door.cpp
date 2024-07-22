@@ -930,17 +930,6 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 			m_bCamera = false;
 		}
 	}
-	if (m_bCamera)
-	{
-		_float fScala = Radian_To_Player();
-
-		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-			Camera_Active(PART_EMBLEM, _float3(-0.5f, -0.5f, -10.1f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
-		else
-			Camera_Active(PART_EMBLEM, _float3(0.5f, 0.5f, -10.1f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
-
-	}
-
 
 	if (m_bLock)
 	{
@@ -973,8 +962,17 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 	}
-	
 
+	if (m_bCamera)
+	{
+		_float fScala = Radian_To_Player();
+
+		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+			Camera_Active(PART_EMBLEM, _float3(-0.015f, 0.075f, -0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+		else
+			Camera_Active(PART_EMBLEM, _float3(0.015f, 0.075f, 0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+
+	}
 }
 
 void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
@@ -1003,7 +1001,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
 
-				Opreate_Selector_UI(true, Get_Object_Pos());
+				Opreate_Selector_UI(true, Get_Object_Pos()); 
 			}
 			else
 			{

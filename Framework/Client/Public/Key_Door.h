@@ -33,7 +33,9 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	HRESULT						Initialize_Model();
-
+	virtual HRESULT				Render_LightDepth_Dir()override;
+	virtual HRESULT				Render_LightDepth_Point() override;
+	virtual HRESULT				Render_LightDepth_Spot()override;
 public:
 	void						Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
 

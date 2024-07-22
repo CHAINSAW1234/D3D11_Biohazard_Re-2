@@ -61,6 +61,7 @@ static physx::PxFilterFlags MegamotionFilterShader(
 {
 	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 
+#pragma region For Sound
 	if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::EFFECT))
 	{
 		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
@@ -74,6 +75,21 @@ static physx::PxFilterFlags MegamotionFilterShader(
 		return PxFilterFlag::eDEFAULT;
 
 	}
+
+	if ((filterData0.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData1.word0 & COLLISION_CATEGORY::RAGDOLL))
+	{
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
+
+	}
+
+	if ((filterData1.word0 & COLLISION_CATEGORY::STATIC_MESH) && (filterData0.word0 & COLLISION_CATEGORY::RAGDOLL))
+	{
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return PxFilterFlag::eDEFAULT;
+
+	}
+#pragma endregion
 
 #pragma region Default
 	//충돌 무시 코드

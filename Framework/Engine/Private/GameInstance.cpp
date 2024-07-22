@@ -1361,11 +1361,18 @@ _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPo
 
 	return false;
 }
-CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, const string& name)
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,pDevice,pContext,name);
 	
+	return nullptr;
+}
+CRagdoll_Physics* CGameInstance::Get_Ragdoll(_uint iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->GetRagdoll(iId);
+
 	return nullptr;
 }
 void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
@@ -1813,6 +1820,12 @@ int CGameInstance::BGMVolumeUp_2D(_float _vol, _int eID)
 	return 0;
 }
 
+int CGameInstance::BGMVolume_2D(_float _vol, _int eID)
+{
+	m_pSound_Manager_2D->BGMVolume_2D(_vol, eID);
+	return 0;
+}
+
 int CGameInstance::BGMVolumeDown_2D(_float _vol, _int eID)
 {
 	m_pSound_Manager_2D->BGMVolumeDown_2D(_vol, eID);
@@ -1902,7 +1915,7 @@ _bool CGameInstance::IsPlaying_2D(_int eID, _bool* boolean)
 }
 void CGameInstance::PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float Volume)
 {
-	uniform_int_distribution<_int>	Prob(1, SOUND_CHANNEL_SIZE - 1);
+	uniform_int_distribution<_int>	Prob(1, SOUND_CHANNEL_SIZE/2 - 1);
 	_int Index = Prob(m_RandomNumber);
 	_bool boolean = false;
 

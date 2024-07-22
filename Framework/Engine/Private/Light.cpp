@@ -9,7 +9,6 @@ CLight::CLight()
 HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
 	LIGHT_DESC* pNewDesc = new LIGHT_DESC();
-	ZeroMemory(pNewDesc, sizeof(LIGHT_DESC));
 
 	pNewDesc->bRender = desc.bRender;
 	pNewDesc->bShadow = desc.bShadow;
@@ -22,7 +21,7 @@ HRESULT CLight::Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _fl
 	pNewDesc->vDirection = desc.vDirection;
 	pNewDesc->vPosition = desc.vPosition;
 	pNewDesc->vSpecular = desc.vSpecular;
-	pNewDesc->BelongNumVec = desc.BelongNumVec; //vec로 받고
+	pNewDesc->BelongNumVec = vector<_int>(desc.BelongNumVec); //vec로 받고
 	
 	for (auto iter : pNewDesc->BelongNumVec) // 실제로 사용할 배열에 넣는다.
 	{

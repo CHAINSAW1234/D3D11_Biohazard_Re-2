@@ -12,8 +12,8 @@
 #include "SoftBody.h"
 #include "Rigid_Static.h"
 
-#define OLD_RAYCAST
-//#define NEW_RAYCAST
+//#define OLD_RAYCAST
+#define NEW_RAYCAST
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -904,7 +904,7 @@ void CPhysics_Controller::Config_SoftBody(PxSoftBody* softBody, const PxFEMParam
 	PX_PINNED_HOST_FREE(m_CudaContextManager, restPositionPinned);
 }
 
-CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
+CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& name)
 {
 	//Ragdoll Init
 	auto pRagdoll = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
@@ -912,7 +912,7 @@ CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecB
 
 	pRagdoll->SetBone_Ragdoll(vecBone);
 	pRagdoll->SetTransform(pTransform);
-	pRagdoll->Init(name);
+	pRagdoll->Init(name,pDevice,pContext);
 
 	m_vecRagdoll.push_back(pRagdoll);
 
@@ -965,6 +965,11 @@ void CPhysics_Controller::SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix)
 {
 	/*if (nullptr != m_pRagdoll_Physics)
 		m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);*/
+}
+
+CRagdoll_Physics* CPhysics_Controller::GetRagdoll(_uint iId)
+{
+	return m_vecRagdoll[iId-1];
 }
 
 CRigid_Static* CPhysics_Controller::Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh)

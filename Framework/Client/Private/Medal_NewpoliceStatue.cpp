@@ -114,7 +114,6 @@ HRESULT CMedal_NewpoliceStatue::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
@@ -141,8 +140,20 @@ HRESULT CMedal_NewpoliceStatue::Render()
 				return E_FAIL;
 		}
 
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			_bool isEmissive = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_DEFAULT)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
