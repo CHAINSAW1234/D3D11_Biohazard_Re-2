@@ -969,7 +969,7 @@ void CPhysics_Controller::SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix)
 
 CRagdoll_Physics* CPhysics_Controller::GetRagdoll(_uint iId)
 {
-	return m_vecRagdoll[iId];
+	return m_vecRagdoll[iId-1];
 }
 
 CRigid_Static* CPhysics_Controller::Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh)

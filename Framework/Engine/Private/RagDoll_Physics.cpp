@@ -479,7 +479,7 @@ _bool CRagdoll_Physics::Init(const string& name, ID3D11Device* pDevice, ID3D11De
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom_Sound, 10);
 
 	m_vecRagdollSound_Filter.clear();
-	m_vecRagdollSound_Filter.resize(10,false);
+	m_vecRagdollSound_Filter.resize(13,false);
 #pragma endregion
 
 	return true;
@@ -2776,57 +2776,117 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 	case COLLIDER_TYPE::ARM_L:
 		if (m_vecRagdollSound_Filter[0] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Arm_L_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0, 2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 0);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 0);
 
-			m_vecRagdollSound_Filter[0] = true;
+				m_vecRagdollSound_Filter[0] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 0);
+
+				m_vecRagdollSound_Filter[0] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::ARM_R:
 		if (m_vecRagdollSound_Filter[1] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Arm_R_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0,2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 1);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 1);
 
-			m_vecRagdollSound_Filter[1] = true;
+				m_vecRagdollSound_Filter[1] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 1);
+
+				m_vecRagdollSound_Filter[1] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::FOREARM_L:
 		if (m_vecRagdollSound_Filter[2] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Arm_L_High || m_ForeArm_L_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0, 2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 2);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 2);
 
-			m_vecRagdollSound_Filter[2] = true;
+				m_vecRagdollSound_Filter[2] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 2);
+
+				m_vecRagdollSound_Filter[2] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::FOREARM_R:
 		if (m_vecRagdollSound_Filter[3] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_ForeArm_R_High || m_Arm_R_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0, 2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 3);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 3);
 
-			m_vecRagdollSound_Filter[3] = true;
+				m_vecRagdollSound_Filter[3] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 3);
+
+				m_vecRagdollSound_Filter[3] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::HEAD:
@@ -2834,7 +2894,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 		{
 			const wchar_t* str = L"Break_Drop_";
 			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			_int inum = m_pGameInstance->GetRandom_Int(3, 9);
 
 			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2848,7 +2908,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 		{
 			const wchar_t* str = L"Break_Drop_";
 			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			_int inum = m_pGameInstance->GetRandom_Int(3, 9);
 
 			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
@@ -2860,57 +2920,117 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 	case COLLIDER_TYPE::LEG_L:
 		if (m_vecRagdollSound_Filter[6] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Leg_L_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0, 2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 6);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 6);
 
-			m_vecRagdollSound_Filter[6] = true;
+				m_vecRagdollSound_Filter[6] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 6);
+
+				m_vecRagdollSound_Filter[6] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::LEG_R:
 		if (m_vecRagdollSound_Filter[7] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Leg_R_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0, 2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 7);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 7);
 
-			m_vecRagdollSound_Filter[7] = true;
+				m_vecRagdollSound_Filter[7] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 7);
+
+				m_vecRagdollSound_Filter[7] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::CALF_L:
 		if (m_vecRagdollSound_Filter[8] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Leg_L_High || m_Calf_L_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0,2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 8);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 8);
 
-			m_vecRagdollSound_Filter[8] = true;
+				m_vecRagdollSound_Filter[8] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 8);
+
+				m_vecRagdollSound_Filter[8] = true;
+			}
 		}
 		break;
 	case COLLIDER_TYPE::CALF_R:
 		if (m_vecRagdollSound_Filter[9] == false)
 		{
-			const wchar_t* str = L"Break_Drop_";
-			wchar_t result[32];
-			_int inum = m_pGameInstance->GetRandom_Int(0, 9);
+			if(m_Calf_R_High)
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(0, 2);
 
-			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
-			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 9);
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 9);
 
-			m_vecRagdollSound_Filter[9] = true;
+				m_vecRagdollSound_Filter[9] = true;
+			}
+			else
+			{
+				const wchar_t* str = L"Break_Drop_";
+				wchar_t result[32];
+				_int inum = m_pGameInstance->GetRandom_Int(3, 9);
+
+				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 9);
+
+				m_vecRagdollSound_Filter[9] = true;
+			}
 		}
 		break;
 	}
