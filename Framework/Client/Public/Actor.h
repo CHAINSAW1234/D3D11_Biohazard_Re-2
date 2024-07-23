@@ -45,6 +45,8 @@ public:
 
 	_bool					Is_Finished_Animation_Part(_uint iPartType);
 	_bool					Is_Finished_Animation_All_Part();
+	void					Play_Pose_FirstTick(_uint iPartIndex);
+	void					Play_Animation_PartObject(_uint iPartIndex);
 
 	_bool					Is_Finished_All_Animation_All();
 

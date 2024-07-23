@@ -185,6 +185,16 @@ _bool CActor::Is_Finished_Animation_All_Part()
     return true;
 }
 
+void CActor::Play_Pose_FirstTick(_uint iPartIndex)
+{
+    m_PartObjects[iPartIndex]->Play_Pose_FirstTick();
+}
+
+void CActor::Play_Animation_PartObject(_uint iPartIndex)
+{
+    m_PartObjects[iPartIndex]->Play_Animation_Light(0.01f);
+}
+
 _bool CActor::Is_Finished_All_Animation_All()
 {
     for (auto& pPartObject : m_PartObjects)

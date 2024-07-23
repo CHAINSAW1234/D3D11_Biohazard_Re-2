@@ -329,6 +329,4 @@ CGameObject* CActor_PL78::Clone(void* pArg)
 void CActor_PL78::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pRagDoll);
 }

@@ -38,6 +38,10 @@ HRESULT CCut_Scene_CF95::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Play_Pose_FirstTick(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_BODY));
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Play_Pose_FirstTick(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_HEAD));
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Play_Animation_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_SHIRTS));
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Play_Animation_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_PANTS));
 
 	return S_OK;
 }

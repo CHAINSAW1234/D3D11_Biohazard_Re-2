@@ -39,6 +39,9 @@ public:
 	void					Set_Pause_Anim(_bool isPause) { m_isPause_Anim = isPause; }
 	void					Set_Local_Transformation(_fmatrix TransformationMatrix) { XMStoreFloat4x4(&m_LocalTransformation, TransformationMatrix); }
 
+	void					Play_Pose_FirstTick();
+	void					Play_Animation_Light(_float fTimeDelta) { m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta); }
+
 private:
 	HRESULT					Render_LightDepth_Dir() override;
 	HRESULT					Render_LightDepth_Spot() override;

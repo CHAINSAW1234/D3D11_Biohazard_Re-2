@@ -226,6 +226,11 @@ void CActor_PartObject::Set_Loop(_uint iPlayingIndex, _bool isLoop)
 	m_pModelCom->Set_Loop(iPlayingIndex, isLoop);
 }
 
+void CActor_PartObject::Play_Pose_FirstTick()
+{
+	m_pModelCom->Play_Pose(0);
+}
+
 HRESULT CActor_PartObject::Render_LightDepth_Dir()
 {
 	if (nullptr == m_pShaderCom)
