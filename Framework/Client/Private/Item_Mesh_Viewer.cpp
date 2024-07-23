@@ -338,8 +338,8 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 			m_eOperType = EXAMIN_PUZZLE;
-			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
-			m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
 			m_iSelected_Button = -1;
 			break;
 		}
@@ -434,19 +434,36 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	}
 
 	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
-		if (true == Check_Puzzle_Success())
+		for (_uint i = 0; i < 8; i++)
 		{
-
-			break;
-		}
-
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
-			m_eButtonStates[m_iSelected_Button] = PRESSED;
-			break;
+			if (PRESSED == m_eButtonStates[i])
+			{
+				m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, 0.f, 0.5f));
+			}
 		}
 
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
 			m_eOperType = EXAMIN;
+			break;
+		}
+
+		//if (false == Check_Puzzle_Success())
+		//{
+
+		//	break;
+		//}
+
+		else //ÆÛÁñ ¼º°ø
+		{
+			if (8 == m_iPuzzle_Progress)
+			{
+
+			}
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eButtonStates[m_iSelected_Button] = PRESSED;
+			m_iPuzzle_Progress++;
 			break;
 		}
 
@@ -458,21 +475,20 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		else if (DOWN == m_pGameInstance->Get_KeyState('A')) {
 			if (m_iSelected_Button + 1 < 8)
 				m_iSelected_Button += 1;
+
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
 			if (m_iSelected_Button + 2 < 8)
 				m_iSelected_Button += 2;
+
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
 			if (m_iSelected_Button - 2 > -1)
 				m_iSelected_Button -= 2;
+
 		}
-
-		m_eButtonStates[m_iSelected_Button] = SELECTED;
-
-
 		break;
 	}
 
@@ -536,7 +552,7 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 _bool CItem_Mesh_Viewer::Check_Puzzle_Success()
 {
 	_bool isPuzzleSuccess = true;
-	for (_uint i = 0; i < 8; i++)
+	for (_uint i = 0; i < m_iPuzzle_Progress; i++)
 	{
 		if (m_iCorrectAnswer[i] != m_iInputAnswer[i])
 			isPuzzleSuccess = false;
@@ -853,7 +869,6 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 	else
 		return S_OK;
 }
-
 
 void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 {
@@ -1209,8 +1224,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		//m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.f, -0.4f, 0.f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
 		m_fPopupHide_EndDist = 0.15f;
