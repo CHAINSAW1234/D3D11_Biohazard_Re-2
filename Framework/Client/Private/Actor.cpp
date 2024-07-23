@@ -139,6 +139,22 @@ void CActor::Reset_Animations()
     }
 }
 
+void CActor::Set_Pause_Anim_All_Part(_bool isPause)
+{
+    for (_uint i = 0; i < m_iNumParts; ++i)
+    {
+        m_PartObjects[i]->Set_Pause_Anim(isPause);
+    }
+}
+
+void CActor::Set_Render_All_Part(_bool isRender)
+{
+    for (_uint i = 0; i < m_iNumParts; ++i)
+    {
+        m_PartObjects[i]->Set_Render(isRender);
+    }
+}
+
 _bool CActor::Is_Finished_Animation_Part(_uint iPartType)
 {
     if (m_iNumParts <= iPartType)
@@ -222,8 +238,12 @@ HRESULT CActor::Initialize_PartObjects()
         if (nullptr == pPart_Model)
             return E_FAIL;
 
-        if(FAILED(pPart_Model->Link_Bone_Auto(pBase_Model)))
-            return E_FAIL;
+        if (true == m_PartObjects[i]->Is_LinkAuto())
+        {
+            if (FAILED(pPart_Model->Link_Bone_Auto(pBase_Model)))
+                return E_FAIL;
+
+        }
     }
 
     return S_OK;

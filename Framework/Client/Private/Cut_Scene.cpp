@@ -144,9 +144,6 @@ void CCut_Scene::Tick(_float fTimeDelta)
 
 void CCut_Scene::Late_Tick(_float fTimeDelta)
 {
-	if (false == m_isPlaying)
-		return;
-
 	m_pTransformCom->Set_WorldMatrix(CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00)->Get_Transform()->Get_WorldMatrix());
 
 	Late_Tick_Actors(fTimeDelta);
@@ -173,12 +170,24 @@ HRESULT CCut_Scene::SetUp_Animation_Layer()
 void CCut_Scene::Start_CutScene()
 {
 	m_pEvent_Camera->Set_PlayCamlist(m_strCamera_Event_Tag);
+
+	for (auto& pActor : m_Actors)
+	{
+		pActor->Set_Pause_Anim_All_Part(false);
+		pActor->Set_Render_All_Part(true);
+	}
 }
 
 void CCut_Scene::Finish_CutScene()
 {
 	if(nullptr != m_pEvent_Camera)
 		m_pEvent_Camera->Reset();
+
+	for (auto& pActor : m_Actors)
+	{
+		pActor->Set_Pause_Anim_All_Part(true);
+		pActor->Set_Render_All_Part(false);
+	}
 }
 
 HRESULT CCut_Scene::Add_Actor(const wstring& strPrototypeTag, _uint iActorType, void* pArg)

@@ -418,7 +418,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / ((_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1] - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame])));
 	}
 
-	m_fFovy = XMConvertToRadians(60.f) / vZoom;
+	m_fFovy = XMConvertToRadians(60.f) * vZoom;
 
 #pragma region 축회전 해봣는데 안댐
 	_vector				vTransaltionWorld = { XMVectorSetW(XMLoadFloat3(&vTranslation), 1.f)};

@@ -33,7 +33,11 @@ public:
 	HRESULT					Set_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, _uint iAnimIndex);
 	void					Set_Animation_Seq(_uint iPlayingIndex, _uint iSequenceLevel);
 	void					Set_Loop(_uint iPlayingIndex, _bool isLoop);
-	inline void				Pause_Animation(_bool isPause) { m_isPause_Anim = isPause; }
+
+	_bool					Is_LinkAuto() { return m_isLink_Auto; }
+	void					Set_LinkAuto(_bool isLinkAuto) { m_isLink_Auto = isLinkAuto; }
+	void					Set_Pause_Anim(_bool isPause) { m_isPause_Anim = isPause; }
+	void					Set_Local_Transformation(_fmatrix TransformationMatrix) { XMStoreFloat4x4(&m_LocalTransformation, TransformationMatrix); }
 
 private:
 	HRESULT					Render_LightDepth_Dir() override;
@@ -48,6 +52,10 @@ private:
 	_bool					m_isPause_Anim = { false };
 	wstring					m_strAnimLayerTag = { TEXT("") };
 	unordered_map<wstring, vector<string>>				m_Animations_Seq;	
+
+	_bool					m_isLink_Auto = { true };
+
+	_float4x4				m_LocalTransformation = {};
 
 private:
 	HRESULT					Add_Components(const wstring& strModelPrototypeTag);

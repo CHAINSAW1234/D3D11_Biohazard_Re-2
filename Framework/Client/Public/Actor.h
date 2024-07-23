@@ -38,6 +38,8 @@ public:
 	virtual void			Set_Loop(_uint iPartType, _bool isLoop);
 
 	virtual void			Reset_Animations();
+	void					Set_Pause_Anim_All_Part(_bool isPause);
+	void					Set_Render_All_Part(_bool isRender);
 
 	inline _uint			Get_NumParts() { return m_iNumParts; }
 

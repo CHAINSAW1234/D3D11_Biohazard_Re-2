@@ -9,6 +9,7 @@ class CCut_Scene_CF94 final : public CCut_Scene
 {
 public:
 	enum class CF94_ACTOR_TYPE { _PL_0000, _PL_5700, _END };
+	enum class CF94_PROP_TYPE { _SM_60_033, _END };
 
 private:
 	CCut_Scene_CF94(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

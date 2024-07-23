@@ -170,6 +170,8 @@ void CCut_Scene_CF92::Finish_CutScene()
 	pFlashLight->Set_Origin_Translation(false);
 
 	m_pOrigin_SocketMatrix = nullptr;
+
+	m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
 }
 
 HRESULT CCut_Scene_CF92::Add_Actors()

@@ -41,6 +41,7 @@ private:
 
 private:
 	CRagdoll_Physics*		m_pRagDoll = { nullptr };
+	_bool					m_isCutBody = { false };
 
 public:
 	static CActor_PL78* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

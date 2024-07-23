@@ -36,6 +36,9 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	_matrix			TransformationMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Set_Local_Transformation(TransformationMatrix);
+
 	return S_OK;
 }
 
@@ -116,6 +119,8 @@ void CCut_Scene_CF94::Finish_CutScene()
 
 	CPlayer*			pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(true);
+
+	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
 }
 
 HRESULT CCut_Scene_CF94::Add_Actors()
@@ -143,6 +148,14 @@ HRESULT CCut_Scene_CF94::Add_Actors()
 
 HRESULT CCut_Scene_CF94::Add_Props()
 {
+	//m_PropControllers.resize(static_cast<size_t>(CF92_PROP_TYPE::_END));
+
+	//CProp_Controller::PROP_CONTROLL_DESC			Prop_SM60_033_Desc;
+	//Prop_SM60_033_Desc.strAnimLayerTag = TEXT("CF92_SM60_033_00");
+
+	//if (FAILED(Add_PropController(TEXT("Prototype_GameObject_Prop_SM60_033"), static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033), &Prop_SM60_033_Desc)))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 

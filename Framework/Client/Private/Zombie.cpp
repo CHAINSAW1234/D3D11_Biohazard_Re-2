@@ -3163,7 +3163,7 @@ void CZombie::Ready_Effect()
 	{
 		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
 		pBlood_Drop->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
-		m_vecBlood_Drop.push_back(pBlood_Drop);
+		m_vecBlood_Drop.push_back(pBlood_Drop);	
 		pBlood_Drop->Start();
 	}
 

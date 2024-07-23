@@ -34,6 +34,7 @@ HRESULT CActor_PL78::Initialize(void* pArg)
 	if (nullptr == pRagDoll_Model)
 		return E_FAIL;
 
+	m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_GUTS)]->Set_Render(false);
 	m_pRagDoll = m_pGameInstance->Create_Ragdoll(pRagDoll_Model->GetBoneVector(), m_pTransformCom, m_pDevice, m_pContext, "../Bin/Resources/Models/CutScene/pl7800/pl7800.fbx");
 
 	return S_OK;
@@ -59,7 +60,7 @@ void CActor_PL78::Late_Tick(_float fTimeDelta)
 		_int			iAnimIndex = { pBody_Model->Get_AnimIndex_PlayingInfo(static_cast<_uint>(0)) };
 		_float			fTrackPosition = { pBody_Model->Get_TrackPosition(static_cast<_uint>(0)) };
 
-		if (fTrackPosition > 1400.f && 0 == iAnimIndex)
+		if (fTrackPosition > 1360.f && 0 == iAnimIndex)
 		{
 			Cut_Body();
 		}
@@ -132,11 +133,13 @@ HRESULT CActor_PL78::Add_PartObjects()
 	RagDoll_Desc.pParentsTransform = m_pTransformCom;
 	RagDoll_Desc.pRootTranslation = &m_vRootTranslation;
 	RagDoll_Desc.isBaseObject = true;
-	Body_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_PL7800");
+	RagDoll_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_PL7800");
 
-	CActor_PartObject* pPartObject_RagDoll = { CActor_PartObject::Create(m_pDevice, m_pContext, &Guts_Desc) };
+	CActor_PartObject* pPartObject_RagDoll = { CActor_PartObject::Create(m_pDevice, m_pContext, &RagDoll_Desc) };
 	if (nullptr == pPartObject_RagDoll)
 		return E_FAIL;
+
+	pPartObject_RagDoll->Set_LinkAuto(false);
 
 	m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_RAGDOLL)] = pPartObject_RagDoll;
 
@@ -236,6 +239,9 @@ HRESULT CActor_PL78::Initialize_Models()
 
 void CActor_PL78::Cut_Body()
 {
+	if (true == m_isCutBody)
+		return;
+
 	CModel*					pBody_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
 	if (nullptr == pBody_Model)
 		return;
@@ -248,8 +254,13 @@ void CActor_PL78::Cut_Body()
 
 	pRagDoll_Model->Hide_Mesh_Branch(static_cast<_uint>(ACTOR_PL78_MESH_BRANCH::_LOWER_BODY), false);
 
+	m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_GUTS)]->Set_Render(true);
+
+	m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_RAGDOLL)]->Set_Pause_Anim(true);
 	Apply_LastAnimCombined_RagDoll();
 	SetRagdoll();
+
+	m_isCutBody = true;
 }
 
 void CActor_PL78::SetRagdoll()
@@ -267,11 +278,10 @@ void CActor_PL78::SetRagdoll()
 
 void CActor_PL78::Apply_LastAnimCombined_RagDoll()
 {
-
 	CModel* pBody_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pRagDoll_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_RAGDOLL)]->Get_Component(TEXT("Com_Model"))) };
 
-	if (nullptr == pRagDoll_Model)
+	if (nullptr == pBody_Model)
 		return;
 	if (nullptr == pRagDoll_Model)
 		return;
@@ -280,6 +290,9 @@ void CActor_PL78::Apply_LastAnimCombined_RagDoll()
 	for (auto& strBoneTag : BoneTags)
 	{
 		_float4x4*				pBoneCombiend = { const_cast<_float4x4*>(pBody_Model->Get_CombinedMatrix(strBoneTag)) };
+		if (nullptr == pBoneCombiend)
+			continue;
+
 		pRagDoll_Model->Set_CombinedMatrix(strBoneTag, XMLoadFloat4x4(pBoneCombiend));
 	}
 

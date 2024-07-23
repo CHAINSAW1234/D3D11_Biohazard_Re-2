@@ -37,6 +37,8 @@ HRESULT CCut_Scene_CF95::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
+
 	return S_OK;
 }
 
@@ -134,6 +136,8 @@ void CCut_Scene_CF95::Finish_CutScene()
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(true);
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
 
 	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
 	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };

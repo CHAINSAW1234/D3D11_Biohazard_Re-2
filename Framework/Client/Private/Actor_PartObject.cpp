@@ -46,7 +46,12 @@ HRESULT CActor_PartObject::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Set_OptimizationCulling(false);
 	m_pModelCom->Set_Loop(0, false);
-	m_pModelCom->Change_Animation(0, m_strAnimLayerTag, 0);
+	//	m_pModelCom->Change_Animation(0, m_strAnimLayerTag, 0);
+
+	XMStoreFloat4x4(&m_LocalTransformation, XMMatrixIdentity());
+
+	m_bRender = false;
+	m_isPause_Anim = true;
 
 	return S_OK;
 }
@@ -65,25 +70,31 @@ void CActor_PartObject::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (true == m_isBaseObject)
+	if (false == m_isPause_Anim)
 	{
-		//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
-		if (m_strAnimLayerTag != TEXT(""))
+		if (true == m_isBaseObject)
+		{
+			//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+			if (m_strAnimLayerTag != TEXT(""))
 				m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
-	}
-	else
-	{
-		//	_float3				vTempDirection = {};
-		//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempDirection);
-		if (m_strAnimLayerTag != TEXT(""))
-			m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
-	}
-	
+		}
+		else
+		{
+			//	_float3				vTempDirection = {};
+			//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempDirection);
+			if (m_strAnimLayerTag != TEXT(""))
+				m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+		}
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
+
+	if (true == m_bRender)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
 }
 
 HRESULT CActor_PartObject::Render()

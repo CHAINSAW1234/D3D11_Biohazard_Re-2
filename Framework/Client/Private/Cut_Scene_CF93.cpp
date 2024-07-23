@@ -111,6 +111,14 @@ void CCut_Scene_CF93::Start_CutScene()
 	if (nullptr == pShutter)
 		return;
 
+	CGameObject*			pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	if (nullptr == pGameObject)
+		return;
+
+	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
+	pPlayer->Set_Render(false);
+	pPlayer->Set_Spotlight(false);
+
 	pShutter->Set_OutOfControll(true);
 }
 
@@ -124,6 +132,10 @@ void CCut_Scene_CF93::Finish_CutScene()
 
 	CPlayer*				pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(true);
+
+	m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_PL_7800)]->Set_Render_All_Part(true);
+	m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
+
 
 	CProp_Controller*		pProp_Controller = { m_PropControllers[static_cast<_uint>(CF93_PROP_TYPE::_SM_60_034)] };
 	CShutter*				pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
