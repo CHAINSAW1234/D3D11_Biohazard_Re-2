@@ -61,9 +61,9 @@ void CKey_Door::Tick(_float fTimeDelta)
 	///* Ã³À½ ¹®¿¡ Á¢¼ÓÇßÀ» ¶§ ´úÄÈ´úÄÈ */
 	//if (DOWN == m_pGameInstance->Get_KeyState('3'))
 	//	*m_pEmblemAnim = 2;
-	if (*m_pEmblemAnim == (_uint)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)
+	if (*m_pEmblemAnim == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)
 		m_isKeyRender =true;
-	if(*m_pEmblemAnim == (_uint)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM)
+	if(*m_pEmblemAnim == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM)
 		m_isKeyRender = false;
 
 }
