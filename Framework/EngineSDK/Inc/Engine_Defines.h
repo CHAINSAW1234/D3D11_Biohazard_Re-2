@@ -185,6 +185,7 @@ using namespace Engine;
 #define CULLING_DISTANCE 45.f
 #define CULLING_DISTANCE_ZOMBIE 20.f
 
+
 #pragma endregion
 
 #pragma region Animation LOD
