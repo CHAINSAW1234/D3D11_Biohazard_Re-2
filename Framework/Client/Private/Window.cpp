@@ -137,7 +137,7 @@ void CWindow::Tick(_float fTimeDelta)
 		m_eBarrigateState = BARRIGATE_STATIC;
 
 	if (true == m_bBarrigateInstallable &&( m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
-		if ((*m_pPlayerInteract))
+		if ((*m_pPlayerInteract)&& false == m_pGameInstance->IsPaused())
 			Active();
 
 	if (m_bCamera)
@@ -276,8 +276,7 @@ void CWindow::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-	if(false == m_pGameInstance->IsPaused())
-		m_pPlayer->Interact_Props(this);
+	m_pPlayer->Interact_Props(this);
 
 	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 

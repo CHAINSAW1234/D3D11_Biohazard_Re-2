@@ -89,7 +89,7 @@ void CStatue::Tick(_float fTimeDelta)
 	
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1]&&!m_bItemDead)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Active();
 	}
 
@@ -274,8 +274,7 @@ void CStatue::Active()
 
 	if(m_eState != static_cast<_ubyte>(CStatue::STATE_PLAY))
 	{
-		if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);
+		m_pPlayer->Interact_Props(this);
 	}
 	else
 	{

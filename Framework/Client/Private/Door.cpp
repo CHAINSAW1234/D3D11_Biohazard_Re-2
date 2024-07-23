@@ -937,7 +937,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		{
 			if (m_bCol[INTER_COL_NORMAL][COL_STEP2])
 				m_bActivity = true;
-			if (*m_pPlayerInteract)
+			if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
 				OneDoor_Active();
 		}
 		//m_bActivity = true;
@@ -1094,11 +1094,9 @@ void CDoor::OneDoor_Active()
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 
 		m_bCamera = true;
-		if (false == m_pGameInstance->IsPaused())
-		{
-			m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
-			m_pPlayer->Interact_Props(this);
-		}
+		m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
+		m_pPlayer->Interact_Props(this);
+
 		
 	}
 	else

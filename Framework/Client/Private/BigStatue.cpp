@@ -120,7 +120,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 	
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/|| m_bAutoOpen)
 	{
-		if (*m_pPlayerInteract|| m_bAutoOpen)
+		if ((*m_pPlayerInteract|| m_bAutoOpen)&& false == m_pGameInstance->IsPaused())
 			Active();
 	}
 
@@ -386,8 +386,7 @@ void CBigStatue::Active()
 	if (m_bAutoOpen)
 	{
 		//여기서 아이템 겟
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
+		m_pPlayer->Interact_Props(this);
 		m_bAutoOpen = false;
 		return;
 	}
@@ -403,9 +402,7 @@ void CBigStatue::Active()
 	}
 	else
 	{
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
-		//여기도 아이템 겟
+		m_pPlayer->Interact_Props(this);
 	}
 	
 
