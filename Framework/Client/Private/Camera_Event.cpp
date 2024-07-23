@@ -451,6 +451,9 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	//	_matrix					WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(0.01f, 0.01f, 0.01f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),  vQuaternion, vTransaltionWorld)};
 	//	WorldMatrix = WorldMatrix* TransformationMatrix;
 
+	WorldMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(XMVectorSet(0.f, 30.f, 0.f, 1.f), XMVectorSet(-5.f, 0.f, -12.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	m_fFovy = XMConvertToRadians(100.f);
+
 	m_pTransformCom->Set_WorldMatrix(WorldMatrix);
 #pragma endregion
 	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),

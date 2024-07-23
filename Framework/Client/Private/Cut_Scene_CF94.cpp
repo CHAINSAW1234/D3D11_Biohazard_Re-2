@@ -72,26 +72,57 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 	}
 
 	_uint			iSeqLev = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Get_SeqLev() };
-	if (1 == iSeqLev)
+	if (1 <= iSeqLev)
 	{
-		CActor*				pActor = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)] };
-		CModel*				pBody_Model = { static_cast<CModel*>(pActor->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-		_matrix				RootCombinedMatrix = { pBody_Model->Get_CurrentKeyFrame_Root_CombinedMatrix(0) };
+		CActor*				pActorPL00 = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)] };
+		CModel*				pPL00_Body_Model = { static_cast<CModel*>(pActorPL00->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
 
-		pActor->Get_Transform()->Set_WorldMatrix(RootCombinedMatrix * pActor->Get_Transform()->Get_WorldMatrix());
+		CActor*				pActorPL57= { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)] };
+		CModel*				pPL57_Body_Model = { static_cast<CModel*>(pActorPL57->Get_PartObject(static_cast<_uint>(CActor_PL57::ACTOR_PL57_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+
+
+		_matrix			PL57CombiendMatrix = { XMLoadFloat4x4(const_cast<_float4x4*>(pPL57_Body_Model->Get_CombinedMatrix("Null_Offset"))) };
+		_matrix			PL00CombiendMatrix = { XMLoadFloat4x4(const_cast<_float4x4*>(pPL00_Body_Model->Get_CombinedMatrix("Null_Offset"))) };
+
+		pPL00_Body_Model->Set_CombinedMatrix("Null_Offset", XMMatrixIdentity());
+
+		_vector			vSrcScale, vSrcQuaternion, vSrcTranslation;
+		_vector			vDstScale, vDstQuaternion, vDstTranslation;
+
+		/*XMMatrixDecompose(&vSrcScale, &vSrcQuaternion, &vSrcTranslation, PL00CombiendMatrix);
+		XMMatrixDecompose(&vDstScale, &vDstQuaternion, &vDstTranslation, PL57CombiendMatrix);
+
+		_vector			vDeltaTranslation = { XMVectorSetW(vDstTranslation - vSrcQuaternion, 0.f) };
+		_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vSrcQuaternion), XMQuaternionNormalize(vDstQuaternion)) };
 		
-		pBody_Model->Set_RootBone("root");
-		pBody_Model->Active_RootMotion_Rotation(true);
-		pBody_Model->Active_RootMotion_XZ(true);
-		pBody_Model->Active_RootMotion_Y(true);
+		_matrix			WorldMatrix = { pActorPL00->Get_Transform()->Get_WorldMatrix() };
+		_vector			vPostion = { WorldMatrix.r[CTransform::STATE_POSITION] };
+		
+		_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vDeltaQuaternion) };
+		WorldMatrix.r[CTransform::STATE_POSITION] = { XMVectorSet(0.f, 0.f, 0.f, 1.f) };
+		WorldMatrix = WorldMatrix * RotationMatrix;
 
-		pActor->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Set_Animation_Light(false);
+		_matrix			ScaleMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) };
+		vPostion = vPostion + XMVector3TransformNormal(vDeltaQuaternion, ScaleMatrix);
+		WorldMatrix.r[CTransform::STATE_POSITION] = vPostion;
+		pActorPL00->Get_Transform()->Set_WorldMatrix(WorldMatrix);*/
+
+		/*_matrix			WorldMatrix = { pActorPL00->Get_Transform()->Get_WorldMatrix() };
+
+		WorldMatrix.r[CTransform::STATE_POSITION] = PL00CombiendMatrix.r[CTransform::STATE_POSITION] * 0.01f - PL57CombiendMatrix.r[CTransform::STATE_POSITION] * 0.01f;
+		pActorPL00->Get_Transform()->Set_WorldMatrix(WorldMatrix);*/
+		
 	}
 
 	else if (0 == iSeqLev)
 	{
 		_matrix				RotationMatrix = { XMMatrixIdentity()};
 		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Set_AdditionalRotation_Root(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY), false, RotationMatrix);
+
+		CActor* pActorPL00 = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)] };
+		CModel* pPL00_Body_Model = { static_cast<CModel*>(pActorPL00->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+
+		pPL00_Body_Model->Set_Surbodinate("COG", false);
 	}
 
 	__super::Priority_Tick(fTimeDelta);
