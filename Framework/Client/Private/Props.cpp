@@ -115,14 +115,6 @@ HRESULT CProps::Render()
 	else
 		m_bRender = false;
 
-	if(m_bLocalized == false)
-	{
-		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.f))
-		{
-			return S_OK;
-		}
-	}
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

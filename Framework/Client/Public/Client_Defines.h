@@ -42,7 +42,9 @@ using namespace std;
 using namespace Client;
 
 #pragma region For Spot Light Frustrum Culling
-#define SPOT_FRUSTRUM_CULLING
+
+//#define SPOT_FRUSTRUM_CULLING
+
 #pragma endregion
 	
 //#define MAP_NOTHING
