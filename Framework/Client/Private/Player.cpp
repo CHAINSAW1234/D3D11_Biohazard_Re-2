@@ -2084,7 +2084,7 @@ void CPlayer::RayCast_Shoot()
 
 	if (CCall_Center::Get_Instance()->Is_Focus_Player()) {		// 조건 들어갈 예정 : 형준형의 변수 들어감
 		if (!isHit &&
-			(rand() % (5 - iMissCnt ) == 0)
+			(rand() % max((5 - iMissCnt ), 1) == 0)
 			) {
 			wstring strSoundTag;
 			_int iRandCnt;
