@@ -30,14 +30,19 @@ HRESULT CEnvSound::Initialize(void * pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;		
 
-	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, ENV_CHENNEL_END)))
-		return E_FAIL;
-	for (size_t i = 0; i < ENV_CHENNEL_END; i++)
-	{
-		_float fMax = m_pGameInstance->GetRandom_Real(10.f, 30.f);
+	//if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+	//	return E_FAIL;
 
-		m_pGameInstance->Set_Volume_3D(m_pTransformCom, i, 0.2f);
-		m_pGameInstance->Set_Distance_3D(m_pTransformCom, i, 1.f, fMax);
+	for (_int i = 0; i < ENV_CHENNEL_END; i++)
+	{
+		_float fMax = m_pGameInstance->GetRandom_Real(16.f, 17.5f);
+		m_pGameInstance->Add_Object_Sound(m_pEnvSoundTransformCom[i], 1);
+		m_pGameInstance->Set_Volume_3D(m_pEnvSoundTransformCom[i], 0, 0.35f);
+		m_pGameInstance->Set_Distance_3D(m_pEnvSoundTransformCom[i], 0, 0.1f, fMax);
+	}
+	for (_int i = 0; i < ENV_CHENNEL_END; i++)
+	{
+		m_fSoundCoolTime[i] = m_pGameInstance->GetRandom_Real(2.f, 3.f);
 	}
 	return S_OK;
 }
@@ -86,31 +91,37 @@ void CEnvSound::Tick(_float fTimeDelta)
 
 	if (m_fRegionChangeTimeDelay == 0.f && m_fRegionChangeTimeDelay2 == 0.f && !bPlaying)
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("location"), m_BGMSoundMap[m_iPreRegion], BGM_2D, m_fCurSound);
-	//_int iRandom = m_pGameInstance->GetRandom_Int(0,5);
-	//for (_int i = 0; i < m_EnvSoundMap[m_iCurRegion].size(); i++)
-	//{
-	//	if (!m_pGameInstance->Is_Playing_Sound(m_pTransformCom, ENV_CHENNEL_LOCAL0)&& iRandom>1)
-	//	{
-	//		m_pTransformCom->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][i].WorldMatrix);
-	//		m_pGameInstance->Change_Sound_3D(m_pTransformCom, m_EnvSoundMap[m_iCurRegion][i].wstrSoundName, ENV_CHENNEL_LOCAL0, true);
-	//	}
-	//	else if (!m_pGameInstance->Is_Playing_Sound(m_pTransformCom, ENV_CHENNEL_LOCAL1)&&iRandom >4)
-	//	{
-	//		m_pTransformCom->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][i].WorldMatrix);
-	//		m_pGameInstance->Change_Sound_3D(m_pTransformCom, m_EnvSoundMap[m_iCurRegion][i].wstrSoundName, ENV_CHENNEL_LOCAL1, true);
-	//	}
-	//	else if (!m_pGameInstance->Is_Playing_Sound(m_pTransformCom, ENV_CHENNEL_LOCAL2)&& iRandom > 3)
-	//	{
-	//		m_pTransformCom->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][i].WorldMatrix);
-	//		m_pGameInstance->Change_Sound_3D(m_pTransformCom, m_EnvSoundMap[m_iCurRegion][i].wstrSoundName, ENV_CHENNEL_LOCAL2, true);
-	//	}
-	//	else if (!m_pGameInstance->Is_Playing_Sound(m_pTransformCom, ENV_CHENNEL_LOCAL3)&& iRandom > 2)
-	//	{
-	//		m_pTransformCom->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][i].WorldMatrix);
-	//		m_pGameInstance->Change_Sound_3D(m_pTransformCom, m_EnvSoundMap[m_iCurRegion][i].wstrSoundName, ENV_CHENNEL_LOCAL3, true);
-	//	}
-	//	//m_pGameInstance->Change_Sound_3D(m_pTransformCom, m_EnvSoundMap[m_iCurRegion][i].wstrSoundName, ENV_CHENNEL_LOCAL0, true);
-	//}
+	_int iRandom = m_pGameInstance->GetRandom_Int(0, m_EnvSoundMap[m_iCurRegion].size()-1);
+	for (_int i = 0; i < ENV_CHENNEL_END; i++)
+		m_fSoundTime[i] += fTimeDelta;
+	
+	if (!m_pGameInstance->Is_Playing_Sound(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL0], 0) && m_fSoundCoolTime[ENV_CHENNEL_LOCAL0] < m_fSoundTime[ENV_CHENNEL_LOCAL0])
+	{
+		m_fSoundTime[ENV_CHENNEL_LOCAL0] = 0.f;
+		m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL0]->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][iRandom].WorldMatrix);
+		m_pGameInstance->Change_Sound_3D(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL0], m_EnvSoundMap[m_iCurRegion][iRandom].wstrSoundName, 0, true);
+	}
+	else if (!m_pGameInstance->Is_Playing_Sound(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL1], 0)&&m_fSoundCoolTime[ENV_CHENNEL_LOCAL1] < m_fSoundTime[ENV_CHENNEL_LOCAL1])
+	{
+		m_fSoundTime[ENV_CHENNEL_LOCAL1] = 0.f;
+		m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL1]->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][iRandom].WorldMatrix);
+		m_pGameInstance->Change_Sound_3D(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL1], m_EnvSoundMap[m_iCurRegion][iRandom].wstrSoundName, 0, true);
+	}
+	else if (!m_pGameInstance->Is_Playing_Sound(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL2], 0) && m_fSoundCoolTime[ENV_CHENNEL_LOCAL2] < m_fSoundTime[ENV_CHENNEL_LOCAL2])
+	{
+		m_fSoundTime[ENV_CHENNEL_LOCAL2] = 0.f;
+		m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL2]->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][iRandom].WorldMatrix);
+		m_pGameInstance->Change_Sound_3D(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL2], m_EnvSoundMap[m_iCurRegion][iRandom].wstrSoundName, 0, true);
+	}
+	else if (!m_pGameInstance->Is_Playing_Sound(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL3], 0) && m_fSoundCoolTime[ENV_CHENNEL_LOCAL3] < m_fSoundTime[ENV_CHENNEL_LOCAL3])
+	{
+		m_fSoundTime[ENV_CHENNEL_LOCAL3] = 0.f;
+		m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL3]->Set_WorldMatrix(m_EnvSoundMap[m_iCurRegion][iRandom].WorldMatrix);
+		m_pGameInstance->Change_Sound_3D(m_pEnvSoundTransformCom[ENV_CHENNEL_LOCAL3], m_EnvSoundMap[m_iCurRegion][iRandom].wstrSoundName, 0, true);
+	}
+
+
+
 
 
 	return;
@@ -138,7 +149,7 @@ HRESULT CEnvSound::Add_Components()
 		return E_FAIL;
 
 	DWORD	dwByte = { 0 };
-	for (_int i = 0; i < 51; i++)
+	for (_int i = 0; i < LOCATION_MAP_VISIT_END; i++)
 	{
 		_int iSize = { 0 };
 		if (!ReadFile(hSoundLayerFile, &iSize, sizeof(_int), &dwByte, nullptr))
@@ -181,7 +192,7 @@ HRESULT CEnvSound::Add_Components()
 		return E_FAIL;
 
 	//DWORD	dwByte = { 0 };
-	for (_int i = 0; i < 51; i++)
+	for (_int i = 0; i < LOCATION_MAP_VISIT_END; i++)
 	{
 		_int iSize = { 0 };
 		if (!ReadFile(hSoundFile, &iSize, sizeof(_int), &dwByte, nullptr))
@@ -218,6 +229,18 @@ HRESULT CEnvSound::Add_Components()
 		}
 	}
 	CloseHandle(hSoundFile);
+
+	for (_int i = 0; i < ENV_CHENNEL_END; i++)
+	{
+		m_pEnvSoundTransformCom[i] = CTransform::Create(m_pDevice, m_pContext);
+		if (nullptr == m_pEnvSoundTransformCom[i])
+			return E_FAIL;
+		CTransform::TRANSFORM_DESC pArg = {};
+		pArg.fRotationPerSec = 1.f;
+		pArg.fSpeedPerSec = 1.f;
+		if (FAILED(m_pEnvSoundTransformCom[i]->Initialize(&pArg)))
+			return E_FAIL;
+	}
 
 
 	return S_OK;
@@ -263,5 +286,9 @@ CGameObject * CEnvSound::Clone(void * pArg)
 void CEnvSound::Free()
 {
 	__super::Free();
-
+	for (_int i = 0; i < ENV_CHENNEL_END; i++)
+	{
+		Safe_Release(m_pEnvSoundTransformCom[i]);
+		m_pEnvSoundTransformCom[i] = nullptr;
+	}
 }
