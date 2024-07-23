@@ -1,6 +1,7 @@
 
 #define SCREEN_SIZE_X 1600
 #define SCREEN_SIZE_Y 900
+#define PI 3.14159265359f
 
 sampler LinearSampler = sampler_state
 {
@@ -119,3 +120,46 @@ BlendState BS_Blend
     DestBlend = one;
     BlendOp = Add;
 };
+
+
+float DistributeGGX(float3 N, float3 H, float a)
+{
+    float a_square = a * a;
+    float a_square_square = a_square * a_square;
+    float NdotH = max(dot(N, H), 0.f);
+    float NdotH_square = NdotH * NdotH;
+
+    float nom = a_square;
+    float denom = (NdotH * a_square - NdotH) * NdotH + 1;
+    //float denom = (NdotH * NdotH * (a_square - 1.f) + 1.f);
+    denom = PI * denom * denom;
+    
+    return nom / denom;
+}
+
+float GeometrySchlickGGX(float NdotV, float k)
+{
+    float nom = NdotV;
+    float denom = NdotV * (1.f - k) + k;
+    
+    return nom / denom;
+}
+
+float GeometrySmith(float3 N, float3 V, float3 L, float k)
+{
+    float r = k + 1.0;
+    float k2 = (r * r) / 8.0; // Epic suggests using this roughness remapping for analytic lights.
+    
+    float NdotV = max(dot(N, V), 0.f);
+    float NdotL = max(dot(N, L), 0.f);
+    float ggx1 = GeometrySchlickGGX(NdotV, k2);
+    float ggx2 = GeometrySchlickGGX(NdotL, k2);
+
+    return ggx1 * ggx2;
+}
+
+float3 FresnelSchlick(float cos_theta, float3 F0)
+{
+    // cos_theta : dot(N. V)
+    return F0 + (1.f - F0) * pow(clamp(1.0 - cos_theta, 0.0, 1.0), 5.f);
+}

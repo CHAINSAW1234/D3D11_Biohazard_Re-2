@@ -88,8 +88,6 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
-	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -122,8 +120,21 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
-	//	return E_FAIL;
+	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
+	LightDesc.bRender = false;
+	LightDesc.bShadow = false;
+	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-1.f, -1.f, 0.F, 0.f)), 0.f));
+	LightDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+
+	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
+		return E_FAIL;
+
+
+
+	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
 
 	return S_OK;
 }
