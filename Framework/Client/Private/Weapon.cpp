@@ -52,7 +52,7 @@ HRESULT CWeapon::Initialize(void * pArg)
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
 		break;
 	case CPlayer::STG:
-		m_iMaxBullet = 7;
+		m_iMaxBullet = 4;
 
 		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
 		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
