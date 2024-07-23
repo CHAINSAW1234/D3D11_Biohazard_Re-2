@@ -106,6 +106,11 @@ void CCamera_Event::Change_to_Next(_float fTimeDelta)
 
 	cout << "Change Camara : " << m_iCurrentMCAMIndex << endl;
 
+	MCAM CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex];
+	_float			fDutation = { CurrentMCAM.CAMHeader.frameCount };
+
+	cout << "Camera Frames : " << fDutation << endl;
+
 #endif
 }
 

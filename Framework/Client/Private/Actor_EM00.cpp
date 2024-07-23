@@ -73,6 +73,7 @@ HRESULT CActor_EM00::Add_PartObjects()
 	Body_Desc.isBaseObject = true;
 	Body_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_Zombie_Body_Male");
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF93_EM0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_EM0000"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_EM0000"));
 
 	CActor_PartObject* pPartObject_Body = { CActor_PartObject::Create(m_pDevice, m_pContext, &Body_Desc) };
@@ -86,6 +87,7 @@ HRESULT CActor_EM00::Add_PartObjects()
 	if (ACTOR_EM00_FACE_TYPE::_DEFAULT == m_eFaceType)
 	{
 		Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_Zombie_Face00_Male");
+		Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_EM0050"));
 	}
 	else if (ACTOR_EM00_FACE_TYPE::_BROKEN == m_eFaceType)
 	{

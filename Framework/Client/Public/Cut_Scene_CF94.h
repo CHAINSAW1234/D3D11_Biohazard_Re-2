@@ -8,7 +8,7 @@ BEGIN(Client)
 class CCut_Scene_CF94 final : public CCut_Scene
 {
 public:
-	enum class CF94_ACTOR_TYPE { _PL_0000, _PL_5700, _END };
+	enum class CF94_ACTOR_TYPE { _PL_0000, _PL_5700, _EM_0000, _SM69_015, _END };
 	enum class CF94_PROP_TYPE { _SM_60_033, _END };
 
 private:

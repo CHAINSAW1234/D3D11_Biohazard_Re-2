@@ -808,8 +808,17 @@
     <Filter Include="02.GameObjects\MapObject\EnvSound">
       <UniqueIdentifier>{d6a37236-5798-4827-b91e-444e4b3459a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\NewFilter1">
+      <UniqueIdentifier>{db06b4df-7290-4a7b-be78-741e74940827}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player">
       <UniqueIdentifier>{3110fbc5-7eac-4c11-be2d-968269282fdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM69_015">
+      <UniqueIdentifier>{72ef3a79-bf2b-4b58-b5e2-9e8bbb3ccdea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_">
+      <UniqueIdentifier>{3efa00f6-2520-497f-9bf3-8ee9c67a7207}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1576,6 +1585,9 @@
     <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Actor_SM69_015.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM69_015</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2301,6 +2313,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_SM69_015.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM69_015</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

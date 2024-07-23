@@ -35,12 +35,16 @@ public:
 	void					Set_Loop(_uint iPlayingIndex, _bool isLoop);
 
 	_bool					Is_LinkAuto() { return m_isLink_Auto; }
+	_bool					Is_Finish_Seq(_uint iSequence);
 	void					Set_LinkAuto(_bool isLinkAuto) { m_isLink_Auto = isLinkAuto; }
 	void					Set_Pause_Anim(_bool isPause) { m_isPause_Anim = isPause; }
 	void					Set_Local_Transformation(_fmatrix TransformationMatrix) { XMStoreFloat4x4(&m_LocalTransformation, TransformationMatrix); }
 
 	void					Play_Pose_FirstTick();
 	void					Play_Animation_Light(_float fTimeDelta) { m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta); }
+
+	void					Set_AdditionalRotation_RootBone(_bool isSetAdditionalRotation, _fmatrix RotationMatrix);
+	void					Set_Animation_Light(_bool isLight) { m_isAnimLight = isLight; }
 
 private:
 	HRESULT					Render_LightDepth_Dir() override;
@@ -57,6 +61,9 @@ private:
 	unordered_map<wstring, vector<string>>				m_Animations_Seq;	
 
 	_bool					m_isLink_Auto = { true };
+	_bool					m_isAnimLight = { true };
+	_bool					m_isSetAdditionalRotation = { false };
+	_float4x4				m_AdditionalRotation_Root = {};
 
 	_float4x4				m_LocalTransformation = {};
 

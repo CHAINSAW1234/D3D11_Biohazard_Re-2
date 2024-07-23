@@ -42,6 +42,7 @@ public:
 	void					Set_Render_All_Part(_bool isRender);
 
 	inline _uint			Get_NumParts() { return m_iNumParts; }
+	_uint					Get_SeqLev() { return m_iCurSeqLev; }
 
 	_bool					Is_Finished_Animation_Part(_uint iPartType);
 	_bool					Is_Finished_Animation_All_Part();
@@ -58,6 +59,7 @@ public:
 
 public:
 	inline _uint			Get_BasePartIndex() { return m_iBasePartIndex; }
+	void					Set_AdditionalRotation_Root(_uint iPartIndex, _bool isSet, _fmatrix RotaitonMatrix);
 
 protected:
 	vector<class CActor_PartObject*>				m_PartObjects;

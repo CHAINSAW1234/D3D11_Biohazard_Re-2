@@ -174,12 +174,14 @@ _bool CActor::Is_Finished_Animation_All_Part()
         if (nullptr == pPartObject)
             continue;
 
-        CModel* pPart_Model = { dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model"))) };
+        if (false == pPartObject->Is_Finish_Seq(m_iCurSeqLev))
+            return false;
+        /*       CModel* pPart_Model = { dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model"))) };
         if (nullptr == pPart_Model)
             continue;
 
         if (false == pPart_Model->isFinished(0))
-            return false;
+            return false;*/
     }
 
     return true;
@@ -257,6 +259,11 @@ HRESULT CActor::Initialize_PartObjects()
     }
 
     return S_OK;
+}
+
+void CActor::Set_AdditionalRotation_Root(_uint iPartIndex, _bool isSet, _fmatrix RotaitonMatrix)
+{
+    m_PartObjects[iPartIndex]->Set_AdditionalRotation_RootBone(isSet, RotaitonMatrix);
 }
 
 HRESULT CActor::Add_Components()

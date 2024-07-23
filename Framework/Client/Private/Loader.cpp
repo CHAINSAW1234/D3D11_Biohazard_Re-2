@@ -40,6 +40,7 @@
 #include "Actor_EM00.h"
 
 #include "Actor_WP4530.h"
+#include "Actor_SM69_015.h"
 
 #include "Prop_SM60_033_00.h"
 #include "Prop_SM60_034_00.h"
@@ -1283,6 +1284,11 @@ HRESULT CLoader::Create_Prototypes_Actor()
 		CActor_WP4530::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM69_015"),
+		CActor_SM69_015::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_033"),
 		CProp_SM60_033::Create(m_pDevice, m_pContext))))
@@ -1290,6 +1296,7 @@ HRESULT CLoader::Create_Prototypes_Actor()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_034"),
 		CProp_SM60_034::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -2563,6 +2570,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_SM60_033 */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM60_033"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Map/Prop/Gimmick/sm60/sm60_033_pipeshutter01a_Anim.fbx",
+			XMMatrixIdentity()))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region	//		SM69_015
+
+	/* Prototype_Component_Model_SM69_015 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM69_015"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm69_015/sm69_015.fbx",
 			XMMatrixIdentity()))))
 		return E_FAIL;
 

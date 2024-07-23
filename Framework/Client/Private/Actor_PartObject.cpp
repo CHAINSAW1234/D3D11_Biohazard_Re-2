@@ -74,16 +74,44 @@ void CActor_PartObject::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_isBaseObject)
 		{
-			//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
-			if (m_strAnimLayerTag != TEXT(""))
-				m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+			if (true == m_isAnimLight)
+			{
+				if (m_strAnimLayerTag != TEXT(""))
+					m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+			}
+			
+			else
+			{
+				if (true == m_isSetAdditionalRotation)
+				{
+					m_pModelCom->Add_Additional_Transformation_World("root", XMLoadFloat4x4(&m_AdditionalRotation_Root));
+				}
+
+				if (m_strAnimLayerTag != TEXT(""))
+					m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+			}
 		}
 		else
 		{
-			//	_float3				vTempDirection = {};
-			//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempDirection);
-			if (m_strAnimLayerTag != TEXT(""))
-				m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+			if (true == m_isAnimLight)
+			{
+				if (m_strAnimLayerTag != TEXT(""))
+					m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+			}
+
+			else
+			{
+				if (true == m_isSetAdditionalRotation)
+				{
+					m_pModelCom->Add_Additional_Transformation_World("COG", XMLoadFloat4x4(&m_AdditionalRotation_Root));
+				}
+
+				if (m_strAnimLayerTag != TEXT(""))
+				{
+					_float3				vTempDirection = {};
+					m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempDirection);
+				}
+			}
 		}
 
 	}
@@ -226,9 +254,40 @@ void CActor_PartObject::Set_Loop(_uint iPlayingIndex, _bool isLoop)
 	m_pModelCom->Set_Loop(iPlayingIndex, isLoop);
 }
 
+_bool CActor_PartObject::Is_Finish_Seq(_uint iSequence)
+{
+	if (nullptr == m_pModelCom)
+		return true;
+
+	wstring				strAnimLayerTag = { m_pModelCom->Get_CurrentAnimLayerTag(0) };
+
+	unordered_map<wstring, vector<string>>::iterator			iter = { m_Animations_Seq.find(strAnimLayerTag) };
+	if (iter == m_Animations_Seq.end())
+		return true;
+
+	_uint				iNumSequence = { static_cast<_uint>(iter->second.size()) };
+	if (iNumSequence <= iSequence)
+		return true;
+
+	string				strSeqAnimTag = { iter->second[iSequence] };
+	string				strCurrentAnimTag = { m_pModelCom->Get_CurrentAnimTag(0) };
+	if (strSeqAnimTag != strCurrentAnimTag)
+	{
+		return true;
+	}
+	return m_pModelCom->isFinished(0);
+}
+
 void CActor_PartObject::Play_Pose_FirstTick()
 {
 	m_pModelCom->Play_Pose(0);
+}
+
+void CActor_PartObject::Set_AdditionalRotation_RootBone(_bool isSetAdditionalRotation, _fmatrix RotationMatrix)
+{
+	m_isSetAdditionalRotation = isSetAdditionalRotation;
+	XMStoreFloat4x4(&m_AdditionalRotation_Root, RotationMatrix);
+	m_isAnimLight = false;
 }
 
 HRESULT CActor_PartObject::Render_LightDepth_Dir()

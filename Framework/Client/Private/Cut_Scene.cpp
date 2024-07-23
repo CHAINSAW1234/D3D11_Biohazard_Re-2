@@ -48,7 +48,7 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 		return;
 
 	_bool		isNonFinishedCurrentAnim = { false };
-	for (auto& pActor : m_Actors)
+	/*for (auto& pActor : m_Actors)
 	{
 		if (true == isNonFinishedCurrentAnim)
 			break;
@@ -68,7 +68,7 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 		{
 			isNonFinishedCurrentAnim = true;
 		}
-	}
+	}*/
 	
 	if (false == m_pEvent_Camera->Is_Finsihed())
 	{
