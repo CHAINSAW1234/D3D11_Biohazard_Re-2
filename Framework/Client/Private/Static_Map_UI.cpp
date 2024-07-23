@@ -27,12 +27,32 @@ HRESULT CStatic_Map_UI::Initialize(void* pArg)
             return E_FAIL;
     }
 
+    m_isStatic_Type = true;
+
     return S_OK;
 }
 
 void CStatic_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if (MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type)
+    {
+        if (DOWN == m_pGameInstance->Get_KeyState('9'))
+            m_isGetMap = !m_isGetMap;
+
+        if (true == m_isGetMap)
+        {
+            if (!m_vecTextBoxes.empty())
+            {
+                for (auto& iter : m_vecTextBoxes)
+                {
+                    iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+                }
+            }
+        }
+    }
+
 }
 
 

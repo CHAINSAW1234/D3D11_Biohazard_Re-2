@@ -2,7 +2,7 @@
 
 #include "Item_Mesh_Viewer.h"
 #include "Camera_Free.h"
-
+#include "Light.h"
 
 constexpr _float	DIST_CAM_FAR_LIMIIT = 10.f;
 constexpr _float	DIST_CAM_NEAR_LIMIT = 1.f;
@@ -129,9 +129,36 @@ HRESULT CItem_Mesh_Viewer::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices()};
+	const LIGHT_DESC* pDesc = m_pGameInstance->Get_LightDesc(g_strDirectionalTag, 1);
 
+	if (nullptr == pDesc)
+		return E_FAIL;
 
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pDesc->vDirection, sizeof(_float4))))
+	//	return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(m_pShaderCom, "g_PrevIrradianceTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(m_pShaderCom, "g_CurIrradianceTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(m_pShaderCom, "g_PrevEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(m_pShaderCom, "g_CurEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
+		return E_FAIL;
+
+	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
@@ -179,8 +206,18 @@ HRESULT CItem_Mesh_Viewer::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_ALPHABLEND)))
-			return E_FAIL;
+
+		if (m_eItem_Number == portablesafe) {
+			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
+				return E_FAIL;
+		}
+		else {
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
+				return E_FAIL;
+		}
 
 		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
 	}
@@ -445,6 +482,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 HRESULT CItem_Mesh_Viewer::Add_Components()
 {
 	/* For.Com_Shader */
+
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;

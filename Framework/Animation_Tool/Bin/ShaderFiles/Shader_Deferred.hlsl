@@ -98,10 +98,7 @@ float4 g_vMtrlAmbient = float4(1.f, 1.f, 1.f, 1.f);
 float4 g_vMtrlSpecular = float4(1.f, 1.f, 1.f, 1.f);
 
 float4 g_vCamPosition;
-
 float g_fLightDepthFar;
-
-const float PI = 3.14159265359f;
 
 //For SSD
 float3 g_vExtent;
@@ -282,44 +279,6 @@ struct PS_OUT_LIGHT
     float4 vSpecular : SV_TARGET1;
 };
 
-float DistributeGGX(float3 N, float3 H, float a)
-{
-    float a_square = a * a;
-    float a_square_square = a_square * a_square;
-    float NdotH = max(dot(N, H), 0.f);
-    float NdotH_square = NdotH * NdotH;
-
-    float nom = a_square;
-    float denom = (NdotH * a_square - NdotH) * NdotH + 1;
-    //float denom = (NdotH * NdotH * (a_square - 1.f) + 1.f);
-    denom = PI * denom * denom;
-    
-    return nom / denom;
-}
-float GeometrySchlickGGX(float NdotV, float k)
-{
-    float nom = NdotV;
-    float denom = NdotV * (1.f - k) + k;
-    
-    return nom / denom;
-}
-float GeometrySmith(float3 N, float3 V, float3 L, float k)
-{
-    float r = k + 1.0;
-    float k2 = (r * r) / 8.0; // Epic suggests using this roughness remapping for analytic lights.
-    
-    float NdotV = max(dot(N, V), 0.f);
-    float NdotL = max(dot(N, L), 0.f);
-    float ggx1 = GeometrySchlickGGX(NdotV, k2);
-    float ggx2 = GeometrySchlickGGX(NdotL, k2);
-
-    return ggx1 * ggx2;
-}
-float3 FresnelSchlick(float cos_theta, float3 F0)
-{
-    // cos_theta : dot(N. V)
-    return F0 + (1.f - F0) * pow(clamp(1.0 - cos_theta, 0.0, 1.0), 5.f);
-}
 
 uint querySpecularTextureLevels()
 {
@@ -1114,7 +1073,7 @@ PS_OUT PS_SSR(PS_IN In)
 }
 
 float g_fTargetDepth = 3.f;
-const float g_fDOFParam = 5.f;  // 블러 적용 여부에 대한 반경 
+static const float g_fDOFParam = 5.f;  // 블러 적용 여부에 대한 반경 
 Texture2D g_DOFTexture;
 // 뷰 공간에서의 깊이 : z  = fNear ~ fFar
 // 투영 공간에서의 깊이 : z = 0 ~ 1

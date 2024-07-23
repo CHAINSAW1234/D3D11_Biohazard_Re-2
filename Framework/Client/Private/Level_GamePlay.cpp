@@ -88,8 +88,6 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
-	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -122,8 +120,21 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
-	//	return E_FAIL;
+	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
+	LightDesc.bRender = false;
+	LightDesc.bShadow = false;
+	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-1.f, -1.f, 0.F, 0.f)), 0.f));
+	LightDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+
+	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
+		return E_FAIL;
+
+
+
+	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -228,8 +239,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT //- map
-	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-		return E_FAIL;
+		//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		//	return E_FAIL;
 #endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
@@ -244,38 +255,38 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
 	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };*/
-//
-//	ZOMBIE_FEMALE_SHIRTS::_END;
-//	ZOMBIE_FEMALE_PANTS::_END;
-//	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
-//	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE};
-//	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(3) };
-//	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(0) };
-//	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(4) };
-//
-//	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
-//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
-//
-//	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
-//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
-//
-//	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-//	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-//
-//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-//	   return E_FAIL;
-//
-//	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
-//	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-//
-//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-//	   return E_FAIL;
-//
-//	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
-//	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-//
-//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-//	   return E_FAIL;
+
+	ZOMBIE_FEMALE_SHIRTS::_END;
+	ZOMBIE_FEMALE_PANTS::_END;
+	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE};
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(3) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(0) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(4) };
+
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+
+	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	   return E_FAIL;
+
+	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	   return E_FAIL;
+
+	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	   return E_FAIL;
 #endif
 
 	SetUp_DeadMonsters();
@@ -653,6 +664,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* 10. UI_Item_Read_Write */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_ReadUI_ItemType.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
 	/* 11. UI_Item_Read_Arrow */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Item_Read_Arrow.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -920,7 +937,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* Read_Item_UI */
-	else if ( TEXT("UI_Item_Introduce") == fileName || TEXT("UI_Item_Read") == fileName || TEXT("UI_Item_Read_Arrow") == fileName)
+	else if ( TEXT("UI_Item_Introduce") == fileName || TEXT("UI_Item_Read") == fileName || TEXT("UI_Item_Read_Arrow") == fileName || TEXT("UI_ReadUI_ItemType") == fileName)
 	{
 		CustomizeUIDesc.wstrFileName = fileName;
 

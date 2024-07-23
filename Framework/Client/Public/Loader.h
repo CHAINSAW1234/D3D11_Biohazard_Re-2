@@ -61,7 +61,7 @@ private:
 
 private :
 	list<class CLoading_UI*>				m_eLoadingList;
-
+	_float									m_fPercent = { 0.f };
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

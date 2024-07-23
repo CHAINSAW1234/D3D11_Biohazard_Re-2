@@ -33,8 +33,6 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	//	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
-
 	return S_OK;
 }
 
@@ -95,8 +93,6 @@ void CDecal_SSD::LookAt(_float4 vDir)
 
 	m_vNormal = vDir;
 	m_pTransformCom->Look_At(XMLoadFloat4(&vPos));
-
-	PlaySound();
 }
 
 void CDecal_SSD::PlaySound()

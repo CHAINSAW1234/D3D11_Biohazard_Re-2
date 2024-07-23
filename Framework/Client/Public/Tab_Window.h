@@ -39,10 +39,14 @@ private:
 public: 
 	_bool							Get_MinMapRender()				{ return m_isMapRender; }
 	_bool*							Get_MainRender_Ptr()			{ return m_pInvenButton->Get_Dead_Ptr(); }
+	_bool							Get_PickUp_ItemRender()			{ return m_isPickUp_Item; }
 	WINDOW_TYPE*					Get_Window_RenderType_Ptr()		{ return &m_eWindowType; }
 
 private :
 	class CTargeting_Map_UI*		m_pTargetNotify_UI = { nullptr };
+
+private :
+	_bool							m_isPickUp_Item = { false };
 #pragma endregion
 
 
@@ -99,12 +103,13 @@ private:
 	CHotKey*					m_pHotKey = { nullptr };
 
 	CHint*						m_pHint = { nullptr };
+#pragma region ³ª¿µ
 
-private : /* NY */
+private: /* NY */
 	void				Find_Cursor();
 	void				Select_UI();
 
-	class CCursor_UI*	m_pCursor[2] = {nullptr};
+	class CCursor_UI* m_pCursor[2] = { nullptr };
 
 private:
 	WINDOW_TYPE			m_eWindowType = { INVENTORY };
@@ -112,6 +117,9 @@ private:
 	_bool				m_isMapRender = { false };
 
 	_bool				m_isSecondTick = { false };
+	_bool				m_isMapOpen = { false };
+#pragma endregion
+
 
 	/*for. Item_Mesh_Viewer*/
 	_float				m_fCurTime = { 0.f };

@@ -32,7 +32,7 @@ HRESULT CBlood::Initialize(void* pArg)
 
 	m_fDissolveSpeed = 0.05f;
 
-	//	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
 
 	return S_OK;
 }

@@ -52,7 +52,7 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion	
 
-	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 	if (nullptr == pBody_Model)
 		return false;
 
@@ -65,6 +65,8 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 			return false;
 		}
+
+		Play_DropSound();
 	}
 
 	else if (MONSTER_STATE::MST_HOLD == eState)
@@ -84,8 +86,8 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
-			return false;	
-	}	
+		return false;
+	}
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -157,6 +159,31 @@ void CStun_Hold_Zombie::Change_Animation()
 
 	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+}
+
+void CStun_Hold_Zombie::Play_DropSound()
+{
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+	if (abs(fTrackPosition - 50.f) < 1.3f)
+	{
+		const wchar_t* str = L"Break_Drop_";
+		wchar_t result[32];
+		_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+		std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+		m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+		if (inum == 11)
+		{
+			m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.4f);
+		}
+	}
 }
 
 CStun_Hold_Zombie* CStun_Hold_Zombie::Create(void* pArg)

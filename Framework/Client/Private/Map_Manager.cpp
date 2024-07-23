@@ -59,6 +59,18 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 
 	Find_Player();
 	
+	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	{
+		CGameObject* pBackGround = Find_BackGround();
+
+		if (nullptr != pBackGround)
+		{
+			CStatic_Map_UI* pGetMap = static_cast<CStatic_Map_UI*>(pBackGround);
+
+			m_pGetMap = pGetMap->Get_Map_Ptr();
+		}
+	}
+
 	/* Tool */
 	_float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
@@ -104,7 +116,6 @@ HRESULT CMap_Manager::Render()
 
 HRESULT CMap_Manager::Change_Tool()
 {
-	
 	return S_OK;
 }
 
@@ -234,6 +245,21 @@ void CMap_Manager::Exception_Handle()
 			MSG_BOX(TEXT("CMap_Manager() : Tab Window를 찾을 수 없습니다."));
 	}
 
+	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	{
+		CGameObject* pBackGround = Find_BackGround();
+
+		if (nullptr != pBackGround)
+		{
+			CStatic_Map_UI* pGetMap = static_cast<CStatic_Map_UI*>(pBackGround);
+
+			m_pGetMap = pGetMap->Get_Map_Ptr();
+		}
+
+		if (nullptr == m_pGetMap)
+			MSG_BOX(TEXT("CMap_Manager() : Get Map 변수를 찾을 수 없습니다."));
+	}
+
 	{
 		Transform_Adjustment();
 
@@ -355,6 +381,16 @@ void CMap_Manager::Transform_Control(_float fTimeDelta)
 
 void CMap_Manager::Rendering(_float fTimeDelta)
 {
+	if (false == m_isStatic_Type)
+	{
+		if(nullptr != m_pGetMap && false == *m_pGetMap)
+		{
+			m_isRender = false;
+
+			return;
+		}
+	}
+
 	if(m_eMapComponent_Type != MAP_UI_TYPE::TARGET_NOTIFY)
 	{
 		Open_Map();
@@ -380,6 +416,7 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 		if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
 		{
 			m_fBlending = 1.f;
+
 			m_isRender = false;
 		}
 
@@ -390,12 +427,14 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 			if (false == m_isLastPosition)
 			{
 				m_vLastMatrix = m_pTransformCom->Get_WorldMatrix();
+
 				m_isLastPosition = true;
 			}
 
 			if (m_fBlending >= 1.f)
 			{
 				m_fBlending = 1.f;
+
 				m_isRender = false;
 
 				if (true == m_isLastPosition)
@@ -436,6 +475,7 @@ void CMap_Manager::Open_Map()
 			}
 
 			m_isFirstRender = true;
+
 			m_isRender = true;
 		}
 
@@ -443,6 +483,7 @@ void CMap_Manager::Open_Map()
         else
 		{
 			m_isFirstRender = false;
+
 			m_isRender = false;
 		}
     }
@@ -464,8 +505,10 @@ CGameObject* CMap_Manager::Find_BackGround()
 			}
 		}
 	}
+
 	return nullptr;
 }
+
 
 /* Type을 구분 짓는 함수 */
 void CMap_Manager::Find_MapStateType()

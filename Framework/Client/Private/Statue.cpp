@@ -79,18 +79,6 @@ void CStatue::Tick(_float fTimeDelta)
 		m_isCamera_Reset = false;
 	}
 
-
-	if (m_bCamera)
-	{
-		//CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_SCEPTER]);
-		//m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
-		//m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
-
-		//m_pCameraGimmick->Active_Camera(true);
-		Camera_Active(PART_BODY, _float3(-0.5f, -1.f, -1.5f),INTERACT_GIMMICK_TYPE::KEY_GIMMICK, _float4(0.f,1.5f,0.f,0.f));
-
-	}
-
 	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
 	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
 	if (true == m_isPut_HandItem)
@@ -103,6 +91,17 @@ void CStatue::Tick(_float fTimeDelta)
 	{
 		if (*m_pPlayerInteract)
 			Active();
+	}
+
+	if (m_bCamera)
+	{
+		//CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_SCEPTER]);
+		//m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		//m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+
+		//m_pCameraGimmick->Active_Camera(true);
+		Camera_Active(PART_BODY, _float3(-0.15f, -0.f, -1.5f), INTERACT_GIMMICK_TYPE::KEY_GIMMICK, _float4(0.f, 1.5f, 0.f, 0.f));
+
 	}
 
 	__super::Tick(fTimeDelta);

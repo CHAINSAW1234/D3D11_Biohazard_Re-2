@@ -51,6 +51,7 @@ void CItem_Map_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     Rendering();
+
     Player_BetweenDistance();
 }
 
@@ -124,6 +125,14 @@ void CItem_Map_UI::Rendering()
 
     if (false == m_pTab_Window->Get_MinMapRender())
         return;
+
+    if (nullptr != m_pGetMap && false == *m_pGetMap)
+    {
+        m_isRender = false;
+
+        return;
+    }
+
 
     if (true == m_isItemRender)
     {

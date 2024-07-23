@@ -502,13 +502,6 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 			m_bCamera = false;
 		}
 	}
-	if (m_bCamera)
-	{
-		if (m_eCabinetType == TYPE_NORMAL)
-			Camera_Active(PART_LOCK, _float3(0.1f, 0.5f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
-		else
-			Camera_Active(PART_LOCK, _float3(0.1f, 0.5f, 0.3f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
-	}
 	
 	if (m_bDead)
 		m_bItemDead = true;
@@ -518,6 +511,15 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 		if (*m_pPlayerInteract)
 			Safe_Normal_Active();
 	}
+
+	if (m_bCamera)
+	{
+		if (m_eCabinetType == TYPE_NORMAL)
+			Camera_Active(PART_LOCK, _float3(0.025f, -0.015f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+		else
+			Camera_Active(PART_LOCK, _float3(0.1f, 0.1f, 0.4f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+	}
+
 	if (m_eState == CABINET_OPEN)
 	{
 		m_bObtain = true;
@@ -577,14 +579,6 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 	if (!m_bLock && !m_bLockLeon)
 		m_fDelayLockTime = 5.f;
 
-
-	if (m_bCamera)
-	{
-		if (m_eLockLeonState != CCabinet::STATIC_LOCK && (m_eLockState == CCabinet::STATIC_LOCK || m_eLockState == CCabinet::CLEAR_LOCK))
-			Camera_Active(PART_LOCK1, _float3(0.7f, 0.6f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
-		else if (m_eLockState != CCabinet::STATIC_LOCK && (m_eLockLeonState == CCabinet::STATIC_LOCK || m_eLockLeonState == CCabinet::CLEAR_LOCK))
-			Camera_Active(PART_LOCK, _float3(-0.7f, 0.6f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
-	}
 	if (m_bDead)
 		m_bItemDead = true;
 
@@ -593,6 +587,15 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		if (*m_pPlayerInteract || m_bAutoOpen)
 			LeonDesk_Active();
 	}
+
+	if (m_bCamera)
+	{
+		if (m_eLockLeonState != CCabinet::STATIC_LOCK && (m_eLockState == CCabinet::STATIC_LOCK || m_eLockState == CCabinet::CLEAR_LOCK))
+			Camera_Active(PART_LOCK1, _float3(-0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+		else if (m_eLockState != CCabinet::STATIC_LOCK && (m_eLockLeonState == CCabinet::STATIC_LOCK || m_eLockLeonState == CCabinet::CLEAR_LOCK))
+			Camera_Active(PART_LOCK, _float3(0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+	}
+
 	if (m_eState == CABINET_OPEN)
 	{
 		m_bObtain = true;
@@ -668,7 +671,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 		}
 	}
 	if (m_bCamera)
-		Camera_Active(PART_LOCK, _float3(0.3f, 2.5f, 0.3f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+		Camera_Active(PART_LOCK, _float3(0.05f, 0.15f, 0.3f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 	
 	
 	if ((!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1]) || m_bAutoOpen)

@@ -73,7 +73,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 	if (m_fDelayLockTime > 0.f)
 	{
 		m_fDelayLockTime -= fTimeDelta;
-		Camera_Active(PART_MEDAL, _float3(0.9f, -0.6f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+		Camera_Active(PART_MEDAL, _float3(0.15f, -0.1f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	}
 	if (m_fDelayLockTime < 0.f)
 	{
@@ -116,17 +116,17 @@ void CBigStatue::Tick(_float fTimeDelta)
 			Reset_Camera();
 			m_bCamera = false;
 		}
-		
-
 	}
-	if (m_bCamera && m_eLockState != CLEAR_LOCK)
-		Camera_Active(PART_DIAL, _float3(0.9f, -0.6f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/|| m_bAutoOpen)
 	{
 		if (*m_pPlayerInteract|| m_bAutoOpen)
 			Active();
 	}
+
+	if (m_bCamera && m_eLockState != CLEAR_LOCK)
+		Camera_Active(PART_DIAL, _float3(0.15f, -0.1f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+
 	__super::Tick(fTimeDelta);
 }
 

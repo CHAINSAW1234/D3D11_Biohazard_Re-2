@@ -157,6 +157,8 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
 
     Targeting_Render(fTimeDelta);
 
+    Verification_MapType();
+
     __super::Tick(fTimeDelta);
 }
 
@@ -249,7 +251,6 @@ void CTargeting_Map_UI::Find_NotifyText_RenderState()
                     }
                 }
             }
-
         }
     }
 }
@@ -262,8 +263,14 @@ void CTargeting_Map_UI::Verification_MapType()
         /* 1. 모든 아이템을 먹었는가? */
         for (auto& iter : m_ItemStore_Vec[m_eFloorVerification])
         {
+            LOCATION_MAP_VISIT a = iter->Get_Map_Location_Type();
+
+            if (a == RECEPT_ROOM)
+                int e = 1;
+
             if (m_eLocationVerification == iter->Get_Map_Location_Type())
             {
+                
                 if (false == iter->Get_Dead())
                 {
                     m_isSearchForVerification = false;
@@ -275,16 +282,18 @@ void CTargeting_Map_UI::Verification_MapType()
         
         list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
-        /* 2. or One ITem*/
+        /* 2. or One Item*/
         for (auto& iter : *pMapUI_List)
         {
             CMain_Map_UI* pMain = dynamic_cast<CMain_Map_UI*>(iter);
 
             if (nullptr != pMain)
             {
-                if (m_eLocationVerification == pMain->Get_Map_Location_Type())
+                if (m_eLocationVerification == static_cast<_ubyte>(pMain->Get_Map_Location_Type()))
                 {
                     *(pMain->Map_Clear_Ptr()) = true;
+
+                    m_isSearchForVerification = false;
 
                     break;
                 }
