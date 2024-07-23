@@ -343,104 +343,8 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder">
       <UniqueIdentifier>{0b035877-0214-4780-9c8c-017dbe391d29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController">
-      <UniqueIdentifier>{5f9b1726-6c27-40c6-a328-0a0450dd77bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie">
-      <UniqueIdentifier>{17427bf7-5af3-448b-9ab4-81220ef7dd37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task">
-      <UniqueIdentifier>{a3234f00-5adb-4ce0-8c97-38afbd2b2638}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage">
-      <UniqueIdentifier>{6420e8fc-e8c5-4e90-908d-168ef012f3dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\KnockBack">
-      <UniqueIdentifier>{abc7699d-d613-4dc0-b3f4-abe7352e3101}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Burst">
-      <UniqueIdentifier>{7655c67e-8b7f-43e5-9668-85629dcf06cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Down">
-      <UniqueIdentifier>{e39ac2ab-bfcb-4f9a-bb6d-90fcbe5c965e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Stun">
-      <UniqueIdentifier>{9c40efde-60ef-46f9-b9fd-6691f08728bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Stun_Hold">
-      <UniqueIdentifier>{9a24aab7-ef1e-4341-a35f-cc92ec5d9758}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move">
-      <UniqueIdentifier>{76244dd5-0d21-4e53-94c7-6a355f20f1f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\MoveTo">
-      <UniqueIdentifier>{c3e3ec08-4601-40bd-8466-feb5c8686e29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Pivot_Turn">
-      <UniqueIdentifier>{c057336a-fe5c-42f9-92bd-4753165810f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Move_Include_Turn">
-      <UniqueIdentifier>{9a4b689a-b94c-4f87-94c8-a3895329747e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle">
-      <UniqueIdentifier>{f04202b9-12d2-446c-b58f-f1ca71b257d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Wait">
-      <UniqueIdentifier>{022420cb-4aa4-4658-b312-d73a780980eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Sleep">
-      <UniqueIdentifier>{4f0ee31c-a304-4a7a-b3f8-b3744827cdd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Creep">
-      <UniqueIdentifier>{b2bbda7d-d9c7-4056-b6ec-853c3d869c33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite">
-      <UniqueIdentifier>{21ea7137-52b5-45a4-bdb2-65854ae6b87d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional">
-      <UniqueIdentifier>{89f0a103-d0ee-4b53-a0f5-11cc64058fb6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\ShakeSkin">
-      <UniqueIdentifier>{acf145ab-b930-419e-a81d-e6dcfeda6b4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility">
-      <UniqueIdentifier>{1169d85d-c8da-4637-afcb-30447c83345f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\ExecutePreTask">
-      <UniqueIdentifier>{f9aa79f4-30c5-47f5-8c46-5a4e0c14f097}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Hold">
-      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Lightly_Hold_Zombie">
-      <UniqueIdentifier>{bd1bb944-b4f1-4ede-a608-1796bffc4e2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep">
-      <UniqueIdentifier>{624cbdd6-57e1-45bf-832d-aa3d76d6f0d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep\StandUp">
-      <UniqueIdentifier>{4e2d63f6-7d59-460a-8663-77389f8750f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep\TurnOver">
-      <UniqueIdentifier>{251a916b-36e3-4df4-8c4e-4415fb202b35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\DummyFinsh">
-      <UniqueIdentifier>{2dfbaeaa-f270-4b3d-b3b3-34ebd33af1ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\BlackBoard">
-      <UniqueIdentifier>{e33e900e-5192-4c9a-b631-9e1407794ffe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Header_Package">
-      <UniqueIdentifier>{963422fe-d604-40e9-916c-97d953096cd8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Boss">
       <UniqueIdentifier>{a87e8545-b91d-4b68-b068-5531a9bd1345}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Turn_Spine_Head">
-      <UniqueIdentifier>{2a92dd55-c301-4406-88c4-f036bcf72b03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Raise_Up_Hand">
-      <UniqueIdentifier>{a02d6ff8-c24f-4273-85a3-7356d509b814}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Cut_Scene">
       <UniqueIdentifier>{62ebcfb5-83e5-404d-863c-990a6ea4aa5d}</UniqueIdentifier>
@@ -463,39 +367,6 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf">
       <UniqueIdentifier>{dbecbce8-dd75-44a7-bb60-112ccd863c83}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact">
-      <UniqueIdentifier>{075b7780-a450-4ccb-b8e4-37df241a6a5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window">
-      <UniqueIdentifier>{9fdf94a1-7fbc-4e9a-857a-43c60ae7d015}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door">
-      <UniqueIdentifier>{607b69f8-8741-453d-8ab2-8b14620f85fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Open_Door">
-      <UniqueIdentifier>{3834b8d1-3026-4254-9aec-7a4675916d69}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Knock_Door">
-      <UniqueIdentifier>{b7990758-69a5-41b5-ac6f-31b4af4b82e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Rub_Door">
-      <UniqueIdentifier>{a4ee0c79-593d-455b-abaa-6ccb5dd59bde}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Break_Window">
-      <UniqueIdentifier>{a3b8b7e0-2a44-43c9-af45-61e70b019f27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Hold_Out_Hand_Window">
-      <UniqueIdentifier>{040f953d-73ae-4051-953f-895d0f092975}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\In_Window">
-      <UniqueIdentifier>{7f8f6c22-1a6e-414c-98b8-e1a4c6181942}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Knock_Window">
-      <UniqueIdentifier>{e9edce39-00a3-41d8-8431-9c53aae339f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Break_In_Window">
-      <UniqueIdentifier>{5149374e-a540-4cce-a559-95bee657afe0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever">
       <UniqueIdentifier>{bff6a259-79a2-452f-a9e7-819e06a0c52b}</UniqueIdentifier>
     </Filter>
@@ -510,12 +381,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Effect\Muzzle_Smoke">
       <UniqueIdentifier>{bb4b199b-bb82-4cbc-9469-651e4a8b3e6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start">
-      <UniqueIdentifier>{058c9192-1076-44bf-9d92-1e678b756b23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update">
-      <UniqueIdentifier>{35b87477-27f9-4beb-8e58-83929275a9db}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker">
       <UniqueIdentifier>{b1bd9785-09af-4360-a1b2-b6edb587c506}</UniqueIdentifier>
@@ -558,9 +423,6 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Pannel_Window">
       <UniqueIdentifier>{bba54d7f-846e-45fb-aba4-94e0e31e1dc0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Find_Door_To_Target">
-      <UniqueIdentifier>{97c7d72a-bdfb-4b5f-88ca-00deef3d7a89}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Effect\Muzzle_ShockWave">
       <UniqueIdentifier>{4a5436b6-385d-438a-8382-2212eb5558e7}</UniqueIdentifier>
@@ -613,86 +475,11 @@
     <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info">
       <UniqueIdentifier>{06889494-4e23-49fa-8a90-12b96f7ef2e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\MoveTo_Lost">
-      <UniqueIdentifier>{6b5be4ef-1e86-4ece-afdf-46396e34ccd3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Wait_Lost">
-      <UniqueIdentifier>{23e88a87-186c-4988-88cd-402d1d2e26de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator">
-      <UniqueIdentifier>{e7a9caf3-8a95-42ff-9a85-661132d6ccc0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_RangeDistance">
-      <UniqueIdentifier>{2f2d573e-0a45-4ce9-adc2-b00a0f441c4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Angle">
-      <UniqueIdentifier>{4b8b081f-de29-4cd6-94fd-161bc7bec622}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Patrol">
-      <UniqueIdentifier>{90a16696-589b-4940-862e-1fd58d4658c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Change_State">
-      <UniqueIdentifier>{9edbb823-7423-4ed3-b135-3bd281cb3515}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Hit">
-      <UniqueIdentifier>{01c6a90a-aa7c-4607-9519-62cb132e54d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Down">
-      <UniqueIdentifier>{fe7d57b2-dd4a-4f52-a9d3-281720a08b3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_EnoughTime">
-      <UniqueIdentifier>{8d544143-2331-44aa-b90a-ffaf7f8e9c95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Link_Pre_State">
-      <UniqueIdentifier>{6d98541e-9c4f-409c-a171-313d094d4e4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_MainTain_Pre_Task">
-      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Out_Door">
-      <UniqueIdentifier>{21fb4a70-5ee9-4fc8-a180-03a5dfd8d4b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Collision_Prop">
-      <UniqueIdentifier>{d1f22d52-1de6-4789-b7af-eaf6e46d330c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_In_Door">
-      <UniqueIdentifier>{4ee562f4-75b3-493a-872b-72a7e802463e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start">
-      <UniqueIdentifier>{2508d06a-d437-42e1-929b-9ba1e2f04ee9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Chekcer_Is_Same_Location_Player">
-      <UniqueIdentifier>{c02ab057-eac1-40ee-98c0-a04fd5a629c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Different_Location_Player">
-      <UniqueIdentifier>{278eb919-6324-45cc-bfad-411a9e47cab3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start_Rub_Door">
-      <UniqueIdentifier>{99c78821-66c2-45e9-bc26-eaa7bf3ae28c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Damage_Lost">
-      <UniqueIdentifier>{957b90a5-d64a-46a0-baf4-e1a9507af182}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Turn_Lost">
-      <UniqueIdentifier>{20769b59-6047-4b56-9e81-6ca9183671a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite\Bite_Lost">
-      <UniqueIdentifier>{760e2f79-5e12-4875-a06b-34522073a6f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Impact_Grenade">
       <UniqueIdentifier>{b0dfbe9f-435a-4ba2-bf40-4a69fa774dbb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start">
-      <UniqueIdentifier>{682eaf8b-6f13-41b8-bf43-7eadc0e084c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Hide_Locker">
-      <UniqueIdentifier>{c806d68f-82f2-4e0f-82bf-f5bdb6841ade}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Call_Center">
       <UniqueIdentifier>{d6824a1f-6b20-44c5-8b74-078d2f9649a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead">
-      <UniqueIdentifier>{96eefabc-8da0-42b1-b5ad-08422f37da47}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet">
       <UniqueIdentifier>{35f24066-49e4-4651-95a1-c599c32550b7}</UniqueIdentifier>
@@ -796,20 +583,233 @@
     <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00">
       <UniqueIdentifier>{29072f34-6b3c-4839-8e20-430e5f5e74a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound">
-      <UniqueIdentifier>{a9ec29c9-05f9-4d4f-958d-ede7056aa0f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Event_Center">
       <UniqueIdentifier>{2c07f731-035d-48cf-8f69-4e5fc3b1ae3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Break_Sound">
-      <UniqueIdentifier>{1e796123-6237-4b81-8b41-f11d98420c15}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\MapObject\EnvSound">
       <UniqueIdentifier>{d6a37236-5798-4827-b91e-444e4b3459a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player">
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController">
+      <UniqueIdentifier>{5f9b1726-6c27-40c6-a328-0a0450dd77bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie">
+      <UniqueIdentifier>{17427bf7-5af3-448b-9ab4-81220ef7dd37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task">
+      <UniqueIdentifier>{a3234f00-5adb-4ce0-8c97-38afbd2b2638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage">
+      <UniqueIdentifier>{6420e8fc-e8c5-4e90-908d-168ef012f3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\KnockBack">
+      <UniqueIdentifier>{abc7699d-d613-4dc0-b3f4-abe7352e3101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Burst">
+      <UniqueIdentifier>{7655c67e-8b7f-43e5-9668-85629dcf06cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Down">
+      <UniqueIdentifier>{e39ac2ab-bfcb-4f9a-bb6d-90fcbe5c965e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Stun">
+      <UniqueIdentifier>{9c40efde-60ef-46f9-b9fd-6691f08728bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Stun_Hold">
+      <UniqueIdentifier>{9a24aab7-ef1e-4341-a35f-cc92ec5d9758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator">
+      <UniqueIdentifier>{e7a9caf3-8a95-42ff-9a85-661132d6ccc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_RangeDistance">
+      <UniqueIdentifier>{2f2d573e-0a45-4ce9-adc2-b00a0f441c4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Angle">
+      <UniqueIdentifier>{4b8b081f-de29-4cd6-94fd-161bc7bec622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Patrol">
+      <UniqueIdentifier>{90a16696-589b-4940-862e-1fd58d4658c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Change_State">
+      <UniqueIdentifier>{9edbb823-7423-4ed3-b135-3bd281cb3515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Hit">
+      <UniqueIdentifier>{01c6a90a-aa7c-4607-9519-62cb132e54d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Down">
+      <UniqueIdentifier>{fe7d57b2-dd4a-4f52-a9d3-281720a08b3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_EnoughTime">
+      <UniqueIdentifier>{8d544143-2331-44aa-b90a-ffaf7f8e9c95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Link_Pre_State">
+      <UniqueIdentifier>{6d98541e-9c4f-409c-a171-313d094d4e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_MainTain_Pre_Task">
+      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Out_Door">
+      <UniqueIdentifier>{21fb4a70-5ee9-4fc8-a180-03a5dfd8d4b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Collision_Prop">
+      <UniqueIdentifier>{d1f22d52-1de6-4789-b7af-eaf6e46d330c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_In_Door">
+      <UniqueIdentifier>{4ee562f4-75b3-493a-872b-72a7e802463e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start">
+      <UniqueIdentifier>{2508d06a-d437-42e1-929b-9ba1e2f04ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Chekcer_Is_Same_Location_Player">
+      <UniqueIdentifier>{c02ab057-eac1-40ee-98c0-a04fd5a629c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Different_Location_Player">
+      <UniqueIdentifier>{278eb919-6324-45cc-bfad-411a9e47cab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start_Rub_Door">
+      <UniqueIdentifier>{99c78821-66c2-45e9-bc26-eaa7bf3ae28c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Damage_Lost">
+      <UniqueIdentifier>{957b90a5-d64a-46a0-baf4-e1a9507af182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move">
+      <UniqueIdentifier>{76244dd5-0d21-4e53-94c7-6a355f20f1f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\MoveTo">
+      <UniqueIdentifier>{c3e3ec08-4601-40bd-8466-feb5c8686e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Pivot_Turn">
+      <UniqueIdentifier>{c057336a-fe5c-42f9-92bd-4753165810f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Move_Include_Turn">
+      <UniqueIdentifier>{9a4b689a-b94c-4f87-94c8-a3895329747e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\MoveTo_Lost">
+      <UniqueIdentifier>{6b5be4ef-1e86-4ece-afdf-46396e34ccd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Turn_Lost">
+      <UniqueIdentifier>{20769b59-6047-4b56-9e81-6ca9183671a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle">
+      <UniqueIdentifier>{f04202b9-12d2-446c-b58f-f1ca71b257d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Wait">
+      <UniqueIdentifier>{022420cb-4aa4-4658-b312-d73a780980eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Sleep">
+      <UniqueIdentifier>{4f0ee31c-a304-4a7a-b3f8-b3744827cdd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Creep">
+      <UniqueIdentifier>{b2bbda7d-d9c7-4056-b6ec-853c3d869c33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Wait_Lost">
+      <UniqueIdentifier>{23e88a87-186c-4988-88cd-402d1d2e26de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Bite">
+      <UniqueIdentifier>{21ea7137-52b5-45a4-bdb2-65854ae6b87d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Bite\Bite_Lost">
+      <UniqueIdentifier>{760e2f79-5e12-4875-a06b-34522073a6f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional">
+      <UniqueIdentifier>{89f0a103-d0ee-4b53-a0f5-11cc64058fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\ShakeSkin">
+      <UniqueIdentifier>{acf145ab-b930-419e-a81d-e6dcfeda6b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Turn_Spine_Head">
+      <UniqueIdentifier>{2a92dd55-c301-4406-88c4-f036bcf72b03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Raise_Up_Hand">
+      <UniqueIdentifier>{a02d6ff8-c24f-4273-85a3-7356d509b814}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Foot_Sound">
+      <UniqueIdentifier>{a9ec29c9-05f9-4d4f-958d-ede7056aa0f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Break_Sound">
+      <UniqueIdentifier>{1e796123-6237-4b81-8b41-f11d98420c15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player">
       <UniqueIdentifier>{3110fbc5-7eac-4c11-be2d-968269282fdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility">
+      <UniqueIdentifier>{1169d85d-c8da-4637-afcb-30447c83345f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\ExecutePreTask">
+      <UniqueIdentifier>{f9aa79f4-30c5-47f5-8c46-5a4e0c14f097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Start">
+      <UniqueIdentifier>{058c9192-1076-44bf-9d92-1e678b756b23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Region_Update">
+      <UniqueIdentifier>{35b87477-27f9-4beb-8e58-83929275a9db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Find_Door_To_Target">
+      <UniqueIdentifier>{97c7d72a-bdfb-4b5f-88ca-00deef3d7a89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Hold">
+      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Lightly_Hold_Zombie">
+      <UniqueIdentifier>{bd1bb944-b4f1-4ede-a608-1796bffc4e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep">
+      <UniqueIdentifier>{624cbdd6-57e1-45bf-832d-aa3d76d6f0d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep\StandUp">
+      <UniqueIdentifier>{4e2d63f6-7d59-460a-8663-77389f8750f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep\TurnOver">
+      <UniqueIdentifier>{251a916b-36e3-4df4-8c4e-4415fb202b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\DummyFinsh">
+      <UniqueIdentifier>{2dfbaeaa-f270-4b3d-b3b3-34ebd33af1ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact">
+      <UniqueIdentifier>{075b7780-a450-4ccb-b8e4-37df241a6a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window">
+      <UniqueIdentifier>{9fdf94a1-7fbc-4e9a-857a-43c60ae7d015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Break_Window">
+      <UniqueIdentifier>{a3b8b7e0-2a44-43c9-af45-61e70b019f27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Hold_Out_Hand_Window">
+      <UniqueIdentifier>{040f953d-73ae-4051-953f-895d0f092975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\In_Window">
+      <UniqueIdentifier>{7f8f6c22-1a6e-414c-98b8-e1a4c6181942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Knock_Window">
+      <UniqueIdentifier>{e9edce39-00a3-41d8-8431-9c53aae339f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Break_In_Window">
+      <UniqueIdentifier>{5149374e-a540-4cce-a559-95bee657afe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door">
+      <UniqueIdentifier>{607b69f8-8741-453d-8ab2-8b14620f85fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Open_Door">
+      <UniqueIdentifier>{3834b8d1-3026-4254-9aec-7a4675916d69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Knock_Door">
+      <UniqueIdentifier>{b7990758-69a5-41b5-ac6f-31b4af4b82e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Rub_Door">
+      <UniqueIdentifier>{a4ee0c79-593d-455b-abaa-6ccb5dd59bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start">
+      <UniqueIdentifier>{682eaf8b-6f13-41b8-bf43-7eadc0e084c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start\Hide_Locker">
+      <UniqueIdentifier>{c806d68f-82f2-4e0f-82bf-f5bdb6841ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start\Dead">
+      <UniqueIdentifier>{96eefabc-8da0-42b1-b5ad-08422f37da47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\BlackBoard">
+      <UniqueIdentifier>{e33e900e-5192-4c9a-b631-9e1407794ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Header_Package">
+      <UniqueIdentifier>{963422fe-d604-40e9-916c-97d953096cd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -964,19 +964,19 @@
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BlackBoard_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\BlackBoard</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Header_Package_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Header_Package</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Header_Package</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_Hold_Start.h">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Move_To_Target_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\MoveTo</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\MoveTo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Wait</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Wait</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Button_UI.h">
       <Filter>02.GameObjects\UI\4. Button</Filter>
@@ -1006,7 +1006,7 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sleep_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Sleep</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer</Filter>
@@ -1117,55 +1117,55 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_RangeDistance</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_RangeDistance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Charactor_In_ViewAngle_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Angle</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Angle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Pivot_Turn_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Pivot_Turn</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Pivot_Turn</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Move_Include_Turn.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Move_Include_Turn</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Move_Include_Turn</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Can_Patrol_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Patrol</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Patrol</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Can_Change_State_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Change_State</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Change_State</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Hit_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Hit</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Knock_Back_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\KnockBack</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\KnockBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stun_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Stun</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Stun</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Burst_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Burst</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Burst</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Down_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Down</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Down</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Shake_Skin_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\ShakeSkin</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\ShakeSkin</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Maintain_PreTask_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_MainTain_Pre_Task</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_MainTain_Pre_Task</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Execute_PreTask_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Down_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Down</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Down</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn_Over_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep\TurnOver</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep\TurnOver</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stand_Up_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep\StandUp</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep\StandUp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Event.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
@@ -1174,22 +1174,22 @@
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hold_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Hold</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Hold</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Enough_Time_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_EnoughTime</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_EnoughTime</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Can_Link_Pre_State_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Link_Pre_State</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Link_Pre_State</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stun_Hold_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Stun_Hold</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Stun_Hold</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Bite_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Bite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lightly_Hold_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_Bite.h">
       <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
@@ -1234,7 +1234,7 @@
       <Filter>02.GameObjects\MapObject\InteractProps\ReaderMachine\Body_Reader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Creep_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Creep</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Damage_UI.h">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
@@ -1264,10 +1264,10 @@
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn_Spine_Head_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Turn_Spine_Head</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Turn_Spine_Head</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Raise_Up_Hand_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Raise_Up_Hand</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Raise_Up_Hand</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Cut_Scene.h">
       <Filter>02.GameObjects\Cut_Scene</Filter>
@@ -1303,34 +1303,34 @@
       <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Break_Window_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Break_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Break_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Break_In_Window_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Break_In_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Break_In_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hold_Out_Hand_Window_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Hold_Out_Hand_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Hold_Out_Hand_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\In_Window_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\In_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\In_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Knock_Window_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Knock_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Knock_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Knock_Door_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Knock_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Knock_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Rub_Door_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Rub_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Rub_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Open_Door_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Open_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Open_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Out_Door_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Out_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Out_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Collision_Prop_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Collision_Prop</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Collision_Prop</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_Move_Lever.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
@@ -1348,19 +1348,19 @@
       <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_In_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_In_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Start_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Start_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Start</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Region_Update_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Region_Update</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Same_Location_To_Player_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Chekcer_Is_Same_Location_Player</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Chekcer_Is_Same_Location_Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
@@ -1405,10 +1405,10 @@
       <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Find_Door_To_Target</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Find_Door_To_Target</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Different_Location_Player</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Different_Location_Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Muzzle_ShockWave.h">
       <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
@@ -1441,7 +1441,7 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start_Rub_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start_Rub_Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Event_Base.h">
       <Filter>03. Event</Filter>
@@ -1477,31 +1477,31 @@
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Move_To_Target_Lost_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\MoveTo_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\MoveTo_Lost</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait_Lost_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Wait_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Wait_Lost</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Damage_Lost_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Damage_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Damage_Lost</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn_Lost_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Turn_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Turn_Lost</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Impact_Grenade.h">
       <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hide_Locker_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Hide_Locker</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start\Hide_Locker</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Call_Center.h">
       <Filter>02.GameObjects\Call_Center</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Bite_Lost_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite\Bite_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Bite\Bite_Lost</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dead_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start\Dead</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hint_Directory.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Directory</Filter>
@@ -1564,17 +1564,17 @@
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Foot_Sound_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Event_Call_Center.h" />
     <ClInclude Include="..\Public\Break_Sound_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Break_Sound</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Break_Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EnvSound.h">
       <Filter>02.GameObjects\MapObject\EnvSound</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1717,16 +1717,16 @@
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\BlackBoard</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Hold_Start.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Move_To_Target_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\MoveTo</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\MoveTo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Wait</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Wait</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Button_UI.cpp">
       <Filter>02.GameObjects\UI\4. Button</Filter>
@@ -1756,7 +1756,7 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sleep_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Sleep</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer</Filter>
@@ -1855,76 +1855,76 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_RangeDistance</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_RangeDistance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Charactor_In_ViewAngle_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Angle</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Angle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Pivot_Turn_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Pivot_Turn</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Pivot_Turn</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Move_Include_Turn.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Move_Include_Turn</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Move_Include_Turn</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Can_Patrol_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Patrol</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Patrol</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Can_Change_State_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Change_State</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Change_State</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Hit_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Hit</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Knock_Back_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\KnockBack</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\KnockBack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stun_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Stun</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Stun</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Burst_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Burst</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Burst</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Down_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Down</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Down</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Shake_Skin_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\ShakeSkin</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\ShakeSkin</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Maintain_PreTask_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_MainTain_Pre_Task</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_MainTain_Pre_Task</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Execute_PreTask_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Down_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Down</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Down</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn_Over_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep\TurnOver</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep\TurnOver</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stand_Up_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Creep\StandUp</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Creep\StandUp</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hold_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Hold</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Hold</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Enough_Time_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_EnoughTime</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_EnoughTime</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Link_Pre_State</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Can_Link_Pre_State</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stun_Hold_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Stun_Hold</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Stun_Hold</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Bite_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Bite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lightly_Hold_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Bite.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
@@ -1966,7 +1966,7 @@
       <Filter>02.GameObjects\UI\15. LayOut</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Creep</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Creep</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Damage_UI.cpp">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
@@ -1990,10 +1990,10 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn_Spine_Head_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Turn_Spine_Head</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Turn_Spine_Head</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Raise_Up_Hand_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Raise_Up_Hand</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Raise_Up_Hand</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cut_Scene.cpp">
       <Filter>02.GameObjects\Cut_Scene</Filter>
@@ -2029,34 +2029,34 @@
       <Filter>02.GameObjects\MapObject\InteractProps\Lever\Body_Lever</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Break_Window_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Break_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Break_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Break_In_Window_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Break_In_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Break_In_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hold_Out_Hand_Window_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Hold_Out_Hand_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Hold_Out_Hand_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\In_Window_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\In_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\In_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Knock_Window_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Window\Knock_Window</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Window\Knock_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Knock_Door_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Knock_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Knock_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Rub_Door_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Rub_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Rub_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Open_Door_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Interact\Door\Open_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Interact\Door\Open_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Out_Door_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Out_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Out_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Collision_Prop_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Collision_Prop</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Collision_Prop</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Lever.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
@@ -2074,19 +2074,19 @@
       <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_In_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_In_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Start_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Start</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Region_Update</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Chekcer_Is_Same_Location_Player</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Chekcer_Is_Same_Location_Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
@@ -2131,10 +2131,10 @@
       <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Find_Door_To_Target</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Utility\Find_Door_To_Target</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Different_Location_To_Player_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Different_Location_Player</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Different_Location_Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
@@ -2167,7 +2167,7 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start_Rub_Door</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Decorator\Checker_Is_Start_Rub_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Event_Base.cpp">
       <Filter>03. Event</Filter>
@@ -2203,31 +2203,31 @@
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Move_To_Target_Lost_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\MoveTo_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\MoveTo_Lost</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait_Lost_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Wait_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Idle\Wait_Lost</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Damage_Lost_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Damage\Damage_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Damage\Damage_Lost</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn_Lost_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Turn_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Move\Turn_Lost</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Impact_Grenade.cpp">
       <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hide_Locker_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Hide_Locker</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start\Hide_Locker</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Call_Center.cpp">
       <Filter>02.GameObjects\Call_Center</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Bite_Lost_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite\Bite_Lost</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Bite\Bite_Lost</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dead_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Start\Dead</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hint_Directory.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Directory</Filter>
@@ -2290,17 +2290,17 @@
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Foot_Sound_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Event_Call_Center.cpp" />
     <ClCompile Include="..\Private\Break_Sound_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Break_Sound</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Break_Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EnvSound.cpp">
       <Filter>02.GameObjects\MapObject\EnvSound</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2348,7 +2348,7 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="..\Text\Zombie_BeTree.txt">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie</Filter>
+      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie</Filter>
     </Text>
   </ItemGroup>
 </Project>
