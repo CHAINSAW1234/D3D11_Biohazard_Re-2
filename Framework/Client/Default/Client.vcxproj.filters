@@ -808,9 +808,6 @@
     <Filter Include="02.GameObjects\MapObject\EnvSound">
       <UniqueIdentifier>{d6a37236-5798-4827-b91e-444e4b3459a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\MapObject\InteractProps\NewFilter1">
-      <UniqueIdentifier>{db06b4df-7290-4a7b-be78-741e74940827}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player">
       <UniqueIdentifier>{3110fbc5-7eac-4c11-be2d-968269282fdd}</UniqueIdentifier>
     </Filter>
