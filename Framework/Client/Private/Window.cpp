@@ -38,9 +38,9 @@ HRESULT CWindow::Initialize(void* pArg)
 	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
 		return E_FAIL;
 	m_pGameInstance->Set_Volume_3D(m_pTransformCom,0,0.1f);
-	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 1, 0.1f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 0, 1.f, 10.f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 1, 1.f, 10.f);
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 1, 0.3f);
+	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 0, 1.f, 5.f);
+	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 1, 1.f, 5.f);
 	return S_OK;
 }
 

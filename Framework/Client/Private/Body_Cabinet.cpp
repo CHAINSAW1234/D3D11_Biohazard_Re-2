@@ -110,7 +110,7 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
-	Get_SpecialBone_Rotation(); // for UI
+	//Get_SpecialBone_Rotation(); // for UI
 
 #ifdef _DEBUG
 #ifdef UI_POS

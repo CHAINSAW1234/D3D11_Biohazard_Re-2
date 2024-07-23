@@ -63,20 +63,28 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 			switch (iRand)
 			{
 			case 0:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"),0);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 1);
+				if(!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"),0);
+				if(!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform,1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 1);
 				break;
 			case 1:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_3.mp3"), 1);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_5.mp3"), 0);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_3.mp3"), 1);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_5.mp3"), 0);
 				break;
 			case 2:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_2.mp3"), 1);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 0);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_2.mp3"), 1);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 0);
 				break;
 			case 3:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_7.mp3"), 1);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"), 0);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_7.mp3"), 1);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"), 0);
 				break;
 
 			}

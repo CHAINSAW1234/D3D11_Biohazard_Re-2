@@ -37,7 +37,7 @@ HRESULT CEnvSound::Initialize(void * pArg)
 	{
 		_float fMax = m_pGameInstance->GetRandom_Real(16.f, 17.5f);
 		m_pGameInstance->Add_Object_Sound(m_pEnvSoundTransformCom[i], 1);
-		m_pGameInstance->Set_Volume_3D(m_pEnvSoundTransformCom[i], 0, 0.35f);
+		m_pGameInstance->Set_Volume_3D(m_pEnvSoundTransformCom[i], 0, 0.3f);
 		m_pGameInstance->Set_Distance_3D(m_pEnvSoundTransformCom[i], 0, 0.1f, fMax);
 	}
 	for (_int i = 0; i < ENV_CHENNEL_END; i++)
