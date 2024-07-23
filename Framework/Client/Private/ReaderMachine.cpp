@@ -60,6 +60,7 @@ void CReaderMachine::Start()
 			if (static_cast<CCabinet*>(iter)->Get_Cabinet_Type() == CCabinet::TYPE_ELECTRIC)
 			{
 				string strTag = static_cast<CCabinet*>(iter)->Get_Electric_Tag();
+				static_cast<CCabinet*>(iter)->Set_Lock();
 				m_Cabinets.insert({ strTag, static_cast<CCabinet*>(iter) });
 			}
 
@@ -133,7 +134,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1]&&!m_bCamera)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
 			Active();
 	}
 	__super::Tick(fTimeDelta);
@@ -332,7 +333,6 @@ void CReaderMachine::Active()
 	m_bCamera = true;
 
 	if (!m_bKey[0] || !m_bKey[1])
-		if (false == m_pGameInstance->IsPaused())
 			m_pPlayer->Interact_Props(this);
 
 

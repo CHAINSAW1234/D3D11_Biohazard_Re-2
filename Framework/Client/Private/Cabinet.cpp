@@ -615,9 +615,9 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 	if (m_bCamera)
 	{
 		if(m_PartObjects[PART_ITEM]!=nullptr)
-			Camera_Active(PART_ITEM, _float3(-1.5f, -1.5f, -1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+			Camera_Active(PART_ITEM, _float3(0.001f, -0.1f, 1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 		else
-			Camera_Active(PART_BODY, _float3(-1.5f, -5.5f, -1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+			Camera_Active(PART_BODY, _float3(0.001f, -0.5f, -1.5), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 
 	}
 	
@@ -676,7 +676,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 	
 	if ((!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1]) || m_bAutoOpen)
 	{
-		if (*m_pPlayerInteract|| m_bAutoOpen)
+		if ((*m_pPlayerInteract || m_bAutoOpen) && false == m_pGameInstance->IsPaused())
 			Weapon_Active();
 	}
 	if (m_eState == CABINET_OPEN)
@@ -817,8 +817,7 @@ void CCabinet::Weapon_Active()
 
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 		m_bCamera = true;
-		if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);
+		m_pPlayer->Interact_Props(this);
 
 	}
 }

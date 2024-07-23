@@ -1479,6 +1479,16 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 				delete[] szName;
 			}
 			break;
+			case OBJ_LADDER:
+				break;
+			case OBJ_LEVER:
+				break;
+			case OBJ_MOVINGSHELF:
+				break;
+			case OBJ_CARDREADER:
+				break;
+			case OBJ_CHAIR:
+				break;
 			}
 
 			//파트오브젝트의 게임 프로토타입

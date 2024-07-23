@@ -1576,6 +1576,12 @@
     <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Chair.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Chair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Chair.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Chair\Body_Chair</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2301,6 +2307,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Chair.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Chair\Body_Chair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Chair.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Chair</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
