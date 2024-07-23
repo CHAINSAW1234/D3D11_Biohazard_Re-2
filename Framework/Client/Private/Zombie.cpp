@@ -291,7 +291,24 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		m_bRender = true;
+		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.f))
+		{
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->Set_Render(false);
+			}
+			m_bRender = false;
+		}
+		else
+		{
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->Set_Render(true);
+			}
+			m_bRender = true;
+		}
 	}
 
 	if (!Distance_Culling())

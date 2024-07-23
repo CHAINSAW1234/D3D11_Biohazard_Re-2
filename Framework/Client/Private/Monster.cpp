@@ -148,7 +148,7 @@ _bool CMonster::Distance_Culling()
 	auto vDelta = vPlayerPos - vMonsterPos;
 	auto fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
 
-	if (fDelta < CULLING_DISTANCE)
+	if (fDelta < CULLING_DISTANCE_ZOMBIE)
 		return true;
 	else
 		return false;
