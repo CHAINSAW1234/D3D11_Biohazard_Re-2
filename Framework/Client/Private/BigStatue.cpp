@@ -92,7 +92,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_W;
 		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
 			m_eKeyInput = KEY_S;
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			if (m_eLockState != CBigStatue::CLEAR_LOCK)
 				m_eLockState = CBigStatue::STATIC_LOCK;

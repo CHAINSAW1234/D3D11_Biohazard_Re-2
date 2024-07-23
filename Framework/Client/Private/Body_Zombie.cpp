@@ -78,7 +78,9 @@ void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 void CBody_Zombie::Tick(_float fTimeDelta)
 {
 	if (m_bRagdoll)
+	{
 		m_bRender = true;
+	}
 
 	__super::Tick(fTimeDelta);
 }
@@ -1031,6 +1033,16 @@ PxRigidDynamic* CBody_Zombie::Get_Ragdoll_RigidBody(COLLIDER_TYPE eType)
 _float4 CBody_Zombie::GetRigidBodyPos(COLLIDER_TYPE eType)
 {
 	return m_pRagdoll->GetRigidBodyPos(eType);
+}
+
+void CBody_Zombie::Set_Render(_bool boolean)
+{
+	m_bRender = boolean;
+
+	m_pRagdoll->SetCulling(boolean);
+
+	if (m_bRagdoll)
+		m_bRender = true;
 }
 
 void CBody_Zombie::Update_Current_MotionType()

@@ -1839,6 +1839,8 @@ void CPlayer::ResetCamera()
 	m_fLerpAmount_Right = m_fRight_Dist_Pos;
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 	m_fLerpAmount_Look = m_fLook_Dist_Pos;
+
+	Calc_Camera_LookAt_Point(1 / 60.f);
 }
 
 void CPlayer::Apply_Recoil(_float fTimeDelta)

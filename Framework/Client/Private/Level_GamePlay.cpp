@@ -238,6 +238,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring& strLayerTag)
 	//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_Test/Layer_Monster.dat"), strLayerTag, g_Level)))
 	//	return E_FAIL;
 //#endif
+
 	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
 		return E_FAIL;
 

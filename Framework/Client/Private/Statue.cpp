@@ -67,7 +67,7 @@ void CStatue::Tick(_float fTimeDelta)
 
 	if(m_bCamera)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 			bCam = true;
 	}
 	if (m_isCamera_Reset)
