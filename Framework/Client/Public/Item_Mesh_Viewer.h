@@ -14,6 +14,9 @@ class CItem_Mesh_Viewer final : public CGameObject
 {
 private:
 	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, SECON_PICKUPITEM, EXAMIN_PUZZLE ,OPER_TYPE_END};
+	enum BUTTON_STATE{ IDLE, SELECTED, PRESSED, BUTTON_STATE_END };
+	enum LAMP_STATE { IDLE, SUCCEED, FAILED, LAMP_STATE_END};
+
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
@@ -31,6 +34,8 @@ private:
 	void PopUp_Operation(_float fTimeDelta);
 	void Idle_Operation(_float fTimeDelta);
 	void Hide_Operation(_float fTimeDelta);
+
+	_bool Check_Puzzle_Success();
 
 public:
 	void Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType);
@@ -68,7 +73,7 @@ private:
 
 	_float4x4			m_matMoveCenter = {};
 
-	_uint				m_iSelected_Button = { 8 };
+	_int				m_iSelected_Button = { -1 };
 
 
 	string				m_LampTags[8];
@@ -78,6 +83,8 @@ private:
 	_uint				m_iInputAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	_uint				m_iCorrectAnswer[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
+	BUTTON_STATE		m_eButtonStates[8] = { BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END };
+	LAMP_STATE			m_eLampStates[8] = { LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END };
 
 
 private:
