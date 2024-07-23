@@ -67,18 +67,8 @@ void CClothes_Zombie::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	/*auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
-	{
-		m_bRender = false;
-	}
-	else
-	{
+	if (m_bRagdoll)
 		m_bRender = true;
-	}*/
-
-	m_bRender = true;
 }
 
 void CClothes_Zombie::Late_Tick(_float fTimeDelta)

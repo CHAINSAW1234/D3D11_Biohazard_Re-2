@@ -49,6 +49,8 @@ HRESULT CBlood_Drop::Initialize(void* pArg)
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1);
 
+	m_bRender = false;
+
 	return S_OK;
 }
 
@@ -112,12 +114,6 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 	if (m_iFrame >= iNumMesh)
 	{
 		m_bDissolving = true;
-		/*m_bRender = false;
-		m_iFrame = 0;
-		m_fSizeX = m_fSize_X_Default;
-		m_fSizeY = m_fSize_Y_Default;
-		m_fSizeZ = m_fSize_Z_Default;
-		m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);*/
 	}
 }
 

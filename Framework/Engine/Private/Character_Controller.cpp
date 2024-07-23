@@ -498,7 +498,6 @@ void CCharacter_Controller::Update_Collider()
 	if (m_ragdoll == nullptr)
 		return;
 
-	//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
 	m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
 	_float4x4* RotMat = m_pRotationMatrix;
 	RotMat->_41 = m_pWorldMatrix->_41;

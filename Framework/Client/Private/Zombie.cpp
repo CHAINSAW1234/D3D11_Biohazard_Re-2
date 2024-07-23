@@ -226,10 +226,13 @@ HRESULT CZombie::Initialize(void* pArg)
 
 #pragma endregion
 
+	m_WindowDropSound_Delay = 20;
 
 #pragma region DEFAULT SETUP
 
 	m_isStart = true;
+
+	m_RagdollWakeUpDelay = 5000;
 
 #pragma endregion
 	return S_OK;
@@ -251,12 +254,45 @@ void CZombie::Tick(_float fTimeDelta)
 
 	if (m_eStartType == ZOMBIE_START_TYPE::_RAG_DOLL)
 	{
-		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-		pBody->WakeUp_Ragdoll();
+		if (m_bRagdollWakeUp)
+		{
+			if (m_RagdollWakeUpDelay + m_RagdollWakeUpTime < GetTickCount64())
+			{
+				m_bRagdollWakeUp = false;
+				auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+				pBody->WakeUp_Ragdoll();
+			}
+		}
 	}
 
 	if (m_bEvent)
 		m_eBeHavior_Col;
+
+	if (m_bRagdoll == false)
+	{
+		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.f))
+		{
+			for (auto& it : m_PartObjects)
+			{
+				if(it)
+					it->Set_Render(false);
+			}
+			m_bRender = false;
+		}
+		else
+		{
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->Set_Render(true);
+			}
+			m_bRender = true;
+		}
+	}
+	else
+	{
+		m_bRender = true;
+	}
 
 	if (!Distance_Culling())
 	{
@@ -310,22 +346,6 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 	XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 
-#pragma region 예은 추가 - 이벤트
-	//if (m_bEvent)
-	//{
-	//	_bool bBehavior = true;
-	//	if (m_InteractObjVec[m_eBeHavior_Col] != nullptr)
-	//		bBehavior = static_cast<CInteractProps*>(m_InteractObjVec[m_eBeHavior_Col])->Attack_Prop(m_pTransformCom);
-	//	// bBehavior가 true이면 창문이 깨지거나 문이 열리거나 하고 있음
-	//	// 
-
-	//	m_fEventCoolTime += fTimeDelta;
-	//}
-	//if (m_fEventCoolTime > 10.f)
-	//	m_bEvent = false; //이벤트 쿨탐 10초가 지나면 다시 이벤트를 할 수 있는 상태(중복 방지)
-
-#pragma endregion
-
 #pragma region Ragdoll 피격
 	if (m_bRagdoll)
 	{
@@ -333,6 +353,8 @@ void CZombie::Tick(_float fTimeDelta)
 		{
 			if (m_pController->Is_Hit())
 			{
+				m_bDecal_Hit = true;
+
 				m_iBloodCount = 0;
 
 				m_bBigAttack = m_pController->IsBigAttack();
@@ -369,6 +391,8 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		if (m_pController->Is_Hit())
 		{
+			m_bDecal_Hit = true;
+
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
@@ -570,14 +594,8 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pController && m_pController->GetDead() == false)
+	if (m_pController && m_pController->GetDead() == false && m_bRender == true)
 		m_pController->Update_Collider();
-
-#pragma region 예은
-	//if(!m_bEvent)
-	//	Col_EventCol();
-
-#pragma endregion 
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
@@ -589,7 +607,9 @@ void CZombie::Late_Tick(_float fTimeDelta)
 	{
 		/*For Decal*/
 #ifdef DECAL
-		Ready_Decal();
+		if(m_bDecal_Hit)
+			Ready_Decal();
+
 		SetBlood();
 #endif
 	}
@@ -2979,128 +2999,12 @@ void CZombie::Perform_Skinning()
 
 void CZombie::Ready_Decal()
 {
+	m_bDecal_Hit = false;
+
 	auto vRayOrigin = m_pGameInstance->Get_RayOrigin_Aim();
 	auto vRayDir = m_pGameInstance->Get_RayDir_Aim();
 	_float	fMinDist = 0.f;
 	_float	fMaxDist = 0.f;
-	//	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
-	//	{
-	//		Perform_Skinning();
-	//
-	//		HitResult hitResult;
-	//		hitResult.hitModel = this;
-	//		hitResult.minHitDistance = fMinDist;
-	//		hitResult.maxHitDistance = fMaxDist;
-	//
-	//		_matrix rotMatrix = XMMatrixIdentity();
-	//		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
-	//
-	//		AddDecalInfo decalInfo;
-	//		decalInfo.rayOrigin = vRayOrigin;
-	//		decalInfo.rayDir = vRayDir;
-	//		XMStoreFloat4(&decalInfo.decalTangent, XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
-	//		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
-	//		decalInfo.minHitDistance = hitResult.minHitDistance;
-	//		decalInfo.maxHitDistance = hitResult.maxHitDistance;
-	//		decalInfo.decalMaterialIndex = 0;
-	//
-	//#pragma region RayCasting
-	//		////Body Model
-	//		//list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-	//		//for (auto& i : NonHideIndex)
-	//		//{
-	//		//	m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-	//
-	//		//	if (m_iMeshIndex_Hit != 999)
-	//		//	{
-	//		//		m_iMeshIndex_Hit = i;
-	//
-	//		//		_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-	//		//		_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-	//		//		XMStoreFloat4(&m_vHitPosition, CameraPos);
-	//
-	//		//		m_vHitNormal = m_pController->GetHitNormal();
-	//
-	//		//		break;
-	//		//	}
-	//		//}
-	//
-	//		//if(m_iMeshIndex_Hit == 999)
-	//		//{
-	//		//	//Head Model
-	//		//	NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
-	//		//	for (auto& i : NonHideIndex)
-	//		//	{
-	//		//		m_iMeshIndex_Hit = m_pHeadModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-	//
-	//		//		if (m_iMeshIndex_Hit != 999)
-	//		//		{
-	//		//			m_iMeshIndex_Hit = i;
-	//
-	//		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-	//		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-	//		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
-	//
-	//		//			m_vHitNormal = m_pController->GetHitNormal();
-	//
-	//		//			break;
-	//		//		}
-	//		//	}
-	//		//}
-	//
-	//		////Shirt Model
-	//		//if (m_iMeshIndex_Hit == 999)
-	//		//{
-	//		//	NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
-	//		//	for (auto& i : NonHideIndex)
-	//		//	{
-	//		//		m_iMeshIndex_Hit = m_pShirtsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-	//
-	//		//		if (m_iMeshIndex_Hit != 999)
-	//		//		{
-	//		//			m_iMeshIndex_Hit = i;
-	//
-	//		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-	//		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-	//		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
-	//
-	//		//			m_vHitNormal = m_pController->GetHitNormal();
-	//
-	//		//			break;
-	//		//		}
-	//		//	}
-	//		//}
-	//
-	//		////Pants Model
-	//		//if (m_iMeshIndex_Hit == 999)
-	//		//{
-	//		//	NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
-	//		//	for (auto& i : NonHideIndex)
-	//		//	{
-	//		//		m_iMeshIndex_Hit = m_pPantsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-	//
-	//		//		if (m_iMeshIndex_Hit != 999)
-	//		//		{
-	//		//			m_iMeshIndex_Hit = i;
-	//
-	//		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-	//		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-	//		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
-	//
-	//		//			m_vHitNormal = m_pController->GetHitNormal();
-	//
-	//		//			break;
-	//		//		}
-	//		//	}
-	//		//}
-	//#pragma endregion
-	//
-	//		if (m_iMeshIndex_Hit == 999)
-	//		{
-	//			m_vHitPosition = m_pController->GetBlockPoint();
-	//			m_vHitNormal = m_pController->GetHitNormal();
-	//		}
-	//	}
 
 	Perform_Skinning();
 
@@ -3118,21 +3022,6 @@ void CZombie::RayCast_Decal()
 {
 	if (m_pGameInstance->RayCast_Decal(m_vHitPosition, m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &m_vDecalPoint, &m_vDecalNormal, 2.f))
 	{
-		//auto iNumDecal = m_pDecal_Layer->size();
-		//for(auto& it : *m_pDecal_Layer)
-		//{
-		//	if(it->GetbRender() == false)
-		//	{
-		//		++m_iDecal_Index;
-		//		auto pDecal = static_cast<CDecal_SSD*>(it);
-		//		pDecal->Set_Render(true);
-		//		//pDecal->SetWorldMatrix_With_HitNormal(m_vDecalNormal);
-		//		pDecal->SetPosition(m_vDecalPoint);
-		//		pDecal->LookAt(m_vDecalNormal);
-		//		break;
-		//	}
-		//}
-
 		m_vecDecal_SSD[m_iDecal_Index]->Set_Render(true);
 		m_vecDecal_SSD[m_iDecal_Index]->SetPosition(m_vDecalPoint);
 		m_vecDecal_SSD[m_iDecal_Index]->LookAt(m_vDecalNormal);
@@ -3348,7 +3237,6 @@ void CZombie::SetBlood()
 				m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vHitPosition);
 				m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
 				m_vecBlood_Drop[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
-
 			}
 		}
 		else
@@ -3670,6 +3558,27 @@ void CZombie::PlayBloodSound(_uint iIndex)
 	m_pGameInstance->Set_Volume_3D(m_pTransformCom, BLOOD_SOUND_STARTINDEX + iIndex, 0.2f);
 
 	m_vecBlood_Drop[iIndex]->SetbDecalSound(false);
+}
+
+void CZombie::StartWindowDropSound()
+{
+	if (m_WindowDropSound_Delay + m_WindowDropSound_Time < GetTickCount64())
+	{
+		m_bWindowDrop_Sound = false;
+
+		const wchar_t* str = L"Break_Drop_";
+		wchar_t result[32];
+		_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+		std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+		m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+		if (inum == 11)
+		{
+			m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.2f);
+		}
+	}
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)
