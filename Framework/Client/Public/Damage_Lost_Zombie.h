@@ -33,7 +33,7 @@ public:
 
 private:
 	void							Change_Animation();
-
+	void							Play_DropSound();
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
 private:

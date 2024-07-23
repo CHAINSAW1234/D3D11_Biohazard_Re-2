@@ -478,6 +478,11 @@ _bool CRagdoll_Physics::Init(const string& name, ID3D11Device* pDevice, ID3D11De
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom_Sound, 10);
 
+	for (size_t i = 0; i < 10; ++i)
+	{
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom_Sound,i,0.f ,10.f);
+	}
+
 	m_vecRagdollSound_Filter.clear();
 	m_vecRagdollSound_Filter.resize(13,false);
 #pragma endregion
