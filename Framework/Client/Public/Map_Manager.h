@@ -91,7 +91,7 @@ protected : /* Variable */
 	_float2					m_vPlayer_MovePos			= {};
 
 	_bool*					m_pGetMap					= { nullptr };
-
+	_bool					m_isStatic_Type				= { false };
 	/* 5. Sound */
 	_bool					m_isOneSound				= { false };
 public:

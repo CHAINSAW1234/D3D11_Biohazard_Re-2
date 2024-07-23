@@ -129,6 +129,13 @@ void CPlayer_Map_UI::Rendering()
     {
         if (true == m_pTab_Window->Get_MinMapRender())
         {
+            if (nullptr != m_pGetMap && false == *m_pGetMap)
+            {
+                m_isRender = false;
+
+                return;
+            }
+
             if (m_pMapPlayer->m_eCurrent_ViewFloor == m_ePlayer_Floor)
                 m_isRender = true;
 

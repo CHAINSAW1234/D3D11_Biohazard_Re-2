@@ -27,6 +27,8 @@ HRESULT CStatic_Map_UI::Initialize(void* pArg)
             return E_FAIL;
     }
 
+    m_isStatic_Type = true;
+
     return S_OK;
 }
 
@@ -50,6 +52,7 @@ void CStatic_Map_UI::Tick(_float fTimeDelta)
             }
         }
     }
+
 }
 
 

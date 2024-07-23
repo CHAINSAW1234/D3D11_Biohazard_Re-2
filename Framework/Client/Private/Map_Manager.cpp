@@ -59,7 +59,7 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 
 	Find_Player();
 	
-	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type)
+	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
 	{
 		CGameObject* pBackGround = Find_BackGround();
 
@@ -245,7 +245,7 @@ void CMap_Manager::Exception_Handle()
 			MSG_BOX(TEXT("CMap_Manager() : Tab Window를 찾을 수 없습니다."));
 	}
 
-	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type)
+	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
 	{
 		CGameObject* pBackGround = Find_BackGround();
 
@@ -381,10 +381,14 @@ void CMap_Manager::Transform_Control(_float fTimeDelta)
 
 void CMap_Manager::Rendering(_float fTimeDelta)
 {
-	if (MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	if (false == m_isStatic_Type)
 	{
 		if(nullptr != m_pGetMap && false == *m_pGetMap)
+		{
+			m_isRender = false;
+
 			return;
+		}
 	}
 
 	if(m_eMapComponent_Type != MAP_UI_TYPE::TARGET_NOTIFY)
