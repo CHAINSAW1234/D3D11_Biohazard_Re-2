@@ -90,7 +90,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_S;
 		else if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
 			m_eKeyInput = KEY_SPACE;
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			m_eMachine_Key_State = CReaderMachine::READERMACHINE_KEY_STATIC;
 			m_iPush[0] = -1;

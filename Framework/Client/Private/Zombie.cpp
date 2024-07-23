@@ -2790,6 +2790,8 @@ void CZombie::Stop_Sound(_uint iSoundIndex)
 
 void CZombie::SetRagdoll_StartPose()
 {
+	m_RagdollWakeUpTime = GetTickCount64();
+
 	m_pController->SetReleased(true);
 	m_pController->SetDead(true);
 	m_pController->Set_Force(_float4(0.f, 0.f, 0.f, 0.f), COLLIDER_TYPE::CHEST);

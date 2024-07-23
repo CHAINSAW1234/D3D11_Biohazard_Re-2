@@ -94,7 +94,7 @@ void CWindow::Tick(_float fTimeDelta)
 	}
 
 	_bool bCam = { false };
-	if (m_bCamera&& DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	if (m_bCamera&& DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 	{
 		bCam = true;
 	}

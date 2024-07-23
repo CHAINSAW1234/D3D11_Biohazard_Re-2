@@ -477,7 +477,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_W;
 		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
 			m_eKeyInput = KEY_S;
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			if (m_eLockState != CCabinet::CLEAR_LOCK)
 				m_eLockState = CCabinet::STATIC_LOCK;
@@ -543,7 +543,7 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_W;
 		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
 			m_eKeyInput = KEY_S;
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			if (m_eLockState != CCabinet::CLEAR_LOCK)
 				m_eLockState = CCabinet::STATIC_LOCK;
@@ -608,7 +608,7 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 void CCabinet::Electric_Tick(_float fTimeDelta)
 {
 	_bool bCam = false;
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 	{
 		bCam = true;
 	}
@@ -653,7 +653,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 
 	if (m_eLockState == CCabinet::LIVE_LOCK)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 			bCam = true;
 	}
 	if (m_bCamera && (bCam || static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK])->Get_Clear()))
