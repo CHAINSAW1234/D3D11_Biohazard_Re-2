@@ -48,7 +48,7 @@ using namespace Client;
 //	#define Map_Ye
 //#define Map_TEST2
 
-//	#define TEST_ZOMBIE_MAINHALL
+//#define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING

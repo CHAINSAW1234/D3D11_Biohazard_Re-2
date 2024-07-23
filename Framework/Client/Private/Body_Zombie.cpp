@@ -77,6 +77,9 @@ void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 
 void CBody_Zombie::Tick(_float fTimeDelta)
 {
+	if (m_bRagdoll)
+		m_bRender = true;
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -225,6 +228,10 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+			if (iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_OUTTER)
+				continue;
+
 			if (FAILED(Bind_WorldMatrix(i)))
 				return E_FAIL;
 
@@ -276,6 +283,10 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+			if (iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_OUTTER)
+				continue;
+
 			if (FAILED(Bind_WorldMatrix(i)))
 				return E_FAIL;
 
@@ -323,6 +334,10 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+			if (iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_OUTTER)
+				continue;
+
 			if (FAILED(Bind_WorldMatrix(i)))
 				return E_FAIL;
 

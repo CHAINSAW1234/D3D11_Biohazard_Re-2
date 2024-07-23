@@ -45,6 +45,12 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pGameInstance->Set_Volume_3D(m_pTransformCom,0, 0.9f);
+
+	if (m_pTransformCom->IsIdentityWorldMatrix())
+	{
+		m_bLocalized = true;
+		m_vLocal_To_World_Pos = m_pModelCom->GetCenterPoint();
+	}
 	
 	return S_OK;
 }

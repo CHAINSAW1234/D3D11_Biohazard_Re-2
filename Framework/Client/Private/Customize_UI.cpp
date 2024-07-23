@@ -887,6 +887,23 @@ void CCustomize_UI::Move(_float3 fMoveMent)
 		static_cast<CCustomize_UI*>(iter)->Move(fMoveMent);
 }
 
+void CCustomize_UI::Move_To_Target(_float4 vTargetPos, _float fTimeDelta, _float fMinDistance)
+{
+	_float3 fPrePos = { GetPosition().x, GetPosition().y, GetPosition().z };
+
+	m_pTransformCom->Move_toTargetUI(_float4(vTargetPos.x, vTargetPos.y, vTargetPos.z, 1.f), fTimeDelta, fMinDistance);
+
+	_float2 fCruPos = { GetPosition().x, GetPosition().y };
+
+	_float3 fMoveMent = { fCruPos.x - fPrePos.x, fCruPos.y - fPrePos.y, 0.f };
+
+	for (auto& iter : m_vecTextBoxes)
+		iter->Move(fMoveMent);
+
+	for (auto& iter : m_vecChildUI)
+		static_cast<CCustomize_UI*>(iter)->Move(fMoveMent);
+}
+
 void CCustomize_UI::Set_Position(_vector vPos)
 {
 	_vector vprePos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);

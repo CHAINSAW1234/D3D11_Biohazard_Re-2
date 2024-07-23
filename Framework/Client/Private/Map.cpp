@@ -65,10 +65,6 @@ HRESULT CMap::Initialize(void* pArg)
 #endif 
 #pragma endregion
 
-#pragma region Effect
-	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
-#pragma endregion
-
 #pragma region Initializing Octree
 
 	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");
@@ -84,6 +80,8 @@ HRESULT CMap::Initialize(void* pArg)
 	//	m_pModelCom->Release_IndexBuffer(i);
 	//}
 
+	m_pModelCom->Release_Decal_Dump();
+	m_pModelCom->Release_Dump();
 #pragma endregion
 
 	return S_OK;
@@ -137,9 +135,9 @@ void CMap::Late_Tick(_float fTimeDelta)
 
 	if (m_bShadow)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
+		/*m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);*/
 	}
 	
 //#endif

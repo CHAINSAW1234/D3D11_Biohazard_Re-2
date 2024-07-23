@@ -40,13 +40,13 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	if (FAILED(Ready_Managers()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
 	if (FAILED(Ready_EnvSounds()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_Camera(g_strCameraTag)))
 		return E_FAIL;
 
@@ -59,7 +59,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
 
- 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_RegionCollider()))
@@ -147,7 +147,7 @@ HRESULT CLevel_GamePlay::Ready_EnvSounds()
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
+HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring& strLayerTag)
 {
 	CCamera_Free::CAMERA_FREE_DESC		CameraDesc{};
 
@@ -160,13 +160,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.fSpeedPerSec = 10.f;
 	CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-	
+
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc)))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Event"), &CameraDesc)))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Gimmick"), &CameraDesc)))
 		return E_FAIL;
 
@@ -223,7 +223,7 @@ HRESULT CLevel_GamePlay::Ready_PropManager()
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/)
+HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring& strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/)
 {
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Player"))))
 		return E_FAIL;
@@ -231,17 +231,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
+HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring& strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
-#ifdef MAP_TEST //- map
-	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_Test/Layer_Monster.dat"), strLayerTag, g_Level)))
+//#ifdef MAP_TEST //- map
+//	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_Test/Layer_Monster.dat"), strLayerTag, g_Level)))
+//		return E_FAIL;
+//#endif
+	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
 		return E_FAIL;
-#endif
-#ifdef MAP_INTERACT //- map
-		//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-		//	return E_FAIL;
-#endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
 	//CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
@@ -259,7 +257,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	ZOMBIE_FEMALE_SHIRTS::_END;
 	ZOMBIE_FEMALE_PANTS::_END;
 	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
-	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE};
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(3) };
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(0) };
 	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(4) };
@@ -270,23 +268,23 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
 	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
 
-	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
+		return E_FAIL;
 
 	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
+		return E_FAIL;
 
 	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
+		return E_FAIL;
 #endif
 
 	SetUp_DeadMonsters();
@@ -294,7 +292,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
+HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring& strLayerTag)
 {
 #ifdef MAP_NOTHING
 
@@ -320,7 +318,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 		return E_FAIL;
 #endif
 
-	
+
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_NavMesh_Debug"))))
 		return E_FAIL;
@@ -374,16 +372,16 @@ HRESULT CLevel_GamePlay::Ready_EnvCube()
 {
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_EnvCubeMap"), TEXT("Prototype_GameObject_EnvCube"))))
 		return E_FAIL;
-	
-	m_pCubeMap = static_cast<CEnvCube*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY,TEXT("Layer_EnvCubeMap"), 0));
+
+	m_pCubeMap = static_cast<CEnvCube*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_EnvCubeMap"), 0));
 
 	m_pGameInstance->Set_CubeMap(m_pCubeMap->Get_Texture());
 
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
-{	
+HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring& strLayerTag)
+{
 	for (size_t i = 0; i < 20; i++)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Effect"))))
@@ -441,7 +439,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º   */////////////////////////////
 
 	///* 5. UI_Sub_Inventory */
@@ -483,7 +481,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	/* 4. UI_HintLayout */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Inven.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -515,9 +513,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	///////////////////////////*¢º ¢º  ¢º  ¢º  ¢º Map : Font */////////////////////////////
-	
+
 	/* 9. UI_Map_Font */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Font.dat");//
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -587,7 +585,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	/* 9. UI_Map_Item_Floor2 */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Item_Floor2.dat");//
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -611,7 +609,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	/* 9. UI_Map_Player */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Player.dat");//
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -623,7 +621,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	/* 9. Map_BackGround */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Target_Notify.dat");//
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -669,7 +667,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	
+
 	/* 11. UI_Item_Read_Arrow */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Item_Read_Arrow.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -696,32 +694,32 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Decal(const wstring& strLayerTag)
 {
-	for(size_t i = 0;i<30;++i)
+	for (size_t i = 0; i < 30; ++i)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Decal_SSD"))))
 			return E_FAIL;
 	}
-	
+
 	return S_OK;
 }
 
 void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child, CGameObject* pSupervisor)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
-	
-	if(fileName == TEXT("UI_Map_Floor3")|| fileName == TEXT("UI_Map_Font2") || fileName == TEXT("UI_Map_Floor2")|| fileName == TEXT("UI_Map_Window") || fileName == TEXT("UI_Map") ||  fileName == TEXT("Map_Mask_Font"))
+
+	if (fileName == TEXT("UI_Map_Floor3") || fileName == TEXT("UI_Map_Font2") || fileName == TEXT("UI_Map_Floor2") || fileName == TEXT("UI_Map_Window") || fileName == TEXT("UI_Map") || fileName == TEXT("Map_Mask_Font"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
-	if (fileName == TEXT("UI_Item_Introduce")|| fileName == TEXT("UI_Item_Read_Arrow"))
+	if (fileName == TEXT("UI_Item_Introduce") || fileName == TEXT("UI_Item_Read_Arrow"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
 	if (fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Item_Floor2") || fileName == TEXT("UI_Map_Item_Floor3"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
-	if(fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Item_Floor2") || fileName == TEXT("UI_Map_Item_Floor3"))
+	if (fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Item_Floor2") || fileName == TEXT("UI_Map_Item_Floor3"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eItem_Number), sizeof(ITEM_NUMBER));
 
-	if ( fileName == TEXT("UI_Map_Door") || fileName == TEXT("UI_Map_Door_Floor2") || fileName == TEXT("UI_Map_Door_Floor3"))
+	if (fileName == TEXT("UI_Map_Door") || fileName == TEXT("UI_Map_Door_Floor2") || fileName == TEXT("UI_Map_Door_Floor3"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eDoor_Type), sizeof(DOOR_TYPE));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
@@ -767,7 +765,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
 
-	
+
 	for (_int i = 0; i <= (_int)CustomizeUIDesc.iColorMaxNum; i++)
 	{
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
@@ -805,14 +803,14 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 
 		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
 
-		if (TEXT("UI_Map_Font") == fileName || TEXT("UI_Map") == fileName )
+		if (TEXT("UI_Map_Font") == fileName || TEXT("UI_Map") == fileName)
 			TextBoxDesc.isUI_Render = true;
 		else
 			TextBoxDesc.isUI_Render = false;
 
 		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
 	}
-	
+
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
 
 	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
@@ -937,7 +935,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* Read_Item_UI */
-	else if ( TEXT("UI_Item_Introduce") == fileName || TEXT("UI_Item_Read") == fileName || TEXT("UI_Item_Read_Arrow") == fileName || TEXT("UI_ReadUI_ItemType") == fileName)
+	else if (TEXT("UI_Item_Introduce") == fileName || TEXT("UI_Item_Read") == fileName || TEXT("UI_Item_Read_Arrow") == fileName || TEXT("UI_ReadUI_ItemType") == fileName)
 	{
 		CustomizeUIDesc.wstrFileName = fileName;
 
@@ -946,7 +944,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* 4. UI_LayOut */
-	else if (TEXT("UI_Layout_BackGround") == fileName || TEXT("UI_Layout_Key") == fileName || TEXT("UI_Layout_Statue") == fileName 
+	else if (TEXT("UI_Layout_BackGround") == fileName || TEXT("UI_Layout_Key") == fileName || TEXT("UI_Layout_Statue") == fileName
 		|| TEXT("UI_Layout_Inven") == fileName || TEXT("UI_Layout_Hint") == fileName || TEXT("UI_Layout_Map") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_LayOut_UI"), &CustomizeUIDesc)))
@@ -1065,7 +1063,7 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		}
 		_int iNum = { 0 };
 
-		if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL)) 
+		if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
 		{
 			CloseHandle(hFile);
 			return E_FAIL;
@@ -1076,7 +1074,7 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 
 
 
-		if (!ReadFile(hFile, &iDir, sizeof(_int), &dwByte, NULL)) 
+		if (!ReadFile(hFile, &iDir, sizeof(_int), &dwByte, NULL))
 		{
 			CloseHandle(hFile);
 			return E_FAIL;
@@ -1088,8 +1086,8 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		{
 			CloseHandle(hFile);
 			return E_FAIL;
-		}		
-		
+		}
+
 		_int iFloor = { 0 };
 		if (!ReadFile(hFile, &iFloor, sizeof(_int), &dwByte, NULL))
 		{
@@ -1564,7 +1562,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 				return E_FAIL;
 			}
 		}
-		
+
 		else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
 		{
 			CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
@@ -1585,7 +1583,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 				CloseHandle(hFile);
 				return E_FAIL;
 			}
-		}		
+		}
 
 		else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
 		{
@@ -1596,7 +1594,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_BIG_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_BIG_SHIRTS::_END) - 1)) };
 
 
-			
+
 		}*/
 #pragma endregion 
 
@@ -1684,7 +1682,7 @@ HRESULT CLevel_GamePlay::SetUp_DeadMonsters()
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring & strLayerTag)
+HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring& strLayerTag)
 {
 	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Terrain"))))
 	//	return E_FAIL;
@@ -1695,9 +1693,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring & strLayerTag)
 	return S_OK;
 }
 
-CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_GamePlay*		pInstance = new CLevel_GamePlay(pDevice, pContext);
+	CLevel_GamePlay* pInstance = new CLevel_GamePlay(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{

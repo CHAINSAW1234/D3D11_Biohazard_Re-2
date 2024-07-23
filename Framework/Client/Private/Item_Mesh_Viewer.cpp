@@ -80,6 +80,8 @@ void CItem_Mesh_Viewer::Start()
 
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+
+
 }
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
@@ -88,6 +90,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Scaled(m_fCurSize, m_fCurSize, m_fCurSize);
 
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+	
 	_vector vCamRight = m_pCameraFree->Get_Transform()->Get_State_Vector(CTransform::STATE_RIGHT);
 	vCamRight *= m_fDistCamX;
 	vFrontCamPos += vCamRight;
@@ -99,7 +102,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 	case Client::POP_UP: {
 		PopUp_Operation(fTimeDelta);
 		break;
-	}
+	}	
 
 	case Client::UI_IDLE: {
 		Idle_Operation(fTimeDelta);
@@ -134,88 +137,98 @@ HRESULT CItem_Mesh_Viewer::Render()
 	if (nullptr == pDesc)
 		return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pDesc->vDirection, sizeof(_float4))))
-	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
+	CShader* pShader = { nullptr };
+	if (m_eItem_Number == portablesafe) {
+		pShader = m_pAnimShaderCom;
+	}
+	else {
+		pShader = m_pShaderCom;
+	}
+	_float4 vup = m_pCameraFree->Get_Transform()->Get_State_Float4(CTransform::STATE_UP);
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(m_pShaderCom, "g_PrevIrradianceTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(m_pShaderCom, "g_CurIrradianceTexture")))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &vup, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(m_pShaderCom, "g_PrevEnvironmentTexture")))
+	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(m_pShaderCom, "g_CurEnvironmentTexture")))
+
+	if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
+
+	if (FAILED(pShader->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(pShader, "g_PrevIrradianceTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(pShader, "g_CurIrradianceTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(pShader, "g_PrevEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(pShader, "g_CurEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
 		return E_FAIL;
 
 	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
 			_bool isAlphaTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
 		{
 			_bool isAOTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
 			_bool isAOTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
 		{
 			_bool isEmissive = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
 			_bool isEmissive = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 				return E_FAIL;
 		}
 
 
 		if (m_eItem_Number == portablesafe) {
-			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(pShader, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
 				return E_FAIL;
 		}
 		else {
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
 				return E_FAIL;
 		}
 
@@ -244,33 +257,52 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 		m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
-		_float fRadian = m_pGameInstance->Get_Ease(Ease_InSine, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_Linear, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
+		_float fResultRadian = fRadian - m_fPreRadian;
+		
+		fResultRadian /= XMConvertToRadians(360.0f);
 
 		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Rotation(MyUp, fRadian);
+		m_pTransformCom->Turn(MyUp, fResultRadian);
+		
+		// 1. ÀÌ¹ø Tick ÀÇ Radian  - ÀÌÀü Radian
+		// 2. CTransformÀÌ °®°í ÀÖ´Â m_fRotationPerSec¸¦ ³ª´²Áà¾ßµÊ  
+
+		//m_pTransformCom->Rotation(MyUp, fRadian);
 
 		//_vector CamUp = m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_UP);
 		//m_pTransformCom->Rotation(CamUp, fRadian);
 		// 
 		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
+
+		m_fPreRadian = fRadian;
+		
 	}
 }
 
 void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 {
-	//Add_Additional_Transformation_World
+	//Add_Additional_Transfortion_World
 	switch (m_eOperType)
 	{
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eOperType = EXAMIN_PUZZLE;
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			break;
+		}
+
+
 		if (true == m_pGameInstance->Check_Wheel_Down())
 		{
-			m_fDistCamZ -= 0.001f;
+			m_fDistCamZ -= 0.0001f;
 		}
 		else if (true == m_pGameInstance->Check_Wheel_Up())
 		{
-			m_fDistCamZ += 0.001f;
+			m_fDistCamZ += 0.0001f;
 		}
 
 		static		_float2			vSpeed = { 0.f, 0.f };
@@ -313,12 +345,11 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 				vSpeed.y = 0.f;
 		}
 
-		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
-		m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
 
 		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
-
 
 		break;
 	}
@@ -350,6 +381,90 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	}
 
 	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM: {
+		break;
+	}
+
+	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
+
+		if (true == m_pGameInstance->Check_Wheel_Down())
+		{
+			m_fDistCamZ -= 0.001f;
+		}
+		else if (true == m_pGameInstance->Check_Wheel_Up())
+		{
+			m_fDistCamZ += 0.001f;
+		}
+
+		static		_float2			vSpeed = { 0.f, 0.f };
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			_long	MouseMove = { 0 };
+			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
+			{
+				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
+			}
+
+
+			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
+			{
+				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
+			}
+		}
+		if (vSpeed.x > 0.f)
+		{
+			vSpeed.x -= fTimeDelta * 0.1f;
+			if (vSpeed.x < 0.f)
+				vSpeed.x = 0.f;
+		}
+		else
+		{
+			vSpeed.x += fTimeDelta * 0.1f;
+			if (vSpeed.x > 0.f)
+				vSpeed.x = 0.f;
+		}
+		if (vSpeed.y > 0.f)
+		{
+			vSpeed.y -= fTimeDelta * 0.1f;
+			if (vSpeed.y < 0.f)
+				vSpeed.y = 0.f;
+		}
+		else
+		{
+			vSpeed.y += fTimeDelta * 0.1f;
+			if (vSpeed.y > 0.f)
+				vSpeed.y = 0.f;
+		}
+
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
+
+		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
+
+
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
+			m_eOperType = EXAMIN;
+			break;
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState('D')) {
+			m_vecModelCom[portablesafe]->Add_Additional_Transformation_World("button_p001", XMMatrixTranslation(0.f, 0.f, 1.f));
+		}
+
+		else if (DOWN == m_pGameInstance->Get_KeyState('A')) {
+			m_vecModelCom[portablesafe]->Add_Additional_Transformation_World("button_p002", XMMatrixTranslation(0.f, 0.f, 0.01f));
+		}
+
+		else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
+			m_vecModelCom[portablesafe]->Add_Additional_Transformation_World("button_p003", XMMatrixTranslation(0.f, 0.f, 0.01f));
+		}
+
+		else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
+			m_vecModelCom[portablesafe]->Add_Additional_Transformation_World("button_p004", XMMatrixTranslation(0.f, 0.f, 0.01f));
+		}
+
+		
 		break;
 	}
 
@@ -422,9 +537,9 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
 		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
 		m_matMoveCenter *= TempMat;
-		_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-		m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+		
+		m_fPreRadian = 0.f;
+
 		break;
 	}
 
@@ -456,7 +571,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 			m_matMoveCenter *= TempMat;
 			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
 			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-			m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+			//m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		}
 		
 		break;
@@ -485,6 +600,11 @@ HRESULT CItem_Mesh_Viewer::Add_Components()
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	/* For.Com_Body_Shader */
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+		TEXT("Com_Anim_Shader"), (CComponent**)&m_pAnimShaderCom)))
 		return E_FAIL;
 
 	if (FAILED(Load_ItemsModel()))
@@ -544,6 +664,7 @@ void CItem_Mesh_Viewer::Free()
 	__super::Free();
 
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pAnimShaderCom);
 
 	for (auto& iter : m_vecModelCom)
 	{
@@ -1052,12 +1173,13 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::portablesafe:
-		m_fPopupHide_EndDist = 0.15f;
+		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
+		//m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
 		m_fPopupHide_EndDist = 0.15f;
@@ -1070,7 +1192,16 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 
 	default:
 		break;
-	}
+	}		
+	
+	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+
+	_float3 vScaled = m_pTransformCom->Get_Scaled();
+	m_pTransformCom->Set_WorldMatrix(m_pCameraFree->Get_Transform()->Get_WorldMatrix());
+	m_pTransformCom->Set_Scaled(vScaled.x, vScaled.y, vScaled.z);
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 }
 
 void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)

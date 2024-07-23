@@ -13,7 +13,7 @@ BEGIN(Client)
 class CItem_Mesh_Viewer final : public CGameObject
 {
 private:
-	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, SECON_PICKUPITEM, OPER_TYPE_END};
+	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, SECON_PICKUPITEM, EXAMIN_PUZZLE ,OPER_TYPE_END};
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
@@ -41,6 +41,7 @@ private:
 	vector<CModel*>		m_vecModelCom;
 	vector<wstring>		m_vecModelTag;
 	CShader*			m_pShaderCom = { nullptr };
+	CShader*			m_pAnimShaderCom = { nullptr };
 	class CCamera_Free*	m_pCameraFree = { nullptr };
 
 private:
@@ -63,7 +64,14 @@ private:
 
 	_bool				m_bStop = { true };
 
+	_float				m_fPreRadian = { 0.f };
+
 	_float4x4			m_matMoveCenter = {};
+
+	_uint				m_iSelected_Button = { 0 };
+
+	_uint				m_iInputAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	_uint				m_iCorrectAnswer[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
 private:
 	HRESULT Add_Components();

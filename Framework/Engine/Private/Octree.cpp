@@ -1029,8 +1029,6 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 							return;
 					}
 
-					pRootWorld->Bind_DecalMap(k, pShader);
-
 					if (FAILED(pShader->Begin(0)))
 						return;
 
@@ -1092,8 +1090,6 @@ void COctree::Render_Node_Blend(CModel* pRootWorld, CShader* pShader)
 						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 							return;
 					}
-
-					pRootWorld->Bind_DecalMap(k, pShader);
 
 					if (FAILED(pShader->Begin(1)))
 						return;

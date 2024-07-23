@@ -1092,6 +1092,32 @@ void CBite_Zombie::Initiate_Effect()
 				}
 			}
 
+			if (Is_CurrentAnim_FinishAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 100.f) < 1.3f)
+				{
+					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+				}
+
+				if (abs(fTrackPosition - 140.f) < 1.3f)
+				{
+					const wchar_t* str = L"Break_Drop_";
+					wchar_t result[32];
+					_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+					std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+					m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+					if (inum == 11)
+					{
+						m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.2f);
+					}
+				}
+			}
+
 			m_pBlackBoard->Get_AI()->SetBiteBlood();
 			break;
 		}
@@ -1108,6 +1134,32 @@ void CBite_Zombie::Initiate_Effect()
 				if (abs(fTrackPosition - 40.f) < 1.3f)
 				{
 					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+				}
+			}
+
+			if (Is_CurrentAnim_FinishAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 100.f) < 1.3f)
+				{
+					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+				}
+
+				if (abs(fTrackPosition - 140.f) < 1.3f)
+				{
+					const wchar_t* str = L"Break_Drop_";
+					wchar_t result[32];
+					_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+					std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+					m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+					if (inum == 11)
+					{
+						m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.2f);
+					}
 				}
 			}
 

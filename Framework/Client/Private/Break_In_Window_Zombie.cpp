@@ -70,6 +70,7 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 	if (nullptr == pWindow)
 		return false;
 
+	Play_DropSound();
 
 	if (MONSTER_STATE::MST_BREAK_IN_WINDOW == m_pBlackBoard->Get_AI()->Get_Current_MonsterState())
 	{
@@ -81,6 +82,7 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 		{
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
 			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_UP);
+
 			return false;
 		}
 	}
@@ -144,8 +146,6 @@ void CBreak_In_Window_Zombie::Exit()
 	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 	m_pBlackBoard->Get_AI()->Set_OutDoor(false);
 	m_pBlackBoard->Release_Nearest_Window();
-
-	m_pBlackBoard->Get_AI()->Play_Random_Drop_Body_Sound();
 }
 
 void CBreak_In_Window_Zombie::Change_Animation()
@@ -161,6 +161,28 @@ void CBreak_In_Window_Zombie::Change_Animation()
 	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
 
 #pragma endregion
+}
+
+void CBreak_In_Window_Zombie::Play_DropSound()
+{
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_eBasePlayingIndex));
+
+	if (abs(fTrackPosition - 150.f) < 1.3f)
+	{
+		const wchar_t* str = L"Break_Drop_";
+		wchar_t result[32];
+		_int inum = m_pGameInstance->GetRandom_Int(10, 12);
+
+		std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
+
+		m_pGameInstance->Change_Sound_3D(m_pBlackBoard->Get_AI()->Get_Transform(), result, (_uint)ZOMBIE_SOUND_CH::_BITE_DROP);
+
+		if (inum == 11)
+		{
+			m_pGameInstance->Set_Volume_3D(m_pBlackBoard->Get_AI()->Get_Transform(), (_uint)ZOMBIE_SOUND_CH::_BITE_DROP, 0.4f);
+		}
+	}
 }
 
 CBreak_In_Window_Zombie* CBreak_In_Window_Zombie::Create(void* pArg)
