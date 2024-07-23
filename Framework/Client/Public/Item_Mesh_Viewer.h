@@ -68,7 +68,10 @@ private:
 
 	_float4x4			m_matMoveCenter = {};
 
-	_int				m_iSelected_Button = { -1 };
+	_uint				m_iSelected_Button = { 0 };
+
+	_uint				m_iInputAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	_uint				m_iCorrectAnswer[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
 private:
 	HRESULT Add_Components();

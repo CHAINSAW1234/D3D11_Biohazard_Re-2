@@ -80,6 +80,8 @@ void CItem_Mesh_Viewer::Start()
 
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+
+
 }
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)

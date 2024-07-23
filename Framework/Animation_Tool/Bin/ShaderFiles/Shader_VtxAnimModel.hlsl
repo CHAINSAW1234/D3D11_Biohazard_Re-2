@@ -40,6 +40,17 @@ bool		g_Cloth;
 bool		g_Hair;
 bool		g_bPlayer;
 
+float4 g_vCamPosition;
+float4 g_vLightDiffuse;
+
+TextureCubeArray g_PrevIrradianceTexture;
+TextureCubeArray g_CurIrradianceTexture;
+TextureCubeArray g_PrevEnvironmentTexture;
+TextureCubeArray g_CurEnvironmentTexture;
+Texture2D g_SpecularLUTTexture;
+float g_PBRLerpTime;
+
+
 struct VS_IN
 {
 	float3 vPosition : POSITION;
@@ -227,6 +238,12 @@ struct PS_OUT_EMISSIVE
 	float4 vEmissive : SV_TARGET0;
 };
 
+struct PS_OUT_COLOR
+{
+    float4 vColor : SV_TARGET0;
+};
+
+
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT Out = (PS_OUT)0;
@@ -407,6 +424,135 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 	return Out;
 }
 
+
+uint querySpecularTextureLevels()
+{
+    uint width, height, elements, levels;
+    g_CurEnvironmentTexture.GetDimensions(0, width, height, elements, levels);
+    return levels;
+}
+
+PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
+{
+    PS_OUT_COLOR Out = (PS_OUT_COLOR) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal, In.vNormal);
+    
+    vector vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    float fMaterialRoughness = saturate(vNormal.a + 0.2f);
+    
+    vNormal = vector(mul(vNormal.xyz, WorldMatrix), 0.f);
+
+    vector vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
+
+    float fMaterialMetalic = vDiffuse.r;
+    float fMaterialAO = 1.f;
+    
+    if (g_isAlphaTexture)
+    {
+        vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
+        vDiffuse.a = vAlphaDesc.r;
+        if (0.01f >= vDiffuse.a)
+            discard;
+    }
+    else
+    {
+        vDiffuse.a = 1.f;
+    }
+    
+    if (g_isAOTexture)
+    {
+        vector vAODesc = g_AOTexture.Sample(LinearSampler, In.vTexcoord);
+        fMaterialAO = vAODesc.r;
+    }
+
+    if (g_isEmissiveTexture)
+    {
+        vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
+        if (vEmissive.r != 0 || vEmissive.g != 0 || vEmissive.b != 0)
+        {
+            Out.vColor = vEmissive;
+            return Out;
+        }
+    }
+       
+    // PBR
+    
+    vector vAlbedo = pow(vDiffuse, 2.2);
+    
+    float3 Lo = normalize(g_vCamPosition.xyz - In.vWorldPos.xyz);
+    float cosLo = max(0.0f, dot(vNormal.xyz, Lo));
+    float3 Lradiance = g_vLightDiffuse.xyz;
+    
+    float3 Lr = 2.0f * cosLo * vNormal.xyz - Lo;
+    float3 F0 = lerp(0.04, vAlbedo, fMaterialMetalic).xyz;
+    
+    // 여기부터 for문이였음
+   // float3 Li = -g_vLightDir.xyz;
+    float3 Li = -float3(0.f, 1.f, 0.f);
+    float3 Lh = normalize(Li + Lo);
+    
+    float cosLi = max(0.0, dot(vNormal.xyz, Li));
+    float cosLh = max(0.0, dot(vNormal.xyz, Lh));
+    
+    float3 F = FresnelSchlick(max(dot(Lh.xyz, Lo.xyz), 0.f), F0);
+    float D = DistributeGGX(vNormal.xyz, Lh, fMaterialRoughness);
+    float G = GeometrySmith(vNormal.xyz, Lo, Li, fMaterialRoughness);
+    float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), fMaterialMetalic);
+    
+    float3 diffuseBRDF = kd * vAlbedo.xyz;
+    float3 specularBRDF = (F * D * G) / max(0.00001f, 4.0 * cosLi * cosLo);
+  
+    float3 directLighting = (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
+    
+    float3 ambientLighting;
+    {
+        // Sample diffuse irradiance at normal direction.
+        float3 Previrradiance = pow(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
+        float3 Curirradiance = pow(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
+
+        float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime); // ???????????????????????????
+        
+        // Calculate Fresnel term for ambient lighting.
+        float3 F = FresnelSchlick(cosLo, F0);
+        // Get diffuse contribution factor (as with direct lighting).
+        float3 kd = lerp(1.0 - F, 0.0, fMaterialMetalic);
+
+        // Irradiance map contains exitant radiance assuming Lambertian BRDF, no need to scale by 1/PI here either.
+        float3 diffuseIBL = kd * vAlbedo.xyz * irradiance;
+
+        // Sample pre-filtered specular reflection environment at correct mipmap level.
+        uint specularTextureLevels = querySpecularTextureLevels();
+        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        
+        float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
+        
+        //// Split-sum approximation factors for Cook-Torrance specular BRDF.
+        float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;
+
+        // Total specular IBL contribution.
+        float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
+
+        // Total ambient lighting contribution.
+        ambientLighting = (diffuseIBL + specularIBL);
+    }
+    
+    vector vColor = float4(directLighting + ambientLighting, 1);
+    
+    vColor = vColor / (vColor + 1);
+    vColor = pow(vColor, 1 / 2.2f);
+    
+    Out.vColor = vColor;
+
+    return Out;
+}
+
+
+
 technique11 DefaultTechnique
 {
 	pass Default	// 0
@@ -501,4 +647,18 @@ technique11 DefaultTechnique
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
+    pass PS_EXAMINE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_FORWARD_LIGHTING();
+    }
+
 }

@@ -172,12 +172,22 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 
 			case Client::INTERACT:
 			case Client::USEABLE:
-				if (true == m_isActive) {
+				if (true == m_isActive) 
+				{
 					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
 					Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
 				}
 				else {
-					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Denied.mp3"), 0.5f);
+					if (m_vecChildUI[0] == pHoveredMenu)
+					{
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Denied.mp3"), 0.5f);
+					}
+					else
+					{
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+						Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+					}
+					
 				}
 				break;
 
