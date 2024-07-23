@@ -41,8 +41,8 @@ HRESULT CCut_Scene_CF92::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	CTransform* pPL00Transform = { m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_Transform() };
-	m_pGameInstance->Add_Object_Sound(pPL00Transform, 5);
+
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 5);
 
 	return S_OK;
 }
@@ -110,12 +110,11 @@ void CCut_Scene_CF92::Start_CutScene()
 	if (nullptr == pShutter)
 		return;
 
-	CTransform*				pPL00Transform = { m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_Transform() };
-	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_dialogue.bnk.2.x64_2_00000001.mp3"), 0);
-	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_1.mp3"), 1);
-	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_2.mp3"), 2);
-	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_3.mp3"), 3);
-	m_pGameInstance->Change_Sound_3D(pPL00Transform, TEXT("cf092_se_en.bnk.2_4.mp3"), 4);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_dialogue.bnk.2.x64_2_00000001.mp3"), 0);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_1.mp3"), 1);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_2.mp3"), 2);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_3.mp3"), 3);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_4.mp3"), 4);
 
 	m_pGameInstance->PlaySoundEffect_2D(TEXT("BGM"), TEXT("cf092_music_en.bnk.2_1.mp3"), 0.5f);
 

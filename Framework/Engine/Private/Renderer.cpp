@@ -70,7 +70,7 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
-	if (FAILED(Render_Field_Shadow_Direction()))
+	/*if (FAILED(Render_Field_Shadow_Direction()))
 		return E_FAIL;
 
 	if (FAILED(Render_Field_Shadow_Point()))
@@ -83,7 +83,7 @@ HRESULT CRenderer::Render()
 		return E_FAIL;
 
 	if (FAILED(Render_Shadow_Spot()))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	if (FAILED(Render_Field()))
 		return E_FAIL;

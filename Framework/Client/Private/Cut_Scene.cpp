@@ -5,6 +5,8 @@
 #include "Prop_Controller.h"
 #include "Camera_Event.h"
 
+#include "Call_Center.h"
+
 CCut_Scene::CCut_Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -22,6 +24,9 @@ HRESULT CCut_Scene::Initialize_Prototype()
 
 HRESULT CCut_Scene::Initialize(void* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
 	if (FAILED(Add_Actors()))
 		return E_FAIL;
 
@@ -141,6 +146,8 @@ void CCut_Scene::Late_Tick(_float fTimeDelta)
 {
 	if (false == m_isPlaying)
 		return;
+
+	m_pTransformCom->Set_WorldMatrix(CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00)->Get_Transform()->Get_WorldMatrix());
 
 	Late_Tick_Actors(fTimeDelta);
 }

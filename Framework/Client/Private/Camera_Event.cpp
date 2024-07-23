@@ -25,6 +25,8 @@ HRESULT CCamera_Event::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_fNear = 0.025f;
+
 	//m_Defaultmatrix = XMMatrixIdentity();
 
 	return S_OK;

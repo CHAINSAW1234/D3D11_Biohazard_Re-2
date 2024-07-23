@@ -592,7 +592,7 @@ void CZombie::Late_Tick(_float fTimeDelta)
 		SetBlood();
 #endif
 	}
-
+		
 	if (m_bHeadBlow)
 	{
 		SetBlood_HeadBlow();
