@@ -32,7 +32,7 @@ HRESULT CChair::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	if (m_tagPropDesc.strGamePrototypeName.find("zombie"))
+	if (m_tagPropDesc.strGamePrototypeName.find("zombie")!=string::npos)
 	{
 		m_eType = CHAIR_ZOMBIE;
 		//if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR)))
@@ -66,12 +66,13 @@ void CChair::Start()
 		if (pDoor == nullptr)
 			return;
 		for (auto& iter : *pDoor)
-			if (m_pColliderCom[INTER_COL_NORMAL][COL_STEP0]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider_Normal_Step0")))))
-			{
-				m_pDoor = static_cast<CDoor*>(iter);
-				m_pDoor->Set_Lock(true);
-				break;
-			}
+			if(static_cast<CDoor*>(iter)->Get_DoorType()==CDoor::TYPE_DOOR::DOOR_DOUBLE)
+				if (m_pColliderCom[INTER_COL_NORMAL][COL_STEP0]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider_Normal_Step0")))))
+				{
+					m_pDoor = static_cast<CDoor*>(iter);
+					m_pDoor->Set_Lock(true);
+					break;
+				}
 
 	}
 	
@@ -159,14 +160,14 @@ HRESULT CChair::Add_Components()
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-		ColliderDesc.fRadius = _float(150.f);
-		ColliderDesc.vCenter = _float3(0.f, 0.f, 20.f);
+		ColliderDesc.fRadius = _float(80.f);
+		ColliderDesc.vCenter = _float3(0.f, 0.f, -30.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(120.f);
+		ColliderDesc.fRadius = _float(50.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
