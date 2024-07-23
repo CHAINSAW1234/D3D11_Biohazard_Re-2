@@ -137,88 +137,98 @@ HRESULT CItem_Mesh_Viewer::Render()
 	if (nullptr == pDesc)
 		return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pDesc->vDirection, sizeof(_float4))))
-	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
+	CShader* pShader = { nullptr };
+	if (m_eItem_Number == portablesafe) {
+		pShader = m_pAnimShaderCom;
+	}
+	else {
+		pShader = m_pShaderCom;
+	}
+	_float4 vup = m_pCameraFree->Get_Transform()->Get_State_Float4(CTransform::STATE_UP);
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(m_pShaderCom, "g_PrevIrradianceTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(m_pShaderCom, "g_CurIrradianceTexture")))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &vup, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(m_pShaderCom, "g_PrevEnvironmentTexture")))
+	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(m_pShaderCom, "g_CurEnvironmentTexture")))
+
+	if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
+
+	if (FAILED(pShader->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(pShader, "g_PrevIrradianceTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(pShader, "g_CurIrradianceTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(pShader, "g_PrevEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(pShader, "g_CurEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
 		return E_FAIL;
 
 	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
 			_bool isAlphaTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
 		{
 			_bool isAOTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
 			_bool isAOTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
 		{
 			_bool isEmissive = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
 			_bool isEmissive = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 				return E_FAIL;
 		}
 
 
 		if (m_eItem_Number == portablesafe) {
-			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(pShader, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
 				return E_FAIL;
 		}
 		else {
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
 				return E_FAIL;
 		}
 

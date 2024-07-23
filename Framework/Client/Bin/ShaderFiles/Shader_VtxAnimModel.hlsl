@@ -42,6 +42,7 @@ bool		g_bPlayer;
 
 float4 g_vCamPosition;
 float4 g_vLightDiffuse;
+float4 g_vLightDir;
 
 TextureCubeArray g_PrevIrradianceTexture;
 TextureCubeArray g_CurIrradianceTexture;
@@ -492,7 +493,7 @@ PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
     
     // 여기부터 for문이였음
    // float3 Li = -g_vLightDir.xyz;
-    float3 Li = -float3(0.f, 1.f, 0.f);
+    float3 Li = -g_vLightDir.xyz;
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
