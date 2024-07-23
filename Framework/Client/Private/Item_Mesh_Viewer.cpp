@@ -109,11 +109,19 @@ void CItem_Mesh_Viewer::Start()
 	m_ButtonBoneTags[7] = "button_p008";
 
 
+	//m_vecModelCom[portablesafe]->Set_RootBone("RootNode");
+	//m_vecModelCom[portablesafe]->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	//m_vecModelCom[portablesafe]->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
+	//m_vecModelCom[portablesafe]->Set_TotalLinearInterpolation(0.2f);
+	//m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 0);
+
+
 	m_vecModelCom[portablesafe]->Set_RootBone("RootNode");
 	m_vecModelCom[portablesafe]->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_vecModelCom[portablesafe]->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-	m_vecModelCom[portablesafe]->Set_TotalLinearInterpolation(0.2f);
-}
+	m_vecModelCom[portablesafe]->Active_RootMotion_Rotation(false);
+	m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 0);
+}	
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 {
@@ -155,7 +163,11 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 	if (portablesafe == m_eItem_Number)
 	{
 		_float3				vDirection = { };
-		m_vecModelCom[portablesafe]->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
+		if (FAILED(m_vecModelCom[portablesafe]->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection)))
+		{
+			int a = 0;
+		}
+		
 	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EXAMINE, this);
