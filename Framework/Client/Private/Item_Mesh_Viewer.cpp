@@ -167,7 +167,6 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 		{
 			int a = 0;
 		}
-		
 	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EXAMINE, this);
@@ -341,6 +340,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			m_eOperType = EXAMIN_PUZZLE;
 			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
 			m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			m_iSelected_Button = -1;
 			break;
 		}
 
@@ -434,63 +434,16 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	}
 
 	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
+		if (true == Check_Puzzle_Success())
+		{
 
-		if (true == m_pGameInstance->Check_Wheel_Down())
-		{
-			m_fDistCamZ -= 0.001f;
-		}
-		else if (true == m_pGameInstance->Check_Wheel_Up())
-		{
-			m_fDistCamZ += 0.001f;
+			break;
 		}
 
-		static		_float2			vSpeed = { 0.f, 0.f };
-		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			_long	MouseMove = { 0 };
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
-			{
-				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
-			}
-
-
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
-			{
-				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
-			}
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eButtonStates[m_iSelected_Button] = PRESSED;
+			break;
 		}
-		if (vSpeed.x > 0.f)
-		{
-			vSpeed.x -= fTimeDelta * 0.1f;
-			if (vSpeed.x < 0.f)
-				vSpeed.x = 0.f;
-		}
-		else
-		{
-			vSpeed.x += fTimeDelta * 0.1f;
-			if (vSpeed.x > 0.f)
-				vSpeed.x = 0.f;
-		}
-		if (vSpeed.y > 0.f)
-		{
-			vSpeed.y -= fTimeDelta * 0.1f;
-			if (vSpeed.y < 0.f)
-				vSpeed.y = 0.f;
-		}
-		else
-		{
-			vSpeed.y += fTimeDelta * 0.1f;
-			if (vSpeed.y > 0.f)
-				vSpeed.y = 0.f;
-		}
-
-		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
-		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
-
-		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
-
-
 
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
 			m_eOperType = EXAMIN;
@@ -498,20 +451,28 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		}
 
 		if (DOWN == m_pGameInstance->Get_KeyState('D')) {
-			
+			if (m_iSelected_Button - 1 > -1)
+				m_iSelected_Button -= 1;
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('A')) {
-
+			if (m_iSelected_Button + 1 < 8)
+				m_iSelected_Button += 1;
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
-
+			if (m_iSelected_Button + 2 < 8)
+				m_iSelected_Button += 2;
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
-
+			if (m_iSelected_Button - 2 > -1)
+				m_iSelected_Button -= 2;
 		}
+
+		m_eButtonStates[m_iSelected_Button] = SELECTED;
+
+
 		break;
 	}
 
@@ -570,6 +531,17 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 	default:
 		break;
 	}
+}
+
+_bool CItem_Mesh_Viewer::Check_Puzzle_Success()
+{
+	_bool isPuzzleSuccess = true;
+	for (_uint i = 0; i < 8; i++)
+	{
+		if (m_iCorrectAnswer[i] != m_iInputAnswer[i])
+			isPuzzleSuccess = false;
+	}
+	return isPuzzleSuccess;
 }
 
 void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
