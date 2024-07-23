@@ -1098,12 +1098,15 @@ void CDoor::OneDoor_Active()
 	{
 		//m_bInteract = true;
 
-		m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 
 		m_bCamera = true;
 		if (false == m_pGameInstance->IsPaused())
+		{
+			m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
 			m_pPlayer->Interact_Props(this);
+		}
+		
 	}
 	else
 	{

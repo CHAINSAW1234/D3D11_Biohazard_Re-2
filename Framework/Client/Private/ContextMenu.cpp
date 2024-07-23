@@ -153,7 +153,6 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredMenu->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 		HoveredPos.z = CONTEXT_HIGHLIGHTER_POSZ;
 		m_pContext_HighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
-
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			switch (m_eContextType)
@@ -182,11 +181,11 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 				}
 				break;
 
+
 			default:
 				break;
 			}
 		}
-
 #pragma region ³ª¿Ë
 		if (m_iPrev_HoverMenu_Type != m_iHoverMenu_Type)
 		{

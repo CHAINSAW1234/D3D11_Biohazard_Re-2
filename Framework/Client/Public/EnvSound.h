@@ -52,8 +52,10 @@ private:
 	_float						m_fMaxSound = { 0.4f }; // 지역이 바뀔때 이 둘을 보간한다.
 	_float						m_fMinSound = { 0.2f }; //
 	_float						m_fCurSound = { 0.4f }; //
-	_float						m_fSoundTime = {};
+	_float						m_fSoundCoolTime[ENV_CHENNEL_END] = {};
+	_float						m_fSoundTime[ENV_CHENNEL_END] = {};
 
+	CTransform*				m_pEnvSoundTransformCom[ENV_CHENNEL_END] = { nullptr,nullptr,nullptr ,nullptr };
 	//map<wstring, vector<ENVSOUND_DESC>>		m_EnvSoundMap; // 사운드 제목, <속한 구역, 위치들> -> 특정 구역에 소리가 난다.
 	map<_int, vector<ENVSOUND_DESC>>			m_EnvSoundMap; //구역 / 사운드와 속한 곳, pos
 	map<_int, wstring>										m_BGMSoundMap;// 구역, 사운드 명

@@ -286,6 +286,10 @@ _bool CSound_Manager::Is_Playing_Sound(CTransform* pTransform, _uint iSoundIndex
 
 	FMOD_BOOL				isPlaying = { false };
 	FMOD_RESULT				eResult = { FMOD_OK };
+
+	if (pSoundDesc == nullptr)
+		return false;
+
 	FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
 	if (true == isPlaying)
 	{
