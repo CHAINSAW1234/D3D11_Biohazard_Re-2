@@ -756,7 +756,7 @@ float Cal_Shadow(float2 vTexcoord)
             float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
             float fAtt = saturate(1.f - ((fDistance * fDistance) / (g_fSpotLightRange * g_fSpotLightRange))); //범위 줘서 끝 범위에서는 연해지게 
             fAtt *= fAtt;
-            fAtt *= (fIntensity * fIntensity);
+           // fAtt *= (fIntensity * fIntensity);
             
             if (fAtt > 0)
             {
