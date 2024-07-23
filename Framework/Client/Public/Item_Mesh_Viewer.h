@@ -68,10 +68,17 @@ private:
 
 	_float4x4			m_matMoveCenter = {};
 
-	_uint				m_iSelected_Button = { 0 };
+	_uint				m_iSelected_Button = { 8 };
+
+
+	string				m_LampTags[8];
+	string				m_ButtonTags[8];
+	string				m_ButtonBoneTags[8];
 
 	_uint				m_iInputAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	_uint				m_iCorrectAnswer[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+
 
 private:
 	HRESULT Add_Components();
