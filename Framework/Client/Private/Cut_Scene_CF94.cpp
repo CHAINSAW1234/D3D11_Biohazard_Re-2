@@ -44,28 +44,28 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 
 void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState('U'))
-	{
-		m_isPlaying = true;
+	//if (DOWN == m_pGameInstance->Get_KeyState('U'))
+	//{
+	//	m_isPlaying = true;
 
-		for (auto& pActor : m_Actors)
-		{
-			if (nullptr == pActor)
-				continue;
+	//	for (auto& pActor : m_Actors)
+	//	{
+	//		if (nullptr == pActor)
+	//			continue;
 
-			pActor->Reset_Animations();
-		}
+	//		pActor->Reset_Animations();
+	//	}
 
-		for (auto& pProp : m_PropControllers)
-		{
-			if (nullptr == pProp)
-				continue;
+	//	for (auto& pProp : m_PropControllers)
+	//	{
+	//		if (nullptr == pProp)
+	//			continue;
 
-			pProp->Reset_Animations();
-		}
+	//		pProp->Reset_Animations();
+	//	}
 
-		Start_CutScene();
-	}
+	//	Start_CutScene();
+	//}
 
 	__super::Priority_Tick(fTimeDelta);
 }
