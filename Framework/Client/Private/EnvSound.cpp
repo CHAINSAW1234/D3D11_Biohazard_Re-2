@@ -42,7 +42,7 @@ HRESULT CEnvSound::Initialize(void * pArg)
 	}
 	for (_int i = 0; i < ENV_CHENNEL_END; i++)
 	{
-		m_fSoundCoolTime[i] = m_pGameInstance->GetRandom_Real(2.f, 3.f);
+		m_fSoundCoolTime[i] = m_pGameInstance->GetRandom_Real(2.f, 5.f);
 	}
 	return S_OK;
 }
