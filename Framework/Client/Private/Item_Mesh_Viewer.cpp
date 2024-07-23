@@ -666,13 +666,22 @@ HRESULT CItem_Mesh_Viewer::Add_Components()
 
 HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
+	CShader* pShader = { nullptr };
+	if (m_eItem_Number == portablesafe) {
+		pShader = m_pAnimShaderCom;
+	}
+	else {
+		pShader = m_pShaderCom;
+	}
+
+	if (nullptr == pShader)
 		return E_FAIL;
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix", m_matMoveCenter)))
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(pShader, "g_WorldMatrix", m_matMoveCenter)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(pShader->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(pShader->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	return S_OK;

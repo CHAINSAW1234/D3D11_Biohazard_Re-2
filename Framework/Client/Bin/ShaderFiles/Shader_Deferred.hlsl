@@ -1432,8 +1432,8 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
                 ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
                 ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
         
-                if (saturate(ShadowMapCoord.x) == ShadowMapCoord.x &&
-                    saturate(ShadowMapCoord.y) == ShadowMapCoord.y)
+                if ((saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
+                    (saturate(ShadowMapCoord.y) == ShadowMapCoord.y))
                 {
                     float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
             
@@ -1450,7 +1450,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
     accumulation_Dir /= SAMPLE_COUNT;
     accumulation_Spot /= SAMPLE_COUNT;
    
-    Out.vColor = g_vDirLightDiffuse * accumulation_Dir * 0.2f + g_vSpotLightDiffuse * accumulation_Spot * 0.1f;
+    Out.vColor = g_vDirLightDiffuse * accumulation_Dir * 0.2f + g_vSpotLightDiffuse * accumulation_Spot * 0.05f;
     return Out;
 }
 
