@@ -474,7 +474,7 @@ _bool CRagdoll_Physics::Init(const string& name, ID3D11Device* pDevice, ID3D11De
 #pragma region Sound
 	m_pTransformCom_Sound = CTransform::Create(pDevice, pContext);
 	if (nullptr == m_pTransformCom_Sound)
-		return E_FAIL;
+		return false;
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom_Sound, 10);
 

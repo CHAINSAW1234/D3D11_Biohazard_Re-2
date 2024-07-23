@@ -29,6 +29,7 @@ namespace Client
 		PASS_EMISSIVE,
 		PASS_LIGHTDEPTH_CUBE,
 		PASS_NONCULL,
+		PASS_EXAMINE,
 		PASS_END
 	};	
 
@@ -39,6 +40,7 @@ namespace Client
 		PASS_LIGHTDEPTH_CUBE,
 		PASS_WIREFRAME,
 		PASS_BLOOD,
+		PASS_EXAMINE,
 		PASS_END
 	};
 

@@ -42,6 +42,7 @@ public:
 	_bool						Get_ShaderState(SHADER_STATE eState);
 	void						Set_ShaderState(SHADER_STATE eState, _bool isState);
 	void						Set_RenderFieldShadow(_bool isRenderFieldShadow) { m_isRenderFieldShadow = isRenderFieldShadow; }
+
 private:
 	HRESULT						SetUp_RenderTargets();
 	HRESULT						SetUp_LightDSV();
@@ -67,9 +68,6 @@ private:		/* For.SetUp_RenderTarget */
 #pragma region Effect
 	HRESULT						SetUp_RenderTargets_Effect_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 #pragma endregion
-
-	HRESULT						SetUp_Test();
-	HRESULT						Render_Test();
 
 #ifdef _DEBUG
 	HRESULT						SetUp_Debug();
@@ -152,7 +150,6 @@ private:
 	HRESULT						Render_UI_Blur();
 	HRESULT						Render_Distortion();
 
-
 private:
 	HRESULT						Render_Lights();
 	HRESULT						Render_Light_Result();
@@ -187,7 +184,6 @@ public:
 	HRESULT						Bind_DepthTarget(class CShader* pShader);
 	HRESULT						Render_Decal_Deferred();
 #pragma endregion
-
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
