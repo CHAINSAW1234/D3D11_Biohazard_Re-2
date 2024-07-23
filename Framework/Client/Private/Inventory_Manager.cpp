@@ -452,7 +452,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 		
 	case Client::CInventory_Manager::APPLY: {
 		m_fClickTimer = 0.f;
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D ,0.5f);
+		
 		if (m_PickResult == -1)
 		{
 			m_eInven_Manager_State = EVENT_CANCLE;
@@ -481,20 +481,37 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			m_pDragShadow->Set_Dead(true);
 			m_pSelected_ItemUI = nullptr;
 			m_eInven_Manager_State = GET_ITEM;
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
 		}
 
 		else if(m_PickResult == 1)
 		{
+			Find_Slot(_float2(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y))->Set_IsFilled(true);
+			m_pSelected_ItemUI->Set_Position(XMVectorSet(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y, Z_POS_ITEM_UI, 1.f));
+			m_fSwitchTargetPos = _float2();
+			_float3 fNewItemPos = { m_pDragShadow->GetPositionVector() };
+			AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), 10, _float3(fNewItemPos.x, fNewItemPos.y, Z_POS_ITEM_UI));
+			m_fItemSwitchTime = 0.f;
+			m_PickResult = -1;
+			m_pSlotHighlighter->Set_DragShadow(false);
+			m_pDragShadow->Set_Dead(true);
+			m_pSelected_ItemUI = nullptr;
+			m_eInven_Manager_State = GET_ITEM;
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
+
+			/*
 			if (m_fItemSwitchTime / 0.5f <= 1.f)
 			{
 				m_fItemSwitchTime += fTimeDelta;
-				_float fSpeed = m_pGameInstance->Get_Ease(Ease_OutQuart, 0.f, SWITCH_SPEED_LIMIT, m_fItemSwitchTime / 0.5f);
-				m_pSelected_ItemUI->Get_Transform()->Move_toTargetUI(_float4(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y, Z_POS_ITEM_UI, 1.f), fSpeed, 5.f);
+				//_float fSpeed = m_pGameInstance->Get_Ease(Ease_Linear, 0.f, SWITCH_SPEED_LIMIT, m_fItemSwitchTime / 0.5f);
+				//m_pSelected_ItemUI->Get_Transform()->Move_toTargetUI(_float4(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y, Z_POS_ITEM_UI, 1.f), fSpeed, 5.f);
+				m_pSelected_ItemUI->Move_To_Target(_float4(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y, Z_POS_ITEM_UI, 1.f), fTimeDelta * 10.f, 0.1f);
 			}
 
 			else
 			{
 				Find_Slot(_float2(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y))->Set_IsFilled(true);
+				//m_pSelected_ItemUI->Set_Position(_float3(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y, Z_POS_ITEM_UI));
 				m_fSwitchTargetPos = _float2();
 				_float3 fNewItemPos = { m_pDragShadow->GetPositionVector() };
 				AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), 10, _float3(fNewItemPos.x, fNewItemPos.y, Z_POS_ITEM_UI));
@@ -504,10 +521,10 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 				m_pDragShadow->Set_Dead(true);
 				m_pSelected_ItemUI = nullptr;
 				m_eInven_Manager_State = GET_ITEM;
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
 			}
+			*/
 		}
-
-
 		break;
 	}
 		
@@ -2065,6 +2082,10 @@ void CInventory_Manager::Set_ItemRecipe()
 #pragma region Åº¾Ë Á¶ÇÕ½Ä
 	Add_Recipe(handgun_bullet01a, handgun_bullet01a, handgun_bullet01a);
 	Add_Recipe(shotgun_bullet01a, shotgun_bullet01a, shotgun_bullet01a);
+#pragma endregion
+
+#pragma region Åº¾Ë Á¶ÇÕ½Ä
+	Add_Recipe(woodbarricade01a, woodbarricade01a, woodbarricade01a);
 #pragma endregion
 
 #pragma region Á¶°¢»ó ±â¹Í

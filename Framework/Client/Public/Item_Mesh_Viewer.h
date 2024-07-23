@@ -41,6 +41,7 @@ private:
 	vector<CModel*>		m_vecModelCom;
 	vector<wstring>		m_vecModelTag;
 	CShader*			m_pShaderCom = { nullptr };
+	CShader*			m_pAnimShaderCom = { nullptr };
 	class CCamera_Free*	m_pCameraFree = { nullptr };
 
 private:
@@ -66,6 +67,8 @@ private:
 	_float				m_fPreRadian = { 0.f };
 
 	_float4x4			m_matMoveCenter = {};
+
+	_int				m_iSelected_Button = { -1 };
 
 private:
 	HRESULT Add_Components();

@@ -134,6 +134,7 @@ protected :
 
 public:
 	virtual void Move(_float3 fMoveMent) override;
+	void Move_To_Target(_float4 vTargetPos, _float fTimeDelta, _float fMinDistance);
 	virtual void Set_Position(_vector vPos) override;
 
 
