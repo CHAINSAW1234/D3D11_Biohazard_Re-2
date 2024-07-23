@@ -24,6 +24,7 @@ public:
 
 private:
 	void							Change_Animation(_float fTimeDelta);
+	void							Play_DropSound();
 
 public:
 	inline void						SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }

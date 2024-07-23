@@ -69,7 +69,7 @@ public:
 	int									GetSceneTriangleCount(CModel* pWorld);
 	int									GetDisplayListID() { return m_DisplayListID; }
 	void								SetDisplayListID(int displayListID) { m_DisplayListID = displayListID; }
-	_float4							GetNewNodeCenter(_float4 vCenter, float width, int nodeID);
+	_float4								GetNewNodeCenter(_float4 vCenter, float width, int nodeID);
 	void								CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter, float width);
 	void								CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangleCount,_float4 vCenter, float width, int nodeID);
 	void								AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles);

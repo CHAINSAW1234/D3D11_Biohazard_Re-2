@@ -284,6 +284,12 @@ public:
 	_float4x4							GetDecalWorldMat();
 	void								SetBlood_HeadBlow();
 	void								PlayBloodSound(_uint iIndex);
+	void								SetWindowDrop_Sound(_bool boolean)
+	{
+		m_bWindowDrop_Sound = true;
+		m_WindowDropSound_Time = GetTickCount64();
+	}
+	void								StartWindowDropSound();
 protected:
 	vector<class CBlood*>				m_vecBlood;
 	vector<class CBlood_Drop*>			m_vecBlood_Drop;
@@ -327,6 +333,13 @@ protected:
 	ULONGLONG							m_HeadBlowEffectTime = { 0 };
 	ULONGLONG							m_HeadBlowEffectDelay = { 0 };
 	_bool								m_bHeadBlow = { false };
+	_bool								m_bWindowDrop_Sound = { false };
+	ULONGLONG							m_WindowDropSound_Time = { 0 };
+	ULONGLONG							m_WindowDropSound_Delay = { 0 };
+	_bool								m_bDecal_Hit = { false };
+	ULONGLONG							m_RagdollWakeUpTime = { 0 };
+	ULONGLONG							m_RagdollWakeUpDelay = { 0 };
+	_bool								m_bRagdollWakeUp = { true };
 #pragma endregion
 
 private:

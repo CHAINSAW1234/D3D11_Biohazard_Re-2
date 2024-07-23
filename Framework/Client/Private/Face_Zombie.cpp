@@ -61,18 +61,8 @@ void CFace_Zombie::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	//vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	//if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
-	//{
-	//	m_bRender = false;
-	//}
-	//else
-	//{
-	//	m_bRender = true;
-	//}
-
-	m_bRender = true;
+	if (m_bRagdoll)
+		m_bRender = true;
 }
 
 void CFace_Zombie::Late_Tick(_float fTimeDelta)
@@ -228,6 +218,10 @@ HRESULT CFace_Zombie::Render_LightDepth_Dir()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+			if (iBranch == (_int)CFace_Zombie::FACE_MESH_TYPE::_INNER)
+				continue;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -283,6 +277,10 @@ HRESULT CFace_Zombie::Render_LightDepth_Point()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+			if (iBranch == (_int)CFace_Zombie::FACE_MESH_TYPE::_INNER)
+				continue;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -335,6 +333,10 @@ HRESULT CFace_Zombie::Render_LightDepth_Spot()
 
 		for (size_t i = 0; i < iNumMeshes; i++)
 		{
+			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+			if (iBranch == (_int)CFace_Zombie::FACE_MESH_TYPE::_INNER)
+				continue;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 

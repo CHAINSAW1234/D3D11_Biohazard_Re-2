@@ -38,14 +38,14 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 
 void CDecal_SSD::Tick(_float fTimeDelta)
 {
-	if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
+	/*if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
 	{
 		m_bRender = false;
 	}
 	else
 	{
 		m_bRender = true;
-	}
+	}*/
 }
 
 void CDecal_SSD::Late_Tick(_float fTimeDelta)

@@ -463,21 +463,10 @@ HRESULT CLevel::Load_Light(const wstring& strFilePath, _uint iLevel)
 					}
 
 					m_pGameInstance->Add_Light(wszLightTag, tagLight_desc);
-
-
 				}
-
-
-
-
-
-
 			}
-
 			CloseHandle(hLightLayerFile);
-
 		}
-
 	}
 	CloseHandle(hFile);
 
