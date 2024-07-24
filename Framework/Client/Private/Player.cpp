@@ -726,7 +726,6 @@ void CPlayer::Set_Render(_bool boolean)
 	}
 
 	Set_Spotlight(Get_Spotlight());
-
 }
 
 void CPlayer::Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex)
@@ -1533,7 +1532,7 @@ void CPlayer::Update_Direction()
 
 void CPlayer::Update_FootStep_Sound()
 {
-	if (m_eState == BITE)
+	if (m_eState == BITE || !m_isFootStep)
 		return ;
 
 	_float4				vL_Ball_Position_Local_Float3 = { *(_float4*)(&m_pL_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
