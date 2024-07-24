@@ -50,7 +50,7 @@ TextureCubeArray g_PrevEnvironmentTexture;
 TextureCubeArray g_CurEnvironmentTexture;
 Texture2D g_SpecularLUTTexture;
 float g_PBRLerpTime;
-
+float4 g_Color;
 
 struct VS_IN
 {
@@ -475,7 +475,7 @@ PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
         vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
         if (vEmissive.r != 0 || vEmissive.g != 0 || vEmissive.b != 0)
         {
-            Out.vColor = vEmissive;
+            Out.vColor = vEmissive * g_Color;
             return Out;
         }
     }

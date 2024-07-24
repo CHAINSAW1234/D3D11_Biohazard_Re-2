@@ -50,7 +50,7 @@ TextureCubeArray g_PrevEnvironmentTexture;
 TextureCubeArray g_CurEnvironmentTexture;
 Texture2D g_SpecularLUTTexture;
 float g_PBRLerpTime;
-
+float4 g_Color;
 
 struct VS_IN
 {
@@ -547,12 +547,10 @@ PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
     vColor = vColor / (vColor + 1);
     vColor = pow(vColor, 1 / 2.2f);
     
-    Out.vColor = vColor;
+    Out.vColor = vColor * g_Color;
 
     return Out;
 }
-
-
 
 technique11 DefaultTechnique
 {
