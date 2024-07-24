@@ -206,19 +206,19 @@ void CDial_BigStatue::InPutKey_Sound(_int iRand, _int iRand1)
 	switch (iRand1)
 	{
 	case 0:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 0);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 0);
 		break;
 	case 1:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
 		break;
 	case 2:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
 		break;
 	case 3:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 1);
 		break;
 	case 4:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 1);
 		break;
 	}
 

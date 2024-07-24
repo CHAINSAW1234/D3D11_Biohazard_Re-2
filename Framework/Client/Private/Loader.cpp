@@ -1144,7 +1144,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 
 
-
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShotGun"), CBody_ItemProp::Create(m_pDevice, m_pContext));
 
 
 	CloseHandle(hFile);

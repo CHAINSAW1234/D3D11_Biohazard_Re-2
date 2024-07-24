@@ -110,18 +110,6 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 void CMini_BigStatue::Late_Tick(_float fTimeDelta)
 {
-	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
-	{
-		if (DOWN == m_pGameInstance->Get_KeyState('R'))
-			*m_isMoveStart = true;
-
-		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
-		{
-			if (nullptr != m_isMoveStart && true == *m_isMoveStart)
-				Lion_Statue(fTimeDelta);
-		} 
-	}
-
 	if (PARTS_TYPE::MINI_BODY == static_cast<PARTS_TYPE>(m_ePartsType))
 	{
 		_matrix WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };

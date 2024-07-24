@@ -129,8 +129,13 @@ void CChair::Late_Tick(_float fTimeDelta)
 			else
 			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-				Opreate_Selector_UI(true, Get_Object_Pos());
 
+				if (nullptr != m_pSelector)
+				{
+					m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+					m_pSelector = nullptr;
+				}
 			}
 		}
 		else
