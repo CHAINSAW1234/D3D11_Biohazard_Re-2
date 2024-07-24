@@ -4,6 +4,7 @@
 
 #include"BigStatue.h"
 #include"Light.h"
+#include "Tab_Window.h"
 
 #define PUT_Z -0.9f
 #define ROTATION 30.f
@@ -62,6 +63,8 @@ HRESULT CMini_BigStatue::Initialize(void* pArg)
 		m_pTransformCom->Set_WorldMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
 	}
 
+	Find_Window();
+
 
 #ifndef NON_COLLISION_PROP
 
@@ -74,11 +77,16 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (nullptr == m_pTapWindow)
+		Find_Window();
+
+	if(DOWN == m_pGameInstance->Get_KeyState('0'))
+		MiniMap_Statue(ITEM_NUMBER::unicornmedal01a);
+
 	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_UNICON) == m_eMiniType)
 	{
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-
 			if(true == *m_isMoveStart)
 				Unicon_Statue(fTimeDelta);
 		}
@@ -382,6 +390,13 @@ HRESULT CMini_BigStatue::Initialize_PartObjects()
 	return S_OK;
 }
 
+void CMini_BigStatue::Find_Window()
+{
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_TabWindow"));
+
+	m_pTapWindow = static_cast<CTab_Window*>(pUIList->back());
+}
+
 void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 {
 	vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
@@ -457,6 +472,8 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 
 	else if (true == m_isMoveEnd)
 	{
+		MiniMap_Statue(ITEM_NUMBER::unicornmedal01a);
+
 		/* Rotation */
 		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
@@ -490,6 +507,8 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 		{
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
 		}
+
+		
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState('K'))
@@ -650,6 +669,8 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 
 	else if (true == m_isMoveEnd)
 	{
+		MiniMap_Statue(ITEM_NUMBER::virginmedal02a);
+		
 		/* Rotation */
 		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
@@ -694,6 +715,16 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 		m_fRotationAngle = 0.f;
 		m_isMoveStart = false;
 		m_isMoveEnd = false;
+	}
+}
+
+void CMini_BigStatue::MiniMap_Statue(ITEM_NUMBER _item)
+{
+	if (false == m_isTab)
+	{
+		m_isTab = true;
+
+		m_pTapWindow->Destroy_Statue_Item(_item);
 	}
 }
 

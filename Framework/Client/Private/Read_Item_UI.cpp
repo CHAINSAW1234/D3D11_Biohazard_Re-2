@@ -310,18 +310,12 @@ void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
 
     m_fIntro_Timer += fTimeDelta;
 
-    m_vCurrentColor.w = 0.f;
+    m_vCurrentColor = _float4(0.f, 0.f, 0.f, 0.8f);
+    m_fBlending = 1.f;
 
     if (INTRO_LIFE <= m_fIntro_Timer)
     {
-        m_fBlending += fTimeDelta * 2.f;
-
-        if (m_fBlending >= 1.f)
-        {
-            m_fBlending = 1.f;
-
-            m_isRead_Start = true;
-        }
+         m_isRead_Start = true;
     }
 
     /* FONT */
@@ -438,6 +432,11 @@ void CRead_Item_UI::Set_ReadItem_Type(ITEM_READ_TYPE _readType)
                 if(READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
                 {
                     iter->m_isReadCall = true;
+
+                    if (false == m_IsChild)
+                    {
+                        m_fBlending = 0.3f;
+                    }
 
                     m_eBook_Type = _readType;  
 

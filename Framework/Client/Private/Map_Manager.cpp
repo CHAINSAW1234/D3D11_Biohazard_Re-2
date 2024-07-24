@@ -59,7 +59,7 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 
 	Find_Player();
 	
-	if (nullptr == m_isGetMap_Item && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	if (nullptr == m_pGetMap_Item && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
 	{
 		CGameObject* pBackGround = Find_BackGround();
 
@@ -67,7 +67,7 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 		{
 			CStatic_Map_UI* pGetMap = static_cast<CStatic_Map_UI*>(pBackGround);
 
-			m_isGetMap_Item = pGetMap->Get_Map_Ptr();
+			m_pGetMap_Item = pGetMap->Get_Map_Ptr();
 		}
 	}
 
@@ -246,7 +246,7 @@ void CMap_Manager::Exception_Handle()
 			MSG_BOX(TEXT("CMap_Manager() : Tab Window를 찾을 수 없습니다."));
 	}
 
-	if (nullptr == m_isGetMap_Item && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	if (nullptr == m_pGetMap_Item && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
 	{
 		CGameObject* pBackGround = Find_BackGround();
 
@@ -254,10 +254,10 @@ void CMap_Manager::Exception_Handle()
 		{
 			CStatic_Map_UI* pGetMap = static_cast<CStatic_Map_UI*>(pBackGround);
 
-			m_isGetMap_Item = pGetMap->Get_Map_Ptr();
+			m_pGetMap_Item = pGetMap->Get_Map_Ptr();
 		}
 
-		if (nullptr == m_isGetMap_Item)
+		if (nullptr == m_pGetMap_Item)
 			MSG_BOX(TEXT("CMap_Manager() : Get Map 변수를 찾을 수 없습니다."));
 	}
 
@@ -395,7 +395,7 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 {
 	if (false == m_isStatic_Type)
 	{
-		if(nullptr != m_isGetMap_Item && false == *m_isGetMap_Item)
+		if(nullptr != m_pGetMap_Item && false == *m_pGetMap_Item)
 		{
 			m_isRender = false;
 

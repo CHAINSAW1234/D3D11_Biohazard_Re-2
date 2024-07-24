@@ -648,21 +648,21 @@ void CTab_Window::Destroy_Statue_Item(ITEM_NUMBER _statue)
 
 	if (_statue == ITEM_NUMBER::unicornmedal01a)
 	{
-		iFoorType = 1;
+		iFoorType = 3;
 		iLocation_map_visit = 0;
 		iCollectNum = 899;
 	}
 
 	else if (_statue == ITEM_NUMBER::virginmedal01a)
 	{
-		iFoorType = 2;
+		iFoorType = 4;
 		iLocation_map_visit = 44;
 		iCollectNum = 897;
 	}
 
 	else if (_statue == ITEM_NUMBER::virginmedal02a)
 	{
-		iFoorType = 1;
+		iFoorType = 3;
 		iLocation_map_visit = 29;
 		iCollectNum = 898;
 	}
@@ -906,9 +906,6 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 
 		if (ITEM_READ_TYPE ::ABOUT_MAP == eIRT)
 		{
-		}
-		else
-		{
 			m_isGetMapItem = true;
 
 			list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
@@ -931,7 +928,10 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 					pAnnounceMap->Set_GetMapItem();
 				}
 			}
+		}
 
+		else
+		{
 			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
 		}
 

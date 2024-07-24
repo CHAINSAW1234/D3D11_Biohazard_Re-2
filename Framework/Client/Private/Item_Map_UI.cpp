@@ -129,7 +129,7 @@ void CItem_Map_UI::Rendering()
     if (false == m_pTab_Window->Get_MinMapRender())
         return;
 
-    if (nullptr != m_isGetMap_Item && false == *m_isGetMap_Item)
+    if (nullptr != m_pGetMap_Item && false == *m_pGetMap_Item)
     {
         m_isRender = false;
 

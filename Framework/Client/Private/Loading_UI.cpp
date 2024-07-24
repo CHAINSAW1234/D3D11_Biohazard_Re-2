@@ -292,6 +292,18 @@ void CLoading_UI::Operate_Ending(_float fTimeDelta)
     {
         Render_Ending(fTimeDelta);
     }
+
+    if (false == m_isRender)
+    {
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+            }
+        }
+
+    }
 }
 
 void CLoading_UI::Ending_Notification()

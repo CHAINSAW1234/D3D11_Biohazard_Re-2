@@ -2671,7 +2671,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	if (true == m_isFinished)
 	{
-		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
+		// m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
 	}
 
 	return S_OK;
