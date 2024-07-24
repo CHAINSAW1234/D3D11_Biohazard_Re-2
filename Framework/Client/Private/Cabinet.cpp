@@ -245,6 +245,7 @@ HRESULT CCabinet::Add_PartObjects()
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	BodyDesc.eCabinetType = m_eCabinetType;
+	BodyDesc.pLock = &m_bLock;
 	BodyDesc.iPropType = m_tagPropDesc.iPropType;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
@@ -665,6 +666,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK&& m_fDelayLockTime==0.f)
 				m_fDelayLockTime = 3.f;
+			m_bLock = false;
 		}
 		else if (bCam||!m_bLock)
 		{

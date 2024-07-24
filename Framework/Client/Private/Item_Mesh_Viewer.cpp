@@ -280,7 +280,7 @@ HRESULT CItem_Mesh_Viewer::Render()
 					}
 				}
 			}
-			if (FAILED(pShader->Bind_RawValue("g_Color", &vColor, sizeof(_float4))))
+			if (FAILED(pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 				return E_FAIL;
 
 

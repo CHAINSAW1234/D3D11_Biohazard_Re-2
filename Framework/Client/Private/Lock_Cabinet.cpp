@@ -52,11 +52,7 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
-	
 	m_pModelCom->Active_RootMotion_Rotation(false);
-
-
-
 
 	return S_OK;
 }
@@ -120,12 +116,11 @@ HRESULT CLock_Cabinet::Render()
 		return S_OK;
 	else
 		m_bRender = false;
-	
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-
 	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
@@ -163,16 +158,47 @@ HRESULT CLock_Cabinet::Render()
 				return E_FAIL;
 		}
 
+		_float4 vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			continue;
+			_bool isEmissive = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+
+			if (m_pModelCom->Get_MeshTags()[static_cast<_int>(i)] == "LOD_1_Group_0_Sub_1__sm42_174_CardReader04A_A_Mat__Env__d00") {
+				if (*m_pLockState == CCabinet::CLEAR_LOCK) {
+					vColor = _float4(0.f, 1.f, 0.f, 1.f); // 초록색
+				}
+				else {
+					vColor = _float4(1.f, 0.f, 0.f, 1.f); // 빨간색
+				}
+			}
+		}
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
+	_float4 vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
 
 	return S_OK;
 }
+
 
 HRESULT CLock_Cabinet::Render_LightDepth_Dir()
 {

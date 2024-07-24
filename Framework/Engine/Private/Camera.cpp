@@ -73,7 +73,6 @@ HRESULT CCamera::Bind_PipeLines()
 		{
 			_matrix				WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 			_matrix				LastWorldMatrix = { XMLoadFloat4x4(&m_PreCamWorldMatrix) };
-			_matrix				ResultWorldMatrix;
 
 			_vector				vLastScale, vLastQuaternion, vLastTranslation;
 			XMMatrixDecompose(&vLastScale, &vLastQuaternion, &vLastTranslation, LastWorldMatrix);

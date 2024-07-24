@@ -278,6 +278,8 @@ HRESULT CSound_Manager::Update_Sounds_Playing()
 			SoundDesc.isChange = false;
 		}
 	}
+
+	return S_OK;
 }
 
 _bool CSound_Manager::Is_Playing_Sound(CTransform* pTransform, _uint iSoundIndex)
