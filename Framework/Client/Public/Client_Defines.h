@@ -46,8 +46,8 @@ using namespace Client;
 #pragma endregion
 	
 //#define MAP_NOTHING
-#define MAP_INTERACT
-//#define MAP_TEST
+//#define MAP_INTERACT
+#define MAP_TEST
 //#define Map_NA
 //	#define Map_Ye
 //#define Map_TEST2
@@ -63,7 +63,7 @@ using namespace Client;
 
 #define DISPLAY_FRAME
 //	#define DISPLAY_NAVMESH
-//	#define FRAME_LOCK
+	#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {

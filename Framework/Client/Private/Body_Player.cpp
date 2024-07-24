@@ -41,6 +41,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Add_Animations()))
 		return E_FAIL;
 
+	m_pModelCom->Hide_Mesh("LOD_1_Group_100_Sub_1__pl0001_Sling_Mat_mesh0006", true);
 	m_pModelCom->Hide_Mesh("LOD_1_Group_200_Sub_1__pl0001_Gun_Mat_mesh0007", true);
 
 	m_pModelCom->Add_IK("l_arm_radius", "l_weapon", TEXT("IK_SHOTGUN"), 3, 1.f);

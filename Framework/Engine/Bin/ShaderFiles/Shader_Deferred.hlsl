@@ -1376,38 +1376,48 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float4 vViewPosition = mul(ConvertoTexcoordToWorldPosition(In.vTexcoord), g_CamViewMatrix);
+    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+
+    float3 vDir = normalize(vViewPosition.xyz);
     
-    float3 vDir = vViewPosition.xyz;
-    float fCameraDistance = length(vViewPosition.xyz);
-    vDir /= fCameraDistance;
-    
-    const uint SAMPLE_COUNT = 64;
+    const int SAMPLE_COUNT = 64;
     
     float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
     float stepSize = length(vViewPosition.xyz - rayEnd) / SAMPLE_COUNT;
     
     float accumulation_Dir = 0;
     float accumulation_Spot = 0;
+
+    float4 vPosition = float4(0.f, 0.f, 0.f, 1.f);
+    
+    if (vDepthDesc.r == 0)
+    {
+        vPosition = vViewPosition;
+        vDir = -vDir;
+
+    }
+
+    
     for (uint i = 0; i < SAMPLE_COUNT; ++i)
     {
         // 1. Direction
         if (g_isShadowDirLight)
         {
-            float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
+            float4 ShadowMapCoord = mul(vPosition, g_ViewMatrixInv); // WorldPosition
             ShadowMapCoord = mul(ShadowMapCoord, g_DirLightViewMatrix);
             ShadowMapCoord = mul(ShadowMapCoord, g_DirLightProjMatrix);
             ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
             ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
         
-            if ((saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
+            if ( (saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
             (saturate(ShadowMapCoord.y) == ShadowMapCoord.y) )
             {
-                float fDepth1 = g_DirLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
-                float fDepth2 = g_DirLightFieldDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
+                //float fDepth1 = g_DirLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
+                float fDepth2 = g_DirLightFieldDepthTexture.Sample(LinearSamplerClamp, ShadowMapCoord.xy).r;
                 
-                float fDepth = min(fDepth1, fDepth2);
+                //float fDepth = min(fDepth1, fDepth2);
                 
-                if (ShadowMapCoord.w < fDepth * 1000)
+                if (ShadowMapCoord.w < fDepth2 * 1000)
                     ++accumulation_Dir;
             
             }
@@ -1415,7 +1425,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
         // 2. SpotLight
         if (g_isShadowSpotLight)
         {
-            vector vLightDir = mul(vViewPosition, g_ViewMatrixInv) -g_vSpotLightPosition;
+            vector vLightDir = mul(vPosition, g_ViewMatrixInv) - g_vSpotLightPosition;
             vector vSpotDir = g_vSpotLightDirection;
             float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
            
@@ -1427,7 +1437,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
                 fAtt *= fAtt;
                 fAtt *= (fIntensity * fIntensity);
                                
-                float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
+                float4 ShadowMapCoord = mul(vPosition, g_ViewMatrixInv); // WorldPosition
                 ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightViewMatrix);
                 ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightProjMatrix);
                 ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
@@ -1436,7 +1446,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
                 if ((saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
                     (saturate(ShadowMapCoord.y) == ShadowMapCoord.y))
                 {
-                    float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
+                    float fDepth = g_SpotLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
             
                     if (ShadowMapCoord.w  < fDepth * 1000)
                         accumulation_Spot += fAtt;
@@ -1445,7 +1455,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
             }
         }
         
-        vViewPosition = vViewPosition + float4(vDir * stepSize, 0);
+        vPosition = vPosition + float4(vDir * stepSize, 0);
     }
     
     accumulation_Dir /= SAMPLE_COUNT;
