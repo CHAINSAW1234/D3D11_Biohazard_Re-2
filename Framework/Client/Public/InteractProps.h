@@ -192,7 +192,7 @@ public:
 public:
 	_int												Get_NeedItem_Index() const { return m_iNeedItem; }
 	virtual void										Do_Interact_Props() { return ; }
-	CGameObject*										Get_Item_Props() { return this ; }
+	virtual CGameObject*										Get_Item_Props() { return this ; }
 
 public:
 	void												Set_OutOfControll(_bool isOutOfControll) { m_isOutOfControll = isOutOfControll; }

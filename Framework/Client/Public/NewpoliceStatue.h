@@ -44,17 +44,17 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
-
+	virtual void					Do_Interact_Props() override;
 public:
 	virtual _float4 Get_Object_Pos() override;
 
 private :
 	void				Animation_BaseOn_MedalType();
-
+	void				Active();
 private:
 	_bool				m_eMedalRender[3]	= { false };
 	_bool				m_isGiveMedal		= { false };
-
+	_float			m_fZoomOut = { 0.f };
 	_uint				m_iEXCode = { 0 };
 	_uint				m_iPrevMedalCnt = { 0 }; 
 

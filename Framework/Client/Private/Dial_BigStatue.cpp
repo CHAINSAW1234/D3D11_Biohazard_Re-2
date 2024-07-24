@@ -111,6 +111,7 @@ void CDial_BigStatue::Late_Tick(_float fTimeDelta)
 		case CBigStatue::KEY_W:
 			m_fGoalAngle[m_iCurBoneIndex] -= 60.f;
 			*m_pPressKeyState = CBigStatue::KEY_NOTHING;
+			InPutKey_Sound(0,0);
 			break;
 
 		case CBigStatue::KEY_A:
@@ -118,12 +119,14 @@ void CDial_BigStatue::Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex < BONE_DIAL1)
 				m_iCurBoneIndex = BONE_DIAL3;
 			*m_pPressKeyState = CBigStatue::KEY_NOTHING;
+			InPutKey_Sound(0,1);
 			break;
 
 		case CBigStatue::KEY_S:
 			//뼈 아래로 돌리기
 			m_fGoalAngle[m_iCurBoneIndex] += 60.f;
 			*m_pPressKeyState = CBigStatue::KEY_NOTHING;
+			InPutKey_Sound(0, 2);
 			break;
 
 		case CBigStatue::KEY_D:
@@ -131,6 +134,7 @@ void CDial_BigStatue::Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex > BONE_DIAL3)
 				m_iCurBoneIndex = BONE_DIAL1;
 			*m_pPressKeyState = CBigStatue::KEY_NOTHING;
+			InPutKey_Sound(0,3);
 			break;
 		}
 
@@ -193,6 +197,32 @@ void CDial_BigStatue::Late_Tick(_float fTimeDelta)
 
 	Get_SpecialBone_Rotation(); // for UI
 }
+
+
+void CDial_BigStatue::InPutKey_Sound(_int iRand, _int iRand1)
+{
+	switch (iRand1)
+	{
+	case 0:
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 0);
+		break;
+	case 1:
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
+		break;
+	case 2:
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
+		break;
+	case 3:
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 1);
+		break;
+	case 4:
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 1);
+		break;
+	}
+
+
+}
+
 
 HRESULT CDial_BigStatue::Render()
 {

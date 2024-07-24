@@ -88,7 +88,6 @@ private:
 	void						Electric_Active();
 	void						Weapon_Active();
 	void						Zombie_Active();
-
 public:
 	virtual _float4		Get_Object_Pos() override;
 	void					Set_Lock_False() { m_bLock = false; }

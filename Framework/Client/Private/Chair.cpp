@@ -82,7 +82,15 @@ void CChair::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
 	if (!m_bVisible)
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
 		return;
+	}
 
 	m_eType == CHAIR_ZOMBIE ? Zombie_Tick(fTimeDelta) : Barrigate_Tick(fTimeDelta);
 
@@ -160,14 +168,14 @@ HRESULT CChair::Add_Components()
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-		ColliderDesc.fRadius = _float(80.f);
-		ColliderDesc.vCenter = _float3(0.f, 0.f, -30.f);
+		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.vCenter = _float3(0.f, 0.f, 90.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(50.f);
+		ColliderDesc.fRadius = _float(80.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;

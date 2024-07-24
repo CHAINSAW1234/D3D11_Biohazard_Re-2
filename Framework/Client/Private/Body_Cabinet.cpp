@@ -430,6 +430,8 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 	vector<string>			ResultMeshTags;
 	for (auto& strMeshTag : MeshTags)
 	{
+		if ((strMeshTag.find("Group_1_Sub_2") != string::npos) || (strMeshTag.find("Group_3_Sub_1") != string::npos) || (strMeshTag.find("Group_2_Sub_1") != string::npos))
+			m_strMeshTag = strMeshTag;
 		string strFindTag = "10" + to_string(m_iPropType);
 		if (m_iPropType >= 10)
 			strFindTag = "20" + to_string(m_iPropType - 10);

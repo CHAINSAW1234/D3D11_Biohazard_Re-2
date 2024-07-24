@@ -110,9 +110,6 @@ void CReaderMachine::Tick(_float fTimeDelta)
 		m_bCameraReset = false;
 	}
 
-	if (m_bCamera)
-		Camera_Active(PART_READER, _float3(-0.5f, -1.f, -0.5f));
-	
 	if (m_bDoOpen)
 	{
 		if (Open_Cabinet())
@@ -137,6 +134,11 @@ void CReaderMachine::Tick(_float fTimeDelta)
 		if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
 			Active();
 	}
+
+
+	if (m_bCamera)
+		Camera_Active(PART_READER, _float3(-0.5f, -1.f, -0.5f));
+
 	__super::Tick(fTimeDelta);
 
 }
