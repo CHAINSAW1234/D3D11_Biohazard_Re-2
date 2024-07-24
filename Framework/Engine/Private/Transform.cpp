@@ -295,7 +295,7 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 	{
 		_float4x4 wordpure = Get_WorldMatrix_Pure();
 
-		_float4x4 TempMatrix = MoveMatrix * m_WorldMatrix;
+		_float4x4 TempMatrix = MoveMatrix * wordpure;
 
 		_matrix Resultmat = XMLoadFloat4x4(&TempMatrix);
 

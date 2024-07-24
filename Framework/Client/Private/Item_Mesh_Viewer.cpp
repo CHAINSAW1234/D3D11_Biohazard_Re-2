@@ -108,7 +108,6 @@ void CItem_Mesh_Viewer::Start()
 	m_ButtonBoneTags[6] = "button_p007";
 	m_ButtonBoneTags[7] = "button_p008";
 
-
 	//m_vecModelCom[portablesafe]->Set_RootBone("RootNode");
 	//m_vecModelCom[portablesafe]->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	//m_vecModelCom[portablesafe]->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
@@ -187,7 +186,7 @@ HRESULT CItem_Mesh_Viewer::Render()
 
 
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe) {
+	if (m_eItem_Number == portablesafe /*&& EXAMIN_PUZZLE == m_eOperType*/) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -340,7 +339,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			m_eOperType = EXAMIN_PUZZLE;
 			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
 			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
-			m_iSelected_Button = -1;
+			m_iSelected_Button = 1;
 			break;
 		}
 
@@ -438,12 +437,16 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		{
 			if (PRESSED == m_eButtonStates[i])
 			{
-				m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, 0.f, 0.5f));
+				m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, -0.25f, 0.f));
+				//_float4 fUp = m_pTransformCom->Get_State_Float4(CTransform::STATE_UP);
+				//fUp *= 5.f;
+				//m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(-fUp.x, -fUp.y, -fUp.z));
 			}
 		}
 
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
 			m_eOperType = EXAMIN;
+			PS_Button_Resset();
 			break;
 		}
 
@@ -481,13 +484,11 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
 			if (m_iSelected_Button + 2 < 8)
 				m_iSelected_Button += 2;
-
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
 			if (m_iSelected_Button - 2 > -1)
 				m_iSelected_Button -= 2;
-
 		}
 		break;
 	}
@@ -560,6 +561,16 @@ _bool CItem_Mesh_Viewer::Check_Puzzle_Success()
 	return isPuzzleSuccess;
 }
 
+void CItem_Mesh_Viewer::PS_Button_Resset()
+{
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_eButtonStates[i] = BUTTON_IDLE;
+		m_iInputAnswer[i] = 0;
+
+	}
+}
+
 void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
 {
 	switch (eOperation)
@@ -573,7 +584,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		Set_ScaleByItemNum(eCallItemType);
 		m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
 		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, fCenter.z);
 		m_matMoveCenter *= TempMat;
 		
 		m_fPreRadian = 0.f;
@@ -605,10 +616,14 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 
 			m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
 			_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-			_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
-			m_matMoveCenter *= TempMat;
-			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+			if (portablesafe != m_eItem_Number)
+			{
+				_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+				m_matMoveCenter *= TempMat;
+				_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+				m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+			}
+
 			//m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		}
 		
@@ -655,7 +670,7 @@ HRESULT CItem_Mesh_Viewer::Add_Components()
 HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 {
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe) {
+	if (m_eItem_Number == portablesafe/* && EXAMIN_PUZZLE == m_eOperType*/) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -687,7 +702,7 @@ CItem_Mesh_Viewer* CItem_Mesh_Viewer::Create(ID3D11Device* pDevice, ID3D11Device
 
 		Safe_Release(pInstance);
 	}
-
+	
 	return pInstance;
 
 }
@@ -1224,8 +1239,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		m_matMoveCenter = XMMatrixTranslation(0.f, -0.4f, 0.f);
-		//m_matMoveCenter = XMMatrixIdentity();
+		//m_matMoveCenter = XMMatrixTranslation(0.f, 0.004f, 0.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
 		m_fPopupHide_EndDist = 0.15f;
