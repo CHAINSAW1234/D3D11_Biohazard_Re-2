@@ -49,12 +49,16 @@ private:
 	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
 	//인터렉트 아이템
 	void INTERACT_ITEM_Operation(_float fTimeDelta);
+	void InteractUseItem();
 	void INTERACT_ITEM_SoundPlay();
+
 
 private:
 	void Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
 	void Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
 	CInventory_Slot* Find_Slot(_float2 FindPos);
+	_bool IsHealItem();
+
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -106,6 +110,8 @@ public:
 			return pTransform->Get_State_Float4(CTransform::STATE_POSITION);
 		}
 	}
+
+	void Set_Port_To_Blank();
 
 private: 
 	ID3D11Device*					m_pDevice = { nullptr };

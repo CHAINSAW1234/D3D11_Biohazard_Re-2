@@ -3,6 +3,7 @@
 #include "Item_Mesh_Viewer.h"
 #include "Camera_Free.h"
 #include "Light.h"
+#include "Tab_Window.h"
 
 constexpr _float	DIST_CAM_FAR_LIMIIT = 10.f;
 constexpr _float	DIST_CAM_NEAR_LIMIT = 1.f;
@@ -81,24 +82,33 @@ void CItem_Mesh_Viewer::Start()
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
 
-	m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
+	//m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
+	//m_LampTags[1] = "sm77002portablesafe01a00md_1_Group_0_Sub_3__sm77_002_Po_5926c14";
+	//m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
+	//m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
+	//m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
+	//m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
+	//m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
+	//m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
+
+	m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
 	m_LampTags[1] = "sm77002portablesafe01a00md_1_Group_0_Sub_3__sm77_002_Po_5926c14";
-	m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
-	m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
-	m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
-	m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
-	m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
-	m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
+	m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
+	m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
+	m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
+	m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
+	m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
+	m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
+	//3, 2, 6, 1, 7, 4, 8, 5
 
-	m_ButtonTags[0] = "sm77002portablesafe01a00md_1_Group_1_Sub_1__sm77_002_Po_b6f4fe2";
-	m_ButtonTags[1] = "sm77002portablesafe01a00md_1_Group_2_Sub_1__sm77_002_Po_5f4e97d";
-	m_ButtonTags[2] = "sm77002portablesafe01a00md_1_Group_3_Sub_1__sm77_002_Po_85f6203";
-	m_ButtonTags[3] = "sm77002portablesafe01a00md_1_Group_4_Sub_1__sm77_002_Po_f030480";
-	m_ButtonTags[4] = "sm77002portablesafe01a00md_1_Group_5_Sub_1__sm77_002_Po_53e75b6";
-	m_ButtonTags[5] = "sm77002portablesafe01a00md_1_Group_6_Sub_1__sm77_002_Po_0577076";
-	m_ButtonTags[6] = "sm77002portablesafe01a00md_1_Group_7_Sub_1__sm77_002_Po_b9c21fc";
-	m_ButtonTags[7] = "sm77002portablesafe01a00md_1_Group_8_Sub_1__sm77_002_Po_0b164c0";
-
+	m_ButtonTags[7] = "sm77002portablesafe01a00md_1_Group_1_Sub_1__sm77_002_Po_b6f4fe2";
+	m_ButtonTags[6] = "sm77002portablesafe01a00md_1_Group_2_Sub_1__sm77_002_Po_5f4e97d";
+	m_ButtonTags[5] = "sm77002portablesafe01a00md_1_Group_3_Sub_1__sm77_002_Po_85f6203";
+	m_ButtonTags[4] = "sm77002portablesafe01a00md_1_Group_4_Sub_1__sm77_002_Po_f030480";
+	m_ButtonTags[3] = "sm77002portablesafe01a00md_1_Group_5_Sub_1__sm77_002_Po_53e75b6";
+	m_ButtonTags[2] = "sm77002portablesafe01a00md_1_Group_6_Sub_1__sm77_002_Po_0577076";
+	m_ButtonTags[1] = "sm77002portablesafe01a00md_1_Group_7_Sub_1__sm77_002_Po_b9c21fc";
+	m_ButtonTags[0] = "sm77002portablesafe01a00md_1_Group_8_Sub_1__sm77_002_Po_0b164c0";
 
 	m_ButtonBoneTags[7] = "button_p001";
 	m_ButtonBoneTags[6] = "button_p002";
@@ -113,7 +123,7 @@ void CItem_Mesh_Viewer::Start()
 	m_vecModelCom[portablesafe]->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_vecModelCom[portablesafe]->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_vecModelCom[portablesafe]->Active_RootMotion_Rotation(false);
-	m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 0);
+	m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 1);
 }	
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
@@ -156,191 +166,13 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 	if (portablesafe == m_eItem_Number)
 	{
 		_float3				vDirection = { };
-		if (FAILED(m_vecModelCom[portablesafe]->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection)))
 		{
 			int a = 0;
 		}
 	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EXAMINE, this);
-}
-
-HRESULT CItem_Mesh_Viewer::Render()
-{
-	if (ITEM_NUMBER_END == m_eItem_Number)
-		return E_FAIL;
-
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-	const LIGHT_DESC* pDesc = m_pGameInstance->Get_LightDesc(g_strDirectionalTag, 1);
-
-	if (nullptr == pDesc)
-		return E_FAIL;
-
-
-	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe /*&& EXAMIN_PUZZLE == m_eOperType*/) {
-		pShader = m_pAnimShaderCom;
-	}
-	else {
-		pShader = m_pShaderCom;
-	}
-	_float4 vup = -m_pCameraFree->Get_Transform()->Get_State_Float4(CTransform::STATE_UP);
-
-	if (FAILED(pShader->Bind_RawValue("g_vLightDir", &vup, sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(pShader->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(pShader, "g_PrevIrradianceTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(pShader, "g_CurIrradianceTexture")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(pShader, "g_PrevEnvironmentTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(pShader, "g_CurEnvironmentTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
-		return E_FAIL;
-
-	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices() };
-	for (auto& i : NonHideIndices)
-	{
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
-
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
-		{
-			_bool isAlphaTexture = false;
-			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isAlphaTexture = true;
-			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
-		{
-			_bool isAOTexture = false;
-			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isAOTexture = true;
-			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
-		{
-			_bool isEmissive = false;
-			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isEmissive = true;
-			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-
-		if (m_eItem_Number == portablesafe) {
-			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(pShader, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
-
-			_int iIndex = -1;
-			_float4 vColor = { 1.f, 1.f, 1.f ,1.f };
-
-			for (_int j = 0; j < 8; ++j) {
-				if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_LampTags[j]) {
-					switch (m_eLampStates[j]) {
-					case SUCCEED:
-						vColor = _float4(0.f, 1.f, 0.f, 1.f);
-						break;
-					case FAILED:
-						vColor = _float4(1.f, 0.f, 0.f, 1.f);
-						break;
-					}
-				}
-			}
-			if (FAILED(pShader->Bind_RawValue("g_Color", &vColor, sizeof(_float4))))
-				return E_FAIL;
-
-
-
-			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
-				return E_FAIL;
-		}
-		else {
-			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
-				return E_FAIL;
-		}
-
-		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
-	}
-
-
-	return S_OK;
-}
-
-void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
-{
-	m_fPopupHide_CurTime += fTimeDelta;
-
-	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
-	{
-		m_eViewer_State = UI_IDLE;
-		m_fPopupHide_CurTime = 0.f;
-		m_fDistCamZ = m_fPopupHide_EndDist;
-		m_bStop = true;
-		return;
-	}	
-
-	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
-	{
-		m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
-			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-
-		_float fRadian = m_pGameInstance->Get_Ease(Ease_Linear, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
-			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-
-		_float fResultRadian = fRadian - m_fPreRadian;
-		
-		fResultRadian /= XMConvertToRadians(360.0f);
-
-		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Turn(MyUp, fResultRadian);
-		
-		// 1. ÀÌ¹ø Tick ÀÇ Radian  - ÀÌÀü Radian
-		// 2. CTransformÀÌ °®°í ÀÖ´Â m_fRotationPerSec¸¦ ³ª´²Áà¾ßµÊ  
-
-		//m_pTransformCom->Rotation(MyUp, fRadian);
-
-		//_vector CamUp = m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_UP);
-		//m_pTransformCom->Rotation(CamUp, fRadian);
-		// 
-		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
-
-		m_fPreRadian = fRadian;
-		
-	}
 }
 
 void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
@@ -356,6 +188,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
 			m_fDistCamZ = 0.18f;
 			m_iSelected_Button = 0;
+			Set_Answer();
 			break;
 		}
 
@@ -450,6 +283,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		case Client::CItem_Mesh_Viewer::PUZZLE_IDLE: {
 			if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
 				m_eOperType = EXAMIN;
+				m_isFirstPress = false;
 				PS_Button_Resset();
 				break;
 			}
@@ -469,28 +303,32 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			for (_uint i = 0; i < 8; i++)
 			{
 				if (PRESSED == m_eButtonStates[i])
-					m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, -0.25f, 0.f));
+					m_vecModelCom[m_eItem_Number]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, -0.3f, 0.f));
 			}
 
 			if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 				m_eButtonStates[m_iSelected_Button] = PRESSED;
 				m_iInputAnswer[m_iPuzzle_Progress] = m_iSelected_Button;
 				m_iPuzzle_Progress++;
+				Puszzle_button_Sound(m_iSelected_Button);
+
+
 				break;
 			}
+
 			if (DOWN == m_pGameInstance->Get_KeyState('D')) {
 				if (m_iSelected_Button + 1 < 8)
 					m_iSelected_Button += 1;
 			}
-			else if (DOWN == m_pGameInstance->Get_KeyState('A')) {
+			if (DOWN == m_pGameInstance->Get_KeyState('A')) {
 				if (m_iSelected_Button - 1 > -1)
 					m_iSelected_Button -= 1;
 			}
-			else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
+			if (DOWN == m_pGameInstance->Get_KeyState('W')) {
 				if (m_iSelected_Button - 2 > -1)
 					m_iSelected_Button -= 2;
 			}
-			else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
+			if (DOWN == m_pGameInstance->Get_KeyState('S')) {
 				if (m_iSelected_Button + 2 < 8)
 					m_iSelected_Button += 2;
 			}
@@ -500,57 +338,148 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		case Client::CItem_Mesh_Viewer::PUZZLE_SUCCEEC: {
 			static _uint iSuccec_Equence = 0;
 			if (iSuccec_Equence == 0)
-				m_pGameInstance->PlaySoundEffect_2D(TEXT(""), TEXT(""), 0.5f);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Portuble_Puzzle_Clear.mp3"), CH4_2D ,0.5f);
+
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
+				m_ePZ_Progress = PUZZLE_FAILED;
+				iSuccec_Equence = 0;
+				break;
+			}
 
 			m_fPopupHide_CurTime += fTimeDelta;
 
-			if (m_fPopupHide_CurTime > 0.2f)
+			if (iSuccec_Equence < 7)
 			{
-				if (iSuccec_Equence % 2 == 0 && iSuccec_Equence < 6)
+				if (m_fPopupHide_CurTime > 0.2f)
 				{
-					for (_uint i = 0; i < 8; i++)
+					if (iSuccec_Equence % 2 == 0 && iSuccec_Equence < 6)
 					{
-						if (i % 2 == 0)
+						for (_uint i = 0; i < 8; i++)
+						{
+							if (i % 2 == 0)
+								m_eLampStates[m_iInputAnswer[i]] = SUCCEED;
+							else
+								m_eLampStates[m_iInputAnswer[i]] = LAMP_IDLE;
+						}
+						iSuccec_Equence++;
+						m_fPopupHide_CurTime = 0.f;
+						break;
+					}
+
+					else if (iSuccec_Equence % 2 != 0 && iSuccec_Equence < 6)
+					{
+						for (_uint i = 0; i < 8; i++)
+						{
+							if (i % 2 != 0)
+								m_eLampStates[m_iInputAnswer[i]] = SUCCEED;
+							else
+								m_eLampStates[m_iInputAnswer[i]] = LAMP_IDLE;
+						}
+						iSuccec_Equence++;
+						m_fPopupHide_CurTime = 0.f;
+						break;
+					}
+
+					else if (iSuccec_Equence == 6)
+					{
+						for (_uint i = 0; i < 8; i++)
+						{
 							m_eLampStates[i] = SUCCEED;
-						else
-							m_eLampStates[i] = LAMP_IDLE;
+						}
+
+						_bool isPlay = true;
+						m_pGameInstance->IsPlaying_2D(CH4_2D, &isPlay);
+						if (false == isPlay)
+						{
+							iSuccec_Equence++;
+							m_fPopupHide_CurTime = 0.f;
+						}
+						break;
 					}
 				}
-
-				else if (iSuccec_Equence % 2 != 0 && iSuccec_Equence < 6)
-				{
-					for (_uint i = 0; i < 8; i++)
-					{
-						if (i % 2 != 0)
-							m_eLampStates[i] = SUCCEED;
-						else
-							m_eLampStates[i] = LAMP_IDLE;
-					}
-				}
-
-				else if (iSuccec_Equence == 6)
-				{
-					for (_uint i = 0; i < 8; i++)
-					{
-						m_eLampStates[i] = SUCCEED;
-					}
-
-					m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 1);
-					break;
-				}
-
-				iSuccec_Equence++;
-				m_fPopupHide_CurTime = 0.f;
 			}
 
-		
+			if (iSuccec_Equence == 7)
+			{
+				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+				{
+					m_fDistCamZ = 0.4f;
+					m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(-0.5f, 0.5f, 0.f, 0.f));
+				}
+				else
+				{
+					m_fPopupHide_CurTime = 0.f;
+					m_fPreRadian = 0.f;
+					iSuccec_Equence++;
+				}
+			}
+
+			if (iSuccec_Equence == 8)
+			{
+				m_vecModelCom[m_eItem_Number]->Change_Animation(0, TEXT("Default"), 0);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_9.mp3"), CH4_2D, 0.5f);
+				iSuccec_Equence++;
+			}
+
+			if (iSuccec_Equence == 9)
+			{
+				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+				{
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, 0.4, POPUP_HIDE_START_DIST,
+						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+				}
+				else
+				{
+					m_eItem_Number = blankkey01a;
+					Set_ScaleByItemNum(m_eItem_Number);
+					m_fPopupHide_CurTime = 0.f;
+					iSuccec_Equence++;
+				}
+			}
+
+			if (iSuccec_Equence == 10)
+			{
+				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+				{
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, 0.4,
+						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+					m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(-0.5f, 0.5f, 0.f, 0.f));
+				}
+				else
+				{
+					//m_eItem_Number = blankkey01a;
+					m_fPopupHide_CurTime = 0.f;
+					m_fDistCamX = PICK_UP_IDLE_X_DIST;
+					m_eOperType = SECON_PICKUPITEM;
+					CGameObject* pT = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_TabWindow"))->front();
+					static_cast<CTab_Window*>(pT)->Set_PortabTo_Blank();
+					iSuccec_Equence++;
+				}
+			}
+
 			break;
 		}
 			
 		case Client::CItem_Mesh_Viewer::PUZZLE_FAILED: {
-			PS_Button_Resset();
-			m_eButtonStates[m_iSelected_Button] = PRESSED;
-			m_iPuzzle_Progress = 0;
+			m_fPopupHide_CurTime += fTimeDelta;
+			if (m_fPopupHide_CurTime > 0.1f)
+			{
+				PS_Button_Resset();
+				m_eButtonStates[m_iSelected_Button] = PRESSED;
+				m_eLampStates[m_iSelected_Button] = SUCCEED;
+				Set_Answer();
+				m_iPuzzle_Progress = 1;
+				m_fPopupHide_CurTime = 0;
+				m_ePZ_Progress = PUZZLE_IDLE;
+				m_iInputAnswer[0] = m_iSelected_Button;
+				break;
+			}
+
+			for (_uint i = 0; i < m_iPuzzle_Progress; i++)
+			{
+				m_eLampStates[m_iInputAnswer[i]] = FAILED;
+			}
+
 			break;
 		}
 			
@@ -620,24 +549,18 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 _int CItem_Mesh_Viewer::Check_Puzzle_Success()
 {
 	_int isPuzzleSuccess = 0;
-	_uint iProgerss = m_iProgressStartPoint;
 
 	for (_uint i = 0; i < m_iPuzzle_Progress; i++)
 	{
-		if (m_iCorrectAnswer[iProgerss] != m_iInputAnswer[iProgerss])
+		if (m_iSetByNumAnswer[i] != m_iInputAnswer[i])
 		{
 			isPuzzleSuccess = -1;
-			m_eLampStates[iProgerss] = FAILED;
+			m_eLampStates[m_iInputAnswer[i]] = FAILED;
 		}
-		else if (m_iCorrectAnswer[iProgerss] == m_iInputAnswer[iProgerss])
+		else if (m_iSetByNumAnswer[i] == m_iInputAnswer[i])
 		{
-			m_eLampStates[iProgerss] = SUCCEED;
+			m_eLampStates[m_iInputAnswer[i]] = SUCCEED;
 		}		
-
-		if (7 < iProgerss + 1)
-			iProgerss = 0;
-		else
-			iProgerss++;
 	}
 
 	if (m_iPuzzle_Progress == 8 && isPuzzleSuccess == 0)
@@ -652,9 +575,43 @@ void CItem_Mesh_Viewer::PS_Button_Resset()
 	{
 		m_eButtonStates[i] = BUTTON_IDLE;
 		m_eLampStates[i] = LAMP_IDLE;
-		m_iInputAnswer[i] = 0;
+		m_iSetByNumAnswer[i] = 0;
+		m_iInputAnswer[i] = -1;
 	}
 	m_ePZ_Progress = PUZZLE_IDLE;
+}
+
+void CItem_Mesh_Viewer::Puszzle_button_Sound(_int iButton)
+{
+	switch (iButton)
+	{
+	case 0:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_1.mp3"), 0.5f);
+		break;
+	case 1:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_2.mp3"), 0.5f);
+		break;
+	case 2:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_3.mp3"), 0.5f);
+		break;
+	case 3:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_4.mp3"), 0.5f);
+		break;
+	case 4:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_5.mp3"), 0.5f);
+		break;
+	case 5:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_6.mp3"), 0.5f);
+		break;
+	case 6:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_7.mp3"), 0.5f);
+		break;
+	case 7:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_8.mp3"), 0.5f);
+		break;
+	default:
+		break;
+	}
 }
 
 void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
@@ -732,6 +689,29 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 	}
 }
 
+void CItem_Mesh_Viewer::Set_Answer()
+{
+	_uint iFindNumPos = 0;
+
+	for (_uint i = 0; i < 8; i++)
+	{
+		if (m_iSelected_Button == m_iAnswer[i])
+		{
+			iFindNumPos = i;
+		}
+	}
+
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_iSetByNumAnswer[i] = m_iAnswer[iFindNumPos];
+
+		if (iFindNumPos + 1 == 8)
+			iFindNumPos = 0;
+		else
+			iFindNumPos++;
+	}
+}
+
 HRESULT CItem_Mesh_Viewer::Add_Components()
 {
 	/* For.Com_Shader */
@@ -751,11 +731,196 @@ HRESULT CItem_Mesh_Viewer::Add_Components()
 	return S_OK;
 }
 
+HRESULT CItem_Mesh_Viewer::Render()
+{
+	if (ITEM_NUMBER_END == m_eItem_Number)
+		return E_FAIL;
+
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	const LIGHT_DESC* pDesc = m_pGameInstance->Get_LightDesc(g_strDirectionalTag, 1);
+
+	if (nullptr == pDesc)
+		return E_FAIL;
+
+	CShader* pShader = { nullptr };
+	if (m_eItem_Number == portablesafe) {
+		pShader = m_pAnimShaderCom;
+	}
+	else {
+		pShader = m_pShaderCom;
+	}
+	_float4 vup = -m_pCameraFree->Get_Transform()->Get_State_Float4(CTransform::STATE_UP);
+
+	if (FAILED(pShader->Bind_RawValue("g_vLightDir", &vup, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Bind_RawValue("g_PBRLerpTime", m_pGameInstance->Get_PBRLerpTime(), sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevIrradianceTexture(pShader, "g_PrevIrradianceTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurIrradianceTexture(pShader, "g_CurIrradianceTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_PrevCubeMapTexture(pShader, "g_PrevEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_CurCubeMapTexture(pShader, "g_CurEnvironmentTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
+		return E_FAIL;
+
+	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices() };
+	for (auto& i : NonHideIndices)
+	{
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+			return E_FAIL;
+
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+			return E_FAIL;
+
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		{
+			_bool isAlphaTexture = false;
+			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAlphaTexture = true;
+			if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			_bool isEmissive = false;
+			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+
+		if (m_eItem_Number == portablesafe) {
+			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(pShader, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			_int iIndex = -1;
+			_float4 vColor = { 1.f, 1.f, 1.f ,1.f };
+
+			if (m_eOperType == EXAMIN_PUZZLE)
+			{
+				for (_int j = 0; j < 8; ++j) {
+					if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_LampTags[j]) {
+						switch (m_eLampStates[j]) {
+						case SUCCEED:
+							vColor = _float4(0.f, 1.f, 0.f, 1.f);
+							break;
+						case FAILED:
+							vColor = _float4(1.f, 0.f, 0.f, 1.f);
+							break;
+						}
+					}
+				}
+				for (_int j = 0; j < 8; ++j) {
+					if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_ButtonTags[j])
+					{
+						if (j == m_iSelected_Button)
+							vColor = _float4(2.f, 2.f, 2.f, 1.f);
+
+						else if (m_eButtonStates[j] == PRESSED)
+							vColor = _float4(0.4f, 0.4f, 0.4f, 1.f);
+					}
+				}
+			}
+			
+			if (FAILED(pShader->Bind_RawValue("g_Color", &vColor, sizeof(_float4))))
+				return E_FAIL;
+
+
+
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
+				return E_FAIL;
+		}
+		else {
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_EXAMINE)))
+				return E_FAIL;
+		}
+
+		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
+	}
+
+
+	return S_OK;
+}
+
+void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
+{
+	m_fPopupHide_CurTime += fTimeDelta;
+
+	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
+	{
+		m_eViewer_State = UI_IDLE;
+		m_fPopupHide_CurTime = 0.f;
+		m_fDistCamZ = m_fPopupHide_EndDist;
+		m_bStop = true;
+		m_fPreRadian = 0.f;
+		return;
+	}
+
+	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+	{
+		m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
+			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_Linear, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
+			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+		_float fResultRadian = fRadian - m_fPreRadian;
+
+		fResultRadian /= XMConvertToRadians(360.0f);
+
+		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Turn(MyUp, fResultRadian);
+		m_fPreRadian = fRadian;
+		// 1. ÀÌ¹ø Tick ÀÇ Radian  - ÀÌÀü Radian
+		// 2. CTransformÀÌ °®°í ÀÖ´Â m_fRotationPerSec¸¦ ³ª´²Áà¾ßµÊ  
+		//m_pTransformCom->Rotation(MyUp, fRadian);
+		//_vector CamUp = m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_UP);
+		//m_pTransformCom->Rotation(CamUp, fRadian);
+		// //m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
+	}
+}
 
 HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 {
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe/* && EXAMIN_PUZZLE == m_eOperType*/) {
+	if (m_eItem_Number == portablesafe) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -1395,3 +1560,5 @@ void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint 
 		break;
 	}
 }
+
+

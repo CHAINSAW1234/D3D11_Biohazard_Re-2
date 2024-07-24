@@ -11,7 +11,7 @@ BEGIN(Client)
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, INTERACT_PROPS, WINDOW_TYPE_END };
+	enum WINDOW_TYPE { MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, INTERACT_PROPS, WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,24 +36,24 @@ private:
 	void INTERACT_PROPS_Operation(_float fTimeDelta);
 
 #pragma region 나옹
-public: 
-	_bool							Get_MinMapRender()				{ return m_isMapRender; }
-	_bool*							Get_MainRender_Ptr()			{ return m_pInvenButton->Get_Dead_Ptr(); }
-	_bool							Get_PickUp_ItemRender()			{ return m_isPickUp_Item; }
-	WINDOW_TYPE*					Get_Window_RenderType_Ptr()		{ return &m_eWindowType; }
+public:
+	_bool							Get_MinMapRender() { return m_isMapRender; }
+	_bool* Get_MainRender_Ptr() { return m_pInvenButton->Get_Dead_Ptr(); }
+	_bool							Get_PickUp_ItemRender() { return m_isPickUp_Item; }
+	WINDOW_TYPE* Get_Window_RenderType_Ptr() { return &m_eWindowType; }
 
-private :
-	class CTargeting_Map_UI*		m_pTargetNotify_UI = { nullptr };
+private:
+	class CTargeting_Map_UI* m_pTargetNotify_UI = { nullptr };
 
-private :
+private:
 	_bool							m_isPickUp_Item = { false };
 #pragma endregion
 
 
 #pragma region 예은 추가
-private :
-	class CRead_Item_UI*		m_pRead_Item_UI = { nullptr };
-	class CItem_Map_UI*			m_pMapItem_UI	= { nullptr };
+private:
+	class CRead_Item_UI* m_pRead_Item_UI = { nullptr };
+	class CItem_Map_UI* m_pMapItem_UI = { nullptr };
 #pragma endregion 
 
 
@@ -88,6 +88,11 @@ public:
 
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void			UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
+
+public://하드용
+	void			Set_Dead_Discription(_bool bDead);
+	void			Set_PortabTo_Blank();
+
 
 private:
 	class CButton_UI*			m_pMapButton = { nullptr };
