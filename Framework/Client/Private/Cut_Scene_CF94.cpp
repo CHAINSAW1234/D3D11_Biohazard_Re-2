@@ -40,8 +40,7 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	_matrix			TransformationMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
-	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Set_Local_Transformation(TransformationMatrix);
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 25);
 
 	return S_OK;
 }
@@ -71,60 +70,26 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 		Start_CutScene();
 	}
 
+	//	1번 시퀀스 240프레임
+
 	_uint			iSeqLev = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Get_SeqLev() };
-	if (1 <= iSeqLev)
+	if (1 == iSeqLev)
 	{
-		CActor*				pActorPL00 = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)] };
-		CModel*				pPL00_Body_Model = { static_cast<CModel*>(pActorPL00->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+		CActor_PartObject* pPartBody = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_BODY));
+		CModel* pBodyModel = { static_cast<CModel*>(pPartBody->Get_Component(TEXT("Com_Model"))) };
 
-		CActor*				pActorPL57= { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)] };
-		CModel*				pPL57_Body_Model = { static_cast<CModel*>(pActorPL57->Get_PartObject(static_cast<_uint>(CActor_PL57::ACTOR_PL57_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+		_float fTrackPosition = { pBodyModel->Get_TrackPosition(0) };
+		if (550.f < fTrackPosition)
+		{
+			CActor_PartObject* pPartHead = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_HEAD));
+			CActor_PartObject* pPartBrokenHead = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_SM69_015)]->Get_PartObject(static_cast<_uint>(CActor_SM69_015::ACTOR_SM69_015_PART::_HEAD));
 
+			pPartHead->Set_Render(false);
+			pPartBrokenHead->Set_Render(true);
+		}
 
-		_matrix			PL57CombiendMatrix = { XMLoadFloat4x4(const_cast<_float4x4*>(pPL57_Body_Model->Get_CombinedMatrix("Null_Offset"))) };
-		_matrix			PL00CombiendMatrix = { XMLoadFloat4x4(const_cast<_float4x4*>(pPL00_Body_Model->Get_CombinedMatrix("Null_Offset"))) };
-
-		pPL00_Body_Model->Set_CombinedMatrix("Null_Offset", XMMatrixIdentity());
-
-		_vector			vSrcScale, vSrcQuaternion, vSrcTranslation;
-		_vector			vDstScale, vDstQuaternion, vDstTranslation;
-
-		/*XMMatrixDecompose(&vSrcScale, &vSrcQuaternion, &vSrcTranslation, PL00CombiendMatrix);
-		XMMatrixDecompose(&vDstScale, &vDstQuaternion, &vDstTranslation, PL57CombiendMatrix);
-
-		_vector			vDeltaTranslation = { XMVectorSetW(vDstTranslation - vSrcQuaternion, 0.f) };
-		_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vSrcQuaternion), XMQuaternionNormalize(vDstQuaternion)) };
-		
-		_matrix			WorldMatrix = { pActorPL00->Get_Transform()->Get_WorldMatrix() };
-		_vector			vPostion = { WorldMatrix.r[CTransform::STATE_POSITION] };
-		
-		_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vDeltaQuaternion) };
-		WorldMatrix.r[CTransform::STATE_POSITION] = { XMVectorSet(0.f, 0.f, 0.f, 1.f) };
-		WorldMatrix = WorldMatrix * RotationMatrix;
-
-		_matrix			ScaleMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) };
-		vPostion = vPostion + XMVector3TransformNormal(vDeltaQuaternion, ScaleMatrix);
-		WorldMatrix.r[CTransform::STATE_POSITION] = vPostion;
-		pActorPL00->Get_Transform()->Set_WorldMatrix(WorldMatrix);*/
-
-		/*_matrix			WorldMatrix = { pActorPL00->Get_Transform()->Get_WorldMatrix() };
-
-		WorldMatrix.r[CTransform::STATE_POSITION] = PL00CombiendMatrix.r[CTransform::STATE_POSITION] * 0.01f - PL57CombiendMatrix.r[CTransform::STATE_POSITION] * 0.01f;
-		pActorPL00->Get_Transform()->Set_WorldMatrix(WorldMatrix);*/
-		
 	}
-
-	else if (0 == iSeqLev)
-	{
-		_matrix				RotationMatrix = { XMMatrixIdentity()};
-		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Set_AdditionalRotation_Root(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY), false, RotationMatrix);
-
-		CActor* pActorPL00 = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)] };
-		CModel* pPL00_Body_Model = { static_cast<CModel*>(pActorPL00->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-
-		pPL00_Body_Model->Set_Surbodinate("COG", false);
-	}
-
+	
 	__super::Priority_Tick(fTimeDelta);
 }
 
@@ -169,6 +134,33 @@ void CCut_Scene_CF94::Start_CutScene()
 {
 	__super::Start_CutScene();
 
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_dailogue.bnk.2.stm_1.mp3"), 0);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_dailogue.bnk.2.stm_3.mp3"), 1);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_music_en.bnk.2_1.mp3"), 2);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_1.mp3"), 3);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_2.mp3"), 4);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_3.mp3"), 5);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_4.mp3"), 6);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_5.mp3"), 7);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_6.mp3"), 8);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_7.mp3"), 9);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_8.mp3"), 10);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_9.mp3"), 11);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_10.mp3"), 12);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_11.mp3"), 13);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_12.mp3"), 14);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_13.mp3"), 15);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_14.mp3"), 16);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_15.mp3"), 17);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_16.mp3"), 18);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_17.mp3"), 19);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_18.mp3"), 20);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_19.mp3"), 21);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_20.mp3"), 22);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_21.mp3"), 23);
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_22.mp3"), 24);
+
+
 	CGameObject*		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
@@ -178,6 +170,16 @@ void CCut_Scene_CF94::Start_CutScene()
 
 	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF94_PROP_TYPE::_SM_60_033)] };
 	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
+
+	CActor_PartObject*		pPartHead = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_HEAD));
+	CActor_PartObject*		pPartBrokenHead = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_SM69_015)]->Get_PartObject(static_cast<_uint>(CActor_SM69_015::ACTOR_SM69_015_PART::_HEAD));
+
+	pPartBrokenHead->Set_Render(false);
+
+	CModel*					pHeadModel = { static_cast<CModel*>(pPartHead->Get_Component(TEXT("Com_Model"))) };
+	CModel*					pBrokenHeadModel = { static_cast<CModel*>(pPartBrokenHead->Get_Component(TEXT("Com_Model"))) };
+
+	pBrokenHeadModel->Link_Bone_Auto(pHeadModel);
 
 	if (nullptr == pShutter)
 		return;
@@ -206,6 +208,7 @@ void CCut_Scene_CF94::Finish_CutScene()
 	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
 	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_SM69_015)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
+	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_HEAD))->Set_Render(false);
 }
 
 HRESULT CCut_Scene_CF94::Add_Actors()

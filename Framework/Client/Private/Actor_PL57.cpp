@@ -47,6 +47,7 @@ HRESULT CActor_PL57::Add_PartObjects()
 	Body_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_PL5700");
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL5700"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL5700"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("Body_PL5700"));
 
 	CActor_PartObject* pPartObject_Body = { CActor_PartObject::Create(m_pDevice, m_pContext, &Body_Desc) };
 	if (nullptr == pPartObject_Body)
@@ -59,6 +60,7 @@ HRESULT CActor_PL57::Add_PartObjects()
 	Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_PL5750");
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL5750"));
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL5750"));
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("Face_PL5750"));
 
 	CActor_PartObject* pPartObject_Head = { CActor_PartObject::Create(m_pDevice, m_pContext, &Head_Desc) };
 	if (nullptr == pPartObject_Head)
@@ -67,6 +69,28 @@ HRESULT CActor_PL57::Add_PartObjects()
 	m_PartObjects[static_cast<_uint>(ACTOR_PL57_PART::_HEAD)] = pPartObject_Head;
 
 	return S_OK;
+}
+
+void CActor_PL57::Set_Idle_Loop()
+{
+	CActor_PartObject*			pPartObject_Head = { m_PartObjects[static_cast<_uint>(ACTOR_PL57_PART::_HEAD)] };
+	CActor_PartObject*			pPartObject_Body = { m_PartObjects[static_cast<_uint>(ACTOR_PL57_PART::_BODY)] };
+
+	CModel*						pHead_Model = { static_cast<CModel*>(pPartObject_Head->Get_Component(TEXT("Com_Model"))) };
+	CModel*						pBody_Model = { static_cast<CModel*>(pPartObject_Body->Get_Component(TEXT("Com_Model"))) };
+
+	/*_matrix						RootCombinedMatrix = { XMLoadFloat4x4(pBody_Model->Get_CombinedMatrix("root")) };
+	_matrix						WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+
+	WorldMatrix = RootCombinedMatrix * WorldMatrix;
+
+	m_pTransformCom->Set_WorldMatrix(WorldMatrix);*/
+
+	pHead_Model->Change_Animation(0, TEXT("Face_PL5750"), 0);
+	pHead_Model->Set_Loop(0, true);
+
+	pBody_Model->Change_Animation(0, TEXT("Body_PL5700"), 0);
+	pBody_Model->Set_Loop(0, true);
 }
 
 CActor_PL57* CActor_PL57::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

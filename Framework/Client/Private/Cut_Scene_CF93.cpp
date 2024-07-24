@@ -7,6 +7,7 @@
 #include "Actor_PL78.h"
 #include "Actor_PL00.h"
 #include "Actor_EM00.h"
+#include "Actor_SM60_035.h"
 #include "Prop_SM60_034_00.h"
 
 #include "Call_Center.h"
@@ -166,6 +167,10 @@ HRESULT CCut_Scene_CF93::SetUp_Animation_Layer()
 	if (FAILED(m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_PL_7800)]->Set_Animation(static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_GUTS), TEXT("CF93_PL7880"), 0)))
 		return E_FAIL;	
 
+	//	For.SM60_035
+	if (FAILED(m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_SM_60_035)]->Set_Animation(static_cast<_uint>(CActor_SM60_035::ACTOR_SM60_035_PART::_BODY), TEXT("CF93_SM60_035_00"), 0)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -196,6 +201,15 @@ HRESULT CCut_Scene_CF93::Add_Actors()
 	Actor_EM0000_Desc.eFaceType = CActor_EM00::ACTOR_EM00_FACE_TYPE::_DEFAULT;
 
 	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_EM0000"), static_cast<_uint>(CF93_ACTOR_TYPE::_EM_0000), &Actor_EM0000_Desc)))
+		return E_FAIL;
+
+
+	CActor::ACTOR_DESC			Actor_SM60_035_Desc;
+	XMStoreFloat4x4(&Actor_SM60_035_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_SM60_035_Desc.iBasePartIndex = static_cast<_uint>(CActor_SM60_035::ACTOR_SM60_035_PART::_BODY);
+	Actor_SM60_035_Desc.iNumParts = static_cast<_uint>(CActor_SM60_035::ACTOR_SM60_035_PART::_END);
+
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_SM60_035"), static_cast<_uint>(CF93_ACTOR_TYPE::_SM_60_035), &Actor_SM60_035_Desc)))
 		return E_FAIL;
 
 	return S_OK;

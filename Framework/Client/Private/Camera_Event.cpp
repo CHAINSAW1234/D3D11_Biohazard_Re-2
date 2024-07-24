@@ -38,7 +38,7 @@ void CCamera_Event::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	if (m_isPlay) {
-		Play_MCAM(fTimeDelta);
+		//	Play_MCAM(fTimeDelta);
 	}
 	else {
 		;
@@ -106,10 +106,13 @@ void CCamera_Event::Change_to_Next(_float fTimeDelta)
 
 	cout << "Change Camara : " << m_iCurrentMCAMIndex << endl;
 
-	MCAM CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex];
-	_float			fDutation = { CurrentMCAM.CAMHeader.frameCount };
+	if ((*m_pCurrentMCAMList).size() > m_iCurrentMCAMIndex)
+	{
+		MCAM CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex];
+		_float			fDutation = { CurrentMCAM.CAMHeader.frameCount };
 
-	cout << "Camera Frames : " << fDutation << endl;
+		cout << "Camera Frames : " << fDutation << endl;
+	}	
 
 #endif
 }
@@ -126,6 +129,7 @@ HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
 	m_isFinished = false;
+	m_isAllFinished = false;
 	m_isPlay = true;
 	m_fTrackPosition = 0.f;
 
@@ -423,7 +427,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / ((_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1] - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame])));
 	}
 
-	m_fFovy = XMConvertToRadians(60.f) * vZoom;
+	m_fFovy = /*XMConvertToRadians(60.f) * */vZoom;
 
 #pragma region 축회전 해봣는데 안댐
 	_vector				vTransaltionWorld = { XMVectorSetW(XMLoadFloat3(&vTranslation), 1.f)};
@@ -451,8 +455,8 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	//	_matrix					WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(0.01f, 0.01f, 0.01f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),  vQuaternion, vTransaltionWorld)};
 	//	WorldMatrix = WorldMatrix* TransformationMatrix;
 
-	WorldMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(XMVectorSet(0.f, 30.f, 0.f, 1.f), XMVectorSet(-5.f, 0.f, -12.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-	m_fFovy = XMConvertToRadians(100.f);
+	/*WorldMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(XMVectorSet(0.f, 30.f, 0.f, 1.f), XMVectorSet(-5.f, 0.f, -12.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	m_fFovy = XMConvertToRadians(100.f);*/
 
 	m_pTransformCom->Set_WorldMatrix(WorldMatrix);
 #pragma endregion

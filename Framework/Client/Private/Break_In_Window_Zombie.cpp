@@ -82,7 +82,9 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 		{
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
 			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_UP);
-
+			m_pBlackBoard->Get_AI()->Set_OutDoor(false);
+			m_pBlackBoard->Release_Nearest_Window();
+			m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 			return false;
 		}
 	}
@@ -142,10 +144,6 @@ void CBreak_In_Window_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
-
-	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
-	m_pBlackBoard->Get_AI()->Set_OutDoor(false);
-	m_pBlackBoard->Release_Nearest_Window();
 }
 
 void CBreak_In_Window_Zombie::Change_Animation()

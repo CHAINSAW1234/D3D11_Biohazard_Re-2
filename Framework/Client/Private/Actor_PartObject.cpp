@@ -235,6 +235,8 @@ void CActor_PartObject::Set_Animation_Seq(_uint iPlayingIndex, _uint iSeqLevel)
 		return;
 
 	string				strAnimTag = { iter->second[iSeqLevel] };
+	if (strAnimTag == "")
+		return;
 
 #ifdef _DEBUG
 
@@ -493,6 +495,9 @@ HRESULT CActor_PartObject::Sort_Animation_Seq()
 	{
 		if (strAnimLayerTag == TEXT("Default") || strAnimLayerTag == TEXT(""))
 			continue;
+
+		if (strAnimLayerTag.find(TEXT("CF")) == wstring::npos)
+			continue; 
 
 		list<string>			AnimationTags = { m_pModelCom->Get_Animation_Tags(strAnimLayerTag) };
 		_uint					iLevel = { 0 };

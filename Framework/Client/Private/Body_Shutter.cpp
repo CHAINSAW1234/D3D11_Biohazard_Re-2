@@ -49,6 +49,8 @@ HRESULT CBody_Shutter::Initialize(void* pArg)
 	if (m_strModelComponentName.find(L"60_033") != string::npos)
 	{
 		//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+
+		m_pModelCom->Add_Animations(TEXT("SM42_60_033"), TEXT("SM42_60_033"));
 	}
 #endif
 	return S_OK;
@@ -346,29 +348,36 @@ void CBody_Shutter::Shutter_033_Late_Tick(_float fTimeDelta)
 	switch (*m_e033State)
 	{
 	case CShutter::SHUTTER_033_CLOSED:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_Shutter01A_End (1 frames)");
 		break;
 	case CShutter::SHUTTER_033_FULL_CLOSED:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_PipeShutter01A_Full_Closed (1 frames)");
 		break;
 	case CShutter::SHUTTER_033_FULL_OPEN:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_PipeShutter01A_Full_Open (560 frames)");
 		break;
 	case CShutter::SHUTTER_033_FULL_OPENED:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_PipeShutter01A_Full_Opened (1 frames)");
 		break;
 	case CShutter::SHUTTER_033_HALF_CLOSED:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_PipeShutter01A_Half_Closed (1 frames)");
 		break;
 	case CShutter::SHUTTER_033_HALF_OPEN:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_PipeShutter01A_Half_Open (100 frames)");
 		break;
 	case CShutter::SHUTTER_033_HALF_OPENED:
 		if (m_pModelCom->isFinished(0))
 			Change_Sound(TEXT("sound_Map_sm60_hall_pipe_shutter_e2_2.mp3"), 0);
 		else
 			Change_Sound(TEXT("sound_Map_sm60_hall_pipe_shutter_e2_6.mp3"), 0);
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
+		m_pModelCom->Change_Animation(0, TEXT("SM42_60_033"), "sm60_033_PipeShutter01A_Half_Opened (1 frames)");
 		break;
 	}
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);

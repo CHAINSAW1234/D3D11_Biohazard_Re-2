@@ -24,6 +24,9 @@ private:
 	virtual HRESULT			Add_PartObjects();
 
 public:
+	void					Set_Idle_Loop();
+
+public:
 	static CActor_PL57* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;

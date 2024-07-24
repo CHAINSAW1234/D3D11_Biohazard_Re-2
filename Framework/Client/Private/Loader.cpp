@@ -40,7 +40,9 @@
 #include "Actor_EM00.h"
 
 #include "Actor_WP4530.h"
+#include "Actor_SM60_035.h"
 #include "Actor_SM69_015.h"
+#include "Actor_SM42_198.h"
 
 #include "Prop_SM60_033_00.h"
 #include "Prop_SM60_034_00.h"
@@ -50,6 +52,7 @@
 #include "Cut_Scene_CF93.h"
 #include "Cut_Scene_CF94.h"
 #include "Cut_Scene_CF95.h"
+#include "Cut_Scene_CF120.h"
 
 /* Decal*/
 #include "Decal_SSD.h"
@@ -1288,6 +1291,13 @@ HRESULT CLoader::Create_Prototypes_Actor()
 		CActor_SM69_015::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM60_035"),
+		CActor_SM60_035::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM42_198"),
+		CActor_SM42_198::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_033"),
@@ -1317,6 +1327,10 @@ HRESULT CLoader::Create_Prototypes_CutScene()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF95"),
 		CCut_Scene_CF95::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF120"),
+		CCut_Scene_CF120::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
@@ -2585,6 +2599,26 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma endregion
 
+#pragma region	//		SM60_035
+
+	/* Prototype_Component_Model_SM60_035 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM60_035"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm60_035/sm60_035.fbx",
+			XMMatrixIdentity()))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region	//		SM42_198
+
+	/* Prototype_Component_Model_SM42_198 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM42_198"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm42_198/sm42_198.fbx",
+			XMMatrixIdentity()))))
+		return E_FAIL;
+
+#pragma endregion
+
 #pragma endregion		//	CutScene_Model
 
 	m_strLoadingText = TEXT("Now Loading ... Animations");
@@ -2940,6 +2974,22 @@ HRESULT CLoader::Load_Animations()
 			return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Gimmick_Door"), "../Bin/Resources/Animations/Body_Zombie/Gimmick/Door/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region PL5700
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_PL5700"), "../Bin/Resources/Animations/pl5700/Body/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Face_PL5750"), "../Bin/Resources/Animations/pl5700/Face/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region SM60_033
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("SM42_60_033"), "../Bin/Resources/Animations/sm60_033/")))
 		return E_FAIL;
 
 #pragma endregion

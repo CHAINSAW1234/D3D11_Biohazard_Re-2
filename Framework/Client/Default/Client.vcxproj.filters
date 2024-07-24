@@ -817,8 +817,11 @@
     <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM69_015">
       <UniqueIdentifier>{72ef3a79-bf2b-4b58-b5e2-9e8bbb3ccdea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_">
-      <UniqueIdentifier>{3efa00f6-2520-497f-9bf3-8ee9c67a7207}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM42_198">
+      <UniqueIdentifier>{4e2e756b-372f-4f6c-9465-f558ec459415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM60_035">
+      <UniqueIdentifier>{5aa279eb-faba-4b07-9c59-cee1bf83d619}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1588,6 +1591,15 @@
     <ClInclude Include="..\Public\Actor_SM69_015.h">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM69_015</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF120.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF120</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_SM42_198.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM42_198</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_SM60_035.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM60_035</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2316,6 +2328,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Actor_SM69_015.cpp">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM69_015</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF120.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF120</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_SM42_198.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM42_198</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_SM60_035.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM60_035</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

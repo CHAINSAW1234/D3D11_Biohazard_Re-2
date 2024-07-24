@@ -47,30 +47,40 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 	if (false == m_isPlaying)
 		return;
 
-	_bool		isNonFinishedCurrentAnim = { false };
-	/*for (auto& pActor : m_Actors)
-	{
-		if (true == isNonFinishedCurrentAnim)
-			break;
 
-		if (false == pActor->Is_Finished_Animation_All_Part())
+	if (true == m_isPlaying)
+	{
+		m_pEvent_Camera->Play_MCAM(fTimeDelta);
+
+		if (true == m_pEvent_Camera->Is_All_Finsihed())
 		{
-			isNonFinishedCurrentAnim = true;
+			m_isPlaying = false;
+
+			cout << "Finish" << endl;
+
+			Finish_CutScene();
+		}
+		else if (true == m_pEvent_Camera->Is_Finsihed())
+		{
+			cout << "Next" << endl;
+
+			for (auto& pActor : m_Actors)
+			{
+				pActor->Set_Next_Animation_Sequence();
+			}
+
+			for (auto& pProp : m_PropControllers)
+			{
+				pProp->Set_Next_Animation_Sequence();
+			}
+
+			m_pEvent_Camera->Change_to_Next();
 		}
 	}
 
-	for (auto& pProp : m_PropControllers)
-	{
-		if (true == isNonFinishedCurrentAnim)
-			break;
-
-		if (false == pProp->Is_Finished_Animation())
-		{
-			isNonFinishedCurrentAnim = true;
-		}
-	}*/
+	//	_bool		isNonFinishedCurrentAnim = { false };
 	
-	if (false == m_pEvent_Camera->Is_Finsihed())
+	/*if (false == m_pEvent_Camera->Is_Finsihed())
 	{
 		isNonFinishedCurrentAnim = true;
 	}
@@ -129,7 +139,7 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 
 			m_pEvent_Camera->Change_to_Next();
 		}		
-	}
+	}*/
 
 	Priority_Tick_Actors(fTimeDelta);
 }

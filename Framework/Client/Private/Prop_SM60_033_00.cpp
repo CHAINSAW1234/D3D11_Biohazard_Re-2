@@ -56,8 +56,8 @@ void CProp_SM60_033::Start()
 		return;
 	}
 
-	CShutter*				pShutter = { static_cast<CShutter*>(m_pPropObject) };
-	pShutter->Set_OutOfControll(true);
+	/*CShutter*				pShutter = { static_cast<CShutter*>(m_pPropObject) };
+	pShutter->Set_OutOfControll(true);*/
 
 	m_pBodyModel = pBody_Model;
 	Safe_AddRef(m_pBodyModel);

@@ -365,6 +365,9 @@ HRESULT CLevel_GamePlay::Ready_CutScene()
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF95"))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF120"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

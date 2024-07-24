@@ -27,13 +27,15 @@ public:
 	HRESULT						Set_PlayCamlist(const wstring& strCamTag);
 	HRESULT						Add_CamList(const wstring& strCamLayerTag, const wstring& strFilePath);
 
+public:
+	void						Play_MCAM(_float fTimeDelta);
+
 private:
 	Header						Read_Header(ifstream& inputFileStream);
 	MCAMHeader					Read_CamHeader(ifstream& inputFileStream, streampos Position);
 
 	vector<MCAM>*				Find_MCAMList(const wstring& strCamListTag);
 	MCAM*						Find_MCAM(const wstring& strCamListTag, _uint iIndex);
-	void						Play_MCAM(_float fTimeDelta);
 
 	void						Reset();
 	void						Change_to_Next(_float fTimeDelta = 0.f);

@@ -30,6 +30,13 @@ HRESULT CShutter::Initialize(void* pArg)
 	{
 		m_eType = SHUTTER_033;
 		CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM60_033);
+
+		_vector			vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+		_vector			vMoveDirection = { XMVectorSet(0.25f, -0.05f, 0.f, 0.f) };
+
+		vPosition = vPosition + vMoveDirection;
+
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
 	}
 	else if (m_tagPropDesc.strGamePrototypeName.find("60_034") != string::npos)
 	{
