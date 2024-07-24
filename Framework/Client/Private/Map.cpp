@@ -230,7 +230,6 @@ HRESULT CMap::Render_LightDepth_Dir()
 				return E_FAIL;
 
 			if (m_tagPropDesc.bAnim) {
-				continue;
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 
