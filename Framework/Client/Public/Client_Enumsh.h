@@ -252,6 +252,7 @@ namespace Client
 		OBJ_LEVER,
 		OBJ_MOVINGSHELF,
 		OBJ_CARDREADER,
+		OBJ_CHAIR,
 		OBJ_END
 	};
 

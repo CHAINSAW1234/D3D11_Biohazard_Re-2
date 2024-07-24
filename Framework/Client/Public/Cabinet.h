@@ -88,13 +88,13 @@ private:
 	void						Electric_Active();
 	void						Weapon_Active();
 	void						Zombie_Active();
-
 public:
 	virtual _float4		Get_Object_Pos() override;
 	void					Set_Lock_False() { m_bLock = false; }
 	_int					Get_Cabinet_Type() {return m_eCabinetType; }
 	string				Get_Electric_Tag() { return m_strElectTag; }
 	void					Set_Electric_Open() { m_fDelayLockTime = 3.f; }
+	void					Set_Lock() { m_bLock = true; }
 private:
 	_bool					m_bLeonDesk = { false };
 	_bool					m_bAction = { false };

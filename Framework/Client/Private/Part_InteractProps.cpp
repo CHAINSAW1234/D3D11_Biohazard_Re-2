@@ -61,6 +61,15 @@ void CPart_InteractProps::Start()
 	m_pModelCom->Release_Dump();
 	m_pModelCom->Release_Decal_Dump();
 #pragma endregion
+	_float3				vDirection = { };
+
+
+	if (m_strModelComponentName.find(L"Anim") != wstring::npos)
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+		m_pModelCom->Play_Animations(m_pParentsTransform, 0.1f, &vDirection);
+	}
+
 }
 
 void CPart_InteractProps::Check_Col_Sphere_Player()

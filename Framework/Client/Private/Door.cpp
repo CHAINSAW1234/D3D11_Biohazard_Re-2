@@ -156,7 +156,7 @@ void CDoor::Tick(_float fTimeDelta)
 		return;
 	}
 
-
+	
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
@@ -169,13 +169,6 @@ void CDoor::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 	{
-		//if (nullptr != m_pSelector)
-		//{
-		//	m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-		//	m_pSelector = nullptr;
-		//}
-
 		return;
 	}
 
@@ -942,6 +935,15 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	{
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 		{
+		/*	if (m_pGameInstance->Get_KeyState(VK_F1) == DOWN)
+			{
+				m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+				Camera_Active(PART_KEY, _float3(-0.0001f, 0.0001f, -0.8f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+
+
+
+			}*/
+
 			if (m_bCol[INTER_COL_NORMAL][COL_STEP2])
 				m_bActivity = true;
 			if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
@@ -975,9 +977,9 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		_float fScala = Radian_To_Player();
 
 		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-			Camera_Active(PART_EMBLEM, _float3(-0.015f, 0.075f, -0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+			Camera_Active(PART_EMBLEM, _float3(-0.025f, 0.075f, -0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 		else
-			Camera_Active(PART_EMBLEM, _float3(0.015f, 0.075f, 0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+			Camera_Active(PART_EMBLEM, _float3(0.025f, 0.075f, 0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 
 	}
 }
