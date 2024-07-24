@@ -180,9 +180,6 @@ HRESULT CProps::Render()
 
 HRESULT CProps::Render_LightDepth_Dir()
 {
-	if (m_bRender == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -222,14 +219,6 @@ HRESULT CProps::Render_LightDepth_Spot()
 	if (m_bRender == false)
 		return S_OK;
 
-	if (m_bLocalized == false)
-	{
-		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION),0.2f))
-		{
-			return S_OK;
-		}
-	}
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -249,8 +238,6 @@ HRESULT CProps::Render_LightDepth_Spot()
 
 		for (auto& i : NonHideIndices)
 		{
-
-
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -259,9 +246,7 @@ HRESULT CProps::Render_LightDepth_Spot()
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
-
 		}
-
 	}
 
 	return S_OK;

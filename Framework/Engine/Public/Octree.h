@@ -109,6 +109,13 @@ public:
 	{
 		return	m_bRender;
 	}
+	void								ClearNode()
+	{
+		for (size_t i = 0; i < 8; ++i)
+		{
+			m_pOctreeNodes[i]->m_vecEntryNode.clear();
+		}
+	}
 public:
 	bool												m_bSubDivided;
 	float												m_Width;

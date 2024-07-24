@@ -268,33 +268,13 @@ void CZombie::Tick(_float fTimeDelta)
 	if (m_bEvent)
 		m_eBeHavior_Col;
 
+#pragma region 절두체 컬링
 	if (m_bRagdoll == false)
 	{
 		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.f))
 		{
 			for (auto& it : m_PartObjects)
 			{
-				if(it)
-					it->Set_Render(false);
-			}
-			m_bRender = false;
-		}
-		else
-		{
-			for (auto& it : m_PartObjects)
-			{
-				if (it)
-					it->Set_Render(true);
-			}
-			m_bRender = true;
-		}
-	}
-	else
-	{
-		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.f))
-		{
-			for (auto& it : m_PartObjects)
-			{
 				if (it)
 					it->Set_Render(false);
 			}
@@ -310,6 +290,7 @@ void CZombie::Tick(_float fTimeDelta)
 			m_bRender = true;
 		}
 	}
+#pragma endregion
 
 	if (!Distance_Culling())
 	{
@@ -542,11 +523,58 @@ void CZombie::Tick(_float fTimeDelta)
 									m_bRagdoll = true;
 
 									Play_Random_Broken_Head_Sound();
-									
+
 									SetRagdoll_StartPose();
 
 									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
 									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+								}
+							}
+						}
+
+						if (eType == COLLIDER_TYPE::HEAD)
+						{
+							if (m_bBigAttack && IsPlayerNearBy())
+							{
+								m_pPart_Breaker->Break(BREAK_PART::_HEAD);
+
+								m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+								if (nullptr != m_PartObjects[CMonster::PART_BODY])
+									m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+
+								m_bPartial_Ragdoll = true;
+
+								m_bHeadBlow = true;
+								m_bRagdoll = true;
+
+								Play_Random_Broken_Head_Sound();
+
+								SetRagdoll_StartPose();
+
+								auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+								m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+							}
+						}
+						else
+						{
+							if (m_bBigAttack && IsPlayerNearBy())
+							{
+								auto iProb = m_pGameInstance->GetRandom_Int(0, 100);
+
+								if(iProb > 40)
+								{
+									m_pPart_Breaker->Break(eBreakType);
+
+									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+									if (nullptr != m_PartObjects[CMonster::PART_BODY])
+										m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+
+									m_bPartial_Ragdoll = true;
+
+									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+									m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
+									m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
 								}
 							}
 						}
@@ -624,13 +652,13 @@ void CZombie::Late_Tick(_float fTimeDelta)
 	{
 		/*For Decal*/
 #ifdef DECAL
-		if(m_bDecal_Hit)
+		if (m_bDecal_Hit)
 			Ready_Decal();
 
 		SetBlood();
 #endif
 	}
-		
+
 	if (m_bHeadBlow)
 	{
 		SetBlood_HeadBlow();
@@ -1470,16 +1498,16 @@ HRESULT CZombie::Initialize_Sounds()
 
 HRESULT CZombie::Add_RagDoll_OtherParts()
 {
-	CRagdoll_Physics*			pRagDoll = { static_cast<CBody_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_RagDoll_Ptr() };
+	CRagdoll_Physics* pRagDoll = { static_cast<CBody_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_RagDoll_Ptr() };
 	if (nullptr == pRagDoll)
 		return E_FAIL;
 
 	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Set_RagDoll_Ptr(pRagDoll);
 	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Set_RagDoll_Ptr(pRagDoll);
 
-	CModel*						pBody_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_Component(TEXT("Com_Model"))) };
-	CModel*						pShirt_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Get_Component(TEXT("Com_Model"))) };
-	CModel*						pPants_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Get_Component(TEXT("Com_Model"))) };
+	CModel* pBody_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_Component(TEXT("Com_Model"))) };
+	CModel* pShirt_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Get_Component(TEXT("Com_Model"))) };
+	CModel* pPants_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Get_Component(TEXT("Com_Model"))) };
 
 	if (nullptr == pBody_Model || nullptr == pShirt_Model || nullptr == pPants_Model)
 		return E_FAIL;
@@ -1787,7 +1815,7 @@ HRESULT CZombie::Add_SoundTags_Hit_EF()
 		HitSoundTags.push_back(strTag);
 	}
 	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_HIT, HitSoundTags);
-	
+
 	return S_OK;
 }
 
@@ -2143,12 +2171,12 @@ void CZombie::Play_Random_Hit_Sound()
 	if (iNumHitSound == 0)
 		return;
 
-	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumHitSound) -1) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumHitSound) - 1) };
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(ZOMBIE_MIN_VOLUME_HIT, ZOMBIE_MAX_VOLUME_HIT) };
 
 	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));
-	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));	
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));
 }
 
 void CZombie::Play_Random_Stun_Sound()
@@ -3071,7 +3099,7 @@ void CZombie::Ready_Effect()
 	{
 		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
 		pBlood_Drop->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
-		m_vecBlood_Drop.push_back(pBlood_Drop);	
+		m_vecBlood_Drop.push_back(pBlood_Drop);
 		pBlood_Drop->Start();
 	}
 
@@ -3138,7 +3166,7 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 		m_vecHit[i]->Tick(fTimeDelta);
 	}
 
-	if(m_pImpact)
+	if (m_pImpact)
 		m_pImpact->Tick(fTimeDelta);
 }
 
@@ -3164,7 +3192,7 @@ void CZombie::Late_Tick_Effect(_float fTimeDelta)
 		m_vecHit[i]->Late_Tick(fTimeDelta);
 	}
 
-	if(m_pImpact)
+	if (m_pImpact)
 		m_pImpact->Late_Tick(fTimeDelta);
 }
 
@@ -3610,6 +3638,19 @@ void CZombie::Set_ManualMove(_bool isManualMove)
 		vPosition.y += CONTROLLER_GROUND_GAP_ZOMBIE;
 		m_pController->SetPosition(vPosition);
 	}
+}
+
+_bool CZombie::IsPlayerNearBy()
+{
+	auto pPlayer = m_pBlackBoard->Get_Player();
+	auto vPlayerPos = pPlayer->GetPositionVector();
+	auto vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	_vector vDelta = vPlayerPos - vPos;
+	if (XMVectorGetX(XMVector3Length(vDelta)) < 2.f)
+		return true;
+	else
+		return false;
 }
 
 CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

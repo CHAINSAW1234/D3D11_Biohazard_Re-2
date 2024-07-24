@@ -1211,20 +1211,6 @@ HRESULT CBody_Zombie::Add_Components()
 
 HRESULT CBody_Zombie::Bind_ShaderResources()
 {
-	/*if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}*/
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
