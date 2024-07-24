@@ -194,7 +194,7 @@ HRESULT CItem_Mesh_Viewer::Render()
 	else {
 		pShader = m_pShaderCom;
 	}
-	_float4 vup = m_pCameraFree->Get_Transform()->Get_State_Float4(CTransform::STATE_UP);
+	_float4 vup = -m_pCameraFree->Get_Transform()->Get_State_Float4(CTransform::STATE_UP);
 
 	if (FAILED(pShader->Bind_RawValue("g_vLightDir", &vup, sizeof(_float4))))
 		return E_FAIL;

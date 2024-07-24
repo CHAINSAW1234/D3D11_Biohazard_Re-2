@@ -206,6 +206,7 @@ void CMap::Start()
 
 HRESULT CMap::Render_LightDepth_Dir()
 {
+	//return S_OK;
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
