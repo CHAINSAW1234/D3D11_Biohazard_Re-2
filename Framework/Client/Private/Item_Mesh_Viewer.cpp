@@ -183,7 +183,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 			m_eOperType = EXAMIN_PUZZLE;
-			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector() - XMVectorSet(0.f, 0.4f, 0.f, 0.f));
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector() - XMVectorSet(0.f, -10.f, 0.f, 0.f));
 			//m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
 			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
 			m_fDistCamZ = 0.18f;
@@ -1133,7 +1133,16 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 		return E_FAIL;
 
 	else
+	{
+		wstring magazin = m_vecModelTag[vp70powerup];
+		wstring power = m_vecModelTag[vp70longmagazine];
+
+		m_vecModelTag[vp70powerup] = power;
+		m_vecModelTag[vp70longmagazine] = magazin;
+
 		return S_OK;
+	}
+		
 }
 
 void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
@@ -1515,7 +1524,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 	m_pTransformCom->Set_Scaled(vScaled.x, vScaled.y, vScaled.z);
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(0.f, 0.4f, 0.0f, 0.f));
+	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(0.f, 10.f, 0.0f, 0.f));
 }
 
 void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)

@@ -1244,7 +1244,7 @@ void CInventory_Manager::InteractUseItem()
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::spadekey01a:
-		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		//Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::cardkeylv101a:
@@ -1271,7 +1271,7 @@ void CInventory_Manager::InteractUseItem()
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::diakey01a:
-		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		//Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::virginmedal02a:
