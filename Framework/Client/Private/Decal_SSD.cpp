@@ -38,23 +38,20 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 
 void CDecal_SSD::Tick(_float fTimeDelta)
 {
-	if (m_bRender)
-	{
-		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
-		{
-			m_bRender = false;
-		}
-		else
-		{
-			m_bRender = true;
-		}
-	}
 }
 
 void CDecal_SSD::Late_Tick(_float fTimeDelta)
 {
 	if(m_bRender)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_DECAL, this);
+	{
+		if(IsPlayerNearBy())
+		{
+			if (m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
+			{
+				m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_DECAL, this);
+			}
+		}
+	}
 }
 
 HRESULT CDecal_SSD::Render()
@@ -108,6 +105,19 @@ void CDecal_SSD::PlaySound()
 
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, 0);
 	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 0, 0.2f);
+}
+
+_bool CDecal_SSD::IsPlayerNearBy()
+{
+	auto pPlayer = m_pGameInstance->GetPlayer();
+	auto vPlayerPos = pPlayer->GetPositionVector();
+	auto vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	_vector vDelta = vPlayerPos - vPos;
+	if (XMVectorGetX(XMVector3Length(vDelta)) < CULLING_DISTANCE)
+		return true;
+	else
+		return false;
 }
 
 HRESULT CDecal_SSD::Add_Components()

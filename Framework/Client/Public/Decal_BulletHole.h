@@ -28,6 +28,7 @@ public:
 	void					SetPosition(_float4 vPos);
 	void					LookAt(_float4 vDir);
 	virtual void			PlaySound();
+	_bool					IsPlayerNearBy();
 protected:
 	class CModel*			m_pModelCom = { nullptr };
 	class CShader*			m_pShaderCom = { nullptr };
@@ -42,6 +43,7 @@ protected:
 	_float4					m_vNormal;
 	_int					m_iFrame = { 0 };
 	_bool					m_bBlood = { false };
+
 protected:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();

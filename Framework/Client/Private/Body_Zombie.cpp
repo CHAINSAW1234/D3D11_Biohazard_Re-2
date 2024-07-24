@@ -139,6 +139,9 @@ HRESULT CBody_Zombie::Render()
 		}
 		else
 		{
+			if (m_bRender == false && m_bRagdoll == false)
+				continue;
+
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 		}
@@ -247,6 +250,9 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 			}
 			else
 			{
+				if (m_bRender == false && m_bRagdoll == false)
+					continue;
+
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 			}
@@ -302,6 +308,9 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 			}
 			else
 			{
+				if (m_bRender == false && m_bRagdoll == false)
+					continue;
+
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 			}
@@ -353,6 +362,9 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 			}
 			else
 			{
+				if (m_bRender == false && m_bRagdoll == false)
+					continue;
+
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 			}
