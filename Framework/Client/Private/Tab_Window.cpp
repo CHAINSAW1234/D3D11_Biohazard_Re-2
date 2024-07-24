@@ -214,7 +214,11 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 	case Client::CTab_Window::EXAMINE: {
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
-		m_pItem_Discription->Late_Tick(fTimeDelta);
+		if(CItem_Mesh_Viewer::EXAMIN_PUZZLE != m_pItem_Mesh_Viewer->Get_OperationType())
+		{
+			m_pItem_Discription->Late_Tick(fTimeDelta);
+		}
+		
 		break;
 	}
 
@@ -990,6 +994,16 @@ ITEM_NUMBER CTab_Window::Get_Item_On_HotKey(_uint iHotKeyNum)
 void CTab_Window::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 {
 	return 	m_pInventory_Manager->UseItem(eTargetItemNum, iUsage);
+}
+
+void CTab_Window::Set_Dead_Discription(_bool bDead)
+{
+	m_pItem_Discription->Set_Dead(bDead);
+}
+
+void CTab_Window::Set_PortabTo_Blank()
+{
+	m_pInventory_Manager->Set_Port_To_Blank();
 }
 
 void CTab_Window::Hotkey_PopUp()
