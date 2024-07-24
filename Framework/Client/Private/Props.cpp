@@ -95,7 +95,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
-	if (m_bVisible  /*1*//* && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/)
+	if (m_bVisible)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 

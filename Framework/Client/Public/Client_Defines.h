@@ -44,7 +44,7 @@ using namespace Client;
 #pragma region For Spot Light Frustrum Culling
 
 //#define SPOT_FRUSTRUM_CULLING
-//#define ANIM_PROPS_SPOT_SHADOW
+#define ANIM_PROPS_SPOT_SHADOW
 
 #pragma endregion
 	

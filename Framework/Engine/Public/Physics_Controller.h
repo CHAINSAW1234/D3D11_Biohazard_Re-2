@@ -16,6 +16,7 @@ public:
 	virtual HRESULT										Initialize(void* pArg);
 	virtual void										Simulate(_float fTimeDelta);
 	virtual void										Simulate_Ragdoll(_float fTimeDelta);
+	virtual void										Simulate_PartialRagdoll(_float fTimeDelta);
 	void												Create_Plane(_float4 Pos);
 public:
 	static CPhysics_Controller*							Create();
