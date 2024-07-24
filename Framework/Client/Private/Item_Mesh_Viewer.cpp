@@ -353,6 +353,8 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			m_eOperType = EXAMIN_PUZZLE;
 			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
 			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			//m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
+			//m_fDistCamZ = 0.18f;
 			m_iSelected_Button = 0;
 			break;
 		}
