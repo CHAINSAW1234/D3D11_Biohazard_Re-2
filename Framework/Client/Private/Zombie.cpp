@@ -566,18 +566,19 @@ void CZombie::Tick(_float fTimeDelta)
 
 								if(iProb > 40)
 								{
-									m_pPart_Breaker->Attack_STG(eBreakType);
+									if(m_pPart_Breaker->Attack_STG(eBreakType))
+									{
+										m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+										if (nullptr != m_PartObjects[CMonster::PART_BODY])
+											m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
 
-									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
-									if (nullptr != m_PartObjects[CMonster::PART_BODY])
-										m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+										m_bPartial_Ragdoll = true;
 
-									m_bPartial_Ragdoll = true;
-
-									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
-									m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
-									m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
+										auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+										m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+										m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
+										m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
+									}
 								}
 							}
 						}
