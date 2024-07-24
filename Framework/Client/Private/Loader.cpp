@@ -12,6 +12,7 @@
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+#include "Knife.h"
 #include "Weapon.h"
 #include "FlashLight.h"
 #include "Throwing_Weapon.h"
@@ -467,6 +468,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Part_Hair_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Hair_Player"),
 		CHair_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Knife"),
+		CKnife::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_Weapon */
@@ -1941,11 +1947,21 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
+
+	_matrix			KnifeMatrix = { XMMatrixIdentity()};
+	//LightTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(-20.f));
 	/* Prototype_Component_Model_LeonHair */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonHair"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
-			LeonTransformMatrix))))
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Knife"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/Knife/Knife.fbx",
+			KnifeMatrix))))
 		return E_FAIL;
+
+	/* Prototype_Component_Model_HandGun */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
 
 	/* Prototype_Component_Model_HandGun */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),

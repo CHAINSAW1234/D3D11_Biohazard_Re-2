@@ -23,6 +23,7 @@ public:
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
+		PART_KNIFE,
 		PART_LIGHT,
 		PART_END
 	};
