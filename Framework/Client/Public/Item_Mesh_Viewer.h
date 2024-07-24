@@ -13,11 +13,12 @@ BEGIN(Client)
 class CItem_Mesh_Viewer final : public CGameObject
 {
 public:
-	enum OPERATION_TYPE { EXAMIN, PICKUPITEM, SECON_PICKUPITEM, EXAMIN_PUZZLE, OPER_TYPE_END };
+	enum OPERATION_TYPE { EXAMIN, PICKUPITEM, SECON_PICKUPITEM, EXAMIN_PUZZLE, PUZZLE_SUCCESS ,OPER_TYPE_END };
 
 private:
 	enum BUTTON_STATE { BUTTON_IDLE, PRESSED, BUTTON_STATE_END };
 	enum LAMP_STATE { LAMP_IDLE, SUCCEED, FAILED, LAMP_STATE_END };
+	enum PUZZLE_PROGRESS { PUZZLE_IDLE, PUZZLE_SUCCEEC, PUZZLE_FAILED, PUZZLE_PROGRESS_END };
 
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,8 +37,9 @@ private:
 	void PopUp_Operation(_float fTimeDelta);
 	void Idle_Operation(_float fTimeDelta);
 	void Hide_Operation(_float fTimeDelta);
-
-	_bool Check_Puzzle_Success();
+	
+	//-1:실패 0:진행 1:성공
+	_int Check_Puzzle_Success(); 
 	void PS_Button_Resset();
 
 public:
@@ -58,7 +60,7 @@ private:
 	ITEM_NUMBER			m_eItem_Number = { ITEM_NUMBER_END };
 	UI_OPERRATION		m_eViewer_State = { STATE_END };
 	OPERATION_TYPE		m_eOperType = { OPER_TYPE_END };
-
+	PUZZLE_PROGRESS		m_ePZ_Progress = { PUZZLE_PROGRESS_END };
 
 	_float				m_fDistCamZ = { 0.f };
 	_float				m_fDistCamX = { 0.f };
@@ -80,6 +82,7 @@ private:
 
 	_int				m_iSelected_Button = { -1 };
 	_uint				m_iPuzzle_Progress = 0;
+	_uint				m_iProgressStartPoint = 0;
 
 
 	string				m_LampTags[8];
@@ -87,13 +90,11 @@ private:
 	string				m_ButtonBoneTags[8];
 
 	_uint				m_iInputAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	_uint				m_iRoundAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	_uint				m_iCorrectAnswer[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+	_uint				m_iCorrectAnswer[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 
 	BUTTON_STATE		m_eButtonStates[8] = { BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END };
 	LAMP_STATE			m_eLampStates[8] = { LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END };
-
 
 private:
 	HRESULT Add_Components();

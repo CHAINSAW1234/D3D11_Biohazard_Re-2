@@ -764,10 +764,11 @@ float Cal_Shadow(float2 vTexcoord)
         if (g_fSpotLightOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
         {
             float fDistance = length(vLightDir);
-            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
+            
+            //float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
             float fAtt = saturate(1.f - ((fDistance * fDistance) / (g_fSpotLightRange * g_fSpotLightRange))); //범위 줘서 끝 범위에서는 연해지게 
             fAtt *= fAtt;
-           // fAtt *= (fIntensity * fIntensity);
+            //fAtt *= (fIntensity * fIntensity);
             
             if (fAtt > 0)
             {
