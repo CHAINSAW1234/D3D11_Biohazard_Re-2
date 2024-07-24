@@ -313,10 +313,6 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 		}
 	}
-	else
-	{
-		m_bDistance_Culling = true;
-	}
 
 	__super::Tick(fTimeDelta);
 
@@ -641,8 +637,15 @@ void CZombie::Late_Tick(_float fTimeDelta)
 		fTimeDelta = 0.f;
 	}
 
-	if (!Distance_Culling())
-		return;
+	if(m_bDistance_Culling)
+	{
+		if (!Distance_Culling())
+			return;
+	}
+	else
+	{
+		m_bDistance_Culling = true;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 
