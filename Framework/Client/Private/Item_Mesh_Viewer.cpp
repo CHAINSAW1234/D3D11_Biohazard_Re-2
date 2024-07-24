@@ -81,23 +81,24 @@ void CItem_Mesh_Viewer::Start()
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
 
-	m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_53719dd";
-	m_LampTags[1] = "sm77002portablesafe01a00md_1_Group_0_Sub_3__sm77_002_Po_f15fc86";
-	m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_7883b5a";
+	m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
+	m_LampTags[1] = "sm77002portablesafe01a00md_1_Group_0_Sub_3__sm77_002_Po_5926c14";
+	m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
 	m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
 	m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
-	m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_ef5a5e5";
+	m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
 	m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
 	m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
-	
+
 	m_ButtonTags[0] = "sm77002portablesafe01a00md_1_Group_1_Sub_1__sm77_002_Po_b6f4fe2";
 	m_ButtonTags[1] = "sm77002portablesafe01a00md_1_Group_2_Sub_1__sm77_002_Po_5f4e97d";
 	m_ButtonTags[2] = "sm77002portablesafe01a00md_1_Group_3_Sub_1__sm77_002_Po_85f6203";
 	m_ButtonTags[3] = "sm77002portablesafe01a00md_1_Group_4_Sub_1__sm77_002_Po_f030480";
 	m_ButtonTags[4] = "sm77002portablesafe01a00md_1_Group_5_Sub_1__sm77_002_Po_53e75b6";
 	m_ButtonTags[5] = "sm77002portablesafe01a00md_1_Group_6_Sub_1__sm77_002_Po_0577076";
-	m_ButtonTags[6] = "sm77002portablesafe01a00md_1_Group_7_Sub_1__sm77_002_Po_dc05f72";
+	m_ButtonTags[6] = "sm77002portablesafe01a00md_1_Group_7_Sub_1__sm77_002_Po_b9c21fc";
 	m_ButtonTags[7] = "sm77002portablesafe01a00md_1_Group_8_Sub_1__sm77_002_Po_0b164c0";
+
 
 	m_ButtonBoneTags[7] = "button_p001";
 	m_ButtonBoneTags[6] = "button_p002";
@@ -264,6 +265,26 @@ HRESULT CItem_Mesh_Viewer::Render()
 			if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_BoneMatrices(pShader, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
+			_int iIndex = -1;
+			_float4 vColor = { 1.f, 1.f, 1.f ,1.f };
+
+			for (_int j = 0; j < 8; ++j) {
+				if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_LampTags[j]) {
+					switch (m_eLampStates[j]) {
+					case SUCCEED:
+						vColor = _float4(0.f, 1.f, 0.f, 1.f);
+						break;
+					case FAILED:
+						vColor = _float4(1.f, 0.f, 0.f, 1.f);
+						break;
+					}
+				}
+			}
+			if (FAILED(pShader->Bind_RawValue("g_Color", &vColor, sizeof(_float4))))
+				return E_FAIL;
+
+
+
 			if (FAILED(pShader->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_EXAMINE)))
 				return E_FAIL;
 		}
@@ -332,6 +353,8 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			m_eOperType = EXAMIN_PUZZLE;
 			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
 			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			//m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
+			//m_fDistCamZ = 0.18f;
 			m_iSelected_Button = 0;
 			break;
 		}

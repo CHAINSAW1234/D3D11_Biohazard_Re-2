@@ -715,15 +715,17 @@ void CPlayer::Set_Render(_bool boolean)
 
 	if (m_bRender) {
 		for (auto& pWeapons : m_Weapons) {
-			pWeapons->Set_Render(boolean);
+			if (pWeapons->Get_RenderLocation() != CWeapon::RENDERLOCATION::NONE)
+				pWeapons->Set_Render(boolean);
 		}
 	}
 	else {
 		for (auto& pWeapons : m_Weapons) {
-			if(pWeapons->Get_RenderLocation() != CWeapon::RENDERLOCATION::NONE)
-				pWeapons->Set_Render(boolean);
+			pWeapons->Set_Render(boolean);
 		}
 	}
+
+	Set_Spotlight(Get_Spotlight());
 
 }
 
