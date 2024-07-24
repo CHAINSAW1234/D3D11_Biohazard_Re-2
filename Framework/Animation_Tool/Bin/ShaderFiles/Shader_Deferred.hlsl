@@ -303,7 +303,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
+    float4 vAlbedo = pow(abs(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord)), 2.2f);
 
     if (vAlbedo.a == 0)
         discard;
@@ -361,8 +361,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 ambientLighting;
     {
         // Sample diffuse irradiance at normal direction.
-        float3 Previrradiance = pow(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
-        float3 Curirradiance = pow(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
+        float3 Previrradiance = pow(abs(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb), 2.2f);
+        float3 Curirradiance = pow(abs(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb), 2.2f);
 
         float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime); // ???????????????????????????
         
@@ -376,8 +376,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // Sample pre-filtered specular reflection environment at correct mipmap level.
         uint specularTextureLevels = querySpecularTextureLevels();
-        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
-        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 PrevspecularIrradiance = pow(abs(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels)), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(abs(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels)), 2.2f).rgb;
         
         float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
         
@@ -402,7 +402,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
+    float4 vAlbedo = pow(abs(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord)), 2.2f);
 
     if (vAlbedo.a == 0)
         discard;
@@ -466,8 +466,8 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     float3 ambientLighting;
     {
         // Sample diffuse irradiance at normal direction.
-        float3 Previrradiance = pow(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
-        float3 Curirradiance = pow(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
+        float3 Previrradiance = pow(abs(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb), 2.2f);
+        float3 Curirradiance = pow(abs(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb), 2.2f);
 
         float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime); // ???????????????????????????
         
@@ -481,8 +481,8 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
         // Sample pre-filtered specular reflection environment at correct mipmap level.
         uint specularTextureLevels = querySpecularTextureLevels();
-        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
-        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 PrevspecularIrradiance = pow(abs(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels)), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(abs(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels)), 2.2f).rgb;
         
         float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
         
@@ -507,7 +507,7 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
+    float4 vAlbedo = pow(abs(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord)), 2.2f);
 
     if (vAlbedo.a == 0)
         discard;
@@ -594,8 +594,8 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
 
         // Sample pre-filtered specular reflection environment at correct mipmap level.
         uint specularTextureLevels = querySpecularTextureLevels();
-        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
-        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 PrevspecularIrradiance = pow(abs(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels)), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(abs(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels)), 2.2f).rgb;
         
         float3 specularIrradiance = lerp(CurspecularIrradiance, PrevspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
         
@@ -829,7 +829,7 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
     Out.vColor = DiffuseDesc;
     
     Out.vColor = Out.vColor / (Out.vColor + 1.f);
-    Out.vColor = pow(Out.vColor, 1.f / 2.2f);
+    Out.vColor = pow(abs(Out.vColor), 1.f / 2.2f);
     Out.vColor.a = 1;
 
     return Out;
@@ -1390,7 +1390,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
 
     float4 vPosition = float4(0.f, 0.f, 0.f, 1.f);
     
-    for (uint i = 0; i < SAMPLE_COUNT; ++i)
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
     {
         // 1. Direction
         if (g_isShadowDirLight)

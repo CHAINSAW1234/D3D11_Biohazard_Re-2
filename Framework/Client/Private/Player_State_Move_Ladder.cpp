@@ -43,6 +43,8 @@ void CPlayer_State_Move_Ladder::OnStateEnter()
 	m_LadderTransform._43 += XMVectorGetZ(vLadderLook) * 0.5f;
 
 	Set_StartAnimation();
+
+	m_pPlayer->Set_FootStep(false);
 }
 
 void CPlayer_State_Move_Ladder::OnStateUpdate(_float fTimeDelta)
@@ -62,6 +64,8 @@ void CPlayer_State_Move_Ladder::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Move_Ladder::OnStateExit()
 {
+	m_pPlayer->Set_FootStep(true);
+
 	if(CPlayer::NONE != m_eEquip)
 		m_pPlayer->Requst_Change_Equip(m_eEquip);
 
@@ -80,7 +84,7 @@ void CPlayer_State_Move_Ladder::Start(_float fTimeDelta)
 	Interpolate_Location(fTimeDelta);
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
-
+		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_FootStep_Ladder"), 7, 4);
 		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.1f);
 		m_eState = IDLE;
 
@@ -109,6 +113,8 @@ void CPlayer_State_Move_Ladder::Idle()
 	}
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
+		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_FootStep_Ladder"), 7, 4);
+
 		if (m_iLadderCnt == 5 && m_KeyInput == DOWN) {
 			m_eState = FINISH;
 
@@ -167,6 +173,7 @@ void CPlayer_State_Move_Ladder::Idle()
 void CPlayer_State_Move_Ladder::Finish()
 {
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
+		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_FootStep_Ladder"), 7, 4);
 		m_pHState->Change_State(CPlayer_State_Move::IDLE);
 		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_NOTHING);
 	}

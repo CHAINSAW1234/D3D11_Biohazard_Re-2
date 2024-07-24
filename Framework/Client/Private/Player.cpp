@@ -1211,20 +1211,20 @@ void CPlayer::Update_FSM()
 				Get_Body_Model()->Is_Loop_PlayingInfo(3))
 				Change_State(HOLD);
 		}
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
-			if (NONE != m_eEquip_Sub &&
-				Get_Body_Model()->Is_Loop_PlayingInfo(3))
-				Change_State(SUBHOLD);
-		}
+		//if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
+		//	if (NONE != m_eEquip_Sub &&
+		//		Get_Body_Model()->Is_Loop_PlayingInfo(3))
+		//		Change_State(SUBHOLD);
+		//}
 		break;
 	case HOLD:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) != PRESSING) {
 			Change_State(MOVE);
 		}
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
-			if (NONE != m_eEquip_Sub)
-				Change_State(SUBHOLD);
-		}
+		//if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
+		//	if (NONE != m_eEquip_Sub)
+		//		Change_State(SUBHOLD);
+		//}
 
 		break;
 	case SUBHOLD:

@@ -32,6 +32,8 @@ private:
 	CWeapon(const CWeapon& rhs);
 	virtual ~CWeapon() = default;
 
+
+
 public:
 	virtual HRESULT					Initialize_Prototype() override;
 	virtual HRESULT					Initialize(void* pArg) override;

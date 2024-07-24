@@ -50,7 +50,7 @@ TextureCubeArray g_PrevEnvironmentTexture;
 TextureCubeArray g_CurEnvironmentTexture;
 Texture2D g_SpecularLUTTexture;
 float g_PBRLerpTime;
-float4 g_Color;
+float4 g_vColor;
 
 struct VS_IN
 {
@@ -292,7 +292,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
         if (vEmissive.r != 0 || vEmissive.g != 0 || vEmissive.b != 0)
         {
-            Out.vEmissive = vEmissive;
+            Out.vEmissive = vEmissive * g_vColor;
         }
 
     }
@@ -475,7 +475,7 @@ PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
         vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
         if (vEmissive.r != 0 || vEmissive.g != 0 || vEmissive.b != 0)
         {
-            Out.vColor = vEmissive * g_Color;
+            Out.vColor = vEmissive;
             return Out;
         }
     }
@@ -547,12 +547,10 @@ PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
     vColor = vColor / (vColor + 1);
     vColor = pow(vColor, 1 / 2.2f);
     
-    Out.vColor = vColor;
+    Out.vColor = vColor * g_vColor;
 
     return Out;
 }
-
-
 
 technique11 DefaultTechnique
 {

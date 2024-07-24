@@ -145,7 +145,7 @@ public:
 	void										Set_Gravity(_bool isGravity); 
 	void										Set_Position(_float4 vPos);
 	void										Set_Position(_fvector vPos);
-	void										Set_FootStep(_bool isFootStep) { m_isFootStep = isFootStep };
+	void										Set_FootStep(_bool isFootStep) { m_isFootStep = isFootStep; }
 	virtual void								Set_Render(_bool boolean);
 
 	// ============================ CHANGE == SET ============================

@@ -480,7 +480,7 @@ _bool CRagdoll_Physics::Init(const string& name, ID3D11Device* pDevice, ID3D11De
 
 	for (size_t i = 0; i < 10; ++i)
 	{
-		m_pGameInstance->Set_Distance_3D(m_pTransformCom_Sound,i,0.f ,10.f);
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom_Sound, static_cast<_uint>(i), 0.f, 10.f);
 	}
 
 	m_vecRagdollSound_Filter.clear();

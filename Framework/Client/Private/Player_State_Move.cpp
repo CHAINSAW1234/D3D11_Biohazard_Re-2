@@ -38,7 +38,7 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 		m_pPlayer->Set_TurnSpineLight(false);
 	}
 
-	if (m_pPlayer->Get_Weapon() != nullptr) {
+	if (m_pPlayer->GetbRender() && m_pPlayer->Get_Weapon() != nullptr) {
 		if (m_pPlayer->Get_Spotlight() &&
 			m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE_LIGHT);
