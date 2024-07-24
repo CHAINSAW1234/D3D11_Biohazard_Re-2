@@ -292,23 +292,30 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 #pragma endregion
 
-	if (!Distance_Culling())
+	if(m_bDistance_Culling == true)
 	{
-		for (auto& it : m_PartObjects)
+		if (!Distance_Culling())
 		{
-			if (it)
-				it->SetCulling(true);
-		}
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->SetCulling(true);
+			}
 
-		return;
+			return;
+		}
+		else
+		{
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->SetCulling(false);
+			}
+		}
 	}
 	else
 	{
-		for (auto& it : m_PartObjects)
-		{
-			if (it)
-				it->SetCulling(false);
-		}
+		m_bDistance_Culling = true;
 	}
 
 	__super::Tick(fTimeDelta);

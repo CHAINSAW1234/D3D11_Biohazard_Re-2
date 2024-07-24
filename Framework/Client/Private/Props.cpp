@@ -120,7 +120,6 @@ HRESULT CProps::Render()
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
-
 	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
@@ -180,6 +179,9 @@ HRESULT CProps::Render()
 
 HRESULT CProps::Render_LightDepth_Dir()
 {
+	if (m_bRender == false)
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

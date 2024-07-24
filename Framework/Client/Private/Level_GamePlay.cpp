@@ -73,17 +73,21 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	m_pGameInstance->SetSimulate(true);
 
+#ifdef IMGUI
 	CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
 	CImgui_Manager::Get_Instance()->Initialize();
 	CImgui_Manager::Get_Instance()->Tick();
 	CImgui_Manager::Get_Instance()->Render();
+#endif
 
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+#ifdef IMGUI
 	CImgui_Manager::Get_Instance()->Tick();
+#endif
 
 	__super::Tick(fTimeDelta);
 
@@ -97,7 +101,9 @@ HRESULT CLevel_GamePlay::Render()
 
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
 
+#ifdef IMGUI
 	CImgui_Manager::Get_Instance()->Render();
+#endif
 
 	return S_OK;
 }
@@ -135,7 +141,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -209,8 +215,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	return S_OK;
 }

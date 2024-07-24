@@ -1035,6 +1035,8 @@ void CBody_Zombie::SetCulling(_bool boolean)
 {
 	if (m_pRagdoll)
 		m_pRagdoll->SetCulling(boolean);
+
+	m_bRender = !boolean;
 }
 
 PxRigidDynamic* CBody_Zombie::Get_Ragdoll_RigidBody(COLLIDER_TYPE eType)

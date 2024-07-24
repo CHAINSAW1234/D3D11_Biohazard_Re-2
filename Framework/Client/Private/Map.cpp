@@ -99,16 +99,6 @@ void CMap::Tick(_float fTimeDelta)
 	m_fTimeDelay += fTimeDelta;
 	if (m_pPlayer == nullptr)
 		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-
-	//if (m_pRigid_Static)
-	//{
-	//	if (m_pRigid_Static->Is_Hit())
-	//	{
-	//		m_pRigid_Static->Set_Hit(false);
-	//		m_pModelCom->InitDecalWorldMatrix(m_pRigid_Static->GetBlockPoint(), m_pRigid_Static->GetHitNormal());
-	//		m_pModelCom->Perform_Calc_DecalMap_StaticModel();
-	//	}
-	//}
 }
 
 void CMap::Late_Tick(_float fTimeDelta)
@@ -128,8 +118,6 @@ void CMap::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
-//#ifndef  MAP_TEST
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 
@@ -137,10 +125,7 @@ void CMap::Late_Tick(_float fTimeDelta)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
-	
-//#endif
 
 	function<void()> job1 = bind(&COctree::DrawOctree_1, m_pOctree);
 	m_pGameInstance->Insert_Job(job1);
@@ -184,58 +169,6 @@ HRESULT CMap::Render()
 
 	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
 
-#pragma region Without Octree
-	auto iNumMesh = m_pModelCom->GetNumMesh();
-
-	for(size_t i = 0;i< iNumMesh;++i)
-	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
-		{
-			_bool isAlphaTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			continue;
-		}
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
-		{
-			_bool isAOTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			continue;
-		}
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
-		{
-			_bool isEmissive = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isEmissive = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-
-		m_pModelCom->Render(i);
-	}
-#pragma endregion
-
 	return S_OK;
 }
 
@@ -249,60 +182,6 @@ HRESULT CMap::Render_Blend()
 
 	m_pOctree->Render_Node_Blend(m_pModelCom, m_pShaderCom);
 
-#pragma region Without Octree
-	//auto iNumMesh = m_pModelCom->GetNumMesh();
-
-	//for (size_t i = 0; i < iNumMesh; ++i)
-	//{
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
-	//	{
-	//		continue;
-	//	}
-	//	else
-	//	{
-	//		_bool isAlphaTexture = true;
-	//		if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-	//			return E_FAIL;
-	//	}
-
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
-	//	{
-	//		continue;
-	//	}
-	//	else
-	//	{
-	//		_bool isAOTexture = true;
-	//		if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-	//			return E_FAIL;
-	//	}
-
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-	//		return E_FAIL;
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-	//		return E_FAIL;
-
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
-	//	{
-	//		_bool isEmissive = false;
-	//		if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
-	//			return E_FAIL;
-	//	}
-	//	else
-	//	{
-	//		_bool isEmissive = true;
-	//		if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
-	//			return E_FAIL;
-	//	}
-
-	//	if (FAILED(m_pShaderCom->Begin(1)))
-	//		return E_FAIL;
-
-	//	m_pModelCom->Render(i);
-	//}
-
-	//m_pOctree->ClearNode();
-#pragma endregion
-
 	return S_OK;
 }
 
@@ -312,7 +191,6 @@ void CMap::Start()
 
 HRESULT CMap::Render_LightDepth_Dir()
 {
-	//return S_OK;
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -349,8 +227,6 @@ HRESULT CMap::Render_LightDepth_Dir()
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
-
-		//m_pOctree->Render_Node_LightDepth_Dir(m_pModelCom, m_pShaderCom);
 	}
 
 	return S_OK;
@@ -425,9 +301,6 @@ HRESULT CMap::Render_LightDepth_Point()
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
-
-
-		//m_pOctree->Render_Node_LightDepth_Point(m_pModelCom,m_pShaderCom);
 
 		++iIndex;
 	}

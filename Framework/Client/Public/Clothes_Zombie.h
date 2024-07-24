@@ -43,6 +43,7 @@ public:
 	virtual void			Create_Cloth() override;
 	virtual void			Add_RenderGroup() override;
 	virtual void			SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
+	virtual void			SetCulling(_bool boolean) override;
 private:
 	HRESULT					Initialize_Model();
 
