@@ -630,7 +630,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* 9. Map_BackGround */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Announcement.dat");//
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	m_isMapType = false;
+
 	///////////////////////////* ¢º Map : END */////////////////////////////
 
 	/* 8. UI_Tutorial */
@@ -962,13 +969,19 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	//////////////////////////* Map *///////////////////////////
 	else if (TEXT("UI_Map") == fileName || TEXT("UI_Map_Floor2") == fileName || TEXT("UI_Map_Floor3") == fileName
 		|| TEXT("UI_Map_Door") == fileName || TEXT("UI_Map_Door_Floor2") == fileName
-		|| TEXT("UI_Map_Window") == fileName
+		|| TEXT("UI_Map_Window") == fileName  
 		|| TEXT("UI_Map_Font") == fileName || TEXT("Map_Font2") == fileName || TEXT("Map_Font3") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Main_Map_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
+	else if (TEXT("UI_Map_Announcement") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Announcement_Map_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+		
+	}
 	else if (TEXT("Map_Target") == fileName || TEXT("UI_Map_Target_Notify") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Targeting_Map_UI"), &CustomizeUIDesc)))

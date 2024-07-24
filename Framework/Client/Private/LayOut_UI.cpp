@@ -90,7 +90,7 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         {
             m_eLayout_Type = LAYOUT_TYPE::LAYOUT_STATUE;
 
-            m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::STATUE_UI_TYPE;
         }
 
     }
@@ -145,6 +145,7 @@ void CLayOut_UI::Tick(_float fTimeDelta)
     if (nullptr == m_pLayout_BackGround)
     {
         m_pLayout_BackGround = static_cast<CLayOut_UI*>(Find_Layout_BackGround());
+
         if (nullptr == m_pLayout_BackGround)
         {
             MSG_BOX(TEXT("LayOut에 m_pLayout_BackGround 불러올 수 없습니다."));

@@ -59,7 +59,7 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 
 	Find_Player();
 	
-	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	if (nullptr == m_isGetMap_Item && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
 	{
 		CGameObject* pBackGround = Find_BackGround();
 
@@ -67,7 +67,7 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 		{
 			CStatic_Map_UI* pGetMap = static_cast<CStatic_Map_UI*>(pBackGround);
 
-			m_pGetMap = pGetMap->Get_Map_Ptr();
+			m_isGetMap_Item = pGetMap->Get_Map_Ptr();
 		}
 	}
 
@@ -239,13 +239,14 @@ void CMap_Manager::Exception_Handle()
 	if (nullptr == m_pTab_Window)
 	{
 		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+
 		m_pTab_Window = static_cast<CTab_Window*>(pTabWindow);
 
 		if (nullptr == m_pTab_Window)
 			MSG_BOX(TEXT("CMap_Manager() : Tab Window를 찾을 수 없습니다."));
 	}
 
-	if (nullptr == m_pGetMap && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
+	if (nullptr == m_isGetMap_Item && MAP_UI_TYPE::BACKGROUND_MAP != m_eMapComponent_Type)
 	{
 		CGameObject* pBackGround = Find_BackGround();
 
@@ -253,10 +254,10 @@ void CMap_Manager::Exception_Handle()
 		{
 			CStatic_Map_UI* pGetMap = static_cast<CStatic_Map_UI*>(pBackGround);
 
-			m_pGetMap = pGetMap->Get_Map_Ptr();
+			m_isGetMap_Item = pGetMap->Get_Map_Ptr();
 		}
 
-		if (nullptr == m_pGetMap)
+		if (nullptr == m_isGetMap_Item)
 			MSG_BOX(TEXT("CMap_Manager() : Get Map 변수를 찾을 수 없습니다."));
 	}
 
@@ -354,6 +355,17 @@ void CMap_Manager::Transform_Adjustment()
 	{
 		m_isTransfrom_Setting = true;
 	}
+
+	else if (MAP_UI_TYPE::ANNOUNCEMENT_MAP == m_eMapComponent_Type)
+	{
+		_float4 pTextureTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+		pTextureTrans.z = 0.0f;
+
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTextureTrans);
+
+		m_isTransfrom_Setting = true;
+	}
 }
 
 
@@ -383,7 +395,7 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 {
 	if (false == m_isStatic_Type)
 	{
-		if(nullptr != m_pGetMap && false == *m_pGetMap)
+		if(nullptr != m_isGetMap_Item && false == *m_isGetMap_Item)
 		{
 			m_isRender = false;
 
@@ -646,7 +658,11 @@ void CMap_Manager::Find_MapStateType()
 	else if (TEXT("UI_Map_Target_Notify") == m_wstrFile)
 	{
 		m_eMapComponent_Type = MAP_UI_TYPE::TARGET_NOTIFY;
+	}
 
+	else if (TEXT("UI_Map_Announcement") == m_wstrFile)
+	{
+		m_eMapComponent_Type = MAP_UI_TYPE::ANNOUNCEMENT_MAP;
 	}
 }
 

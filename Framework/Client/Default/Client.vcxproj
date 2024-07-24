@@ -192,6 +192,7 @@
     <ClInclude Include="..\Public\Actor_PL57.h" />
     <ClInclude Include="..\Public\Actor_PL78.h" />
     <ClInclude Include="..\Public\Actor_WP4530.h" />
+    <ClInclude Include="..\Public\Announcement_Map_UI.h" />
     <ClInclude Include="..\Public\Body_Chair.h" />
     <ClInclude Include="..\Public\Break_Sound_Zombie.h" />
     <ClInclude Include="..\Public\Chair.h" />
@@ -485,6 +486,7 @@
     <ClCompile Include="..\Private\Actor_PL57.cpp" />
     <ClCompile Include="..\Private\Actor_PL78.cpp" />
     <ClCompile Include="..\Private\Actor_WP4530.cpp" />
+    <ClCompile Include="..\Private\Announcement_Map_UI.cpp" />
     <ClCompile Include="..\Private\Body_Chair.cpp" />
     <ClCompile Include="..\Private\Break_Sound_Zombie.cpp" />
     <ClCompile Include="..\Private\Chair.cpp" />

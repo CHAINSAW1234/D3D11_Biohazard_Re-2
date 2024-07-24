@@ -4,10 +4,13 @@
 #include "Tab_Window.h"
 #include "Player_Map_UI.h"
 
-#define INCIDENCE   997
-#define STORE_BOX   998
-#define OTHER       999
-#define LADDER      995
+#define INCIDENCE       997
+#define STORE_BOX       998
+#define OTHER           999
+#define LADDER          995
+#define UNICON_STATUE   899
+#define LION_STATUE     898
+#define WOMAN_STATUE    897
 
 CItem_Map_UI::CItem_Map_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMap_Manager{ pDevice, pContext }
@@ -126,7 +129,7 @@ void CItem_Map_UI::Rendering()
     if (false == m_pTab_Window->Get_MinMapRender())
         return;
 
-    if (nullptr != m_pGetMap && false == *m_pGetMap)
+    if (nullptr != m_isGetMap_Item && false == *m_isGetMap_Item)
     {
         m_isRender = false;
 
@@ -235,6 +238,18 @@ void CItem_Map_UI::Item_Name_Selection()
         /* 사건에 따라 분류할 예정*/
     }
     break;
+
+    case UNICON_STATUE :
+        m_wstrItemNumber = TEXT("유니콘 석상");
+        break;
+
+    case LION_STATUE :
+        m_wstrItemNumber = TEXT("사자 석상");
+        break;
+
+    case WOMAN_STATUE :
+        m_wstrItemNumber = TEXT("여인 석상");
+        break;
 
     case STORE_BOX:
         m_wstrItemNumber = TEXT("저장고");

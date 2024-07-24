@@ -109,7 +109,7 @@ void CMini_BigStatue::Late_Tick(_float fTimeDelta)
 
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-			if (true == *m_isMoveStart)
+			if (nullptr != m_isMoveStart && true == *m_isMoveStart)
 				Lion_Statue(fTimeDelta);
 		} 
 	}
