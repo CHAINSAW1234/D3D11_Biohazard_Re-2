@@ -39,14 +39,18 @@ private:
 public: 
 	_bool							Get_MinMapRender()				{ return m_isMapRender; }
 	_bool*							Get_MainRender_Ptr()			{ return m_pInvenButton->Get_Dead_Ptr(); }
+	_bool*							Get_MapItem_Ptr()				 { return &m_isGetMapItem;  }
 	_bool							Get_PickUp_ItemRender()			{ return m_isPickUp_Item; }
 	WINDOW_TYPE*					Get_Window_RenderType_Ptr()		{ return &m_eWindowType; }
+	void							Destroy_Statue_Item(ITEM_NUMBER _statue);
 
 private :
 	class CTargeting_Map_UI*		m_pTargetNotify_UI = { nullptr };
 
 private :
 	_bool							m_isPickUp_Item = { false };
+	_bool							m_isGetMapItem = { false };
+
 #pragma endregion
 
 

@@ -19,7 +19,6 @@ public:
 	virtual void						SetPosition(_float4 vPos) override;
 	virtual PxVec3						GetPosition() override;
 	virtual void						Update() override;
-
 	virtual _float4						GetTranslation() override;
 	virtual PxTransform					GetTransform_Px() override;
 	void								SetKinematic(_bool boolean);
@@ -27,6 +26,7 @@ public:
 	void								AddForce(_float4 vDir);
 	void								ClearForce();
 	void								Release_Body();
+	void								ToSleep();
 public:
 	static CRigid_Dynamic*				Create();
 

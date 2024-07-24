@@ -12,7 +12,10 @@ class CEventProp final : public CInteractProps
 public:
 	enum EVENT_PROP_TYPE
 	{
-		
+		TYPE_ELLIOTNOTE,
+		TYPE_MABINLABTOP,
+		TYPE_BROKENFLOOR,
+		TYPE_EAST2FLOOR
 	};
 	enum EVENT_PROP_STATE
 	{

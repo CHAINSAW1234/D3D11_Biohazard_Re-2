@@ -190,11 +190,6 @@ _bool CUI::IsMouseHover()
 
 	_float3 vSize = m_pTransformCom->Get_Scaled();
 
-	/* UI를 1080 720 상에서 만든 것이라 정확히 3번 나눈 비율 값인 105와 45를 집어넣어줌*/
-	/*
-	float fwinsize = g_iWinSizeX - 1080;
-	fwinsize = fwinsize / 8 
-	*/
 	if (vPosition.x - (vSize.x / 2)  <= mouse.x && vPosition.y - (vSize.y / 2)  <= mouse.y
 		&& vPosition.x + (vSize.x / 2)  >= mouse.x && vPosition.y + (vSize.y / 2) >= mouse.y)
 	{

@@ -95,7 +95,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
-	if (m_bVisible  /*1*//* && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/)
+	if (m_bVisible)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 
@@ -119,7 +119,6 @@ HRESULT CProps::Render()
 		return E_FAIL;
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-
 
 	for (auto& i : NonHideIndices)
 	{
@@ -180,6 +179,9 @@ HRESULT CProps::Render()
 
 HRESULT CProps::Render_LightDepth_Dir()
 {
+	if (m_bRender == false)
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

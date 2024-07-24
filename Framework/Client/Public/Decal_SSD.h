@@ -32,6 +32,7 @@ public:
 	{
 		m_bUsing_Sound = boolean;
 	}
+	_bool					IsPlayerNearBy();
 protected:
 	class CModel*			m_pModelCom = { nullptr };
 	class CShader*			m_pShaderCom = { nullptr };

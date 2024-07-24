@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Static_Map_UI.h"
+#include "Tab_Window.h"
 
 #define ALPHA_ZERO _float4(0.f, 0.f, 0.f, 0.f)
 
@@ -38,9 +39,6 @@ void CStatic_Map_UI::Tick(_float fTimeDelta)
 
     if (MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type)
     {
-        if (DOWN == m_pGameInstance->Get_KeyState('9'))
-            m_isGetMap = !m_isGetMap;
-
         if (true == m_isGetMap)
         {
             if (!m_vecTextBoxes.empty())

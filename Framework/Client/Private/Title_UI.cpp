@@ -254,6 +254,7 @@ void CTitle_UI::InGame_Start(_float fTimeDelta)
 void CTitle_UI::Option_Click(_float fTimeDelta)
 {
     CTransform* pOptionTextTrans = static_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
+
     _float4 fOptionTextTrans = pOptionTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
     if(true == IsMouseHover())
@@ -287,17 +288,17 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         }
         else
         {
-            m_isCheckSound = false;
-            
             fOptionTextTrans.x = m_vOriginOption_Pos.x + OPTION_MOVE_DISTANCE;
             
             pOptionTextTrans->Set_State(CTransform::STATE_POSITION, fOptionTextTrans);
         }
+
     }
     else
     {
         m_vecTextBoxes.back()->Set_FontColor(m_vOriginTextColor);
 
+        m_isCheckSound = false;
 
         /* ¿ÞÂÊ ¹Ð±â */
         if (fOptionTextTrans.x > m_vOriginOption_Pos.x)

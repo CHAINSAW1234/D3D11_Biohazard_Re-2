@@ -131,6 +131,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		m_vecRigid_Dynamic[i]->Update();
 	}
 
+	Simulate_PartialRagdoll(fTimeDelta);
+
 	//Simulate
 	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
@@ -140,7 +142,17 @@ void CPhysics_Controller::Simulate_Ragdoll(_float fTimeDelta)
 {
 	for (int i = 0; i < m_vecRagdoll.size(); ++i)
 	{
-		m_vecRagdoll[i]->Update(fTimeDelta);
+		if(m_vecRagdoll[i]->GetbPartialRagdoll() == false)
+			m_vecRagdoll[i]->Update(fTimeDelta);
+	}
+}
+
+void CPhysics_Controller::Simulate_PartialRagdoll(_float fTimeDelta)
+{
+	for (int i = 0; i < m_vecRagdoll.size(); ++i)
+	{
+		if (m_vecRagdoll[i]->GetbPartialRagdoll() == true)
+			m_vecRagdoll[i]->Update(fTimeDelta);
 	}
 }
 

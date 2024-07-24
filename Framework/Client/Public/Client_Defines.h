@@ -44,9 +44,11 @@ using namespace Client;
 #pragma region For Spot Light Frustrum Culling
 
 //#define SPOT_FRUSTRUM_CULLING
-//#define ANIM_PROPS_SPOT_SHADOW
+#define ANIM_PROPS_SPOT_SHADOW
 
 #pragma endregion
+
+#define IMGUI
 	
 //#define MAP_NOTHING
 #define MAP_INTERACT
@@ -58,7 +60,7 @@ using namespace Client;
 //#define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP
-//	#define PROPS_COOKING
+#define PROPS_COOKING
 
 //#define UI_POS
 

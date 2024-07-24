@@ -58,7 +58,7 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 	}
 	else
-		if (m_strModelComponentName.find(TEXT("electric")) == wstring::npos)
+		if (m_strModelComponentName.find(TEXT("44_005")) == wstring::npos)
 			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 	m_vecRotationBone[ANIM_BONE_TYPE_COLLIDER_CABINET::ATC_CABINET_DOOR] = m_pModelCom->Get_BonePtr("_01");
@@ -122,7 +122,7 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	}
 #endif
 
-#ifndef SPOT_FRUSTRUM_CULLING
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 #endif
 

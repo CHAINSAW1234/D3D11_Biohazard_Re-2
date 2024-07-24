@@ -1809,14 +1809,16 @@ void CRagdoll_Physics::Update(_float fTimeDelta)
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		m_pose_transforms.transforms[i] = XMMatrixInverse(nullptr, joints[i].inverse_bind_pose);
 
+	if (m_bPartialRagdoll)
+	{
+		m_ragdoll->WakeUp();
+	}
+
 	update_animations();
 }
 
 void CRagdoll_Physics::Update_Partial(_float fTimeDelta)
 {
-	if (m_bCulling)
-		return;
-
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
@@ -1827,9 +1829,6 @@ void CRagdoll_Physics::Update_Partial(_float fTimeDelta)
 
 void CRagdoll_Physics::Update_Partial_After(_float fTimeDelta)
 {
-	if (m_bCulling)
-		return;
-
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
@@ -2744,7 +2743,7 @@ void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
 
 	create_partial_ragdoll(eType);
 
-	m_ragdoll->set_kinematic(true);
+	m_ragdoll->set_kinematic_Partial(false);
 
 	m_bPartialRagdoll = true;
 }

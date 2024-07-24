@@ -98,6 +98,7 @@ public:
 
 public:
 	_bool											Attack(BREAK_PART ePart);
+	_bool											Attack_STG(BREAK_PART ePart);
 	_bool											Break(BREAK_PART ePart);
 	
 private:

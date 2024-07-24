@@ -188,7 +188,9 @@ void CDial_BigStatue::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
 
 
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
@@ -204,19 +206,19 @@ void CDial_BigStatue::InPutKey_Sound(_int iRand, _int iRand1)
 	switch (iRand1)
 	{
 	case 0:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 0);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 0);
 		break;
 	case 1:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
 		break;
 	case 2:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
 		break;
 	case 3:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 1);
 		break;
 	case 4:
-		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 1);
 		break;
 	}
 

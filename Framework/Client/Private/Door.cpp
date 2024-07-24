@@ -536,7 +536,7 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 	if (!m_bActivity && (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
 	{
-		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2])
+		if ((*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2])&&!m_bAttack)
 			DoubleDoor_Active();
 
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
@@ -946,7 +946,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 
 			if (m_bCol[INTER_COL_NORMAL][COL_STEP2])
 				m_bActivity = true;
-			if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
+			if ((*m_pPlayerInteract && false == m_pGameInstance->IsPaused())&& !m_bAttack)
 				OneDoor_Active();
 		}
 		//m_bActivity = true;
@@ -956,7 +956,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	{
 		//UI¶ç¿ì°í
 
-		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2])
+		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2]&&!m_bAttack)
 			OneDoor_Active();
 
 

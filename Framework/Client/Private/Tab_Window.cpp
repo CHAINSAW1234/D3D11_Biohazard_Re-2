@@ -10,7 +10,8 @@
 #include "Item_Map_UI.h"
 #include "Targeting_Map_UI.h"
 #include "Player.h"
-
+#include "Static_Map_UI.h"
+#include "Announcement_Map_UI.h"
 
 constexpr _float BACKGROUND_MIN_ALPHA = 0.8f;
 
@@ -639,6 +640,41 @@ void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 	}
 }
 
+void CTab_Window::Destroy_Statue_Item(ITEM_NUMBER _statue)
+{
+	_uint iFoorType = {};
+	_uint iLocation_map_visit = {};
+	_uint iCollectNum = {};
+
+	if (_statue == ITEM_NUMBER::unicornmedal01a)
+	{
+		iFoorType = 3;
+		iLocation_map_visit = 0;
+		iCollectNum = 899;
+	}
+
+	else if (_statue == ITEM_NUMBER::virginmedal01a)
+	{
+		iFoorType = 4;
+		iLocation_map_visit = 44;
+		iCollectNum = 897;
+	}
+
+	else if (_statue == ITEM_NUMBER::virginmedal02a)
+	{
+		iFoorType = 3;
+		iLocation_map_visit = 29;
+		iCollectNum = 898;
+	}
+
+	else
+		return;
+
+	m_pMapItem_UI->Destory_Item(static_cast<MAP_FLOOR_TYPE>(iFoorType),
+		static_cast<LOCATION_MAP_VISIT>(iLocation_map_visit),
+		static_cast<ITEM_NUMBER>(iCollectNum));
+}
+
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 {
 	INVENTORY_EVENT eEvent = m_pInventory_Manager->Get_InventoryEvent();
@@ -732,8 +768,10 @@ _bool CTab_Window::IsInputTab()
 		isInputTab = false;
 	}
 
-	if(DOWN == m_pGameInstance->Get_KeyState('M'))
+	if(DOWN == m_pGameInstance->Get_KeyState('M') || true == m_isGetMapItem)
 	{
+		m_isGetMapItem = false;
+
 		m_isMapOpen = true;
 
 		isInputTab = true;
@@ -797,6 +835,7 @@ void CTab_Window::OnOff_EventHandle()
 void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 {
 	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
+
 	if (nullptr == pProp)
 		return;
 
@@ -864,9 +903,39 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	else
 	{
 		ITEM_READ_TYPE eIRT = static_cast<ITEM_READ_TYPE>(pProp->Get_PropType());
-		m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
+
+		if (ITEM_READ_TYPE ::ABOUT_MAP == eIRT)
+		{
+			m_isGetMapItem = true;
+
+			list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+			for (auto& iter : *pUIList)
+			{
+				CStatic_Map_UI* pStaticBackGround = dynamic_cast<CStatic_Map_UI*>(iter);
+				CAnnouncement_Map_UI* pAnnounceMap = dynamic_cast<CAnnouncement_Map_UI*>(iter);
+
+				if (nullptr != pStaticBackGround)
+				{
+					if (CMap_Manager::MAP_UI_TYPE::BACKGROUND_MAP == pStaticBackGround->Get_MapComponent_Type())
+					{
+						*pStaticBackGround->Get_Map_Ptr() = true;
+					}
+				}
+
+				else if (nullptr != pAnnounceMap)
+				{
+					pAnnounceMap->Set_GetMapItem();
+				}
+			}
+		}
+
+		else
+		{
+			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
+		}
+
 		m_pHint->Acquire_Document(eIRT);
-		//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
 		pPickedUp_Item->Set_Dead(true);
 	}
 }

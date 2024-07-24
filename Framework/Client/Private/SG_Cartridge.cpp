@@ -140,6 +140,9 @@ void CSG_Cartridge::PlaySound()
 	std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, 0);
+
+	m_pRigid_Dynamic->SetPosition(_float4(500.f, 0.f, 500.f, 1.f));
+	m_pRigid_Dynamic->ToSleep();
 }
 
 void CSG_Cartridge::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)

@@ -73,17 +73,21 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	m_pGameInstance->SetSimulate(true);
 
+#ifdef IMGUI
 	CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
 	CImgui_Manager::Get_Instance()->Initialize();
 	CImgui_Manager::Get_Instance()->Tick();
 	CImgui_Manager::Get_Instance()->Render();
+#endif
 
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+#ifdef IMGUI
 	CImgui_Manager::Get_Instance()->Tick();
+#endif
 
 	__super::Tick(fTimeDelta);
 
@@ -97,7 +101,9 @@ HRESULT CLevel_GamePlay::Render()
 
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
 
+#ifdef IMGUI
 	CImgui_Manager::Get_Instance()->Render();
+#endif
 
 	return S_OK;
 }
@@ -135,7 +141,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -209,8 +215,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -503,6 +509,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º  Map */////////////////////////////
 	m_isMapType = true;
 
@@ -632,7 +639,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* 9. Map_BackGround */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Announcement.dat");//
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	m_isMapType = false;
+
 	///////////////////////////* ¢º Map : END */////////////////////////////
 
 	/* 8. UI_Tutorial */
@@ -964,13 +978,19 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	//////////////////////////* Map *///////////////////////////
 	else if (TEXT("UI_Map") == fileName || TEXT("UI_Map_Floor2") == fileName || TEXT("UI_Map_Floor3") == fileName
 		|| TEXT("UI_Map_Door") == fileName || TEXT("UI_Map_Door_Floor2") == fileName
-		|| TEXT("UI_Map_Window") == fileName
+		|| TEXT("UI_Map_Window") == fileName  
 		|| TEXT("UI_Map_Font") == fileName || TEXT("Map_Font2") == fileName || TEXT("Map_Font3") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Main_Map_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
+	else if (TEXT("UI_Map_Announcement") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Announcement_Map_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+		
+	}
 	else if (TEXT("Map_Target") == fileName || TEXT("UI_Map_Target_Notify") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Targeting_Map_UI"), &CustomizeUIDesc)))
