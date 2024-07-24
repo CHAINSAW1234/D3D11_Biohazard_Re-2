@@ -49,7 +49,7 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 
 
-	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos&&(m_strModelComponentName.find(TEXT("ShotGun")) == wstring::npos&&m_strModelComponentName.find(TEXT("emergencyspray01")) == wstring::npos))
+	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos&&(m_strModelComponentName.find(TEXT("ShotGun")) == wstring::npos/*&&m_strModelComponentName.find(TEXT("emergencyspray01")) == wstring::npos*/))
 		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 
 

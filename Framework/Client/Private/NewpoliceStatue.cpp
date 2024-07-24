@@ -135,7 +135,7 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))) && m_iEXCode == 3)
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 		{

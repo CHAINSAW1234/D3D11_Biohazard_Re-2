@@ -63,6 +63,7 @@ public:
 
 private:
 	_bool				m_bActivity = { false };
+	_bool					m_bCamera = { false };
 
 	_ubyte			m_eBarriState = { BARRI_STATIC };
 	_ubyte			m_eZombieState = { Zom_Static };

@@ -5,6 +5,8 @@
 #include "Bone.h"
 #include "Selector_UI.h"
 
+#include"Camera_Gimmick.h"
+
 //part-obj
 #include"Body_Chair.h"
 #include"Door.h"
@@ -256,11 +258,24 @@ void CChair::Zombie_Tick(_float fTimeDelta)
 
 void CChair::Barrigate_Tick(_float fTimeDelta)
 {
+	_bool bCam = { false };
+	if (m_isCamera_Reset)
+		bCam = true;
+	if (m_bCamera && (bCam))
+	{
+		Reset_Camera();
+		m_bCamera = false;
+	}
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
 	{
 		if (*m_pPlayerInteract)
 			Barrigate_Active();
 	}
+	if (m_bCamera)
+		Camera_Active(PART_BODY, _float3(0.001f, 0.01f, 0.04f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
+	
+	if (m_eBarriState == BARRI_MOVE && static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Is_Finishied_Anim())
+		m_isCamera_Reset = true;
 }
 
 
@@ -269,12 +284,11 @@ void CChair::Barrigate_Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-	
-	m_eBarriState = BARRI_MOVE;
-	m_pDoor->Set_Lock();
 
-	m_pPlayer->Set_Lever_Setting(CPlayer::LEVER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
-	
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+	m_bCamera = true;
+	m_eBarriState = BARRI_MOVE;
+	m_pDoor->Set_Lock();	
 }
 
 CChair* CChair::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
