@@ -74,7 +74,6 @@ void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 	{
 		if (true == *m_isMedalAnim)
 		{
-			/* LN : 키 클리어 : sound_Map_sm41_wisdom_statue2_1 */
 			if (m_fStore_ZPos - 2.5f < m_pTransformCom->Get_WorldFloat4x4()._43)
 			{
 				vMedalpos._43 -= fTimeDelta * 1.5f;

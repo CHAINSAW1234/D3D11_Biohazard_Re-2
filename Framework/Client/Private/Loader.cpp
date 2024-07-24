@@ -121,6 +121,7 @@
 #include "Selector_UI.h"
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
+#include "Announcement_Map_UI.h"
 #include "Player_Map_UI.h"
 #include "Main_Map_UI.h"
 #include "Targeting_Map_UI.h"
@@ -614,6 +615,11 @@ HRESULT CLoader::Load_Prototype()
 		CItem_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	/* For.Prototype_GameObject_Announcement_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Announcement_Map_UI"),
+		CAnnouncement_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Main_Map_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Main_Map_UI"),
 		CMain_Map_UI::Create(m_pDevice, m_pContext))))
@@ -2716,7 +2722,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	if (true == m_isFinished)
 	{
-		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
+		// m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
 	}
 
 	return S_OK;

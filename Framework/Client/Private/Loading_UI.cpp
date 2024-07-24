@@ -83,6 +83,7 @@ HRESULT CLoading_UI::Initialize(void* pArg)
                     CTransform* pBodyTrans = static_cast<CTransform*>(pBody_UI->Get_Component(g_strTransformTag));
 
                     m_fBody_Position = pBodyTrans->Get_State_Float4(CTransform::STATE_POSITION);
+
                     break;
                 }
             }
@@ -94,6 +95,7 @@ HRESULT CLoading_UI::Initialize(void* pArg)
             for (auto& iter : m_vecTextBoxes)
             {
                 m_vOriginTextColor = iter->Get_FontColor();
+
                 iter->Set_FontColor(ZERO_ALPHA);
             }
 
@@ -149,7 +151,7 @@ HRESULT CLoading_UI::Change_Tool()
     {
         _float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
        
-        fPos.x += 1.5f;
+        fPos.x += 2.5f;
         fPos.y -= 4.f;
 
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, fPos);
@@ -289,6 +291,18 @@ void CLoading_UI::Operate_Ending(_float fTimeDelta)
     if (true == m_isLoadingEnd)
     {
         Render_Ending(fTimeDelta);
+    }
+
+    if (false == m_isRender)
+    {
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+            }
+        }
+
     }
 }
 

@@ -10,7 +10,7 @@ public:
 	enum class MAP_UI_TYPE {
 		MAIN_MAP, MASK_MAP, FONT_MAP, BACKGROUND_MAP,
 		WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, TARGET_MAP, TARGET_NOTIFY, MAP, ITEM_MAP, PLAYER_MAP,
-		NAMELINE_MAP, SEARCH_TYPE_MAP, FLOOR_TYPE_MAP, END_MAP
+		NAMELINE_MAP, SEARCH_TYPE_MAP, FLOOR_TYPE_MAP, ANNOUNCEMENT_MAP, END_MAP
 	};
 
 protected:
@@ -90,8 +90,9 @@ protected : /* Variable */
 	_float					m_fMouseSensor				= { 50.f };
 	_float2					m_vPlayer_MovePos			= {};
 
-	_bool*					m_pGetMap					= { nullptr };
+	_bool*					m_pGetMap_Item				= { nullptr };
 	_bool					m_isStatic_Type				= { false };
+
 	/* 5. Sound */
 	_bool					m_isOneSound				= { false };
 public:

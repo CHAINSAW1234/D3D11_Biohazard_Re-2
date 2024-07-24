@@ -829,6 +829,9 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\Chair\Body_Chair">
       <UniqueIdentifier>{1bfa1f97-4b8b-4a5c-8358-bbf4ff841523}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\7. Announcement">
+      <UniqueIdentifier>{4cc765dd-e62c-4152-a7cb-0835edbb6f7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1612,6 +1615,9 @@
     <ClInclude Include="..\Public\Actor_SM60_035.h">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM60_035</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Announcement_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2355,6 +2361,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Actor_SM60_035.cpp">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM60_035</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Announcement_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

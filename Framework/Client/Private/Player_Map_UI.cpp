@@ -129,7 +129,7 @@ void CPlayer_Map_UI::Rendering()
     {
         if (true == m_pTab_Window->Get_MinMapRender())
         {
-            if (nullptr != m_pGetMap && false == *m_pGetMap)
+            if (nullptr != m_pGetMap_Item && false == *m_pGetMap_Item)
             {
                 m_isRender = false;
 
