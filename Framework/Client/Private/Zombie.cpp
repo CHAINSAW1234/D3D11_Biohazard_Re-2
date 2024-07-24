@@ -566,7 +566,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 								if(iProb > 40)
 								{
-									m_pPart_Breaker->Break(eBreakType);
+									m_pPart_Breaker->Attack_STG(eBreakType);
 
 									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
 									if (nullptr != m_PartObjects[CMonster::PART_BODY])

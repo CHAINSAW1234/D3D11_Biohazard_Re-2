@@ -95,9 +95,9 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 		true == m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
 }
 
@@ -524,7 +524,6 @@ HRESULT CClothes_Zombie::Initialize_Model()
 
 void CClothes_Zombie::Set_RagDoll_Ptr(CRagdoll_Physics* pRagDoll)
 {
-
 	Safe_Release(m_pRagdoll);
 	m_pRagdoll = pRagDoll;
 	Safe_AddRef(m_pRagdoll);
