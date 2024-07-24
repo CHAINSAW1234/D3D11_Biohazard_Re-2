@@ -501,6 +501,11 @@ void CClothes_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 	m_pModelCom->Set_OptimizationCulling(false);
 }
 
+void CClothes_Zombie::SetCulling(_bool boolean)
+{
+	m_bRender =!boolean;
+}
+
 HRESULT CClothes_Zombie::Initialize_Model()
 {
 	if (nullptr == m_pModelCom)

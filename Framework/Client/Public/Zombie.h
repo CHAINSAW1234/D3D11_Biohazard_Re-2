@@ -340,6 +340,7 @@ protected:
 	ULONGLONG							m_RagdollWakeUpTime = { 0 };
 	ULONGLONG							m_RagdollWakeUpDelay = { 0 };
 	_bool								m_bRagdollWakeUp = { true };
+	_bool								m_bDistance_Culling = { false };
 #pragma endregion
 
 private:

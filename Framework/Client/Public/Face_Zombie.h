@@ -34,6 +34,7 @@ public:
 	HRESULT					Render_LightDepth_Point() override;
 	HRESULT					Render_LightDepth_Spot()override;
 	virtual void			Add_RenderGroup() override;
+	virtual void			SetCulling(_bool boolean) override;
 private:
 	HRESULT					Initialize_Model();
 	HRESULT					Initialize_MeshType();

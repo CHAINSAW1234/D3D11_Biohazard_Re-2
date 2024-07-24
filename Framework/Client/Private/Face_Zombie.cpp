@@ -365,6 +365,11 @@ void CFace_Zombie::Add_RenderGroup()
 	}
 }
 
+void CFace_Zombie::SetCulling(_bool boolean)
+{
+	m_bRender = !boolean;
+}
+
 HRESULT CFace_Zombie::Initialize_Model()
 {
 	if (nullptr == m_pModelCom)
