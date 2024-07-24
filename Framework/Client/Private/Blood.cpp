@@ -259,7 +259,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_3->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 3:
@@ -310,7 +310,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_4->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 4:
@@ -361,7 +361,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_5->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 5:
@@ -412,7 +412,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_6->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 6:
@@ -463,7 +463,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_7->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 7:
@@ -514,7 +514,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_8->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 8:
@@ -565,7 +565,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_9->Render(static_cast<_uint>(m_iFrame));
-		break;
+
 		break;
 	}
 	case 9:
@@ -616,8 +616,7 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_10->Render(static_cast<_uint>(m_iFrame));
-		break;
-		break;
+		break;		break;
 	}
 	case 10:
 	{
@@ -667,7 +666,6 @@ HRESULT CBlood::Render()
 			return E_FAIL;
 
 		m_pModelCom_11->Render(static_cast<_uint>(m_iFrame));
-		break;
 		break;
 	}
 	}

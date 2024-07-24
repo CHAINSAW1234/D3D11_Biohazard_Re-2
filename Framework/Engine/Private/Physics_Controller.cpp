@@ -131,11 +131,6 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		m_vecRigid_Dynamic[i]->Update();
 	}
 
-	//for (int i = 0; i < m_vecRagdoll.size(); ++i)
-	//{
-	//	m_vecRagdoll[i]->Update(fTimeDelta);
-	//}
-
 	//Simulate
 	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);

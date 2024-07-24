@@ -42,12 +42,15 @@ using namespace std;
 using namespace Client;
 
 #pragma region For Spot Light Frustrum Culling
-#define SPOT_FRUSTRUM_CULLING
+
+//#define SPOT_FRUSTRUM_CULLING
+//#define ANIM_PROPS_SPOT_SHADOW
+
 #pragma endregion
 	
 //#define MAP_NOTHING
-//#define MAP_INTERACT
-#define MAP_TEST
+#define MAP_INTERACT
+//#define MAP_TEST
 //#define Map_NA
 //	#define Map_Ye
 //#define Map_TEST2
@@ -62,8 +65,8 @@ using namespace Client;
 //#define NO_COLLISTION
 
 #define DISPLAY_FRAME
-//	#define DISPLAY_NAVMESH
-	#define FRAME_LOCK
+//#define DISPLAY_NAVMESH
+//#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {
