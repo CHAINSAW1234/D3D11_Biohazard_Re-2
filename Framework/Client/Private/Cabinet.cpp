@@ -50,7 +50,10 @@ HRESULT CCabinet::Initialize(void* pArg)
 	else if (m_tagPropDesc.strGamePrototypeName.find("005") != string::npos)
 		m_eCabinetType = TYPE_ELECTRIC;
 	else if (m_tagPropDesc.strGamePrototypeName.find("020") != string::npos)
+	{
 		m_eCabinetType = TYPE_WEAPON;
+		m_iItemIndex = ShotGun;
+	}
 	else if (m_tagPropDesc.strGamePrototypeName.find("024") != string::npos)
 	{
 		if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_HIDE_LOCKER)))
@@ -259,7 +262,10 @@ HRESULT CCabinet::Add_PartObjects()
 		ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pItemDead = &m_bItemDead; //얻었는가?
+		if (m_eCabinetType == TYPE_WEAPON)
+			m_tagPropDesc.tagCabinet.Name = TEXT("ShotGun");
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
+		
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));
 		if (nullptr == pItem)
@@ -495,7 +501,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 		bCam = true;
 	if (m_bCamera && (bCam || static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK])->Get_Clear()))
 	{
-		if (!bCam)
+		if (!bCam&&m_bLock)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK && m_fDelayLockTime == 0.f)
 				m_fDelayLockTime = 5.f;
@@ -512,7 +518,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 
 	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Safe_Normal_Active();
 	}
 
@@ -633,7 +639,7 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 
 	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Electric_Active();
 	}
 	if (m_eState == CABINET_OPEN)
@@ -688,7 +694,7 @@ void CCabinet::Zombie_Tick(_float fTimeDelta)
 {
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Zombie_Active();
 	}
 	if (m_eState == CABINET_OPEN)

@@ -404,7 +404,7 @@ HRESULT CLock_Cabinet::Initialize_SafeBox()
 void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 {
 
-	_int iRand = m_pGameInstance->GetRandom_Int(0, 3);
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 	switch (*m_pLockState)
@@ -482,39 +482,39 @@ void CLock_Cabinet::InPutKey_Sound(_int iRand, _int iRand1)
 	switch (iRand1)
 	{
 	case 0:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_1.mp3"), 0);
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_1.mp3"), iRand);
 		break;
 	case 1:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_2.mp3"), 1);
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_2.mp3"), iRand);
 		break;
 	case 2:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_3.mp3"), 2);
+		Change_Sound(TEXT("sound_Map_sm42_safebox_dial2_3.mp3"), iRand);
 		break;
 	case 3:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_4.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_safebox_dial2_4.mp3"), iRand);
 		break;
 	case 4:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_1.mp3"), 0);
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_1.mp3"), iRand);
 		break;
 	case 5:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), iRand);
 		break;
 	case 6:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), 2);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), iRand);
 		break;
 	case 7:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), 3);
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), iRand);
 		break;
 	case 8:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_7.mp3"), 3);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_7.mp3"), iRand);
 		break;
 		
 	case 9:
-		Change_Same_Sound(TEXT("sound_Map_sm42_parking_card_reader2_1.mp3"), 3);
+		Change_Sound(TEXT("sound_Map_sm42_parking_card_reader2_1.mp3"), 1);
 		break;
 		
 	case 10:
-		Change_Same_Sound(TEXT("sound_Map_sm42_parking_card_reader2_2.mp3"), 3);
+		Change_Sound(TEXT("sound_Map_sm42_parking_card_reader2_2.mp3"), 0);
 		break;
 
 	}
@@ -671,7 +671,7 @@ void CLock_Cabinet::Safebox_Return()
 void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 {
 
-	_int iRand = m_pGameInstance->GetRandom_Int(0, 3);
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 	switch (*m_pLockState)
@@ -695,7 +695,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			m_fGoalAngle[m_iCurBoneIndex] += 60.f;
 			/*if (360.f <= m_fGoalAngle[m_iCurBoneIndex] )
 				m_fGoalAngle[m_iCurBoneIndex] = 360.f;*/
-			InPutKey_Sound(0,4);
+			InPutKey_Sound(iRand,4);
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
 			break;
 
@@ -705,7 +705,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex < BONE_DIAL1)
 				m_iCurBoneIndex = BONE_DIAL3;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
-			InPutKey_Sound(0, 6);			
+			InPutKey_Sound(iRand, 6);
 
 			break;
 
@@ -716,7 +716,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			/*if (-360.f >= m_fGoalAngle[m_iCurBoneIndex])
 				m_fGoalAngle[m_iCurBoneIndex] = -360.f;*/
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
-			InPutKey_Sound(0, 5);
+			InPutKey_Sound(iRand, 5);
 
 			break;
 
@@ -877,7 +877,7 @@ void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 		_float4x4 TranslationMatrix = XMMatrixTranslation(0.f, -m_fCurTranslation,0.f);
 
 		m_pModelCom->Add_Additional_Transformation_World("ItemSet", TranslationMatrix);
-		if (m_fGoalTranslation - 0.02f < m_fCurTranslation)
+		if (m_fGoalTranslation - 0.07f < m_fCurTranslation)
 			InPutKey_Sound(0, 10);
 		else
 			InPutKey_Sound(0, 9);
