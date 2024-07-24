@@ -1187,9 +1187,8 @@ void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
 			m_eInven_Manager_State = USE_INTERACT_ITEM;
 			m_eTaskSequence = SETING;
 			m_pContextMenu->Set_Dead(true);
-			InteractUseItem();
 			INTERACT_ITEM_SoundPlay();
-
+			InteractUseItem();
 			break;
 		}
 
@@ -1250,7 +1249,7 @@ void CInventory_Manager::InteractUseItem()
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::spadekey01a:
-		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		//Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::cardkeylv101a:
@@ -1277,7 +1276,7 @@ void CInventory_Manager::InteractUseItem()
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::diakey01a:
-		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		//Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::virginmedal02a:
@@ -1300,12 +1299,12 @@ void CInventory_Manager::InteractUseItem()
 		break;
 	}
 
-	m_pSelected_ItemUI->Set_ItemVariation(-1);
-	if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
-	{
-		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
-	}
-	m_pSelected_ItemUI = nullptr;
+	//m_pSelected_ItemUI->Set_ItemVariation(-1);
+	//if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
+	//{
+	//	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+	//}
+	//m_pSelected_ItemUI = nullptr;
 }
 
 void CInventory_Manager::Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
