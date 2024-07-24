@@ -41,6 +41,7 @@ public:
 	virtual HRESULT				Initialize(void* pArg) override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
+	void InPutKey_Sound(_int iRand, _int iRand1);
 	virtual HRESULT				Render() override;
 	virtual HRESULT				Render_LightDepth_Dir()override;
 	virtual HRESULT				Render_LightDepth_Point() override;

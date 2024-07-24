@@ -35,6 +35,7 @@ HRESULT CBigStatue::Initialize(void* pArg)
 		m_iPassWord[1] = 2;//È°
 		m_iPassWord[2] = 0;//¹ì
 		m_eType = BIGSTATUE_WOMAN;
+		m_iItemIndex = virginmedal02a ;
 	}
 	else if(m_tagPropDesc.strObjectPrototype.find(TEXT("183")) != wstring::npos)
 	{
@@ -42,6 +43,8 @@ HRESULT CBigStatue::Initialize(void* pArg)
 		m_iPassWord[1] = 2;
 		m_iPassWord[2] = 5;
 		m_eType = BIGSTATUE_LION;
+		m_iItemIndex = virginmedal01a;
+
 	}
 	else
 	{
@@ -49,6 +52,8 @@ HRESULT CBigStatue::Initialize(void* pArg)
 		m_iPassWord[1] = 3;
 		m_iPassWord[2] = 2;
 		m_eType = BIGSTATUE_UNICON;
+		m_iItemIndex = unicornmedal01a;
+
 	}
 
 	if (FAILED(Add_Components()))
@@ -58,6 +63,10 @@ HRESULT CBigStatue::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_PartObjects()))
+		return E_FAIL;
+
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
 		return E_FAIL;
 
 	return S_OK;
@@ -73,6 +82,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 	if (m_fDelayLockTime > 0.f)
 	{
 		m_fDelayLockTime -= fTimeDelta;
+		m_bMove = true;
 		Camera_Active(PART_MEDAL, _float3(0.15f, -0.1f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	}
 	if (m_fDelayLockTime < 0.f)
@@ -120,7 +130,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 	
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/|| m_bAutoOpen)
 	{
-		if (*m_pPlayerInteract|| m_bAutoOpen)
+		if ((*m_pPlayerInteract|| m_bAutoOpen)&& false == m_pGameInstance->IsPaused())
 			Active();
 	}
 
@@ -233,11 +243,13 @@ HRESULT CBigStatue::Add_PartObjects()
 	MiniDesc.isMedalAnim = &m_isMedalAnim;
 	MiniDesc.pState = &m_eState;	
 	MiniDesc.eParts_Type = static_cast<_ubyte>(CMini_BigStatue::PARTS_TYPE::MINI_BODY);
+	MiniDesc.pMove = &m_bMove;
 
 	CPartObject* pMiniPart = { nullptr };
 	CMini_BigStatue::BODY_MINI_STATUE_DESC MiniParts_Desc = {};
 	MiniParts_Desc.pParentsTransform = m_pTransformCom;
 	MiniParts_Desc.isMedalAnim = &m_isMedalAnim;
+	MiniParts_Desc.pMove = &m_bMove;
 	MiniParts_Desc.pState = &m_eState;
 	MiniParts_Desc.eParts_Type = static_cast<_ubyte>(CMini_BigStatue::PARTS_TYPE::MINI_PARTS);
 
@@ -386,8 +398,7 @@ void CBigStatue::Active()
 	if (m_bAutoOpen)
 	{
 		//¿©±â¼­ ¾ÆÀÌÅÛ °Ù
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
+		m_pPlayer->PickUp_Item(this);
 		m_bAutoOpen = false;
 		return;
 	}
@@ -403,9 +414,7 @@ void CBigStatue::Active()
 	}
 	else
 	{
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
-		//¿©±âµµ ¾ÆÀÌÅÛ °Ù
+		m_pPlayer->PickUp_Item(this);
 	}
 	
 

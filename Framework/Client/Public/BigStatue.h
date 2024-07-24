@@ -71,11 +71,11 @@ private:
 			
 public:
 	virtual _float4 Get_Object_Pos() override;
-
 private:
 	_bool					m_bCamera = { false };
 	_bool					m_bCameraReset = { false };
 	_bool					m_bAutoOpen = { false };
+	_bool					m_bMove = { false };
 	_float				m_fDelayLockTime = { 0.f };
 	_ubyte				m_eType = { BIGSTATUE_UNICON };
 	_bool				m_bActivity = { false };

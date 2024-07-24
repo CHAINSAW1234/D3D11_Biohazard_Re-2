@@ -70,6 +70,7 @@ private:
 private: /* Safe Box */
 	HRESULT						Initialize_SafeBox();
 	void								Safebox_Late_Tick(_float fTimeDelta);
+	void								InPutKey_Sound(_int iRand, _int iRand1);
 	void								Safebox_RotationLock(LOCK_ALLOW_KEY _eKeyType, _float fTimeDelta);
 	void								Safebox_Clear_Condition();
 	void								Safebox_Return();

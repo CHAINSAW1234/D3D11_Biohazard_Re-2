@@ -7,7 +7,7 @@
 #include "Body_ItemProp.h"
 #include "Camera_Gimmick.h"
 #include "Player.h"
-
+#include"Selector_UI.h"
 CNewpoliceStatue::CNewpoliceStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -59,22 +59,47 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
 	if (!m_bVisible)
-		return;
-//#ifdef _DEBUG
-//#ifdef UI_POS
-//		Get_Object_Pos();
-//#endif
-//#endif
-
-	/* 예시 코드*/
-	if (DOWN== m_pGameInstance->Get_KeyState('L'))
 	{
-		m_isGiveMedal = true;
-		if (m_iEXCode > 3)
-			m_iEXCode = 3;
-		m_eMedalRender[m_iEXCode] = true;
-		m_iEXCode++;
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
+		return;
 	}
+
+
+	_bool bCam = { false };
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
+	{
+		bCam = true;
+	}
+	/* 예시 코드*/
+	if (m_isCamera_Reset)
+		bCam = true;
+	if (m_bCamera && (bCam))
+	{
+		Reset_Camera();
+		m_bCamera = false;
+	}
+	
+
+
+
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
+	{
+		if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
+			Active();
+	}
+	
+
+	if (m_bCamera)
+		if ((m_fZoomOut > 0.f) && ((m_fZoomOut -= fTimeDelta) > 0.f))
+			Camera_Active(PART_BODY, _float3(0.015f, 3.f, -5.55f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+		else
+			Camera_Active(PART_PART3, _float3(0.015f, 0.15f, 0.85f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+
 
 	Animation_BaseOn_MedalType();
 
@@ -87,7 +112,16 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 		return;
 
 	if (!Visible())
+	{
+
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
 		return;
+	}
 
 	if (m_bRender == false)
 		return;
@@ -101,7 +135,37 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
+	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))))
+	{
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+		{
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+			Opreate_Selector_UI(true, Get_Object_Pos());
 
+		}
+		else
+		{
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+				m_pSelector = nullptr;
+			}
+		}
+	}
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
+	}
 	__super::Late_Tick(fTimeDelta);
 
 
@@ -120,14 +184,14 @@ HRESULT CNewpoliceStatue::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(120.f);
-	ColliderDesc.vCenter = _float3(0.f, -50.f, 0.f);
+	ColliderDesc.fRadius = _float(250.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 200.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(200.f);
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
@@ -258,6 +322,15 @@ HRESULT CNewpoliceStatue::Bind_ShaderResources()
 	return S_OK;
 }
 
+void CNewpoliceStatue::Do_Interact_Props()
+{
+	m_isGiveMedal = true;
+
+	m_eMedalRender[m_iEXCode] = true;
+	m_iEXCode++;
+	m_fZoomOut = 2.f;
+}
+
 _float4 CNewpoliceStatue::Get_Object_Pos()
 {
 
@@ -303,6 +376,28 @@ void CNewpoliceStatue::Animation_BaseOn_MedalType()
 			/* Mission 달성*/
 		}
 	}
+}
+
+void CNewpoliceStatue::Active()
+{
+
+	if (m_iEXCode == 0)
+		m_iNeedItem = virginmedal01a;
+	else if (m_iEXCode == 1)
+		m_iNeedItem = unicornmedal01a;
+	else
+		m_iNeedItem = virginmedal02a;
+
+	if (m_iEXCode > 3)
+		m_iEXCode = 3;
+	
+
+
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
+	m_bCamera = true;
+
+	m_pPlayer->Interact_Props(this);
 }
 
 CNewpoliceStatue* CNewpoliceStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

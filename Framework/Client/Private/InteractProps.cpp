@@ -91,7 +91,7 @@ void CInteractProps::Late_Tick(_float fTimeDelta)
 void CInteractProps::Start()
 {
 	Check_Player();
-
+	
 	m_pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Layer(g_Level, g_strCameraTag)->front());
 	m_pCameraTransform = static_cast<CTransform*>(m_pCamera->Get_Component(g_strTransformTag));
 	for (auto& iter : m_PartObjects)

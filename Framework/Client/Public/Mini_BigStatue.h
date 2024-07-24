@@ -27,6 +27,7 @@ public:
 
 		_float4x4*			vParts_WorldMatrix = {};
 		_bool*				isMedalAnim = { false };
+		_bool*				pMove = { nullptr };
 
 	}BODY_MINI_STATUE_DESC;
 
@@ -67,16 +68,15 @@ private :
 	/* Anim */
 	Mini_Anim					m_eAnim					= { Mini_Anim::Static };
 	_ubyte						m_eMiniType				= {};
-	_bool						m_isMove				= { false };
+	_bool	*					m_isMove				= { false };
 	
 	/* Transform */
 	_float						m_fAdditionalHeight		= { 0.f };
 	_float						m_fAdditionalHeight_D	= { 0.f };
 	_float						m_fAdditionalZ			= { 0.f };
 
-	_bool						m_isMoveStart			= { false };
+	_bool	*					m_isMoveStart			= { nullptr };
 	_bool						m_isMoveEnd				= { false };
-
 	/* Render */
 	_float						m_fZTimer				= { 0.f };
 	_float						m_fRotationAngle		= { 0.f };

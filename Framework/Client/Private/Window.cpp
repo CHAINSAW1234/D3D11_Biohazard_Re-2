@@ -38,9 +38,9 @@ HRESULT CWindow::Initialize(void* pArg)
 	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
 		return E_FAIL;
 	m_pGameInstance->Set_Volume_3D(m_pTransformCom,0,0.1f);
-	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 1, 0.1f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 0, 1.f, 10.f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 1, 1.f, 10.f);
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 1, 0.3f);
+	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 0, 1.f, 5.f);
+	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 1, 1.f, 5.f);
 	return S_OK;
 }
 
@@ -137,7 +137,7 @@ void CWindow::Tick(_float fTimeDelta)
 		m_eBarrigateState = BARRIGATE_STATIC;
 
 	if (true == m_bBarrigateInstallable &&( m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
-		if ((*m_pPlayerInteract))
+		if ((*m_pPlayerInteract)&& false == m_pGameInstance->IsPaused())
 			Active();
 
 	if (m_bCamera)
@@ -276,8 +276,7 @@ void CWindow::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-	if(false == m_pGameInstance->IsPaused())
-		m_pPlayer->Interact_Props(this);
+	m_pPlayer->Interact_Props(this);
 
 	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 
