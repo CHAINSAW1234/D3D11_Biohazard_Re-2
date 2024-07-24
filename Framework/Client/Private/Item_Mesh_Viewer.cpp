@@ -351,14 +351,13 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 			m_eOperType = EXAMIN_PUZZLE;
-			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
-			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
-			//m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
-			//m_fDistCamZ = 0.18f;
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			//m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
+			m_fDistCamZ = 0.18f;
 			m_iSelected_Button = 0;
 			break;
 		}
-
 
 		if (true == m_pGameInstance->Check_Wheel_Down())
 		{
@@ -377,8 +376,6 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
 			}
-				
-
 			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
 			{
 				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
@@ -412,7 +409,6 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
 		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
-
 		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
 
 		break;
@@ -493,7 +489,6 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
 				if (m_iSelected_Button - 2 > -1)
 					m_iSelected_Button -= 2;
-
 			}
 			else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
 				if (m_iSelected_Button + 2 < 8)
@@ -637,8 +632,7 @@ _int CItem_Mesh_Viewer::Check_Puzzle_Success()
 		else if (m_iCorrectAnswer[iProgerss] == m_iInputAnswer[iProgerss])
 		{
 			m_eLampStates[iProgerss] = SUCCEED;
-		}
-		
+		}		
 
 		if (7 < iProgerss + 1)
 			iProgerss = 0;
@@ -1330,8 +1324,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		//m_matMoveCenter = XMMatrixTranslation(0.f, 0.004f, 0.f);
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.f, 0.04f, 0.f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
 		m_fPopupHide_EndDist = 0.15f;
