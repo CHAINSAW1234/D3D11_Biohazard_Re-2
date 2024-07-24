@@ -183,7 +183,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 			m_eOperType = EXAMIN_PUZZLE;
-			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector() - XMVectorSet(0.f, 0.4f, 0.f, 0.f));
 			//m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
 			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
 			m_fDistCamZ = 0.18f;
@@ -425,7 +425,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 				{
-					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, 0.4, POPUP_HIDE_START_DIST,
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, 0.4f, POPUP_HIDE_START_DIST,
 						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 				}
 				else
@@ -441,7 +441,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 				{
-					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, 0.4,
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, 0.4f,
 						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 					m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(-0.5f, 0.5f, 0.f, 0.f));
 				}
@@ -905,8 +905,9 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 
 		fResultRadian /= XMConvertToRadians(360.0f);
 
-		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Turn(MyUp, fResultRadian);
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		//m_pTransformCom->Turn(MyUp, fResultRadian);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fResultRadian);
 		m_fPreRadian = fRadian;
 		// 1. ÀÌ¹ø Tick ÀÇ Radian  - ÀÌÀü Radian
 		// 2. CTransformÀÌ °®°í ÀÖ´Â m_fRotationPerSec¸¦ ³ª´²Áà¾ßµÊ  
@@ -1233,7 +1234,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
 		m_fEndSize = 0.7f;
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.f, 0.f, -0.04f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::shotgun_bullet01a:
 		m_fPopupHide_EndDist = 0.6f;
@@ -1457,7 +1459,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
 		m_fEndSize = 0.7f;
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.f, 0.f, -0.5f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::Flash_Bomb:
 		m_fPopupHide_EndDist = 0.4f;
@@ -1489,7 +1492,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		m_matMoveCenter = XMMatrixTranslation(0.f, 0.04f, 0.f);
+		m_matMoveCenter = XMMatrixTranslation(0.04f, 0.0f, 0.f);
 		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
@@ -1512,7 +1515,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 	m_pTransformCom->Set_Scaled(vScaled.x, vScaled.y, vScaled.z);
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(0.f, 0.4f, 0.0f, 0.f));
 }
 
 void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
