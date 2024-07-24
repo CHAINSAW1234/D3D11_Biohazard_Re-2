@@ -3070,6 +3070,58 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 	}
 }
 
+void CRagdoll_Physics::Set_Part_Kinematic(_bool boolean, COLLIDER_TYPE eType)
+{
+	switch (eType)
+	{
+	case COLLIDER_TYPE::HEAD:
+		m_Head->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::CHEST:
+		m_Chest->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::PELVIS:
+		m_Pelvis->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::ARM_L:
+		m_Arm_L->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::ARM_R:
+		m_Arm_R->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::FOREARM_L:
+		m_ForeArm_L->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::FOREARM_R:
+		m_ForeArm_R->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::HAND_L:
+		m_Hand_L->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::HAND_R:
+		m_Hand_R->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::CALF_L:
+		m_Calf_L->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::CALF_R:
+		m_Calf_R->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::LEG_L:
+		m_Leg_L->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::LEG_R:
+		m_Leg_R->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::FOOT_L:
+		m_Foot_L->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	case COLLIDER_TYPE::FOOT_R:
+		m_Foot_R->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, boolean);
+		break;
+	}
+}
+
 _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth_Arm_L(_uint iIndex)
 {
 	return &m_BoneMatrices_Cloth_Arm_L[iIndex];

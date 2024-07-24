@@ -96,6 +96,10 @@ public:
 	_float4								GetRigidBodyPos(COLLIDER_TYPE eType);
 
 	virtual void						Set_Render(_bool boolean) override;
+	void								Set_pRender(_bool boolean)
+	{
+		*m_pRender = true;
+	}
 private:
 	CModel*								m_pModelCom = { nullptr };
 	CShader*							m_pShaderCom = { nullptr };
@@ -131,7 +135,7 @@ private:
 
 public:
 	void								WakeUp_Ragdoll();
-
+	void								SetKinematic_JumpScare(_bool boolean,COLLIDER_TYPE eType);
 private:
 	HRESULT								Add_Components();
 	HRESULT								Bind_ShaderResources();
