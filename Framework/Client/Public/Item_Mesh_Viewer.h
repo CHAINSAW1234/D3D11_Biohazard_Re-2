@@ -12,8 +12,13 @@ BEGIN(Client)
 
 class CItem_Mesh_Viewer final : public CGameObject
 {
+public:
+	enum OPERATION_TYPE { EXAMIN, PICKUPITEM, SECON_PICKUPITEM, EXAMIN_PUZZLE, OPER_TYPE_END };
+
 private:
-	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, SECON_PICKUPITEM, EXAMIN_PUZZLE ,OPER_TYPE_END};
+	enum BUTTON_STATE { BUTTON_IDLE, PRESSED, BUTTON_STATE_END };
+	enum LAMP_STATE { LAMP_IDLE, SUCCEED, FAILED, LAMP_STATE_END };
+
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
@@ -32,10 +37,15 @@ private:
 	void Idle_Operation(_float fTimeDelta);
 	void Hide_Operation(_float fTimeDelta);
 
+	_bool Check_Puzzle_Success();
+	void PS_Button_Resset();
+
 public:
 	void Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType);
 	void Set_ScaleByItemNum(ITEM_NUMBER eCallItemType);
 	void Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories);
+	OPERATION_TYPE Get_OperationType() const { return m_eOperType; }
+
 	
 private:
 	vector<CModel*>		m_vecModelCom;
@@ -68,7 +78,8 @@ private:
 
 	_float4x4			m_matMoveCenter = {};
 
-	_uint				m_iSelected_Button = { 8 };
+	_int				m_iSelected_Button = { -1 };
+	_uint				m_iPuzzle_Progress = 0;
 
 
 	string				m_LampTags[8];
@@ -76,8 +87,12 @@ private:
 	string				m_ButtonBoneTags[8];
 
 	_uint				m_iInputAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	_uint				m_iRoundAnswer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
 	_uint				m_iCorrectAnswer[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
+	BUTTON_STATE		m_eButtonStates[8] = { BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END ,BUTTON_STATE_END };
+	LAMP_STATE			m_eLampStates[8] = { LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END ,LAMP_STATE_END };
 
 
 private:

@@ -108,7 +108,6 @@ void CItem_Mesh_Viewer::Start()
 	m_ButtonBoneTags[6] = "button_p007";
 	m_ButtonBoneTags[7] = "button_p008";
 
-
 	//m_vecModelCom[portablesafe]->Set_RootBone("RootNode");
 	//m_vecModelCom[portablesafe]->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	//m_vecModelCom[portablesafe]->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
@@ -167,7 +166,6 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 		{
 			int a = 0;
 		}
-		
 	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EXAMINE, this);
@@ -188,7 +186,7 @@ HRESULT CItem_Mesh_Viewer::Render()
 
 
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe) {
+	if (m_eItem_Number == portablesafe /*&& EXAMIN_PUZZLE == m_eOperType*/) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -339,8 +337,9 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 			m_eOperType = EXAMIN_PUZZLE;
-			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
-			m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
+			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			m_iSelected_Button = 1;
 			break;
 		}
 
@@ -434,83 +433,62 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	}
 
 	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
-
-		if (true == m_pGameInstance->Check_Wheel_Down())
+		for (_uint i = 0; i < 8; i++)
 		{
-			m_fDistCamZ -= 0.001f;
-		}
-		else if (true == m_pGameInstance->Check_Wheel_Up())
-		{
-			m_fDistCamZ += 0.001f;
-		}
-
-		static		_float2			vSpeed = { 0.f, 0.f };
-		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			_long	MouseMove = { 0 };
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
+			if (PRESSED == m_eButtonStates[i])
 			{
-				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
-			}
-
-
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
-			{
-				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
+				m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, -0.25f, 0.f));
+				//_float4 fUp = m_pTransformCom->Get_State_Float4(CTransform::STATE_UP);
+				//fUp *= 5.f;
+				//m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(-fUp.x, -fUp.y, -fUp.z));
 			}
 		}
-		if (vSpeed.x > 0.f)
-		{
-			vSpeed.x -= fTimeDelta * 0.1f;
-			if (vSpeed.x < 0.f)
-				vSpeed.x = 0.f;
-		}
-		else
-		{
-			vSpeed.x += fTimeDelta * 0.1f;
-			if (vSpeed.x > 0.f)
-				vSpeed.x = 0.f;
-		}
-		if (vSpeed.y > 0.f)
-		{
-			vSpeed.y -= fTimeDelta * 0.1f;
-			if (vSpeed.y < 0.f)
-				vSpeed.y = 0.f;
-		}
-		else
-		{
-			vSpeed.y += fTimeDelta * 0.1f;
-			if (vSpeed.y > 0.f)
-				vSpeed.y = 0.f;
-		}
-
-		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
-		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
-
-		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
-
-
 
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
 			m_eOperType = EXAMIN;
+			PS_Button_Resset();
+			break;
+		}
+
+		//if (false == Check_Puzzle_Success())
+		//{
+
+		//	break;
+		//}
+
+		else //ÆÛÁñ ¼º°ø
+		{
+			if (8 == m_iPuzzle_Progress)
+			{
+
+			}
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eButtonStates[m_iSelected_Button] = PRESSED;
+			m_iPuzzle_Progress++;
 			break;
 		}
 
 		if (DOWN == m_pGameInstance->Get_KeyState('D')) {
-			
+			if (m_iSelected_Button - 1 > -1)
+				m_iSelected_Button -= 1;
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('A')) {
+			if (m_iSelected_Button + 1 < 8)
+				m_iSelected_Button += 1;
 
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
-
+			if (m_iSelected_Button + 2 < 8)
+				m_iSelected_Button += 2;
 		}
 
 		else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
-
+			if (m_iSelected_Button - 2 > -1)
+				m_iSelected_Button -= 2;
 		}
 		break;
 	}
@@ -572,6 +550,27 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 	}
 }
 
+_bool CItem_Mesh_Viewer::Check_Puzzle_Success()
+{
+	_bool isPuzzleSuccess = true;
+	for (_uint i = 0; i < m_iPuzzle_Progress; i++)
+	{
+		if (m_iCorrectAnswer[i] != m_iInputAnswer[i])
+			isPuzzleSuccess = false;
+	}
+	return isPuzzleSuccess;
+}
+
+void CItem_Mesh_Viewer::PS_Button_Resset()
+{
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_eButtonStates[i] = BUTTON_IDLE;
+		m_iInputAnswer[i] = 0;
+
+	}
+}
+
 void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
 {
 	switch (eOperation)
@@ -585,7 +584,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		Set_ScaleByItemNum(eCallItemType);
 		m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
 		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, fCenter.z);
 		m_matMoveCenter *= TempMat;
 		
 		m_fPreRadian = 0.f;
@@ -617,10 +616,14 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 
 			m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
 			_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-			_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
-			m_matMoveCenter *= TempMat;
-			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+			if (portablesafe != m_eItem_Number)
+			{
+				_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+				m_matMoveCenter *= TempMat;
+				_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+				m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+			}
+
 			//m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		}
 		
@@ -667,7 +670,7 @@ HRESULT CItem_Mesh_Viewer::Add_Components()
 HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 {
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe) {
+	if (m_eItem_Number == portablesafe/* && EXAMIN_PUZZLE == m_eOperType*/) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -699,7 +702,7 @@ CItem_Mesh_Viewer* CItem_Mesh_Viewer::Create(ID3D11Device* pDevice, ID3D11Device
 
 		Safe_Release(pInstance);
 	}
-
+	
 	return pInstance;
 
 }
@@ -881,7 +884,6 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 	else
 		return S_OK;
 }
-
 
 void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 {
@@ -1237,7 +1239,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		//m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
+		//m_matMoveCenter = XMMatrixTranslation(0.f, 0.004f, 0.f);
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
