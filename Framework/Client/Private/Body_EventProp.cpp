@@ -36,9 +36,7 @@ HRESULT CBody_EventProp::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
-
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 

@@ -1143,16 +1143,16 @@ void CBody_Door::IronSound(_int iRandom, _int iRandom1)
 		switch (iRandom1)
 		{
 		case 0:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_1.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_1.mp3"), iRandom);
 			break;
 		case 1:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_15.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_iron_normal2_15.mp3"), iRandom);
 			break;
 		case 2:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_iron_fence2_7.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_iron_fence2_7.mp3"), iRandom);
 			break;
 		case 3:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
 			break;
 		}
 	}
@@ -1169,21 +1169,21 @@ void CBody_Door::WoodSound(_int iRandom, _int iRandom1)
 		switch (iRandom1)
 		{
 		case 0:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_4.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_4.mp3"), iRandom);
 			break;
 		case 1:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_9.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_9.mp3"), iRandom);
 			break;
 		case 2:
-			Change_Same_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_12.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_12.mp3"), iRandom);
 			break;
 		case 3:
-			Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
+			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_15.mp3"), iRandom);
 			break;
 		}
 	}
 	else
-		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_2.mp3"), !iRandom);
+		Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_2.mp3"), !iRandom);
 }
 
 CBody_Door* CBody_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
