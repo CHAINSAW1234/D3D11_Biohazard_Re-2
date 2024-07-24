@@ -988,6 +988,7 @@ void CPlayer::Throw_Sub()
 
 void CPlayer::Reload()
 {
+	m_isReload = true;
 	Get_Body_Model()->Set_Loop(3, false);
 	Change_Body_Animation_Hold(3, HOLD_RELOAD);
 	Get_Body_Model()->Set_TrackPosition(3, 0.f);
@@ -1259,6 +1260,8 @@ void CPlayer::Update_KeyInput_Reload()
 			Get_Body_Model()->Set_Loop(3, true);
 
 			// 총알 개수 업데이트
+			m_isReload = false;
+
 			ITEM_NUMBER eItem = { ITEM_NUMBER_END };
 			_int iNumBullet = { 0 };
 			switch (Get_Equip_As_ITEM_NUMBER()) {

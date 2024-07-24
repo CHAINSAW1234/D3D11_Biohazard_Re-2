@@ -202,6 +202,7 @@
     <ClInclude Include="..\Public\Cut_Scene_CF120.h" />
     <ClInclude Include="..\Public\EnvSound.h" />
     <ClInclude Include="..\Public\Event_Call_Center.h" />
+    <ClInclude Include="..\Public\Hold_UI.h" />
     <ClInclude Include="..\Public\Prop_SM60_033_00.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\BigStatue.h" />
@@ -500,6 +501,7 @@
     <ClCompile Include="..\Private\Cut_Scene_CF120.cpp" />
     <ClCompile Include="..\Private\EnvSound.cpp" />
     <ClCompile Include="..\Private\Event_Call_Center.cpp" />
+    <ClCompile Include="..\Private\Hold_UI.cpp" />
     <ClCompile Include="..\Private\Prop_SM60_033_00.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\BigStatue.cpp" />

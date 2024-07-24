@@ -249,11 +249,12 @@ public:
 	_byte										Get_Player_State()						{ return m_eState; } /* Player 상태 반환 */
 	_bool*										Get_ZoomOff()							{ return &m_isZoomOff;  }
 	_bool*										Get_MissionClear_Ptr()					{ return &m_isMissionClear; }
-	
+	_bool										Get_Request_ChangeEquip()				{ return m_isRequestChangeEquip; }
+
 	//////////////////////* For. Fuction *///////////////////
 	void										Player_First_Behavior();
 	void										MissionClear_Font(wstring _missionText, _ubyte _missionType);
-
+	_bool										IsReload() { return m_isReload;  }
 	/* For. Selector UI Interact : */
 	CGameObject*								Create_Selector_UI(); /* 사용할 Selector Obj를 return */
 
@@ -276,6 +277,7 @@ private:
 	_bool										m_isMissionClear				= { false };
 	_bool										m_isFlod_EntranceDoor			= { false };
 	
+	_bool										m_isReload = { false };
 	_bool										m_MissionCollection[MISSION_TYPE::END_MISSION] = { false };
 #pragma
 

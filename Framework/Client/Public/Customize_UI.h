@@ -511,6 +511,7 @@ protected : /* Client*/
 
 	_int						m_iWhich_Child = { 0 }; /* 몇 번째 자식인 지를 설명할 때 사용 */
 	_bool						m_isBackColor_Change = { false }; /* Black에 관련된 컬러만 변경 */
+	_bool						m_isMaskCircle = { false };
 
 	/* 1. inventory Item */
 	ITEM_BOX_TYPE				m_eBox_Type = { ITEM_BOX_TYPE::END_BOX };

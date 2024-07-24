@@ -730,9 +730,6 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\NewFilter1">
       <UniqueIdentifier>{db06b4df-7290-4a7b-be78-741e74940827}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player">
-      <UniqueIdentifier>{3110fbc5-7eac-4c11-be2d-968269282fdd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM69_015">
       <UniqueIdentifier>{72ef3a79-bf2b-4b58-b5e2-9e8bbb3ccdea}</UniqueIdentifier>
     </Filter>
@@ -831,6 +828,9 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\11. Map_UI\7. Announcement">
       <UniqueIdentifier>{4cc765dd-e62c-4152-a7cb-0835edbb6f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\17. Hold">
+      <UniqueIdentifier>{2ac9f5e8-f17f-48da-8129-81c4dc73abfd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1594,9 +1594,6 @@
     <ClInclude Include="..\Public\EnvSound.h">
       <Filter>02.GameObjects\MapObject\EnvSound</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Chair.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Chair</Filter>
     </ClInclude>
@@ -1617,6 +1614,10 @@
     </ClInclude>
     <ClInclude Include="..\Public\Announcement_Map_UI.h">
       <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h" />
+    <ClInclude Include="..\Public\Hold_UI.h">
+      <Filter>02.GameObjects\UI\17. Hold</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2341,9 +2342,6 @@
     <ClCompile Include="..\Private\EnvSound.cpp">
       <Filter>02.GameObjects\MapObject\EnvSound</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Chair.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Chair</Filter>
     </ClCompile>
@@ -2364,6 +2362,10 @@
     </ClCompile>
     <ClCompile Include="..\Private\Announcement_Map_UI.cpp">
       <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp" />
+    <ClCompile Include="..\Private\Hold_UI.cpp">
+      <Filter>02.GameObjects\UI\17. Hold</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

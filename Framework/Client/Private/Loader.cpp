@@ -137,7 +137,7 @@
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
 #include "HotKey.h"
-
+#include "Hold_UI.h"
 #include "Hint.h"
 #include "Hint_Directory.h"
 #include "Hint_Display.h"
@@ -540,7 +540,7 @@ HRESULT CLoader::Load_Prototype()
 		CCrosshair_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_CNavigation_Debug */
+	/* For.Prototype_GameObject_NavMesh_Debug */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NavMesh_Debug"),
 		CNavMesh_Debug::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -555,26 +555,31 @@ HRESULT CLoader::Load_Prototype()
 		CInventory_Item_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Inventory_Item_UI */
+	/* For.Prototype_GameObject_HPBar_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HPBar_UI"),
 		CHPBar_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Inventory_Item_UI */
+	/* For.Prototype_GameObject_Bullet_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Bullet_UI"),
 		CBullet_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Inventory_Item_UI */
+	/* For.Prototype_GameObject_Title_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Title_UI"),
 		CTitle_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_TextBox */
+	/* For.Prototype_GameObject_MissionBar_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MissionBar_UI"),
 		CMissionBar_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Hold_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hold_UI"),
+		CHold_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 	/* For.Prototype_GameObject_TextBox */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TextBox"),
 		CTextBox::Create(m_pDevice, m_pContext))))

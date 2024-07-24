@@ -12,7 +12,7 @@
 #define TEN 10
 #define ZERO 0
 
-#define ALPHA_ZERO _float4(0, 0, 0, 0)
+#define ALPHA_ZERO _float4(0.f, 0.f, 0.f, 0.f)
 
 #define BULLET_UI_LIFE 2.f
 #define BULLET_BACKGROUND 999
@@ -478,7 +478,9 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
     if (true == m_pCrosshair->Render_Type())
     {
         m_isKeepCross = true;
-        m_isRender = true;
+
+         m_isRender = true;
+
         m_fBulletTimer = 0.f;
     }
 
