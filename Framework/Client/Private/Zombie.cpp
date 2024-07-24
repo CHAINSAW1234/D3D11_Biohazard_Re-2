@@ -269,7 +269,7 @@ void CZombie::Tick(_float fTimeDelta)
 		m_eBeHavior_Col;
 
 #pragma region 절두체 컬링
-	if (m_bRagdoll == false)
+	if (m_bRagdoll == false && m_bPartial_Ragdoll == false)
 	{
 		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.f))
 		{

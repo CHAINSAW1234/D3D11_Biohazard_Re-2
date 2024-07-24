@@ -771,5 +771,5 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Leg_L(CRagdoll* ragdoll, _mat
         }
     }
 
-    return &m_transforms_BreakPart_Cloth_Leg_R;
+    return &m_transforms_BreakPart_Cloth_Leg_L;
 }

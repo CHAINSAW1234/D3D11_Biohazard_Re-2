@@ -1390,14 +1390,6 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
 
     float4 vPosition = float4(0.f, 0.f, 0.f, 1.f);
     
-    if (vDepthDesc.r == 0)
-    {
-        vPosition = vViewPosition;
-        vDir = -vDir;
-
-    }
-
-    
     for (uint i = 0; i < SAMPLE_COUNT; ++i)
     {
         // 1. Direction

@@ -48,14 +48,14 @@ using namespace Client;
 
 #pragma endregion
 	
-//#define MAP_NOTHING
-#define MAP_INTERACT
+#define MAP_NOTHING
+//#define MAP_INTERACT
 //#define MAP_TEST
 //#define Map_NA
 //	#define Map_Ye
 //#define Map_TEST2
 
-//#define TEST_ZOMBIE_MAINHALL
+#define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING

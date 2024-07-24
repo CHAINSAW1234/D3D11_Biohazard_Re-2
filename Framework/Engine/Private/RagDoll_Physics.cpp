@@ -1814,9 +1814,6 @@ void CRagdoll_Physics::Update(_float fTimeDelta)
 
 void CRagdoll_Physics::Update_Partial(_float fTimeDelta)
 {
-	if (m_bCulling)
-		return;
-
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
@@ -1827,9 +1824,6 @@ void CRagdoll_Physics::Update_Partial(_float fTimeDelta)
 
 void CRagdoll_Physics::Update_Partial_After(_float fTimeDelta)
 {
-	if (m_bCulling)
-		return;
-
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)

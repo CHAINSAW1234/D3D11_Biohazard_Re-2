@@ -1039,8 +1039,6 @@ void CBody_Zombie::Set_Render(_bool boolean)
 {
 	m_bRender = boolean;
 
-	m_pRagdoll->SetCulling(boolean);
-
 	if (m_bRagdoll)
 		m_bRender = true;
 }
