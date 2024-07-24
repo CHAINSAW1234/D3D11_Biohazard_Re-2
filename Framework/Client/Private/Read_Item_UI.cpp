@@ -37,8 +37,11 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         if (CustomUIDesc->wstrFileName == TEXT("UI_Item_Introduce"))
         {
             m_eRead_type = READ_UI_TYPE::INTRODUCE_READ;
+
             m_vOriginColor = m_vCurrentColor = m_vColor[0].vColor;
+
             m_vColor[0].fBlender_Value = m_fBlending = MAX_BLENDING;
+
             m_vColor[0].vColor = _float4(0, 0, 0, 0);
 
             if (!m_vecTextBoxes.empty())
@@ -71,6 +74,9 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 
                     else
                         m_eRead_type = READ_UI_TYPE::TEXTURE_READ;
+
+                    m_vOriginScaled = m_pTransformCom->Get_Scaled();
+
                 }
 
                 else if (2 == CustomUIDesc->iWhich_Child)
@@ -109,9 +115,11 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
                     m_eRead_Arrow_Type = READ_ARROW_TYPE::LEFT_ARROW;
 
                     _float4 vMainTrans = pMain_Trans->Get_State_Float4(CTransform::STATE_POSITION);
+
                     _float3 vMainScaled = pMain_Trans->Get_Scaled();
 
                     vMainTrans.x -= (vMainScaled.x - ARROW_DISTANCE);
+
                     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainTrans);
                 }
             }
@@ -142,9 +150,9 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         m_BookText[ITEM_READ_TYPE::HAND_HELD_SAFE_NOTE] = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Portable_Safe1") , TEXT("Prototype_Component_Texture_Portable_Safe2") };
         m_BookText[ITEM_READ_TYPE::RICKER_NOTE]         = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_ReadType_Ricker1") , TEXT("Prototype_Component_Texture_ReadType_Ricker2") , TEXT("Prototype_Component_Texture_ReadType_Ricker3") , TEXT("Prototype_Component_Texture_ReadType_Ricker4") };
         m_BookText[ITEM_READ_TYPE::SAFE_PASSWARD_NOTE]  = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Safe_PassWard_Note1") , TEXT("Prototype_Component_Texture_Safe_PassWard_Note2") , TEXT("Prototype_Component_Texture_Safe_PassWard_Note3")};
-        m_BookText[ITEM_READ_TYPE::PAMPHLET_NOTE]            = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_PamphletNote1"), TEXT("Prototype_Component_Texture_PamphletNote2"), TEXT("Prototype_Component_Texture_PamphletNote3"), TEXT("Prototype_Component_Texture_PamphletNote4") };
+        m_BookText[ITEM_READ_TYPE::PAMPHLET_NOTE]        = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_PamphletNote1"), TEXT("Prototype_Component_Texture_PamphletNote2"), TEXT("Prototype_Component_Texture_PamphletNote3"), TEXT("Prototype_Component_Texture_PamphletNote4") };
        
-        m_BookText[ITEM_READ_TYPE::OFFICER_NOTE]        = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note2") };
+        m_BookText[ITEM_READ_TYPE::OFFICER_NOTE]        = { TEXT("Prototype_Component_Texture_ReadType_Police_Note1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note2") };
         m_BookText[ITEM_READ_TYPE::ABOUT_MAP]           = { TEXT("Prototype_Component_Texture_ReadMap"), };
         
     }
@@ -168,6 +176,11 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
 
         if (nullptr == m_pCursor)
             MSG_BOX(TEXT("CRead_Item_UI() : Cursor를 찾을 수 없습니다."));
+    }
+
+    if (DOWN == m_pGameInstance->Get_KeyState('8'))
+    {
+        Set_ReadItem_Type(ITEM_READ_TYPE::OFFICER_NOTE);
     }
 
     Operate_ReadUI(fTimeDelta);
@@ -229,8 +242,8 @@ void CRead_Item_UI::Operate_ReadUI(_float fTimeDelta)
 
         }
     }
-
-    if (ITEM_READ_TYPE::ABOUT_MAP == m_eBook_Type)
+   
+    else if (ITEM_READ_TYPE::ABOUT_MAP == m_eBook_Type)
     {
         if (READ_UI_TYPE::ITEM_TYPE_READ == m_eRead_type)
         {
@@ -446,6 +459,21 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
 
     // Render_Destory(false);
 
+    if (ITEM_READ_TYPE::OFFICER_NOTE == m_pIntro_UI->m_eBook_Type)
+    {
+        if (false == m_isOneRender)
+        {
+            m_isOneRender = true;
+
+            _float3 vScaled = m_vOriginScaled;
+
+            vScaled.x -= 50.f;
+            vScaled.y += 100.f;
+
+            m_pTransformCom->Set_Scaled(vScaled.x, vScaled.y, vScaled.z);
+        }
+    }
+
     vector<wstring> incidentLogNotes = m_pRead_Supervise->m_BookText[m_pIntro_UI->m_eBook_Type];
 
     /* 1은 Texture. Text는 그 아래 숫자로 내려갈 수 없다. */
@@ -582,6 +610,8 @@ void CRead_Item_UI::Reset(_bool isItem)
 
         m_vCurrentColor = m_vOriginColor;
 
+        m_isOneRender = false;
+
         if (nullptr != m_pRead_Supervise)
             m_pRead_Supervise->m_iBookCnt = 0;
 
@@ -597,6 +627,7 @@ void CRead_Item_UI::Reset(_bool isItem)
 
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vTransform);
     }
+
 }
 
 CCustomize_UI* CRead_Item_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
