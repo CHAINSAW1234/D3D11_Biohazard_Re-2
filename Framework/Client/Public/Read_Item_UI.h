@@ -72,15 +72,18 @@ private :
 	_bool									m_isChange			= { false };
 	_bool									m_isPrevRender		= { false };
 
+	_bool									m_isOneRender		= { false };
 
 private :
 	CRead_Item_UI*							m_pTexture_UI		= { nullptr }; /* Arrow가 가지고 있는 Texture */
 	CRead_Item_UI*							m_pRead_Supervise	= { nullptr }; /* MAIN : 이 안에 부여할 TEXT와 TEXTURE를 가지고 있을 것이다. */
+
 	_int									m_iBookCnt			= { 0 };
 	_int									m_iBook_PrevCnt		= { 1 };
 	vector<CRead_Item_UI*>					m_ReadVec;
 
-	class CCursor_UI*						m_pCursor = { nullptr };
+	class CCursor_UI*						m_pCursor			= { nullptr };
+	_float3									m_vOriginScaled		= {};
 
 private : /* Text 관련*/
 	map<ITEM_READ_TYPE, vector<wstring>>	m_BookText;

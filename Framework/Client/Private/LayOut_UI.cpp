@@ -154,7 +154,9 @@ void CLayOut_UI::Tick(_float fTimeDelta)
 
 
     _float4 vObjPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
     vObjPos.z = 0.1f;
+
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vObjPos);
 
     Layout_Tab();
@@ -287,19 +289,31 @@ void CLayOut_UI::Layout_Tab()
 {
     if (LAYOUT_TYPE::LAYOUT_TAB == m_eLayout_Type || LAYOUT_TYPE::LAYOUT_BACKGROUND == m_eLayout_Type)
     {
-      /*  if (*m_isGimmickCamera_Layout_Type != static_cast<_ubyte>(CInteractProps::INTERACT_GIMMICK_TYPE::NONE_GIMMICK))
-            return;*/
-
         if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
         {
             if (false == (*m_isMainRender))
             {
+                _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+                
+                pos.z = 0.01f;
+
+                m_fBlending = 0.f;
+
                 m_isRender = true;
+               
                 m_eRenderLayout_Type = (LAYOUT_TAB_TYPE) * (m_pTab_Window->Get_Window_RenderType_Ptr());
             }
 
             else
             {
+                _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                pos.z = 0.f;
+
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
+
+                m_fBlending = 0.f;
+
                 m_isRender = false;
                 m_eRenderLayout_Type = LAYOUT_TAB_TYPE::END_UI_TYPE;
             }
@@ -308,7 +322,6 @@ void CLayOut_UI::Layout_Tab()
 
         else
         {
-
             /* ³» ·»´õ¶û È£ÃâÇÒ ·»´õ¶û °°À» ¶§ */
             if (nullptr != m_pLayout_BackGround)
             {

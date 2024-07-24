@@ -500,6 +500,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º  Map */////////////////////////////
 	m_isMapType = true;
 
