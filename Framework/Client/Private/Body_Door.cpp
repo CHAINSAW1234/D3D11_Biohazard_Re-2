@@ -1013,8 +1013,22 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#ifdef SPOT_FRUSTRUM_CULLING
+	if (m_bRender)
+	{
+		if (m_bLocalized == false)
+		{
+			if (m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 0.2f))
+			{
+				m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+			}
+		}
+	}
+#endif
 
+#ifdef ANIM_PROPS_SPOT_SHADOW
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
 }
 
 void CBody_Door::Update_Hit_Reaction(_float fTimeDelta)

@@ -131,7 +131,7 @@ public :
 	_bool										Get_Door_Lock()		{ return m_bLock; }				// 잠겼는지 아닌지(문이 잠김이 true)
 	_bool										Get_FirstInteract()	{ return m_bFirstInteract; } // 접촉만 함 (탐색 - 빨간색)
 	_bool										Get_Interact()		{ return m_bInteract; }			// 열었는지 아닌지(파란색)
-
+	void										Set_Lock(_bool bLock=false) { m_bLock = bLock; }
 private:
 	_bool										m_bLock =	{ false };
 	_ubyte									m_eDoorTexture = { WOOD };

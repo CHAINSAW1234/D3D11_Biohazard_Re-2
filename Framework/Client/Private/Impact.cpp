@@ -33,7 +33,7 @@ HRESULT CImpact::Initialize(void * pArg)
 
 	m_FrameDelay = 25;
 
-	m_fAlpha_Delta = 0.5f;
+	m_fAlpha_Delta = 0.75f;
 
 	return S_OK;
 }

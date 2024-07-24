@@ -38,9 +38,9 @@ HRESULT CDoor::Initialize(void* pArg)
 	m_bLock = m_tagPropDesc.tagDoor.bLock;
 
 	m_tagPropDesc.tagDoor.iLockType; //0=>앰블럼 1=> chain 3=>dial
-	 /* 0 하트 1 스페이스 2 클로버 3 다이아*/
+	/* 0 하트 1 스페이스 2 클로버 3 다이아*/
 	m_iEmblemType = m_tagPropDesc.tagDoor.iEmblemType;
-	
+
 	if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("038") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("113") != string::npos))
 		m_eType = DOOR_DOUBLE;
 
@@ -52,12 +52,12 @@ HRESULT CDoor::Initialize(void* pArg)
 
 	else
 	{
-		
+
 		if (m_tagPropDesc.strGamePrototypeName.find("iron") != string::npos)
 			m_eDoorTexture = IRON;
 		else
 			m_eDoorTexture = WOOD;
-		
+
 		m_eType = DOOR_ONE;
 	}
 
@@ -145,20 +145,20 @@ void CDoor::Tick(_float fTimeDelta)
 
 	if (!m_bVisible)
 		return;
-//#ifdef _DEBUG
-//#ifdef UI_POS
-//	Get_Object_Pos();
-//#endif
-//#endif
+	//#ifdef _DEBUG
+	//#ifdef UI_POS
+	//	Get_Object_Pos();
+	//#endif
+	//#endif
 	if (m_eType == CDoor::DOOR_DUMMY)
 	{
 		m_iHP = 0;
 		return;
 	}
 
-
-	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 	
+	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -169,13 +169,6 @@ void CDoor::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 	{
-		//if (nullptr != m_pSelector)
-		//{
-		//	m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-		//	m_pSelector = nullptr;
-		//}
-
 		return;
 	}
 
@@ -298,8 +291,8 @@ HRESULT CDoor::Add_PartObjects()
 	BodyDesc.pDoorTexture = &m_eDoorTexture;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 
-	if (true == m_bLock && m_tagPropDesc.tagDoor.iLockType == 0 && 
-		(m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::HEART_EMBLEM|| 
+	if (true == m_bLock && m_tagPropDesc.tagDoor.iLockType == 0 &&
+		(m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::HEART_EMBLEM ||
 			m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::SPADE_EMBLEM ||
 			m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::CLOVER_EMBLEM ||
 			m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::DIA_EMBLEM))
@@ -313,7 +306,7 @@ HRESULT CDoor::Add_PartObjects()
 
 	/*PART_LOCK*/
 	m_PartObjects[CDoor::PART_LOCK] = nullptr;
-	
+
 	/*PART_HANDLE*/
 
 	/* 0 하트 1 스페이스 2 클로버 3 다이아*/
@@ -331,7 +324,7 @@ HRESULT CDoor::Add_PartObjects()
 		EmblemDesc.pDoorState = &m_eOneState;
 
 		/* Mark*/
-		CPartObject* pMark = {nullptr};
+		CPartObject* pMark = { nullptr };
 
 		CMark_Door::EMBLEMMARK_DOOR_DESC MarkDesc;
 
@@ -352,7 +345,7 @@ HRESULT CDoor::Add_PartObjects()
 		switch (m_iEmblemType)
 		{
 		case (_uint)CDoor::EMBLEM_TYPE::HEART_EMBLEM:
-			m_iNeedItem = -1; 
+			m_iNeedItem = -1;
 
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_heart_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_heart");
@@ -360,7 +353,7 @@ HRESULT CDoor::Add_PartObjects()
 			break;
 
 		case (_uint)CDoor::EMBLEM_TYPE::SPADE_EMBLEM:
-			m_iNeedItem = spadekey01a; 
+			m_iNeedItem = spadekey01a;
 
 			KeyDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_103_spadekey01a");
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
@@ -370,7 +363,7 @@ HRESULT CDoor::Add_PartObjects()
 			break;
 
 		case (_uint)CDoor::EMBLEM_TYPE::CLOVER_EMBLEM:
-			m_iNeedItem = -1; 
+			m_iNeedItem = -1;
 
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_clover_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_clover");
@@ -397,7 +390,7 @@ HRESULT CDoor::Add_PartObjects()
 			m_PartObjects[PART_EMBLEM] = pEmblem;
 
 		pMark = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mark_EmblemDoor"), &MarkDesc));
-	
+
 		if (nullptr == pMark)
 			return E_FAIL;
 		else
@@ -417,7 +410,7 @@ HRESULT CDoor::Add_PartObjects()
 		else
 			m_PartObjects[PART_KEY] = nullptr;
 	}
-	
+
 
 	return S_OK;
 }
@@ -447,7 +440,7 @@ HRESULT CDoor::Initialize_PartObjects()
 				pItem1->Set_Socket01(pCombinedMatrix);
 
 				/* 2. Key */
-				if (CDoor::EMBLEM_TYPE::SPADE_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType)|| CDoor::EMBLEM_TYPE::DIA_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType))
+				if (CDoor::EMBLEM_TYPE::SPADE_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType) || CDoor::EMBLEM_TYPE::DIA_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType))
 				{
 					CModel* pEmblemModel = { static_cast<CModel*>(m_PartObjects[PART_EMBLEM]->Get_Component(TEXT("Com_Body_Model"))) };
 
@@ -465,17 +458,17 @@ HRESULT CDoor::Initialize_PartObjects()
 
 			}
 	}
-	
+
 	return S_OK;
 }
 
 HRESULT CDoor::Add_Locations()
 {
-	list<CGameObject*>*				pColliders = { m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider")) };
+	list<CGameObject*>* pColliders = { m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider")) };
 	if (nullptr == pColliders)
 		return E_FAIL;
 
-	CCollider*						pMyCollider = { m_pColliderCom[INTER_COL_NORMAL][COL_STEP0] };
+	CCollider* pMyCollider = { m_pColliderCom[INTER_COL_NORMAL][COL_STEP0] };
 	if (nullptr == pMyCollider)
 		return E_FAIL;
 
@@ -501,13 +494,13 @@ HRESULT CDoor::Add_Locations()
 
 #ifdef _DEBUG
 	_uint			iNumLocation = { static_cast<_uint>(m_Linked_Locations.size()) };
-	if(2 != iNumLocation)
+	if (2 != iNumLocation)
 	{
 		_int iA = 0;
 
 		//_int			iFloor = { m_pMyCustomCollider->Get_Floor() };
 		//_int			iRegion = { m_pMyCustomCollider->Get_Region() };
-	}	
+	}
 #endif
 
 	return S_OK;
@@ -522,14 +515,14 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 
 	if (m_fTime > 2.f)
-	{		
-		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bCol[INTER_COL_DOUBLE][COL_STEP1]&&!m_bAttack)
+	{
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bCol[INTER_COL_DOUBLE][COL_STEP1] && !m_bAttack)
 		{
 			m_fTime = 0.f;
 			m_bActivity = false;
 			m_eDoubleState = DOUBLEDOOR_STATIC;
 		}
-		else if(m_bAttack && m_pZombieTransform != nullptr)
+		else if (m_bAttack && m_pZombieTransform != nullptr)
 		{
 			if (Distance_Zombie(m_pZombieTransform) > 2.f)
 			{
@@ -543,7 +536,7 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 	if (!m_bActivity && (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
 	{
-		if (*m_pPlayerInteract|| m_bCol[INTER_COL_NORMAL][COL_STEP2]|| m_bCol[INTER_COL_DOUBLE][COL_STEP2])
+		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2])
 			DoubleDoor_Active();
 
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
@@ -652,7 +645,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		}
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-30.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-150.f, 1.f, 0.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(-30.f, 1.f, 0.f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(-150.f, 1.f, 0.f, 1.f))))
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // 인지?
 		{
@@ -669,14 +662,14 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 				Opreate_Selector_UI(false, Get_Object_Pos());
 			}
-			
+
 		}
 		else
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
-			if(nullptr != m_pSelector)
+			if (nullptr != m_pSelector)
 			{
 				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
 
@@ -777,7 +770,7 @@ void CDoor::DoubleDoor_Active()
 		else
 			m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
 	}
-	
+
 
 }
 
@@ -790,10 +783,10 @@ _float4 CDoor::Get_Object_Pos()
 	if (m_eType == DOOR_DOUBLE)
 	{
 		_float fScala = Radian_To_Player();
-		if ((!m_bCol[INTER_COL_NORMAL][COL_STEP0] && !m_bCol[INTER_COL_DOUBLE][COL_STEP0]) 
+		if ((!m_bCol[INTER_COL_NORMAL][COL_STEP0] && !m_bCol[INTER_COL_DOUBLE][COL_STEP0])
 			|| (m_bCol[INTER_COL_NORMAL][COL_STEP0] && m_bCol[INTER_COL_DOUBLE][COL_STEP0]))
 		{
-			_float4 vPosR; 
+			_float4 vPosR;
 			_float4 vPosL;
 			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 			{
@@ -805,7 +798,7 @@ _float4 CDoor::Get_Object_Pos()
 				vPosR = static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(1); //Lside_R
 				vPosL = static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(3); //Rside_R
 			}
-			return XMVectorSetW( (vPosR+vPosL)/2.f,1.f);
+			return XMVectorSetW((vPosR + vPosL) / 2.f, 1.f);
 		}
 		else if (m_bCol[INTER_COL_NORMAL][COL_STEP0])
 		{
@@ -830,7 +823,7 @@ _float4 CDoor::Get_Object_Pos()
 			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(1);
 	}
 
-		
+
 	return _float4();
 }
 
@@ -848,7 +841,7 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 			else
 				m_eDoubleState = R_DOUBLEDOOR_OPEN;
 		}
-		else if(m_eType == DOOR_ONE)
+		else if (m_eType == DOOR_ONE)
 		{
 			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 				m_eOneState = ONEDOOR_OPEN_L;
@@ -878,19 +871,19 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
 	if (m_bAttack && m_eOneState != ONEDOOR_STATIC && static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Is_Finishied_Anim())
 		m_iHP = 5;
-	
+
 	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
 	if (m_fTime > 2.f)
 	{
-		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1]&& !m_bAttack)
-		{		
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bAttack)
+		{
 			m_fTime = 0.f;
 			m_bActivity = false;
 			m_eOneState = ONEDOOR_STATIC;
 		}
-		else if (m_bAttack&& m_pZombieTransform!= nullptr)
+		else if (m_bAttack && m_pZombieTransform != nullptr)
 		{
 			if (Distance_Zombie(m_pZombieTransform) > 1.f)
 			{
@@ -907,28 +900,28 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		//}
 
 	}
-	
+
 	_bool bCam = { false };
 
-	
+
 	switch (m_eEmblemAnim_Type)
 	{
 	case  (_ubyte)CEmblem_Door::EMBLEM_ANIM::START_ANIM:
-		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == DOWN)
+		if (m_pGameInstance->Get_KeyState(VK_ESCAPE) == DOWN)
 		{
 			m_eEmblemAnim_Type = (_ubyte)CEmblem_Door::EMBLEM_ANIM::STATIC_ANIM;
 			bCam = true;
 		}
-	break;
+		break;
 	}
 
 
 
 	if (m_bCamera && (bCam || static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM])->Get_Clear()))
 	{
-		if ((!bCam)&&m_bLock)
+		if ((!bCam) && m_bLock)
 		{
-			if ((m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM|| m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM) && m_fDelayLockTime == 0.f)
+			if ((m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM || m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM) && m_fDelayLockTime == 0.f)
 				m_fDelayLockTime = 2.f;
 		}
 		else if (bCam || !m_bLock)
@@ -942,23 +935,32 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	{
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 		{
+		/*	if (m_pGameInstance->Get_KeyState(VK_F1) == DOWN)
+			{
+				m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+				Camera_Active(PART_KEY, _float3(-0.0001f, 0.0001f, -0.8f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+
+
+
+			}*/
+
 			if (m_bCol[INTER_COL_NORMAL][COL_STEP2])
 				m_bActivity = true;
-			if (*m_pPlayerInteract)
+			if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
 				OneDoor_Active();
 		}
 		//m_bActivity = true;
-		
+
 	}
-	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f)&& m_eOneState== ONEDOOR_STATIC)
+	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f) && m_eOneState == ONEDOOR_STATIC)
 	{
 		//UI띄우고
-		
-			if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2])
-				OneDoor_Active();
 
-		
-		
+		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2])
+			OneDoor_Active();
+
+
+
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
@@ -975,9 +977,9 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		_float fScala = Radian_To_Player();
 
 		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-			Camera_Active(PART_EMBLEM, _float3(-0.015f, 0.075f, -0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+			Camera_Active(PART_EMBLEM, _float3(-0.025f, 0.075f, -0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 		else
-			Camera_Active(PART_EMBLEM, _float3(0.015f, 0.075f, 0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+			Camera_Active(PART_EMBLEM, _float3(0.025f, 0.075f, 0.45f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 
 	}
 }
@@ -1008,7 +1010,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
 
-				Opreate_Selector_UI(true, Get_Object_Pos()); 
+				Opreate_Selector_UI(true, Get_Object_Pos());
 			}
 			else
 			{
@@ -1046,7 +1048,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 
 	}
 
-	if (!m_bBlock && m_bOnce&& m_bCol[INTER_COL_NORMAL][COL_STEP2])
+	if (!m_bBlock && m_bOnce && m_bCol[INTER_COL_NORMAL][COL_STEP2])
 	{
 		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_12.mp3"), 0);
 		m_bOnce = false;
@@ -1055,7 +1057,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 		else
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
 	}
-	
+
 }
 
 _float CDoor::Radian_To_Player()
@@ -1071,7 +1073,7 @@ _float CDoor::Radian_To_Player()
 }
 
 _float CDoor::Radian_To_Zombie(class CTransform* pTransform)
-{	
+{
 	_vector vLook = XMVector4Normalize(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
 	_vector vDir = XMVector4Normalize(pTransform->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_float fScala = XMVectorGetX(XMVector4Dot(vLook, vDir));
@@ -1085,7 +1087,7 @@ _float CDoor::Radian_To_Zombie(class CTransform* pTransform)
 _float CDoor::Distance_Zombie(class CTransform* pTransform)
 {
 	_vector vDist = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-	_float fDistance = XMVectorGetX( XMVector4Length(vDist));
+	_float fDistance = XMVectorGetX(XMVector4Length(vDist));
 	return fDistance;
 }
 
@@ -1101,12 +1103,9 @@ void CDoor::OneDoor_Active()
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 
 		m_bCamera = true;
-		if (false == m_pGameInstance->IsPaused())
-		{
-			m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
-			m_pPlayer->Interact_Props(this);
-		}
-		
+
+		m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
+		m_pPlayer->Interact_Props(this);
 	}
 	else
 	{
@@ -1119,7 +1118,7 @@ void CDoor::OneDoor_Active()
 		else
 			m_eOneState = ONEDOOR_OPEN_R;
 	}
-	
+
 }
 
 

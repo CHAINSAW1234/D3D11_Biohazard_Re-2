@@ -70,6 +70,10 @@ HRESULT CCabinet::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 
+
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
+		return E_FAIL;
+
 	if (m_eCabinetType == TYPE_ELECTRIC)
 		m_strElectTag = static_cast<CBody_Cabinet*>(m_PartObjects[PART_BODY])->Get_Tag();
 	
@@ -477,7 +481,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_W;
 		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
 			m_eKeyInput = KEY_S;
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			if (m_eLockState != CCabinet::CLEAR_LOCK)
 				m_eLockState = CCabinet::STATIC_LOCK;
@@ -543,7 +547,7 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_W;
 		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
 			m_eKeyInput = KEY_S;
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			if (m_eLockState != CCabinet::CLEAR_LOCK)
 				m_eLockState = CCabinet::STATIC_LOCK;
@@ -584,7 +588,7 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 
 	if (!m_bDead && ((m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]) || m_bAutoOpen)/* && !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract || m_bAutoOpen)
+		if ((*m_pPlayerInteract || m_bAutoOpen) && false == m_pGameInstance->IsPaused())
 			LeonDesk_Active();
 	}
 
@@ -608,19 +612,12 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 void CCabinet::Electric_Tick(_float fTimeDelta)
 {
 	_bool bCam = false;
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 	{
 		bCam = true;
 	}
 	if (m_bCamera)
-	{
-		if(m_PartObjects[PART_ITEM]!=nullptr)
-			Camera_Active(PART_ITEM, _float3(-1.5f, -1.5f, -1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
-		else
-			Camera_Active(PART_BODY, _float3(-1.5f, -5.5f, -1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
-
-	}
-	
+		Camera_Active(PART_BODY, _float3(-0.001f, 1.5f, -0.4f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	if (m_fDelayLockTime > 0.f)
 	{
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
@@ -653,7 +650,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 
 	if (m_eLockState == CCabinet::LIVE_LOCK)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 			bCam = true;
 	}
 	if (m_bCamera && (bCam || static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK])->Get_Clear()))
@@ -676,7 +673,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 	
 	if ((!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1]) || m_bAutoOpen)
 	{
-		if (*m_pPlayerInteract|| m_bAutoOpen)
+		if ((*m_pPlayerInteract || m_bAutoOpen) && false == m_pGameInstance->IsPaused())
 			Weapon_Active();
 	}
 	if (m_eState == CABINET_OPEN)
@@ -817,8 +814,7 @@ void CCabinet::Weapon_Active()
 
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 		m_bCamera = true;
-		if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);
+		m_pPlayer->Interact_Props(this);
 
 	}
 }

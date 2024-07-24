@@ -77,7 +77,7 @@ HRESULT CRenderer::Render()
 
 	if (FAILED(Render_Shadow_Direction()))
 		return E_FAIL;
-
+		
 	if (FAILED(Render_Shadow_Point()))
 		return E_FAIL;
 
@@ -211,7 +211,7 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_DOF(ViewportDesc)))
 		return E_FAIL;
-	if (FAILED(SetUp_RenderTargets_GODRAY(ViewportDesc)))
+	if (FAILED(SetUp_RenderTargets_Volumetric(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_FXAA(ViewportDesc)))
 		return E_FAIL;
@@ -645,14 +645,24 @@ HRESULT CRenderer::SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc)
 	return S_OK;
 }
 
-HRESULT CRenderer::SetUp_RenderTargets_GODRAY(const D3D11_VIEWPORT& ViewportDesc)
+HRESULT CRenderer::SetUp_RenderTargets_Volumetric(const D3D11_VIEWPORT& ViewportDesc)
 {
 	/* For.Target_DOF_Blur_Fin */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_GODRAY"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Volumetric"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+	/* For.Target_Volumetric_Blur_X */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Volumetric_Blur_X"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+	/* For.Target_Volumetric_Blur_Fin */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Volumetric_Blur_Fin"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	/* MRT_DOF : DOF Àû¿ëÀ» À§ÇÑ ·»´õ Å¸°Ù */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GODRAY"), TEXT("Target_GODRAY"))))
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Volumetric"), TEXT("Target_Volumetric"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Volumetric_Blur_X"), TEXT("Target_Volumetric_Blur_X"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Volumetric_Blur_Fin"), TEXT("Target_Volumetric_Blur_Fin"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -746,7 +756,7 @@ HRESULT CRenderer::SetUp_Debug()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), WinSizeX - fSize, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_GODRAY"), WinSizeX - fSize, -fSize / 2 + fSize * 3, fSize, fSize)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Volumetric"), WinSizeX - fSize, -fSize / 2 + fSize * 3, fSize, fSize)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), WinSizeX - fSize, -fSize / 2 + fSize * 4, fSize, fSize)))
 		return E_FAIL;
@@ -1692,14 +1702,11 @@ HRESULT CRenderer::Render_Volumetric()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-
 	if (FAILED(m_pShader->Bind_Matrix("g_CamViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_CamProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_Texture")))
-		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Depth"), "g_DepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Field_Dir"), "g_DirLightFieldDepthTexture")))
@@ -1766,13 +1773,13 @@ HRESULT CRenderer::Render_Volumetric()
 	}
 
 
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GODRAY"))))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric"))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_GODRAY))))
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_VOLUMETRIC))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBuffer->Render()))
@@ -1781,9 +1788,61 @@ HRESULT CRenderer::Render_Volumetric()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_SubResult"), TEXT("Target_GODRAY"))))
-		return S_OK;
 
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric_Blur_X"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Volumetric"), "g_Texture")))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLURX))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric_Blur_Fin"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Volumetric_Blur_X"), "g_Texture")))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLURY))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SubResult"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Volumetric_Blur_Fin"), "g_Texture")))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_MIX))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -2050,7 +2109,7 @@ HRESULT CRenderer::Render_Debug()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_DOF_Blur_Fin"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_GODRAY"), m_pShader, m_pVIBuffer)))
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_FXAA"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;

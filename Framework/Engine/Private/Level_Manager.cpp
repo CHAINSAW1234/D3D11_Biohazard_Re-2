@@ -40,9 +40,9 @@ HRESULT CLevel_Manager::Open_Level()
 	m_pCurrentLevel = pNewLevel;
 	m_iCurrentLevelID = iNewLevelID;
 
-	m_pGameInstance->Set_RenderFieldShadow(true);
-
 	m_pGameInstance->Start();
+
+	m_pGameInstance->Set_RenderFieldShadow(true);
 
 	return S_OK;
 }

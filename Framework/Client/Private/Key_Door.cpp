@@ -38,8 +38,8 @@ HRESULT CKey_Door::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Initialize_Model()))
-		return E_FAIL;
+	//if (FAILED(Initialize_Model()))
+	//	return E_FAIL;
 	
 	m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
@@ -62,10 +62,12 @@ void CKey_Door::Tick(_float fTimeDelta)
 	//if (DOWN == m_pGameInstance->Get_KeyState('3'))
 	//	*m_pEmblemAnim = 2;
 	if (*m_pEmblemAnim == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)
-		m_isKeyRender =true;
-	if(*m_pEmblemAnim == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM)
+		m_isKeyRender = true;
+	else
 		m_isKeyRender = false;
-
+		
+	//m_isKeyRender = true;
+	//m_isKeyRender = false;
 }
 
 void CKey_Door::Late_Tick(_float fTimeDelta)
@@ -80,9 +82,11 @@ void CKey_Door::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
 
-	Get_SpecialBone_Rotation(); // for UI	
+	//Get_SpecialBone_Rotation(); // for UI	
 }
 
 HRESULT CKey_Door::Render()
@@ -106,9 +110,6 @@ HRESULT CKey_Door::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
@@ -171,9 +172,6 @@ HRESULT CKey_Door::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
@@ -226,7 +224,7 @@ HRESULT CKey_Door::Render()
 HRESULT CKey_Door::Add_Components()
 {
 	/* For.Com_Body_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -272,120 +270,6 @@ HRESULT CKey_Door::Initialize_Model()
 			m_strMeshTag = strMeshTag;
 	}
 	
-	return S_OK;
-}
-
-HRESULT CKey_Door::Render_LightDepth_Dir()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-
-	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
-
-		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
-		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
-			return E_FAIL;
-
-		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-		for (auto& i : NonHideIndices)
-		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
-
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
-				return E_FAIL;
-
-			m_pModelCom->Render(static_cast<_uint>(i));
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CKey_Door::Render_LightDepth_Point()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-
-	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
-	_int iIndex = 0;
-	for (auto& pLightDesc : LightDescList) {
-		const _float4x4* pLightViewMatrices;
-		_float4x4 LightProjMatrix;
-		pLightViewMatrices = pLightDesc->ViewMatrix;
-		LightProjMatrix = pLightDesc->ProjMatrix;
-
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
-			return E_FAIL;
-
-		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-		for (auto& i : NonHideIndices)
-		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
-
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
-				return E_FAIL;
-
-			m_pModelCom->Render(static_cast<_uint>(i));
-		}
-
-		++iIndex;
-	}
-	return S_OK;
-}
-
-HRESULT CKey_Door::Render_LightDepth_Spot()
-{
-	if (false == m_isKeyRender)
-		return S_OK;
-
-	if (m_bRender == false)
-		return S_OK;
-
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-
-	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
-
-		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
-		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
-			return E_FAIL;
-
-		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-		for (auto& i : NonHideIndices)
-		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
-
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
-				return E_FAIL;
-
-			m_pModelCom->Render(static_cast<_uint>(i));
-		}
-	}
-
 	return S_OK;
 }
 

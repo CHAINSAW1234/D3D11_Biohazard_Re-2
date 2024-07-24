@@ -88,7 +88,6 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 			return false;
 		}
 	}
-
 	else
 	{
 		if (MONSTER_STATE::MST_KNOCK_WINDOW != eCurrentMonsterState)

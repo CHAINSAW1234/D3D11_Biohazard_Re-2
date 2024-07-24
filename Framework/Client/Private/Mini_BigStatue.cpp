@@ -39,6 +39,8 @@ HRESULT CMini_BigStatue::Initialize(void* pArg)
 
 		m_isMedalAnim = desc->isMedalAnim;
 
+		m_isMoveStart = desc->pMove;
+
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
 			m_ParentWorldMatrix = desc->vParts_WorldMatrix;
@@ -76,20 +78,15 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 	{
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-			if (DOWN == m_pGameInstance->Get_KeyState('L'))
-				m_isMoveStart = true;
 
-			if(true == m_isMoveStart)
+			if(true == *m_isMoveStart)
 				Unicon_Statue(fTimeDelta);
 		}
 	}
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_WOMAN) == m_eMiniType)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState('W'))
-			m_isMoveStart = true;
-
-		if (true == m_isMoveStart)
+		if (true == *m_isMoveStart)
 			Woman_Statue(fTimeDelta);
 	}
 
@@ -97,10 +94,7 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 	{
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-			if (DOWN == m_pGameInstance->Get_KeyState('R'))
-				m_isMoveStart = true;
-
-			if (true == m_isMoveStart)
+			if (true == *m_isMoveStart)
 				Lion_Statue(fTimeDelta);
 		}
 	}
@@ -111,11 +105,11 @@ void CMini_BigStatue::Late_Tick(_float fTimeDelta)
 	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
 	{
 		if (DOWN == m_pGameInstance->Get_KeyState('R'))
-			m_isMoveStart = true;
+			*m_isMoveStart = true;
 
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-			if (true == m_isMoveStart)
+			if (true == *m_isMoveStart)
 				Lion_Statue(fTimeDelta);
 		} 
 	}

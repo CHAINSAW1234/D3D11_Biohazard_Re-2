@@ -238,8 +238,6 @@ HRESULT CProps::Render_LightDepth_Spot()
 
 		for (auto& i : NonHideIndices)
 		{
-
-
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -248,9 +246,7 @@ HRESULT CProps::Render_LightDepth_Spot()
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
-
 		}
-
 	}
 
 	return S_OK;

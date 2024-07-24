@@ -264,6 +264,17 @@ float CalcAmbientOcclusion(float2 Texcoord)
     return ao;
 }
 
+PS_OUT PS_MIX(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    Out.vColor = g_Texture.Sample(PointSampler, In.vTexcoord);
+    if(Out.vColor.a == 0)
+        discard;
+    //Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+    return Out;
+}
+
 PS_OUT PS_SSAO(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -753,10 +764,11 @@ float Cal_Shadow(float2 vTexcoord)
         if (g_fSpotLightOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
         {
             float fDistance = length(vLightDir);
-            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
+            
+            //float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
             float fAtt = saturate(1.f - ((fDistance * fDistance) / (g_fSpotLightRange * g_fSpotLightRange))); //범위 줘서 끝 범위에서는 연해지게 
             fAtt *= fAtt;
-           // fAtt *= (fIntensity * fIntensity);
+            //fAtt *= (fIntensity * fIntensity);
             
             if (fAtt > 0)
             {
@@ -1363,40 +1375,41 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    vector vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
     float4 vViewPosition = mul(ConvertoTexcoordToWorldPosition(In.vTexcoord), g_CamViewMatrix);
+    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+
+    float3 vDir = normalize(vViewPosition.xyz);
     
-    float3 vDir = vViewPosition.xyz;
-    float fCameraDistance = length(vViewPosition.xyz);
-    vDir /= fCameraDistance;
-    
-    const uint SAMPLE_COUNT = 100;
+    const int SAMPLE_COUNT = 64;
     
     float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
     float stepSize = length(vViewPosition.xyz - rayEnd) / SAMPLE_COUNT;
     
     float accumulation_Dir = 0;
     float accumulation_Spot = 0;
+
+    float4 vPosition = float4(0.f, 0.f, 0.f, 1.f);
+    
     for (uint i = 0; i < SAMPLE_COUNT; ++i)
     {
         // 1. Direction
         if (g_isShadowDirLight)
         {
-            float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
+            float4 ShadowMapCoord = mul(vPosition, g_ViewMatrixInv); // WorldPosition
             ShadowMapCoord = mul(ShadowMapCoord, g_DirLightViewMatrix);
             ShadowMapCoord = mul(ShadowMapCoord, g_DirLightProjMatrix);
             ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
             ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
         
-            if ((saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
+            if ( (saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
             (saturate(ShadowMapCoord.y) == ShadowMapCoord.y) )
             {
-                float fDepth1 = g_DirLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
-                float fDepth2 = g_DirLightFieldDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
+                //float fDepth1 = g_DirLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
+                float fDepth2 = g_DirLightFieldDepthTexture.Sample(LinearSamplerClamp, ShadowMapCoord.xy).r;
                 
-                float fDepth = min(fDepth1, fDepth2);
+                //float fDepth = min(fDepth1, fDepth2);
                 
-                if (ShadowMapCoord.w < fDepth * 1000)
+                if (ShadowMapCoord.w < fDepth2 * 1000)
                     ++accumulation_Dir;
             
             }
@@ -1404,7 +1417,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
         // 2. SpotLight
         if (g_isShadowSpotLight)
         {
-            vector vLightDir = mul(vViewPosition, g_ViewMatrixInv) -g_vSpotLightPosition;
+            vector vLightDir = mul(vPosition, g_ViewMatrixInv) - g_vSpotLightPosition;
             vector vSpotDir = g_vSpotLightDirection;
             float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
            
@@ -1416,16 +1429,16 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
                 fAtt *= fAtt;
                 fAtt *= (fIntensity * fIntensity);
                                
-                float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
+                float4 ShadowMapCoord = mul(vPosition, g_ViewMatrixInv); // WorldPosition
                 ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightViewMatrix);
                 ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightProjMatrix);
                 ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
                 ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
         
-                if (saturate(ShadowMapCoord.x) == ShadowMapCoord.x &&
-                    saturate(ShadowMapCoord.y) == ShadowMapCoord.y)
+                if ((saturate(ShadowMapCoord.x) == ShadowMapCoord.x) &&
+                    (saturate(ShadowMapCoord.y) == ShadowMapCoord.y))
                 {
-                    float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
+                    float fDepth = g_SpotLightDepthTexture.Sample(PointSamplerClamp, ShadowMapCoord.xy).r;
             
                     if (ShadowMapCoord.w  < fDepth * 1000)
                         accumulation_Spot += fAtt;
@@ -1434,13 +1447,13 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
             }
         }
         
-        vViewPosition = vViewPosition + float4(vDir * stepSize, 0);
+        vPosition = vPosition + float4(vDir * stepSize, 0);
     }
     
     accumulation_Dir /= SAMPLE_COUNT;
     accumulation_Spot /= SAMPLE_COUNT;
    
-    Out.vColor = vColor + g_vDirLightDiffuse * accumulation_Dir + g_vSpotLightDiffuse * accumulation_Spot;
+    Out.vColor = g_vDirLightDiffuse * accumulation_Dir * 0.2f + g_vSpotLightDiffuse * accumulation_Spot * 0.05f;
     return Out;
 }
 
@@ -1644,7 +1657,20 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DISCARD();
     }
 
-    pass SSAO // 4
+    pass Mix    // 4
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MIX();
+    }
+
+    pass SSAO // 5
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1657,7 +1683,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_SSAO();
     }
 
-    pass Light_Directional // 3
+    pass Light_Directional // 6
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1670,7 +1696,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
     }
 
-    pass Light_Point    // 4
+    pass Light_Point    // 7
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1683,7 +1709,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
     }
     
-    pass Light_Spot     // 5
+    pass Light_Spot     // 8
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1696,7 +1722,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SPOT();
     }
     
-    pass Light_Result   // 6
+    pass Light_Result   // 9
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1709,7 +1735,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_LIGHT_RESULT();
     }
 
-    pass BlurX          //  8
+    pass BlurX          //  10
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1722,7 +1748,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLURX();
     }
 
-    pass BlurY //  9
+    pass BlurY //  11
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1735,7 +1761,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLURY();
     }
 
-    pass Post_Processing_Result //  11
+    pass Post_Processing_Result //  12
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1748,7 +1774,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_POST_PROCESSING_RESULT();
     }
 
-    pass RadialBlur // 12
+    pass RadialBlur // 13
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1761,7 +1787,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_RADIALBLUR();
     }
 
-    pass SSR // 13
+    pass SSR // 14
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1774,7 +1800,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_SSR();
     }
 
-    pass DOF // 14
+    pass DOF // 15
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1787,7 +1813,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DOF();
     }
 
-    pass DOF_BlurX // 15
+    pass DOF_BlurX // 16
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1800,7 +1826,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DOF_BLURX();
     }
 
-    pass DOF_BlurY // 16
+    pass DOF_BlurY // 17
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1812,7 +1838,7 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_DOF_BLURY();
     }
-    pass VOLUMETRIC // 16
+    pass VOLUMETRIC // 18
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1825,7 +1851,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_VOLUMETRIC();
     }
 
-    pass FXAA // 16
+    pass FXAA // 19
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1838,7 +1864,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_FXAA();
     }
 
-    pass Bloom // 17
+    pass Bloom // 20
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1851,7 +1877,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_BLOOM();
     }
 
-    pass SSD // 18
+    pass SSD // 21
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1864,7 +1890,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DECAL();
     }
 
-    pass BlurX_Effect //  19
+    pass BlurX_Effect //  22
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1877,7 +1903,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLURX_EFFECT();
     }
 
-    pass BlurY_Effect //  20
+    pass BlurY_Effect //  23
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1890,7 +1916,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLURY_EFFECT();
     }
 
-    pass BlurX_Effect_Strong //  21
+    pass BlurX_Effect_Strong //  24
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1903,7 +1929,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLURX_EFFECT_STRONG();
     }
 
-    pass BlurY_Effect_Strong //  22
+    pass BlurY_Effect_Strong //  25
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);

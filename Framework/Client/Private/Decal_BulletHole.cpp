@@ -40,14 +40,17 @@ HRESULT CDecal_BulletHole::Initialize(void* pArg)
 
 void CDecal_BulletHole::Tick(_float fTimeDelta)
 {
-	//if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
-	//{
-	//	m_bRender = false;
-	//}
-	//else
-	//{
-	//	m_bRender = true;
-	//}
+	if(m_bRender)
+	{
+		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
+		{
+			m_bRender = false;
+		}
+		else
+		{
+			m_bRender = true;
+		}
+	}
 	m_iFrame = 0;
 }
 

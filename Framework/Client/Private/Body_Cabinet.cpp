@@ -58,7 +58,8 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 	}
 	else
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+		if (m_strModelComponentName.find(TEXT("electric")) == wstring::npos)
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 	m_vecRotationBone[ANIM_BONE_TYPE_COLLIDER_CABINET::ATC_CABINET_DOOR] = m_pModelCom->Get_BonePtr("_01");
 
@@ -108,9 +109,24 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#ifdef SPOT_FRUSTRUM_CULLING
+	if (m_bRender)
+	{
+		if (m_bLocalized == false)
+		{
+			if (m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 0.2f))
+			{
+				m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+			}
+		}
+	}
+#endif
 
-	Get_SpecialBone_Rotation(); // for UI
+#ifndef SPOT_FRUSTRUM_CULLING
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
+
+	//Get_SpecialBone_Rotation(); // for UI
 
 #ifdef _DEBUG
 #ifdef UI_POS
@@ -414,6 +430,8 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 	vector<string>			ResultMeshTags;
 	for (auto& strMeshTag : MeshTags)
 	{
+		if ((strMeshTag.find("Group_1_Sub_2") != string::npos) || (strMeshTag.find("Group_3_Sub_1") != string::npos) || (strMeshTag.find("Group_2_Sub_1") != string::npos))
+			m_strMeshTag = strMeshTag;
 		string strFindTag = "10" + to_string(m_iPropType);
 		if (m_iPropType >= 10)
 			strFindTag = "20" + to_string(m_iPropType - 10);

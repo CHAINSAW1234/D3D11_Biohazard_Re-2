@@ -100,6 +100,10 @@
 #include "Medal_BigStatue.h"
 #include "Mini_BigStatue.h"
 #include "Dial_BigStatue.h"
+#include"Chair.h"
+#include"Body_Chair.h"
+
+
 
 /* UI */
 #include "Customize_UI.h"
@@ -990,6 +994,10 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_006")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ReaderMachine::Create(m_pDevice, m_pContext));
+			
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm45_018")) != wstring::npos|| Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_075")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Chair::Create(m_pDevice, m_pContext));
+
 
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
@@ -1056,6 +1064,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lever"), CLever::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Reader"), CReaderMachine::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Chair"), CChair ::Create(m_pDevice, m_pContext));
 
 
 	_matrix Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));

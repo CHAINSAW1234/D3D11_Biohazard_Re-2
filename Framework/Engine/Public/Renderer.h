@@ -59,7 +59,7 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_GODRAY(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Volumetric(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// Àß ¸ð¸§ 

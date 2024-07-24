@@ -791,6 +791,11 @@ void CPlayer::Set_Equip(EQUIP* eEquip)
 		Safe_AddRef(m_pWeapon);
 		m_pWeapon->Set_RenderLocation(eRenderLocation);
 
+		if (m_pWeapon->Get_Equip() == STG) {
+			Get_Body_Model()->Hide_Mesh("LOD_1_Group_100_Sub_1__pl0001_Sling_Mat_mesh0006", true);
+		}
+
+
 	}
 
 	// 무기 위치를 변경하시오
@@ -880,6 +885,9 @@ void CPlayer::Change_WeaponLocation_To_Holster(CWeapon* pWeapon)
 	m_SetProps[pWeapon->Get_SetPropsLocation()] = pWeapon->Get_Equip();
 	pWeapon->Set_RenderLocation(CWeapon::HOLSTER);
 
+	if (pWeapon->Get_Equip() == STG) {
+		Get_Body_Model()->Hide_Mesh("LOD_1_Group_100_Sub_1__pl0001_Sling_Mat_mesh0006", false);
+	}
 }
 
 void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
@@ -1839,6 +1847,8 @@ void CPlayer::ResetCamera()
 	m_fLerpAmount_Right = m_fRight_Dist_Pos;
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 	m_fLerpAmount_Look = m_fLook_Dist_Pos;
+
+	Calc_Camera_LookAt_Point(1 / 60.f);
 }
 
 void CPlayer::Apply_Recoil(_float fTimeDelta)

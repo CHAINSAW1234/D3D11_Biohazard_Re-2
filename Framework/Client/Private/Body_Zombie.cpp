@@ -78,7 +78,9 @@ void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 void CBody_Zombie::Tick(_float fTimeDelta)
 {
 	if (m_bRagdoll)
+	{
 		m_bRender = true;
+	}
 
 	__super::Tick(fTimeDelta);
 }
@@ -1033,6 +1035,16 @@ _float4 CBody_Zombie::GetRigidBodyPos(COLLIDER_TYPE eType)
 	return m_pRagdoll->GetRigidBodyPos(eType);
 }
 
+void CBody_Zombie::Set_Render(_bool boolean)
+{
+	m_bRender = boolean;
+
+	m_pRagdoll->SetCulling(boolean);
+
+	if (m_bRagdoll)
+		m_bRender = true;
+}
+
 void CBody_Zombie::Update_Current_MotionType()
 {
 	if (nullptr == m_pModelCom)
@@ -1199,20 +1211,6 @@ HRESULT CBody_Zombie::Add_Components()
 
 HRESULT CBody_Zombie::Bind_ShaderResources()
 {
-	/*if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}*/
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;

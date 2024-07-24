@@ -63,20 +63,28 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 			switch (iRand)
 			{
 			case 0:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"),0);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 1);
+				if(!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"),0);
+				if(!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform,1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 1);
 				break;
 			case 1:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_3.mp3"), 1);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_5.mp3"), 0);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_3.mp3"), 1);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_5.mp3"), 0);
 				break;
 			case 2:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_2.mp3"), 1);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 0);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_2.mp3"), 1);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_11.mp3"), 0);
 				break;
 			case 3:
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_7.mp3"), 1);
-				Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"), 0);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 0))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_7.mp3"), 1);
+				if (!m_pGameInstance->Is_Playing_Sound(m_pParentsTransform, 1))
+					Change_Sound(TEXT("sound_Map_sm40_zombie_window2_1.mp3"), 0);
 				break;
 
 			}
@@ -98,8 +106,20 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
+#ifdef SPOT_FRUSTRUM_CULLING
+	if (m_bRender)
+	{
+		if (m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 0.2f))
+		{
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		}
+	}
+#endif
+
+#ifndef SPOT_FRUSTRUM_CULLING
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
 }
 
 HRESULT CBody_Window::Render()

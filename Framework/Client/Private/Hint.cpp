@@ -24,7 +24,7 @@ HRESULT CHint::Initialize_Prototype()
 HRESULT CHint::Initialize(void* pArg)
 {
 	CUI::UI_DESC UIDesc = {};
-	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.008f };
+	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
 	UIDesc.vSize = { g_iWinSizeX, g_iWinSizeY };
 
 	if (FAILED(__super::Initialize(&UIDesc)))

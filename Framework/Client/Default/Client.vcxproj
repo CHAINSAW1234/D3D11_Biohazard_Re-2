@@ -195,7 +195,9 @@
     <ClInclude Include="..\Public\Actor_SM60_035.h" />
     <ClInclude Include="..\Public\Actor_SM69_015.h" />
     <ClInclude Include="..\Public\Actor_WP4530.h" />
+    <ClInclude Include="..\Public\Body_Chair.h" />
     <ClInclude Include="..\Public\Break_Sound_Zombie.h" />
+    <ClInclude Include="..\Public\Chair.h" />
     <ClInclude Include="..\Public\Cut_Scene_CF120.h" />
     <ClInclude Include="..\Public\EnvSound.h" />
     <ClInclude Include="..\Public\Event_Call_Center.h" />
@@ -490,7 +492,9 @@
     <ClCompile Include="..\Private\Actor_SM60_035.cpp" />
     <ClCompile Include="..\Private\Actor_SM69_015.cpp" />
     <ClCompile Include="..\Private\Actor_WP4530.cpp" />
+    <ClCompile Include="..\Private\Body_Chair.cpp" />
     <ClCompile Include="..\Private\Break_Sound_Zombie.cpp" />
+    <ClCompile Include="..\Private\Chair.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF120.cpp" />
     <ClCompile Include="..\Private\EnvSound.cpp" />
     <ClCompile Include="..\Private\Event_Call_Center.cpp" />

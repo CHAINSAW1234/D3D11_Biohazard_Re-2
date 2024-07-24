@@ -403,6 +403,10 @@ HRESULT CLock_Cabinet::Initialize_SafeBox()
  
 void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 {
+
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 3);
+	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
+	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
@@ -423,12 +427,15 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 			m_eMoveingKey = LOCK_ALLOW_KEY::LEFT_LOCK_KEY;
 			m_iRotationCnt--;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			InPutKey_Sound(iRand, 0);
 			break;
 
 		case CCabinet::KEY_D:
 			m_eMoveingKey = LOCK_ALLOW_KEY::RIGHT_LOCK_KEY;
 			m_iRotationCnt++;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			InPutKey_Sound(iRand, 1);
+
 			break;
 		}
 		/* 2. 행동 패턴 */
@@ -443,10 +450,14 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	case CCabinet::WRONG_LOCK:
 		/* LN : 키 클리어 : sound_Map_sm42_safebox_dial2_4*/
 		m_eMoveingKey = LOCK_ALLOW_KEY::RIGHT_LOCK_KEY;
+		InPutKey_Sound(iRand, 3);
+
 		Safebox_RotationLock(m_eMoveingKey, fTimeDelta);
 		break;
 
 	case CCabinet::CLEAR_LOCK:
+		InPutKey_Sound(iRand, 2);
+
 		m_bClear = true;
 		break;
 	}
@@ -464,6 +475,51 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 	
 	Get_SpecialBone_Rotation(); // for UI
+}
+
+void CLock_Cabinet::InPutKey_Sound(_int iRand, _int iRand1)
+{
+	switch (iRand1)
+	{
+	case 0:
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_1.mp3"), 0);
+		break;
+	case 1:
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_2.mp3"), 1);
+		break;
+	case 2:
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_3.mp3"), 2);
+		break;
+	case 3:
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_4.mp3"), 1);
+		break;
+	case 4:
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_1.mp3"), 0);
+		break;
+	case 5:
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), 1);
+		break;
+	case 6:
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), 2);
+		break;
+	case 7:
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), 3);
+		break;
+	case 8:
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_7.mp3"), 3);
+		break;
+		
+	case 9:
+		Change_Same_Sound(TEXT("sound_Map_sm42_parking_card_reader2_1.mp3"), 3);
+		break;
+		
+	case 10:
+		Change_Same_Sound(TEXT("sound_Map_sm42_parking_card_reader2_2.mp3"), 3);
+		break;
+
+	}
+
+
 }
 
 void CLock_Cabinet::Safebox_RotationLock(LOCK_ALLOW_KEY _eKeyType, _float fTimeDelta)
@@ -615,6 +671,9 @@ void CLock_Cabinet::Safebox_Return()
 void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 {
 
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 3);
+	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
+	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
@@ -636,7 +695,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			m_fGoalAngle[m_iCurBoneIndex] += 60.f;
 			/*if (360.f <= m_fGoalAngle[m_iCurBoneIndex] )
 				m_fGoalAngle[m_iCurBoneIndex] = 360.f;*/
-
+			InPutKey_Sound(0,4);
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
 			break;
 
@@ -646,6 +705,8 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex < BONE_DIAL1)
 				m_iCurBoneIndex = BONE_DIAL3;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			InPutKey_Sound(0, 6);			
+
 			break;
 
 		case CCabinet::KEY_S:
@@ -655,6 +716,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			/*if (-360.f >= m_fGoalAngle[m_iCurBoneIndex])
 				m_fGoalAngle[m_iCurBoneIndex] = -360.f;*/
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			InPutKey_Sound(0, 5);
 
 			break;
 
@@ -665,6 +727,8 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex > BONE_DIAL3)
 				m_iCurBoneIndex = BONE_DIAL1;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			InPutKey_Sound(0, 6);
+
 			break;
 		}
 
@@ -675,10 +739,11 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), (_int)(*m_pLockState) );
 		if (m_pModelCom->isFinished(0))
 			*m_pLockState = CCabinet::LIVE_LOCK;
-		
+		InPutKey_Sound(0, 7);
 		break;
 
 	case CCabinet::CLEAR_LOCK:
+		InPutKey_Sound(0, 8);
 
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState );
 		if (m_pModelCom->isFinished(0))
@@ -806,11 +871,16 @@ void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 		break;
 
 	case CCabinet::CLEAR_LOCK:
+		
 		m_bClear = true;
 		m_fCurTranslation = Lerp(m_fCurTranslation, m_fGoalTranslation, fTimeDelta);
 		_float4x4 TranslationMatrix = XMMatrixTranslation(0.f, -m_fCurTranslation,0.f);
 
 		m_pModelCom->Add_Additional_Transformation_World("ItemSet", TranslationMatrix);
+		if (m_fGoalTranslation - 0.02f < m_fCurTranslation)
+			InPutKey_Sound(0, 10);
+		else
+			InPutKey_Sound(0, 9);
 		break;
 	}
 

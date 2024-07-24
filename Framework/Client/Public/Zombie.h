@@ -347,7 +347,7 @@ private:
 
 public:
 	void								Set_ManualMove(_bool isManualMove);
-
+	_bool								IsPlayerNearBy();
 private:
 	_bool								m_isManualMove = { false };
 

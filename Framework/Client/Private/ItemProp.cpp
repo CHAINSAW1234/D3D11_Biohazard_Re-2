@@ -25,7 +25,7 @@ HRESULT CItemProp::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -40,8 +40,22 @@ HRESULT CItemProp::Initialize(void* pArg)
 
 void CItemProp::Tick(_float fTimeDelta)
 {
-	__super::Tick_Col();
-
+	for (size_t i = 0; i < INTER_COL_END; i++)
+	{
+		for (size_t j = 0; j < COL_STEP_END; j++)
+		{
+			if (m_pColliderCom[i][j] == nullptr)
+				continue;
+			_float4x4 Translation = m_pTransformCom->Get_WorldFloat4x4();
+			if (m_pTransformCom->Get_WorldFloat4x4().Translation().y > 0.f && m_pTransformCom->Get_WorldFloat4x4().Translation().y < 3.2f)
+				Translation.m[3][1] = 0.f;
+			else if(m_pTransformCom->Get_WorldFloat4x4().Translation().y < 8.f)
+				Translation.m[3][1] = 5.f;
+			else if(m_pTransformCom->Get_WorldFloat4x4().Translation().y < 11.f)
+				Translation.m[3][1] = 10.f;
+			m_pColliderCom[i][j]->Tick(Translation);
+		}
+	}
 	if (m_bDead)
 	{
 		m_bItemDead = true;
@@ -157,10 +171,14 @@ HRESULT CItemProp::Render()
 
 HRESULT CItemProp::Add_Components()
 {
+
+
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
 	ColliderDesc.fRadius = _float(120.f);
-	ColliderDesc.vCenter = _float3(0.f, -50.f, 0.f);
+	
+
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
