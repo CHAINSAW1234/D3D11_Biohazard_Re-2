@@ -727,7 +727,6 @@
     <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Break_Sound">
       <UniqueIdentifier>{1e796123-6237-4b81-8b41-f11d98420c15}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player">
     <Filter Include="02.GameObjects\MapObject\InteractProps\NewFilter1">
       <UniqueIdentifier>{db06b4df-7290-4a7b-be78-741e74940827}</UniqueIdentifier>
     </Filter>
