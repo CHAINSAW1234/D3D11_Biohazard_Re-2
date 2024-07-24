@@ -274,8 +274,6 @@ void CTab_Window::HINT_Operation(_float fTimeDelta)
 
 void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 {
-	m_pItem_Mesh_Viewer->Tick(fTimeDelta);
-
 	switch (m_eSequence)
 	{
 	case Client::POP_UP: {
@@ -285,7 +283,7 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, BACKGROUND_MIN_ALPHA, 1.f, m_fCurTime / 0.5f);
 		}
 
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) && CItem_Mesh_Viewer::EXAMIN_PUZZLE != m_pItem_Mesh_Viewer->Get_OperationType())
 		{
 			m_fCurTime = 0.f;
 			m_eSequence = HIDE;
@@ -340,6 +338,8 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 	default:
 		break;
 	}
+
+	m_pItem_Mesh_Viewer->Tick(fTimeDelta);
 }
 
 void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
