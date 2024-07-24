@@ -35,7 +35,7 @@ public:
 	inline void						Set_Socket_Ptr(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
 	inline void						Set_Origin_Translation(_bool isOrigin) { m_isOrigin = isOrigin; }
 	inline void						Set_Right_Handed(_bool isRight) { m_isRightHand = isRight; }
-
+	
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CShader*						m_pShaderCom = { nullptr };
