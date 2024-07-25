@@ -480,7 +480,7 @@ _bool CRagdoll_Physics::Init(const string& name, ID3D11Device* pDevice, ID3D11De
 
 	for (size_t i = 0; i < 10; ++i)
 	{
-		m_pGameInstance->Set_Distance_3D(m_pTransformCom_Sound,i,0.f ,10.f);
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom_Sound, static_cast<_uint>(i), 0.f, 10.f);
 	}
 
 	m_vecRagdollSound_Filter.clear();
@@ -1809,14 +1809,16 @@ void CRagdoll_Physics::Update(_float fTimeDelta)
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		m_pose_transforms.transforms[i] = XMMatrixInverse(nullptr, joints[i].inverse_bind_pose);
 
+	if (m_bPartialRagdoll)
+	{
+		m_ragdoll->WakeUp();
+	}
+
 	update_animations();
 }
 
 void CRagdoll_Physics::Update_Partial(_float fTimeDelta)
 {
-	if (m_bCulling)
-		return;
-
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
@@ -1827,9 +1829,6 @@ void CRagdoll_Physics::Update_Partial(_float fTimeDelta)
 
 void CRagdoll_Physics::Update_Partial_After(_float fTimeDelta)
 {
-	if (m_bCulling)
-		return;
-
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
@@ -2744,7 +2743,7 @@ void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
 
 	create_partial_ragdoll(eType);
 
-	m_ragdoll->set_kinematic(true);
+	m_ragdoll->set_kinematic_Partial(false);
 
 	m_bPartialRagdoll = true;
 }

@@ -40,24 +40,21 @@ HRESULT CDecal_BulletHole::Initialize(void* pArg)
 
 void CDecal_BulletHole::Tick(_float fTimeDelta)
 {
-	if(m_bRender)
-	{
-		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
-		{
-			m_bRender = false;
-		}
-		else
-		{
-			m_bRender = true;
-		}
-	}
 	m_iFrame = 0;
 }
 
 void CDecal_BulletHole::Late_Tick(_float fTimeDelta)
 {
-	if(m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_DECAL, this);
+	if (m_bRender)
+	{
+		if (IsPlayerNearBy())
+		{
+			if (m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
+			{
+				m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_DECAL, this);
+			}
+		}
+	}
 }
 
 HRESULT CDecal_BulletHole::Render()
@@ -113,7 +110,19 @@ void CDecal_BulletHole::PlaySound()
 
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, result, 0);
 	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 0, 0.5f);
+}
 
+_bool CDecal_BulletHole::IsPlayerNearBy()
+{
+	auto pPlayer = m_pGameInstance->GetPlayer();
+	auto vPlayerPos = pPlayer->GetPositionVector();
+	auto vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	_vector vDelta = vPlayerPos - vPos;
+	if (XMVectorGetX(XMVector3Length(vDelta)) < CULLING_DISTANCE)
+		return true;
+	else
+		return false;
 }
 
 HRESULT CDecal_BulletHole::Add_Components()

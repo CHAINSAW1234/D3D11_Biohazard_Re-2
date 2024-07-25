@@ -25,6 +25,7 @@ HRESULT CHint_Highliter::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
+
 	m_isLoad = false;
 
 	return S_OK;

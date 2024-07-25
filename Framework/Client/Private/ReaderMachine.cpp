@@ -114,7 +114,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 	{
 		if (Open_Cabinet())
 		{
-			Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_1.mp3"),0);
+			Change_Sound(TEXT("sound_Map_sm42_key_device2_1.mp3"),0);
 			m_iSelectPushNum = 0;
 			m_bDoOpen = false;
 			m_bCameraReset = true;
@@ -123,7 +123,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			Change_Same_Sound(TEXT("sound_Map_sm42_key_device2_11.mp3"), 0);
+			Change_Sound(TEXT("sound_Map_sm42_key_device2_11.mp3"), 0);
 			m_iSelectPushNum = 0;
 			m_bDoOpen = false;
 		}

@@ -61,6 +61,11 @@ void CInventory_Manager::FirstTick_Seting()
 	AddItem_ToInven(ShotGun, 7);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
+
+	AddItem_ToInven(virginmedal01a, 1);
+	AddItem_ToInven(virginmedal02a, 1);
+	AddItem_ToInven(unicornmedal01a, 1);
+	
 }
 
 void CInventory_Manager::SecondTick_Seting()
@@ -984,7 +989,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		case Client::USEABLE: {
 			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_Player"), 0));
 			_bool isCanUse = true;
-			if (5 == pPlayer->Get_Hp())
+			if (5 == pPlayer->Get_Hp() && true == IsHealItem())
 				isCanUse = false;
 			m_pContextMenu->Set_Operation(eItemType, isCanUse, TempTrashCanValue, TempTrashCanValue);
 			break;
@@ -1181,14 +1186,9 @@ void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
 			m_ePre_Inven_Manager_State = INVEN_EVENT_END;
 			m_eInven_Manager_State = USE_INTERACT_ITEM;
 			m_eTaskSequence = SETING;
-			m_pSelected_ItemUI->Set_ItemVariation(-1);
 			m_pContextMenu->Set_Dead(true);
-			if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
-			{
-				Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
-			}
 			INTERACT_ITEM_SoundPlay();
-			m_pSelected_ItemUI = nullptr;
+			InteractUseItem();
 			break;
 		}
 
@@ -1227,6 +1227,84 @@ void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
 	}
 
 	
+}
+
+void CInventory_Manager::InteractUseItem()
+{
+	ITEM_NUMBER iTEM = m_pSelected_ItemUI->Get_ItemNumber();
+
+	switch (iTEM)
+	{
+	case Client::woodbarricade01a:
+		m_pSelected_ItemUI->Set_ItemVariation(-1);
+		if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
+		{
+			Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		}
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::unicornmedal01a:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::spadekey01a:
+		//Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::cardkeylv101a:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::cardkeylv201a:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::blankkey01a:
+		m_pSelected_ItemUI->Set_ItemVariation(-1);
+		if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
+		{
+			Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		}
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::virginmedal01a:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::diakey01a:
+		//Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::virginmedal02a:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::chaincutter01a:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+	case Client::statuebookhand:
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
+		m_pSelected_ItemUI = nullptr;
+		break;
+
+	default:
+		break;
+	}
+
+	//m_pSelected_ItemUI->Set_ItemVariation(-1);
+	//if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
+	//{
+	//	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+	//}
+	//m_pSelected_ItemUI = nullptr;
 }
 
 void CInventory_Manager::Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
@@ -1339,6 +1417,16 @@ CInventory_Slot* CInventory_Manager::Find_Slot(_float2 FindPos)
 	}
 
 	return nullptr;
+}
+
+_bool CInventory_Manager::IsHealItem()
+{
+	ITEM_NUMBER iTemNum = m_pSelected_ItemUI->Get_ItemNumber();
+
+	if (iTemNum < blueherbitem01a)
+		return true;
+
+	return false;
 }
 
 void CInventory_Manager::INTERACT_ITEM_SoundPlay()
@@ -1591,6 +1679,14 @@ _int CInventory_Manager::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
 	}
 
 	return iItemQuantity;
+}
+
+void CInventory_Manager::Set_Port_To_Blank()
+{
+	if (m_pSelected_ItemUI->Get_ItemNumber() == portablesafe)
+	{
+		m_pSelected_ItemUI->Set_ItemUI(blankkey01a, ItemType_Classify_ByNumber(blankkey01a), m_pSelected_ItemUI->GetPositionVector(), 1);
+	}
 }
 
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

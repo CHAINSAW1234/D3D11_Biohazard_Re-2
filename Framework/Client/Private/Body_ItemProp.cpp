@@ -49,7 +49,7 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 
 
-	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos&&(m_strModelComponentName.find(TEXT("emergencyspray01")) == wstring::npos))
+	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos&&(m_strModelComponentName.find(TEXT("ShotGun")) == wstring::npos/*&&m_strModelComponentName.find(TEXT("emergencyspray01")) == wstring::npos*/))
 		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 
 
@@ -74,12 +74,16 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 {
 	if (*m_pItemDead)
 		return;
+
 	/*
 	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);*/
+
+	//if (m_strModelComponentName.find(TEXT("ShotGun")) != wstring::npos)
+	//	m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
 	if (m_pSocketMatrix != nullptr)
 	{
 		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
@@ -96,7 +100,9 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
 
 	Get_SpecialBone_Rotation();
 
@@ -112,9 +118,10 @@ HRESULT CBody_ItemProp::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
+	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+
+	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
@@ -220,7 +227,29 @@ HRESULT CBody_ItemProp::Initialize_Model()
 		if ((strMeshTag.find("Group_0_") != string::npos)|| (strMeshTag.find("Group_1_") != string::npos))
 			m_strMeshTag = strMeshTag;
 	}
+	if (m_strModelComponentName.find(TEXT("ShotGun")) != wstring::npos)
+	{
 
+		vector<string>			ResultMeshTags;
+		vector<string>			HidMeshs;
+
+		for (auto& strMeshTag : MeshTags)
+		{
+			if ((strMeshTag.find("Group_3_Sub_1") == string::npos) && (strMeshTag.find("Group_4_Sub_1") == string::npos))
+				ResultMeshTags.push_back(strMeshTag);
+		}
+
+		for (auto& strMeshTag : MeshTags)
+		{
+			m_pModelCom->Hide_Mesh(strMeshTag, true);
+		}
+
+		for (auto& strMeshTag : ResultMeshTags)
+		{
+			m_pModelCom->Hide_Mesh(strMeshTag, false);
+		}
+
+	}
 	return S_OK;
 }
 

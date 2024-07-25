@@ -13,6 +13,7 @@ public:
 	typedef struct tagBody_Cabinet_desc :public CPart_InteractProps::PART_INTERACTPROPS_DESC
 	{
 		_ubyte eCabinetType = { 0 };
+		_bool* pLock = { nullptr };
 	}BODY_CABINET_DESC;
 private:
 	CBody_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -42,6 +43,7 @@ public:
 private:
 	string							m_strTag = { "" };
 	_ubyte							m_uCabinetType = {0};
+	_bool*							m_pLock = { nullptr };
 public:
 	static CBody_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

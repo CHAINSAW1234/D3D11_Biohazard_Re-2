@@ -47,11 +47,11 @@ void CItemProp::Tick(_float fTimeDelta)
 			if (m_pColliderCom[i][j] == nullptr)
 				continue;
 			_float4x4 Translation = m_pTransformCom->Get_WorldFloat4x4();
-			if (m_pTransformCom->Get_WorldFloat4x4().Translation().y > 0.f && m_pTransformCom->Get_WorldFloat4x4().Translation().y < 3.2f)
+			if (m_pTransformCom->Get_WorldFloat4x4().Translation().y > -1.5f && m_pTransformCom->Get_WorldFloat4x4().Translation().y < 3.2f)
 				Translation.m[3][1] = 0.f;
 			else if(m_pTransformCom->Get_WorldFloat4x4().Translation().y < 8.f)
 				Translation.m[3][1] = 5.f;
-			else if(m_pTransformCom->Get_WorldFloat4x4().Translation().y < 11.f)
+			else if(m_pTransformCom->Get_WorldFloat4x4().Translation().y < 15.f)
 				Translation.m[3][1] = 10.f;
 			m_pColliderCom[i][j]->Tick(Translation);
 		}

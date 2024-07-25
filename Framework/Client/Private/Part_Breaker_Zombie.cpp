@@ -1927,6 +1927,20 @@ _bool CPart_Breaker_Zombie::Attack(BREAK_PART ePart)
 	return false;
 }
 
+_bool CPart_Breaker_Zombie::Attack_STG(BREAK_PART ePart)
+{
+	if (ePart >= BREAK_PART::_END)
+		return false;
+
+	if (m_HPs[static_cast<_uint>(ePart)] < 1000)
+	{
+		m_HPs[static_cast<_uint>(ePart)] = 0;
+		return Break(ePart);
+	}
+	else
+		return false;
+}
+
 _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 {
 	if (ePart >= BREAK_PART::_END)

@@ -52,11 +52,7 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
-	
 	m_pModelCom->Active_RootMotion_Rotation(false);
-
-
-
 
 	return S_OK;
 }
@@ -120,12 +116,11 @@ HRESULT CLock_Cabinet::Render()
 		return S_OK;
 	else
 		m_bRender = false;
-	
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-
 	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
@@ -163,16 +158,47 @@ HRESULT CLock_Cabinet::Render()
 				return E_FAIL;
 		}
 
+		_float4 vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			continue;
+			_bool isEmissive = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+
+			if (m_pModelCom->Get_MeshTags()[static_cast<_int>(i)] == "LOD_1_Group_0_Sub_1__sm42_174_CardReader04A_A_Mat__Env__d00") {
+				if (*m_pLockState == CCabinet::CLEAR_LOCK) {
+					vColor = _float4(0.f, 1.f, 0.f, 1.f); // 초록색
+				}
+				else {
+					vColor = _float4(1.f, 0.f, 0.f, 1.f); // 빨간색
+				}
+			}
+		}
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
+	_float4 vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
 
 	return S_OK;
 }
+
 
 HRESULT CLock_Cabinet::Render_LightDepth_Dir()
 {
@@ -404,7 +430,7 @@ HRESULT CLock_Cabinet::Initialize_SafeBox()
 void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 {
 
-	_int iRand = m_pGameInstance->GetRandom_Int(0, 3);
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 	switch (*m_pLockState)
@@ -482,39 +508,39 @@ void CLock_Cabinet::InPutKey_Sound(_int iRand, _int iRand1)
 	switch (iRand1)
 	{
 	case 0:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_1.mp3"), 0);
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_1.mp3"), iRand);
 		break;
 	case 1:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_2.mp3"), 1);
+		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_2.mp3"), iRand);
 		break;
 	case 2:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_3.mp3"), 2);
+		Change_Sound(TEXT("sound_Map_sm42_safebox_dial2_3.mp3"), iRand);
 		break;
 	case 3:
-		Change_Same_Sound(TEXT("sound_Map_sm42_safebox_dial2_4.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_safebox_dial2_4.mp3"), iRand);
 		break;
 	case 4:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_1.mp3"), 0);
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_1.mp3"), iRand);
 		break;
 	case 5:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), iRand);
 		break;
 	case 6:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), 2);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), iRand);
 		break;
 	case 7:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), 3);
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), iRand);
 		break;
 	case 8:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_7.mp3"), 3);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_7.mp3"), iRand);
 		break;
 		
 	case 9:
-		Change_Same_Sound(TEXT("sound_Map_sm42_parking_card_reader2_1.mp3"), 3);
+		Change_Sound(TEXT("sound_Map_sm42_parking_card_reader2_1.mp3"), 1);
 		break;
 		
 	case 10:
-		Change_Same_Sound(TEXT("sound_Map_sm42_parking_card_reader2_2.mp3"), 3);
+		Change_Sound(TEXT("sound_Map_sm42_parking_card_reader2_2.mp3"), 0);
 		break;
 
 	}
@@ -671,7 +697,7 @@ void CLock_Cabinet::Safebox_Return()
 void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 {
 
-	_int iRand = m_pGameInstance->GetRandom_Int(0, 3);
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 	switch (*m_pLockState)
@@ -695,7 +721,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			m_fGoalAngle[m_iCurBoneIndex] += 60.f;
 			/*if (360.f <= m_fGoalAngle[m_iCurBoneIndex] )
 				m_fGoalAngle[m_iCurBoneIndex] = 360.f;*/
-			InPutKey_Sound(0,4);
+			InPutKey_Sound(iRand,4);
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
 			break;
 
@@ -705,7 +731,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex < BONE_DIAL1)
 				m_iCurBoneIndex = BONE_DIAL3;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
-			InPutKey_Sound(0, 6);			
+			InPutKey_Sound(iRand, 6);
 
 			break;
 
@@ -716,7 +742,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			/*if (-360.f >= m_fGoalAngle[m_iCurBoneIndex])
 				m_fGoalAngle[m_iCurBoneIndex] = -360.f;*/
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
-			InPutKey_Sound(0, 5);
+			InPutKey_Sound(iRand, 5);
 
 			break;
 
@@ -752,7 +778,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 	}
 	for (_int i = 0; i < BONE_DIAL_END; i++)
 	{
-		/*m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta*5.f);
+		m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta*5.f);
 
 
 		_float4			vRotate = { m_WorldMatrix.Right()};
@@ -776,45 +802,45 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		{
 			m_fCurAngle[i] = 0.f;
 			m_fGoalAngle[i] += 360.f;
-		}*/
-		m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta * 5.f);
+		}
+		//m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta * 5.f);
 
 
-		_float4         vRotate = { m_WorldMatrix.Right() };
+		//_float4         vRotate = { m_WorldMatrix.Right() };
 
-		string			strBoneDail1Tag = m_strOpenDial[0];
-		string			strBoneDail2Tag = m_strOpenDial[1];
+		//string			strBoneDail1Tag = m_strOpenDial[0];
+		//string			strBoneDail2Tag = m_strOpenDial[1];
 
-		_matrix         BoneDial1CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail1Tag)) };
-		_matrix         BoneDial2CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail2Tag)) };
-		//   _matrix         BoneWorldMatrix = { BoneCombinedMatrix * XMLoadFloat4x4(&m_WorldMatrix) };
+		//_matrix         BoneDial1CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail1Tag)) };
+		//_matrix         BoneDial2CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail2Tag)) };
+		////   _matrix         BoneWorldMatrix = { BoneCombinedMatrix * XMLoadFloat4x4(&m_WorldMatrix) };
 
-		_vector         vRotateAxis = XMVector3Normalize(BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION] - BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION]);
+		//_vector         vRotateAxis = XMVector3Normalize(BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION] - BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION]);
 
 
 		//   _vector         vRotateAxis = _vector{ vRotate.x,vRotate.y,vRotate.z,vRotate.w };
 		//   vRotateAxis = XMVector3TransformNormal(vRotateAxis, XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix)));
 
-		if (XMVectorGetX(XMVector3Length(vRotateAxis)) != 0.f)
-		{
-			_vector            vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fCurAngle[i])) };
+		//if (XMVectorGetX(XMVector3Length(vRotateAxis)) != 0.f)
+		//{
+		//	_vector            vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fCurAngle[i])) };
 
-			vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
-			_matrix            RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
-			_float4x4          test = RotationMatrix;
-			m_pModelCom->Add_Additional_Transformation_World(m_strOpenDial[i], RotationMatrix);
+		//	vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
+		//	_matrix            RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+		//	_float4x4          test = RotationMatrix;
+		//	m_pModelCom->Add_Additional_Transformation_World(m_strOpenDial[i], RotationMatrix);
 
-			if (m_fCurAngle[i] >= 359.5f && m_fGoalAngle[i] >= 360.f)
-			{
-				m_fCurAngle[i] = 0.f;
-				m_fGoalAngle[i] -= 360.f;
-			}
-			else if (m_fCurAngle[i] < -359.5f && m_fGoalAngle[i] <= -360.f)
-			{
-				m_fCurAngle[i] = 0.f;
-				m_fGoalAngle[i] += 360.f;
-			}
-		}		
+		//	if (m_fCurAngle[i] >= 359.5f && m_fGoalAngle[i] >= 360.f)
+		//	{
+		//		m_fCurAngle[i] = 0.f;
+		//		m_fGoalAngle[i] -= 360.f;
+		//	}
+		//	else if (m_fCurAngle[i] < -359.5f && m_fGoalAngle[i] <= -360.f)
+		//	{
+		//		m_fCurAngle[i] = 0.f;
+		//		m_fGoalAngle[i] += 360.f;
+		//	}
+		//}		
 	}
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
@@ -877,7 +903,7 @@ void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 		_float4x4 TranslationMatrix = XMMatrixTranslation(0.f, -m_fCurTranslation,0.f);
 
 		m_pModelCom->Add_Additional_Transformation_World("ItemSet", TranslationMatrix);
-		if (m_fGoalTranslation - 0.02f < m_fCurTranslation)
+		if (m_fGoalTranslation - 0.07f < m_fCurTranslation)
 			InPutKey_Sound(0, 10);
 		else
 			InPutKey_Sound(0, 9);

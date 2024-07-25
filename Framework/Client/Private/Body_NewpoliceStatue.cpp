@@ -143,8 +143,7 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 		}
 	}
 #endif
-
-#ifndef SPOT_FRUSTRUM_CULLING
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 #endif
 }

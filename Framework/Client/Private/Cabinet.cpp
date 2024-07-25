@@ -50,7 +50,10 @@ HRESULT CCabinet::Initialize(void* pArg)
 	else if (m_tagPropDesc.strGamePrototypeName.find("005") != string::npos)
 		m_eCabinetType = TYPE_ELECTRIC;
 	else if (m_tagPropDesc.strGamePrototypeName.find("020") != string::npos)
+	{
 		m_eCabinetType = TYPE_WEAPON;
+		m_iItemIndex = ShotGun;
+	}
 	else if (m_tagPropDesc.strGamePrototypeName.find("024") != string::npos)
 	{
 		if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_HIDE_LOCKER)))
@@ -242,6 +245,7 @@ HRESULT CCabinet::Add_PartObjects()
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	BodyDesc.eCabinetType = m_eCabinetType;
+	BodyDesc.pLock = &m_bLock;
 	BodyDesc.iPropType = m_tagPropDesc.iPropType;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
@@ -259,7 +263,10 @@ HRESULT CCabinet::Add_PartObjects()
 		ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pItemDead = &m_bItemDead; //얻었는가?
+		if (m_eCabinetType == TYPE_WEAPON)
+			m_tagPropDesc.tagCabinet.Name = TEXT("ShotGun");
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
+		
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));
 		if (nullptr == pItem)
@@ -495,7 +502,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 		bCam = true;
 	if (m_bCamera && (bCam || static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK])->Get_Clear()))
 	{
-		if (!bCam)
+		if (!bCam&&m_bLock)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK && m_fDelayLockTime == 0.f)
 				m_fDelayLockTime = 5.f;
@@ -512,7 +519,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 
 	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Safe_Normal_Active();
 	}
 
@@ -580,8 +587,11 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		
 
 	}
-	if (!m_bLock && !m_bLockLeon)
+	if (!m_bLock && !m_bLockLeon && m_bCamera == true)
+	 {
 		m_fDelayLockTime = 5.f;
+		m_bCamera = false;
+	}
 
 	if (m_bDead)
 		m_bItemDead = true;
@@ -625,6 +635,10 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 		m_bCamera = true;
 	}
 
+	if (m_bDead)
+		m_bItemDead = true;
+
+
 	if (m_bCamera && (bCam||!m_bLock))
 	{
 		Reset_Camera();
@@ -633,7 +647,7 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 
 	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Electric_Active();
 	}
 	if (m_eState == CABINET_OPEN)
@@ -659,6 +673,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK&& m_fDelayLockTime==0.f)
 				m_fDelayLockTime = 3.f;
+			m_bLock = false;
 		}
 		else if (bCam||!m_bLock)
 		{
@@ -688,7 +703,7 @@ void CCabinet::Zombie_Tick(_float fTimeDelta)
 {
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Zombie_Active();
 	}
 	if (m_eState == CABINET_OPEN)

@@ -122,6 +122,11 @@ void CRigid_Dynamic::Release_Body()
 	m_pRigid_Dynamic = nullptr;
 }
 
+void CRigid_Dynamic::ToSleep()
+{
+	m_pRigid_Dynamic->putToSleep();
+}
+
 CRigid_Dynamic* CRigid_Dynamic::Create()
 {
 	return nullptr;

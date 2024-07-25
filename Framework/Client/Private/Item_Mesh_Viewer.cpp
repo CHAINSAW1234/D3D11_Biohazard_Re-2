@@ -3,6 +3,7 @@
 #include "Item_Mesh_Viewer.h"
 #include "Camera_Free.h"
 #include "Light.h"
+#include "Tab_Window.h"
 
 constexpr _float	DIST_CAM_FAR_LIMIIT = 10.f;
 constexpr _float	DIST_CAM_NEAR_LIMIT = 1.f;
@@ -81,24 +82,33 @@ void CItem_Mesh_Viewer::Start()
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
 	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
 
-	m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
+	//m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
+	//m_LampTags[1] = "sm77002portablesafe01a00md_1_Group_0_Sub_3__sm77_002_Po_5926c14";
+	//m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
+	//m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
+	//m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
+	//m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
+	//m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
+	//m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
+
+	m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_2__sm77_002_Po_efc432d";
 	m_LampTags[1] = "sm77002portablesafe01a00md_1_Group_0_Sub_3__sm77_002_Po_5926c14";
-	m_LampTags[2] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
-	m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
-	m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
-	m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
-	m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
-	m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
+	m_LampTags[5] = "sm77002portablesafe01a00md_1_Group_0_Sub_4__sm77_002_Po_02a7153";
+	m_LampTags[0] = "sm77002portablesafe01a00md_1_Group_0_Sub_5__sm77_002_Po_ba99383";
+	m_LampTags[6] = "sm77002portablesafe01a00md_1_Group_0_Sub_6__sm77_002_Po_16b51e4";
+	m_LampTags[3] = "sm77002portablesafe01a00md_1_Group_0_Sub_7__sm77_002_Po_f2b4932";
+	m_LampTags[7] = "sm77002portablesafe01a00md_1_Group_0_Sub_8__sm77_002_Po_c90719f";
+	m_LampTags[4] = "sm77002portablesafe01a00md_1_Group_0_Sub_9__sm77_002_Po_320ce11";
+	//3, 2, 6, 1, 7, 4, 8, 5
 
-	m_ButtonTags[0] = "sm77002portablesafe01a00md_1_Group_1_Sub_1__sm77_002_Po_b6f4fe2";
-	m_ButtonTags[1] = "sm77002portablesafe01a00md_1_Group_2_Sub_1__sm77_002_Po_5f4e97d";
-	m_ButtonTags[2] = "sm77002portablesafe01a00md_1_Group_3_Sub_1__sm77_002_Po_85f6203";
-	m_ButtonTags[3] = "sm77002portablesafe01a00md_1_Group_4_Sub_1__sm77_002_Po_f030480";
-	m_ButtonTags[4] = "sm77002portablesafe01a00md_1_Group_5_Sub_1__sm77_002_Po_53e75b6";
-	m_ButtonTags[5] = "sm77002portablesafe01a00md_1_Group_6_Sub_1__sm77_002_Po_0577076";
-	m_ButtonTags[6] = "sm77002portablesafe01a00md_1_Group_7_Sub_1__sm77_002_Po_b9c21fc";
-	m_ButtonTags[7] = "sm77002portablesafe01a00md_1_Group_8_Sub_1__sm77_002_Po_0b164c0";
-
+	m_ButtonTags[7] = "sm77002portablesafe01a00md_1_Group_1_Sub_1__sm77_002_Po_b6f4fe2";
+	m_ButtonTags[6] = "sm77002portablesafe01a00md_1_Group_2_Sub_1__sm77_002_Po_5f4e97d";
+	m_ButtonTags[5] = "sm77002portablesafe01a00md_1_Group_3_Sub_1__sm77_002_Po_85f6203";
+	m_ButtonTags[4] = "sm77002portablesafe01a00md_1_Group_4_Sub_1__sm77_002_Po_f030480";
+	m_ButtonTags[3] = "sm77002portablesafe01a00md_1_Group_5_Sub_1__sm77_002_Po_53e75b6";
+	m_ButtonTags[2] = "sm77002portablesafe01a00md_1_Group_6_Sub_1__sm77_002_Po_0577076";
+	m_ButtonTags[1] = "sm77002portablesafe01a00md_1_Group_7_Sub_1__sm77_002_Po_b9c21fc";
+	m_ButtonTags[0] = "sm77002portablesafe01a00md_1_Group_8_Sub_1__sm77_002_Po_0b164c0";
 
 	m_ButtonBoneTags[7] = "button_p001";
 	m_ButtonBoneTags[6] = "button_p002";
@@ -113,7 +123,7 @@ void CItem_Mesh_Viewer::Start()
 	m_vecModelCom[portablesafe]->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_vecModelCom[portablesafe]->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_vecModelCom[portablesafe]->Active_RootMotion_Rotation(false);
-	m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 0);
+	m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 1);
 }	
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
@@ -156,13 +166,569 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 	if (portablesafe == m_eItem_Number)
 	{
 		_float3				vDirection = { };
-		if (FAILED(m_vecModelCom[portablesafe]->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection)))
+		if (FAILED(m_vecModelCom[m_eItem_Number]->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection)))
 		{
 			int a = 0;
 		}
 	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EXAMINE, this);
+}
+
+void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
+{
+	//Add_Additional_Transfortion_World
+	switch (m_eOperType)
+	{
+	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+			m_eOperType = EXAMIN_PUZZLE;
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector() - XMVectorSet(0.f, -10.f, 0.f, 0.f));
+			//m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
+			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
+			m_fDistCamZ = 0.18f;
+			m_iSelected_Button = 0;
+			Set_Answer();
+			break;
+		}
+
+		if (true == m_pGameInstance->Check_Wheel_Down())
+		{
+			m_fDistCamZ -= 0.01f;
+		}
+		else if (true == m_pGameInstance->Check_Wheel_Up())
+		{
+			m_fDistCamZ += 0.01f;
+		}
+
+		static		_float2			vSpeed = { 0.f, 0.f };
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			_long	MouseMove = { 0 };
+			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
+			{
+				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
+			}
+			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
+			{
+				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
+			}
+		}
+		if (vSpeed.x > 0.f)
+		{
+			vSpeed.x -= fTimeDelta * 0.1f;
+			if (vSpeed.x < 0.f)
+				vSpeed.x = 0.f;
+		}
+		else
+		{
+			vSpeed.x += fTimeDelta * 0.1f;
+			if (vSpeed.x > 0.f)
+				vSpeed.x = 0.f;
+		}
+		if (vSpeed.y > 0.f)
+		{
+			vSpeed.y -= fTimeDelta * 0.1f;
+			if (vSpeed.y < 0.f)
+				vSpeed.y = 0.f;
+		}
+		else
+		{
+			vSpeed.y += fTimeDelta * 0.1f;
+			if (vSpeed.y > 0.f)
+				vSpeed.y = 0.f;
+		}
+
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
+		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
+
+		break;
+	}
+
+	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
+		if (false == m_bStop)
+		{
+			m_fPopupHide_CurTime += fTimeDelta;
+
+			if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
+			{
+				m_bStop = true;
+				m_fPopupHide_CurTime = 0.f;
+				//m_fDistCamZ = m_fPopupHide_EndDist;
+				return;
+			}
+
+			if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+			{
+				m_fCurSize = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fStartSize, m_fEndSize,
+					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+				m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, ZERO, PICK_UP_IDLE_X_DIST,
+					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+			}
+		}
+
+		break;
+	}
+
+	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM: {
+		break;
+	}
+
+	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
+		switch (m_ePZ_Progress)
+		{
+		case Client::CItem_Mesh_Viewer::PUZZLE_IDLE: {
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
+				m_eOperType = EXAMIN;
+				m_isFirstPress = false;
+				PS_Button_Resset();
+				break;
+			}
+
+			if (-1 == Check_Puzzle_Success() &&  0 < m_iPuzzle_Progress)
+			{
+				m_ePZ_Progress = PUZZLE_FAILED;
+				break;
+			}
+
+			if (1 == Check_Puzzle_Success() && 0 < m_iPuzzle_Progress)
+			{
+				m_ePZ_Progress = PUZZLE_SUCCEEC;
+				break;
+			}
+
+			for (_uint i = 0; i < 8; i++)
+			{
+				if (PRESSED == m_eButtonStates[i])
+					m_vecModelCom[m_eItem_Number]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, -0.3f, 0.f));
+			}
+
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
+				m_eButtonStates[m_iSelected_Button] = PRESSED;
+				m_iInputAnswer[m_iPuzzle_Progress] = m_iSelected_Button;
+				m_iPuzzle_Progress++;
+				Puszzle_button_Sound(m_iSelected_Button);
+
+
+				break;
+			}
+
+			if (DOWN == m_pGameInstance->Get_KeyState('D')) {
+				if (m_iSelected_Button + 1 < 8)
+					m_iSelected_Button += 1;
+			}
+			if (DOWN == m_pGameInstance->Get_KeyState('A')) {
+				if (m_iSelected_Button - 1 > -1)
+					m_iSelected_Button -= 1;
+			}
+			if (DOWN == m_pGameInstance->Get_KeyState('W')) {
+				if (m_iSelected_Button - 2 > -1)
+					m_iSelected_Button -= 2;
+			}
+			if (DOWN == m_pGameInstance->Get_KeyState('S')) {
+				if (m_iSelected_Button + 2 < 8)
+					m_iSelected_Button += 2;
+			}
+			break;
+		}
+			
+		case Client::CItem_Mesh_Viewer::PUZZLE_SUCCEEC: {
+			static _uint iSuccec_Equence = 0;
+			if (iSuccec_Equence == 0)
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Portuble_Puzzle_Clear.mp3"), CH4_2D ,0.5f);
+
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
+				m_ePZ_Progress = PUZZLE_FAILED;
+				iSuccec_Equence = 0;
+				break;
+			}
+
+			m_fPopupHide_CurTime += fTimeDelta;
+
+			if (iSuccec_Equence < 7)
+			{
+				if (m_fPopupHide_CurTime > 0.2f)
+				{
+					if (iSuccec_Equence % 2 == 0 && iSuccec_Equence < 6)
+					{
+						for (_uint i = 0; i < 8; i++)
+						{
+							if (i % 2 == 0)
+								m_eLampStates[m_iInputAnswer[i]] = SUCCEED;
+							else
+								m_eLampStates[m_iInputAnswer[i]] = LAMP_IDLE;
+						}
+						iSuccec_Equence++;
+						m_fPopupHide_CurTime = 0.f;
+						break;
+					}
+
+					else if (iSuccec_Equence % 2 != 0 && iSuccec_Equence < 6)
+					{
+						for (_uint i = 0; i < 8; i++)
+						{
+							if (i % 2 != 0)
+								m_eLampStates[m_iInputAnswer[i]] = SUCCEED;
+							else
+								m_eLampStates[m_iInputAnswer[i]] = LAMP_IDLE;
+						}
+						iSuccec_Equence++;
+						m_fPopupHide_CurTime = 0.f;
+						break;
+					}
+
+					else if (iSuccec_Equence == 6)
+					{
+						for (_uint i = 0; i < 8; i++)
+						{
+							m_eLampStates[i] = SUCCEED;
+						}
+
+						_bool isPlay = true;
+						m_pGameInstance->IsPlaying_2D(CH4_2D, &isPlay);
+						if (false == isPlay)
+						{
+							iSuccec_Equence++;
+							m_fPopupHide_CurTime = 0.f;
+						}
+						break;
+					}
+				}
+			}
+
+			if (iSuccec_Equence == 7)
+			{
+				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+				{
+					m_fDistCamZ = 0.4f;
+					m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(-0.5f, 0.5f, 0.f, 0.f));
+				}
+				else
+				{
+					m_fPopupHide_CurTime = 0.f;
+					m_fPreRadian = 0.f;
+					iSuccec_Equence++;
+				}
+			}
+
+			if (iSuccec_Equence == 8)
+			{
+				m_vecModelCom[m_eItem_Number]->Change_Animation(0, TEXT("Default"), 0);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_9.mp3"), CH4_2D, 0.5f);
+				iSuccec_Equence++;
+			}
+
+			if (iSuccec_Equence == 9)
+			{
+				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+				{
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, 0.4f, POPUP_HIDE_START_DIST,
+						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+				}
+				else
+				{
+					m_eItem_Number = blankkey01a;
+					Set_ScaleByItemNum(m_eItem_Number);
+					m_fPopupHide_CurTime = 0.f;
+					iSuccec_Equence++;
+				}
+			}
+
+			if (iSuccec_Equence == 10)
+			{
+				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+				{
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, 0.4f,
+						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+					m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(-0.5f, 0.5f, 0.f, 0.f));
+				}
+				else
+				{
+					//m_eItem_Number = blankkey01a;
+					m_fPopupHide_CurTime = 0.f;
+					m_fDistCamX = PICK_UP_IDLE_X_DIST;
+					m_eOperType = SECON_PICKUPITEM;
+					CGameObject* pT = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_TabWindow"))->front();
+					static_cast<CTab_Window*>(pT)->Set_PortabTo_Blank();
+					iSuccec_Equence++;
+				}
+			}
+
+			break;
+		}
+			
+		case Client::CItem_Mesh_Viewer::PUZZLE_FAILED: {
+			m_fPopupHide_CurTime += fTimeDelta;
+			if (m_fPopupHide_CurTime > 0.1f)
+			{
+				PS_Button_Resset();
+				m_eButtonStates[m_iSelected_Button] = PRESSED;
+				m_eLampStates[m_iSelected_Button] = SUCCEED;
+				Set_Answer();
+				m_iPuzzle_Progress = 1;
+				m_fPopupHide_CurTime = 0;
+				m_ePZ_Progress = PUZZLE_IDLE;
+				m_iInputAnswer[0] = m_iSelected_Button;
+				break;
+			}
+
+			for (_uint i = 0; i < m_iPuzzle_Progress; i++)
+			{
+				m_eLampStates[m_iInputAnswer[i]] = FAILED;
+			}
+
+			break;
+		}
+			
+		default:
+			break;
+		}
+
+		break;}
+
+	default:
+		break;
+	}
+
+	//m_vecModelCom[portablesafe]->Add_Additional_Transformation_World("button_p001", XMMatrixTranslation(0.f, 0.f, 1.f));
+	//m_vecModelCom[portablesafe]->Hide_Mesh("button_p001", true);
+}
+
+void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
+{
+	m_fPopupHide_CurTime += fTimeDelta;
+
+	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
+	{
+		m_eViewer_State = STATE_END;
+		m_fPopupHide_CurTime = 0.f;
+		m_fDistCamZ = POPUP_HIDE_START_DIST;
+		m_fDistCamX = ZERO;
+		m_bDead = true;
+		m_eItem_Number = ITEM_NUMBER_END;
+		m_matMoveCenter = XMMatrixIdentity();
+		m_fPickupHide_StartDist = DIST_CAM_FAR_LIMIIT;
+		return;
+	}
+
+	switch (m_eOperType)
+	{
+	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+		{
+			m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+		}
+		break;
+	}
+		
+	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM:
+	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
+		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+		{
+			m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+			m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, PICK_UP_IDLE_X_DIST, ZERO,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+			m_fCurSize = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fEndSize, m_fStartSize,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+		}
+		break;
+	}
+		
+	default:
+		break;
+	}
+}
+
+_int CItem_Mesh_Viewer::Check_Puzzle_Success()
+{
+	_int isPuzzleSuccess = 0;
+
+	for (_uint i = 0; i < m_iPuzzle_Progress; i++)
+	{
+		if (m_iSetByNumAnswer[i] != m_iInputAnswer[i])
+		{
+			isPuzzleSuccess = -1;
+			m_eLampStates[m_iInputAnswer[i]] = FAILED;
+		}
+		else if (m_iSetByNumAnswer[i] == m_iInputAnswer[i])
+		{
+			m_eLampStates[m_iInputAnswer[i]] = SUCCEED;
+		}		
+	}
+
+	if (m_iPuzzle_Progress == 8 && isPuzzleSuccess == 0)
+		isPuzzleSuccess = 1;
+
+	return isPuzzleSuccess;
+}
+
+void CItem_Mesh_Viewer::PS_Button_Resset()
+{
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_eButtonStates[i] = BUTTON_IDLE;
+		m_eLampStates[i] = LAMP_IDLE;
+		m_iSetByNumAnswer[i] = 0;
+		m_iInputAnswer[i] = -1;
+	}
+	m_ePZ_Progress = PUZZLE_IDLE;
+}
+
+void CItem_Mesh_Viewer::Puszzle_button_Sound(_int iButton)
+{
+	switch (iButton)
+	{
+	case 0:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_1.mp3"), 0.5f);
+		break;
+	case 1:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_2.mp3"), 0.5f);
+		break;
+	case 2:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_3.mp3"), 0.5f);
+		break;
+	case 3:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_4.mp3"), 0.5f);
+		break;
+	case 4:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_5.mp3"), 0.5f);
+		break;
+	case 5:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_6.mp3"), 0.5f);
+		break;
+	case 6:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_7.mp3"), 0.5f);
+		break;
+	case 7:
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_Map_sm77_portable_safe2_8.mp3"), 0.5f);
+		break;
+	default:
+		break;
+	}
+}
+
+void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
+{
+	switch (eOperation)
+	{
+	case Client::POP_UP: {
+		m_bDead = false;
+		m_eItem_Number = eCallItemType;
+		m_eViewer_State = eOperation;
+		m_fDistCamZ = DIST_CAM_FAR_LIMIIT;
+		m_fPopupHide_CurTime = 0.f;
+		Set_ScaleByItemNum(eCallItemType);
+		m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
+
+		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
+		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, fCenter.z);
+		m_matMoveCenter *= TempMat;
+		
+		m_fPreRadian = 0.f;
+
+		PS_Button_Resset();
+		break;
+	}
+
+	case Client::UI_IDLE: {
+		if (PICKUPITEM == iOperateType)
+		{
+			m_bDead = false;
+			m_eViewer_State = eOperation;
+			m_fPopupHide_CurTime = 0.f;
+			m_bStop = false;
+			m_fPickupIdle_StartDist = m_fDistCamZ;
+		}
+		if (SECON_PICKUPITEM == iOperateType)
+		{
+			m_bDead = false;
+			m_eItem_Number = eCallItemType;
+			m_eViewer_State = eOperation;
+			
+			Set_ScaleByItemNum(eCallItemType);
+
+			m_fPopupHide_CurTime = 0.f;
+			m_fDistCamZ = m_fPopupHide_EndDist;
+			m_fDistCamX = PICK_UP_IDLE_X_DIST;
+			m_fCurSize = m_fEndSize;
+
+			m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
+			_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
+			_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+			m_matMoveCenter *= TempMat;
+			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
+
+			//m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+		}
+		
+		break;
+	}
+
+	case Client::HIDE: {
+		m_bDead = false;
+		m_eViewer_State = eOperation;
+		m_fPopupHide_CurTime = 0.f;
+		if (PICKUPITEM == iOperateType)
+		{
+			m_bStop = false;
+			m_fPickupHide_StartDist = m_fDistCamZ;
+		}
+		break;
+	}
+		
+	default:
+		break;
+	}
+}
+
+void CItem_Mesh_Viewer::Set_Answer()
+{
+	_uint iFindNumPos = 0;
+
+	for (_uint i = 0; i < 8; i++)
+	{
+		if (m_iSelected_Button == m_iAnswer[i])
+		{
+			iFindNumPos = i;
+		}
+	}
+
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_iSetByNumAnswer[i] = m_iAnswer[iFindNumPos];
+
+		if (iFindNumPos + 1 == 8)
+			iFindNumPos = 0;
+		else
+			iFindNumPos++;
+	}
+}
+
+HRESULT CItem_Mesh_Viewer::Add_Components()
+{
+	/* For.Com_Shader */
+
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
+		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	/* For.Com_Body_Shader */
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+		TEXT("Com_Anim_Shader"), (CComponent**)&m_pAnimShaderCom)))
+		return E_FAIL;
+
+	if (FAILED(Load_ItemsModel()))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CItem_Mesh_Viewer::Render()
@@ -178,9 +744,8 @@ HRESULT CItem_Mesh_Viewer::Render()
 	if (nullptr == pDesc)
 		return E_FAIL;
 
-
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe /*&& EXAMIN_PUZZLE == m_eOperType*/) {
+	if (m_eItem_Number == portablesafe) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -268,19 +833,33 @@ HRESULT CItem_Mesh_Viewer::Render()
 			_int iIndex = -1;
 			_float4 vColor = { 1.f, 1.f, 1.f ,1.f };
 
-			for (_int j = 0; j < 8; ++j) {
-				if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_LampTags[j]) {
-					switch (m_eLampStates[j]) {
-					case SUCCEED:
-						vColor = _float4(0.f, 1.f, 0.f, 1.f);
-						break;
-					case FAILED:
-						vColor = _float4(1.f, 0.f, 0.f, 1.f);
-						break;
+			if (m_eOperType == EXAMIN_PUZZLE)
+			{
+				for (_int j = 0; j < 8; ++j) {
+					if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_LampTags[j]) {
+						switch (m_eLampStates[j]) {
+						case SUCCEED:
+							vColor = _float4(0.f, 1.f, 0.f, 1.f);
+							break;
+						case FAILED:
+							vColor = _float4(1.f, 0.f, 0.f, 1.f);
+							break;
+						}
+					}
+				}
+				for (_int j = 0; j < 8; ++j) {
+					if (m_vecModelCom[m_eItem_Number]->Get_MeshTags()[i] == m_ButtonTags[j])
+					{
+						if (j == m_iSelected_Button)
+							vColor = _float4(2.f, 2.f, 2.f, 1.f);
+
+						else if (m_eButtonStates[j] == PRESSED)
+							vColor = _float4(0.4f, 0.4f, 0.4f, 1.f);
 					}
 				}
 			}
-			if (FAILED(pShader->Bind_RawValue("g_Color", &vColor, sizeof(_float4))))
+			
+			if (FAILED(pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 				return E_FAIL;
 
 
@@ -310,8 +889,9 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 		m_fPopupHide_CurTime = 0.f;
 		m_fDistCamZ = m_fPopupHide_EndDist;
 		m_bStop = true;
+		m_fPreRadian = 0.f;
 		return;
-	}	
+	}
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
@@ -322,446 +902,26 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
 		_float fResultRadian = fRadian - m_fPreRadian;
-		
+
 		fResultRadian /= XMConvertToRadians(360.0f);
 
-		_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Turn(MyUp, fResultRadian);
-		
+		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+		//m_pTransformCom->Turn(MyUp, fResultRadian);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fResultRadian);
+		m_fPreRadian = fRadian;
 		// 1. ÀÌ¹ø Tick ÀÇ Radian  - ÀÌÀü Radian
 		// 2. CTransformÀÌ °®°í ÀÖ´Â m_fRotationPerSec¸¦ ³ª´²Áà¾ßµÊ  
-
 		//m_pTransformCom->Rotation(MyUp, fRadian);
-
 		//_vector CamUp = m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_UP);
 		//m_pTransformCom->Rotation(CamUp, fRadian);
-		// 
-		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
-
-		m_fPreRadian = fRadian;
-		
+		// //m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
 	}
 }
-
-void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
-{
-	//Add_Additional_Transfortion_World
-	switch (m_eOperType)
-	{
-	case Client::CItem_Mesh_Viewer::EXAMIN: {
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
-			m_eOperType = EXAMIN_PUZZLE;
-			//m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
-			//m_pTransformCom->Rotation(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
-			//m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
-			//m_fDistCamZ = 0.18f;
-			m_iSelected_Button = 0;
-			break;
-		}
-
-
-		if (true == m_pGameInstance->Check_Wheel_Down())
-		{
-			m_fDistCamZ -= 0.01f;
-		}
-		else if (true == m_pGameInstance->Check_Wheel_Up())
-		{
-			m_fDistCamZ += 0.01f;
-		}
-
-		static		_float2			vSpeed = { 0.f, 0.f };
-		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			_long	MouseMove = { 0 };
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
-			{
-				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
-			}
-				
-
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
-			{
-				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
-			}
-		}
-		if (vSpeed.x > 0.f)
-		{
-			vSpeed.x -= fTimeDelta * 0.1f;
-			if (vSpeed.x < 0.f)
-				vSpeed.x = 0.f;
-		}
-		else
-		{
-			vSpeed.x += fTimeDelta * 0.1f;
-			if (vSpeed.x > 0.f)
-				vSpeed.x = 0.f;
-		}
-		if (vSpeed.y > 0.f)
-		{
-			vSpeed.y -= fTimeDelta * 0.1f;
-			if (vSpeed.y < 0.f)
-				vSpeed.y = 0.f;
-		}
-		else
-		{
-			vSpeed.y += fTimeDelta * 0.1f;
-			if (vSpeed.y > 0.f)
-				vSpeed.y = 0.f;
-		}
-
-		//_vector MyUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
-		//m_pTransformCom->Turn(MyUp, vSpeed.x * -1.f);
-
-		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
-
-		break;
-	}
-
-	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
-		if (false == m_bStop)
-		{
-			m_fPopupHide_CurTime += fTimeDelta;
-
-			if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
-			{
-				m_bStop = true;
-				m_fPopupHide_CurTime = 0.f;
-				//m_fDistCamZ = m_fPopupHide_EndDist;
-				return;
-			}
-
-			if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
-			{
-				m_fCurSize = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fStartSize, m_fEndSize,
-					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-
-				m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, ZERO, PICK_UP_IDLE_X_DIST,
-					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-			}
-		}
-
-		break;
-	}
-
-	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM: {
-		break;
-	}
-
-	case Client::CItem_Mesh_Viewer::EXAMIN_PUZZLE: {
-		switch (m_ePZ_Progress)
-		{
-		case Client::CItem_Mesh_Viewer::PUZZLE_IDLE: {
-			if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON)) {
-				m_eOperType = EXAMIN;
-				PS_Button_Resset();
-				break;
-			}
-
-			if (-1 == Check_Puzzle_Success() &&  0 < m_iPuzzle_Progress)
-			{
-				m_ePZ_Progress = PUZZLE_FAILED;
-				break;
-			}
-
-			if (1 == Check_Puzzle_Success() && 0 < m_iPuzzle_Progress)
-			{
-				m_ePZ_Progress = PUZZLE_SUCCEEC;
-				break;
-			}
-
-			for (_uint i = 0; i < 8; i++)
-			{
-				if (PRESSED == m_eButtonStates[i])
-					m_vecModelCom[portablesafe]->Add_Additional_Transformation_World(m_ButtonBoneTags[i], XMMatrixTranslation(0.f, -0.25f, 0.f));
-			}
-
-			if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
-				m_eButtonStates[m_iSelected_Button] = PRESSED;
-				m_iInputAnswer[m_iPuzzle_Progress] = m_iSelected_Button;
-				m_iPuzzle_Progress++;
-				break;
-			}
-			if (DOWN == m_pGameInstance->Get_KeyState('D')) {
-				if (m_iSelected_Button + 1 < 8)
-					m_iSelected_Button += 1;
-			}
-			else if (DOWN == m_pGameInstance->Get_KeyState('A')) {
-				if (m_iSelected_Button - 1 > -1)
-					m_iSelected_Button -= 1;
-			}
-			else if (DOWN == m_pGameInstance->Get_KeyState('W')) {
-				if (m_iSelected_Button - 2 > -1)
-					m_iSelected_Button -= 2;
-
-			}
-			else if (DOWN == m_pGameInstance->Get_KeyState('S')) {
-				if (m_iSelected_Button + 2 < 8)
-					m_iSelected_Button += 2;
-			}
-			break;
-		}
-			
-		case Client::CItem_Mesh_Viewer::PUZZLE_SUCCEEC: {
-			static _uint iSuccec_Equence = 0;
-			if (iSuccec_Equence == 0)
-				m_pGameInstance->PlaySoundEffect_2D(TEXT(""), TEXT(""), 0.5f);
-
-			m_fPopupHide_CurTime += fTimeDelta;
-
-			if (m_fPopupHide_CurTime > 0.2f)
-			{
-				if (iSuccec_Equence % 2 == 0 && iSuccec_Equence < 6)
-				{
-					for (_uint i = 0; i < 8; i++)
-					{
-						if (i % 2 == 0)
-							m_eLampStates[i] = SUCCEED;
-						else
-							m_eLampStates[i] = LAMP_IDLE;
-					}
-				}
-
-				else if (iSuccec_Equence % 2 != 0 && iSuccec_Equence < 6)
-				{
-					for (_uint i = 0; i < 8; i++)
-					{
-						if (i % 2 != 0)
-							m_eLampStates[i] = SUCCEED;
-						else
-							m_eLampStates[i] = LAMP_IDLE;
-					}
-				}
-
-				else if (iSuccec_Equence == 6)
-				{
-					for (_uint i = 0; i < 8; i++)
-					{
-						m_eLampStates[i] = SUCCEED;
-					}
-
-					m_vecModelCom[portablesafe]->Change_Animation(0, TEXT("Default"), 1);
-					break;
-				}
-
-				iSuccec_Equence++;
-				m_fPopupHide_CurTime = 0.f;
-			}
-
-		
-			break;
-		}
-			
-		case Client::CItem_Mesh_Viewer::PUZZLE_FAILED: {
-			PS_Button_Resset();
-			m_eButtonStates[m_iSelected_Button] = PRESSED;
-			m_iPuzzle_Progress = 0;
-			break;
-		}
-			
-		default:
-			break;
-		}
-
-		break;}
-
-	default:
-		break;
-	}
-
-	//m_vecModelCom[portablesafe]->Add_Additional_Transformation_World("button_p001", XMMatrixTranslation(0.f, 0.f, 1.f));
-	//m_vecModelCom[portablesafe]->Hide_Mesh("button_p001", true);
-}
-
-void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
-{
-	m_fPopupHide_CurTime += fTimeDelta;
-
-	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
-	{
-		m_eViewer_State = STATE_END;
-		m_fPopupHide_CurTime = 0.f;
-		m_fDistCamZ = POPUP_HIDE_START_DIST;
-		m_fDistCamX = ZERO;
-		m_bDead = true;
-		m_eItem_Number = ITEM_NUMBER_END;
-		m_matMoveCenter = XMMatrixIdentity();
-		m_fPickupHide_StartDist = DIST_CAM_FAR_LIMIIT;
-		return;
-	}
-
-	switch (m_eOperType)
-	{
-	case Client::CItem_Mesh_Viewer::EXAMIN: {
-		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
-		{
-			m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
-				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-		}
-		break;
-	}
-		
-	case Client::CItem_Mesh_Viewer::SECON_PICKUPITEM:
-	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
-		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
-		{
-			m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
-				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-
-			m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, PICK_UP_IDLE_X_DIST, ZERO,
-				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-
-			m_fCurSize = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fEndSize, m_fStartSize,
-				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
-		}
-		break;
-	}
-		
-	default:
-		break;
-	}
-}
-
-_int CItem_Mesh_Viewer::Check_Puzzle_Success()
-{
-	_int isPuzzleSuccess = 0;
-	_uint iProgerss = m_iProgressStartPoint;
-
-	for (_uint i = 0; i < m_iPuzzle_Progress; i++)
-	{
-		if (m_iCorrectAnswer[iProgerss] != m_iInputAnswer[iProgerss])
-		{
-			isPuzzleSuccess = -1;
-			m_eLampStates[iProgerss] = FAILED;
-		}
-		else if (m_iCorrectAnswer[iProgerss] == m_iInputAnswer[iProgerss])
-		{
-			m_eLampStates[iProgerss] = SUCCEED;
-		}
-		
-
-		if (7 < iProgerss + 1)
-			iProgerss = 0;
-		else
-			iProgerss++;
-	}
-
-	if (m_iPuzzle_Progress == 8 && isPuzzleSuccess == 0)
-		isPuzzleSuccess = 1;
-
-	return isPuzzleSuccess;
-}
-
-void CItem_Mesh_Viewer::PS_Button_Resset()
-{
-	for (_uint i = 0; i < 8; i++)
-	{
-		m_eButtonStates[i] = BUTTON_IDLE;
-		m_eLampStates[i] = LAMP_IDLE;
-		m_iInputAnswer[i] = 0;
-	}
-	m_ePZ_Progress = PUZZLE_IDLE;
-}
-
-void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
-{
-	switch (eOperation)
-	{
-	case Client::POP_UP: {
-		m_bDead = false;
-		m_eItem_Number = eCallItemType;
-		m_eViewer_State = eOperation;
-		m_fDistCamZ = DIST_CAM_FAR_LIMIIT;
-		m_fPopupHide_CurTime = 0.f;
-		Set_ScaleByItemNum(eCallItemType);
-		m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
-
-		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, fCenter.z);
-		m_matMoveCenter *= TempMat;
-		
-		m_fPreRadian = 0.f;
-
-		PS_Button_Resset();
-		break;
-	}
-
-	case Client::UI_IDLE: {
-		if (PICKUPITEM == iOperateType)
-		{
-			m_bDead = false;
-			m_eViewer_State = eOperation;
-			m_fPopupHide_CurTime = 0.f;
-			m_bStop = false;
-			m_fPickupIdle_StartDist = m_fDistCamZ;
-		}
-		if (SECON_PICKUPITEM == iOperateType)
-		{
-			m_bDead = false;
-			m_eItem_Number = eCallItemType;
-			m_eViewer_State = eOperation;
-			
-			Set_ScaleByItemNum(eCallItemType);
-
-			m_fPopupHide_CurTime = 0.f;
-			m_fDistCamZ = m_fPopupHide_EndDist;
-			m_fDistCamX = PICK_UP_IDLE_X_DIST;
-			m_fCurSize = m_fEndSize;
-
-			m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
-			_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-			_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
-			m_matMoveCenter *= TempMat;
-			_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-
-			//m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
-		}
-		
-		break;
-	}
-
-	case Client::HIDE: {
-		m_bDead = false;
-		m_eViewer_State = eOperation;
-		m_fPopupHide_CurTime = 0.f;
-		if (PICKUPITEM == iOperateType)
-		{
-			m_bStop = false;
-			m_fPickupHide_StartDist = m_fDistCamZ;
-		}
-		break;
-	}
-		
-	default:
-		break;
-	}
-}
-
-HRESULT CItem_Mesh_Viewer::Add_Components()
-{
-	/* For.Com_Shader */
-
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	/* For.Com_Body_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Anim_Shader"), (CComponent**)&m_pAnimShaderCom)))
-		return E_FAIL;
-
-	if (FAILED(Load_ItemsModel()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 
 HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 {
 	CShader* pShader = { nullptr };
-	if (m_eItem_Number == portablesafe/* && EXAMIN_PUZZLE == m_eOperType*/) {
+	if (m_eItem_Number == portablesafe) {
 		pShader = m_pAnimShaderCom;
 	}
 	else {
@@ -973,7 +1133,16 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 		return E_FAIL;
 
 	else
+	{
+		wstring magazin = m_vecModelTag[vp70powerup];
+		wstring power = m_vecModelTag[vp70longmagazine];
+
+		m_vecModelTag[vp70powerup] = power;
+		m_vecModelTag[vp70longmagazine] = magazin;
+
 		return S_OK;
+	}
+		
 }
 
 void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
@@ -1074,7 +1243,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
 		m_fEndSize = 0.7f;
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.f, 0.f, -0.04f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::shotgun_bullet01a:
 		m_fPopupHide_EndDist = 0.6f;
@@ -1298,7 +1468,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
 		m_fEndSize = 0.7f;
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.f, 0.f, -0.5f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::Flash_Bomb:
 		m_fPopupHide_EndDist = 0.4f;
@@ -1330,8 +1501,8 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
-		//m_matMoveCenter = XMMatrixTranslation(0.f, 0.004f, 0.f);
-		m_matMoveCenter = XMMatrixIdentity();
+		m_matMoveCenter = XMMatrixTranslation(0.04f, 0.0f, 0.f);
+		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
 		m_fPopupHide_EndDist = 0.15f;
@@ -1353,7 +1524,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 	m_pTransformCom->Set_Scaled(vScaled.x, vScaled.y, vScaled.z);
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+	m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(0.f, 10.f, 0.0f, 0.f));
 }
 
 void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
@@ -1401,3 +1572,5 @@ void CItem_Mesh_Viewer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint 
 		break;
 	}
 }
+
+

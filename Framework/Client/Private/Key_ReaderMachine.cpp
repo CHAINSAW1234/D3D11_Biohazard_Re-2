@@ -204,7 +204,7 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 					break;
 				if (Check_CanPush())
 				{
-					m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] += _float3(0.f, 0.f, -0.005f);
+					m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] = _float3(0.f, 0.f, -0.005f);
 
 					m_pPush[*m_pKeyNum] = m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)];
 					(*m_pKeyNum)++;
@@ -260,7 +260,9 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+#endif
 
 
 

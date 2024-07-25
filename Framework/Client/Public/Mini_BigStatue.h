@@ -51,12 +51,14 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
+	void						Find_Window();
 
 private:
 	void						Unicon_Statue(_float fTimeDelta);
 	void						Woman_Statue(_float fTimeDelta);
 	void						Lion_Statue(_float fTimeDelta);
-
+	
+	void						MiniMap_Statue(ITEM_NUMBER _item);
 public:
 	_float4x4*					Get_WorldMatrix_Ptr() { return &m_WorldMatrix; }
 
@@ -82,6 +84,8 @@ private :
 	_float						m_fRotationAngle		= { 0.f };
 	_bool*						m_isMedalAnim			= { };
 
+	class CTab_Window*			m_pTapWindow			= { nullptr };
+	_bool						m_isTab = { false };
 public:
 	static CMini_BigStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

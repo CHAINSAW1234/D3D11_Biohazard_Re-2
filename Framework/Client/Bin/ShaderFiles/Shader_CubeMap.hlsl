@@ -99,7 +99,7 @@ void CS_HDR(uint3 ThreadID : SV_DispatchThreadID)
      //  HDR -> LDR(Tone map)
     vColor = vColor / (vColor + float3(1.0f, 1.0f, 1.0f));
     //  Gamma Correction
-    vColor = pow(vColor, 1.0f / 2.2f);
+    vColor = pow(abs(vColor), 1.0f / 2.2f);
 
 
     OutputTexture[ThreadID] = float4(vColor, 1.0f);

@@ -44,7 +44,6 @@ public:
 	}
 
 private:
-
 	_int							m_iCurRegion = { 0 };
 	_int							m_iPreRegion = { 0 };
 	_float						m_fRegionChangeTimeDelay = { 0.f };

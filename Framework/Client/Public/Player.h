@@ -23,6 +23,7 @@ public:
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
+		PART_KNIFE,
 		PART_LIGHT,
 		PART_END
 	};
@@ -145,8 +146,9 @@ public:
 	void										Set_Gravity(_bool isGravity); 
 	void										Set_Position(_float4 vPos);
 	void										Set_Position(_fvector vPos);
-
+	void										Set_FootStep(_bool isFootStep) { m_isFootStep = isFootStep; }
 	virtual void								Set_Render(_bool boolean);
+	void										Set_Knife_Active(_bool isActive);
 
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
@@ -204,6 +206,7 @@ private:
 
 	_bool										m_isReloadedSpotLight = { false };	// reload중 라이트 끄기
 	_bool										m_isBite = { false };
+	_bool										m_isFootStep = { true };
 	_int										m_iBiteAnimIndex = { -1 };
 	_float4x4									m_vBiteInterpolateMatrix;
 	_float										m_fTotalInterpolateTime = 0.f;

@@ -36,9 +36,7 @@ HRESULT CBody_EventProp::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
-
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -80,7 +78,7 @@ void CBody_EventProp::Late_Tick(_float fTimeDelta)
 	}
 #endif
 
-#ifndef SPOT_FRUSTRUM_CULLING
+#ifdef ANIM_PROPS_SPOT_SHADOW
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 #endif
 

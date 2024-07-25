@@ -853,6 +853,12 @@
     <Filter Include="02.GameObjects\Cut_Scene\Manager">
       <UniqueIdentifier>{2ec1a50e-175b-4b11-a9a4-06cf8e197e39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\7. Announcement">
+      <UniqueIdentifier>{4cc765dd-e62c-4152-a7cb-0835edbb6f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Knife">
+      <UniqueIdentifier>{149741d6-3d8e-460b-a770-c730a98cf420}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1661,6 +1667,13 @@
     <ClInclude Include="..\Public\Cut_Scene_Manager.h">
       <Filter>02.GameObjects\Cut_Scene\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Announcement_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h" />
+    <ClInclude Include="..\Public\Knife.h">
+      <Filter>02.GameObjects\Player\Knife</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2429,6 +2442,13 @@
     </ClCompile>
     <ClCompile Include="..\Private\Cut_Scene_Manager.cpp">
       <Filter>02.GameObjects\Cut_Scene\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Announcement_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp" />
+    <ClCompile Include="..\Private\Knife.cpp">
+      <Filter>02.GameObjects\Player\Knife</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

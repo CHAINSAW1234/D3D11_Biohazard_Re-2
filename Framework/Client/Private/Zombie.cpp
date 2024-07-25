@@ -269,7 +269,7 @@ void CZombie::Tick(_float fTimeDelta)
 		m_eBeHavior_Col;
 
 #pragma region 절두체 컬링
-	if (m_bRagdoll == false)
+	if (m_bRagdoll == false && m_bPartial_Ragdoll == false)
 	{
 		if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.f))
 		{
@@ -292,22 +292,25 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 #pragma endregion
 
-	if (!Distance_Culling())
+	if(m_bDistance_Culling == true)
 	{
-		for (auto& it : m_PartObjects)
+		if (!Distance_Culling())
 		{
-			if (it)
-				it->SetCulling(true);
-		}
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->SetCulling(true);
+			}
 
-		return;
-	}
-	else
-	{
-		for (auto& it : m_PartObjects)
+			return;
+		}
+		else
 		{
-			if (it)
-				it->SetCulling(false);
+			for (auto& it : m_PartObjects)
+			{
+				if (it)
+					it->SetCulling(false);
+			}
 		}
 	}
 
@@ -563,18 +566,19 @@ void CZombie::Tick(_float fTimeDelta)
 
 								if(iProb > 40)
 								{
-									m_pPart_Breaker->Break(eBreakType);
+									if(m_pPart_Breaker->Attack_STG(eBreakType))
+									{
+										m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+										if (nullptr != m_PartObjects[CMonster::PART_BODY])
+											m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
 
-									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
-									if (nullptr != m_PartObjects[CMonster::PART_BODY])
-										m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+										m_bPartial_Ragdoll = true;
 
-									m_bPartial_Ragdoll = true;
-
-									auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-									m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
-									m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
-									m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
+										auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+										m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+										m_pGameInstance->Change_Sound_3D(m_pTransformCom, L"Break_0.mp3", (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK);
+										m_pGameInstance->Set_Volume_3D(m_pTransformCom, (_uint)ZOMBIE_SOUND_CH::_HEAD_BREAK, 0.6f);
+									}
 								}
 							}
 						}
@@ -634,8 +638,15 @@ void CZombie::Late_Tick(_float fTimeDelta)
 		fTimeDelta = 0.f;
 	}
 
-	if (!Distance_Culling())
-		return;
+	if(m_bDistance_Culling)
+	{
+		if (!Distance_Culling())
+			return;
+	}
+	else
+	{
+		m_bDistance_Culling = true;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -3157,7 +3168,7 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 
 		if (m_vecBlood_Drop[i]->GetbDecalSound())
 		{
-			PlayBloodSound(i);
+			PlayBloodSound(static_cast<_uint>(i));
 		}
 	}
 

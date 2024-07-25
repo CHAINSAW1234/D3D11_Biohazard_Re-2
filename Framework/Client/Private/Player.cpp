@@ -11,6 +11,7 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+#include "Knife.h"
 #include "Weapon.h"
 #include "Throwing_Weapon.h"
 #include "Throwing_Weapon_Pin.h"
@@ -726,7 +727,15 @@ void CPlayer::Set_Render(_bool boolean)
 	}
 
 	Set_Spotlight(Get_Spotlight());
+}
 
+void CPlayer::Set_Knife_Active(_bool isActive)
+{
+	static_cast<CKnife*>(m_PartObjects[PART_KNIFE])->Set_Active(isActive);
+
+	if (isActive && m_bRender) {
+		m_PartObjects[PART_KNIFE]->Set_Render(true);
+	}
 }
 
 void CPlayer::Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex)
@@ -1212,20 +1221,20 @@ void CPlayer::Update_FSM()
 				Get_Body_Model()->Is_Loop_PlayingInfo(3))
 				Change_State(HOLD);
 		}
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
-			if (NONE != m_eEquip_Sub &&
-				Get_Body_Model()->Is_Loop_PlayingInfo(3))
-				Change_State(SUBHOLD);
-		}
+		//if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
+		//	if (NONE != m_eEquip_Sub &&
+		//		Get_Body_Model()->Is_Loop_PlayingInfo(3))
+		//		Change_State(SUBHOLD);
+		//}
 		break;
 	case HOLD:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) != PRESSING) {
 			Change_State(MOVE);
 		}
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
-			if (NONE != m_eEquip_Sub)
-				Change_State(SUBHOLD);
-		}
+		//if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
+		//	if (NONE != m_eEquip_Sub)
+		//		Change_State(SUBHOLD);
+		//}
 
 		break;
 	case SUBHOLD:
@@ -1533,7 +1542,7 @@ void CPlayer::Update_Direction()
 
 void CPlayer::Update_FootStep_Sound()
 {
-	if (m_eState == BITE)
+	if (m_eState == BITE || !m_isFootStep)
 		return ;
 
 	_float4				vL_Ball_Position_Local_Float3 = { *(_float4*)(&m_pL_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
@@ -3041,6 +3050,18 @@ HRESULT CPlayer::Add_PartObjects()
 		return E_FAIL;
 	m_PartObjects[CPlayer::PART_LIGHT] = pFlashLightObject;
 
+
+	CPartObject* pKnifeObject = { nullptr };
+	CPartObject::PARTOBJECT_DESC		KnifeDesc{};
+	KnifeDesc.pParentsTransform = m_pTransformCom;
+
+	pKnifeObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Knife"), &KnifeDesc));
+	if (nullptr == pKnifeObject)
+		return E_FAIL;
+	m_PartObjects[CPlayer::PART_KNIFE] = pKnifeObject;
+	static_cast<CKnife*>(pKnifeObject)->Set_Socket_Ptr({ const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) });
+
+
 	m_Weapons.clear();
 	m_Weapons.resize(CPlayer::NONE);
 
@@ -3149,44 +3170,6 @@ HRESULT CPlayer::Initialize_PartModels()
 		nullptr == pHeadModel ||
 		nullptr == pHairModel)
 		return E_FAIL;
-
-	//	pBodyModel->Add_Bones(pHeadModel);
-	//	pBodyModel->Add_Bones(pHairModel);
-
-	//_float4x4* pNeck0CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_0")) };
-	//pHeadModel->Set_Surbodinate("neck_0", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_0", pNeck0CombinedMatrix);
-
-	//_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_1")) };
-	//pHeadModel->Set_Surbodinate("neck_1", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
-
-	//_float4x4* pHeadCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("head")) };
-	//pHeadModel->Set_Surbodinate("head", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
-
-	//_float4x4* pLeftArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_arm_clavicle")) };
-	//pHeadModel->Set_Surbodinate("l_arm_clavicle", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_arm_clavicle", pLeftArmCombinedMatrix);
-
-	//_float4x4* pRightArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_arm_clavicle")) };
-	//pHeadModel->Set_Surbodinate("r_arm_clavicle", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_arm_clavicle", pRightArmCombinedMatrix);
-
-	//_float4x4* pLeftTrapMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_trapA_muscle")) };
-	//pHeadModel->Set_Surbodinate("l_trapA_muscle", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_trapA_muscle", pLeftTrapMuscleCombinedMatrix);
-
-	//_float4x4* pRightTrapAMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_trapA_muscle")) };
-	//pHeadModel->Set_Surbodinate("r_trapA_muscle", true);
-	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_trapA_muscle", pRightTrapAMuscleCombinedMatrix);
-
-	////	pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
-	//pHairModel->Set_Surbodinate("neck_1", true);
-	//pHairModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
-
-	//pHairModel->Set_Surbodinate("head", true);
-	//pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
 
 	pHeadModel->Link_Bone_Auto(pBodyModel);
 	pHairModel->Link_Bone_Auto(pBodyModel);

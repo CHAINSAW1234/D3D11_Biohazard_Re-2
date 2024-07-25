@@ -477,6 +477,10 @@ public:
     _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex);
     void                          WakeUp();
     void                          PlaySound_Ragdoll(COLLIDER_TYPE eType);
+    _bool                         GetbPartialRagdoll()
+    {
+        return m_bPartialRagdoll;
+    }
 #pragma endregion
 
 private:

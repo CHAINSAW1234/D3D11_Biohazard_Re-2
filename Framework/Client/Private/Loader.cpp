@@ -12,6 +12,7 @@
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+#include "Knife.h"
 #include "Weapon.h"
 #include "FlashLight.h"
 #include "Throwing_Weapon.h"
@@ -129,6 +130,7 @@
 #include "Selector_UI.h"
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
+#include "Announcement_Map_UI.h"
 #include "Player_Map_UI.h"
 #include "Main_Map_UI.h"
 #include "Targeting_Map_UI.h"
@@ -478,6 +480,11 @@ HRESULT CLoader::Load_Prototype()
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Knife"),
+		CKnife::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Weapon */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 		CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -622,6 +629,11 @@ HRESULT CLoader::Load_Prototype()
 		CItem_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	/* For.Prototype_GameObject_Announcement_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Announcement_Map_UI"),
+		CAnnouncement_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Main_Map_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Main_Map_UI"),
 		CMain_Map_UI::Create(m_pDevice, m_pContext))))
@@ -1146,7 +1158,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 
 
-
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ShotGun"), CBody_ItemProp::Create(m_pDevice, m_pContext));
 
 
 	CloseHandle(hFile);
@@ -1952,11 +1964,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 #pragma region Players Model 
-	/* Prototype_Component_Model_LeonBody */
-	/*if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
-			LeonTransformMatrix))))
-		return E_FAIL;*/
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1969,22 +1976,27 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	/* Prototype_Component_Model_LeonFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonFace"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonFace.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_LeonHair */
+	/* Prototype_Component_Model_LeonFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonHair"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
+	_matrix			KnifeMatrix = { XMMatrixRotationY(XMConvertToRadians(-90.f))};
+	//LightTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(-20.f));
+
+	/* Prototype_Component_Model_LeonHair */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Knife"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/Knife/Knife.fbx",
+			KnifeMatrix))))
+		return E_FAIL;
+
 
 	/* Prototype_Component_Model_HandGun */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
@@ -2785,7 +2797,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	if (true == m_isFinished)
 	{
-		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
+		// m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
 	}
 
 	return S_OK;

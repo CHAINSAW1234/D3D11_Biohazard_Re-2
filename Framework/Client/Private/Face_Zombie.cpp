@@ -329,9 +329,8 @@ HRESULT CFace_Zombie::Render_LightDepth_Spot()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>         NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
 			if (iBranch == (_int)CFace_Zombie::FACE_MESH_TYPE::_INNER)
@@ -343,13 +342,13 @@ HRESULT CFace_Zombie::Render_LightDepth_Spot()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
+			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
 	}
-
 	Update_WorldMatrix();
 
 	return S_OK;
@@ -364,6 +363,11 @@ void CFace_Zombie::Add_RenderGroup()
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
+}
+
+void CFace_Zombie::SetCulling(_bool boolean)
+{
+	m_bRender = !boolean;
 }
 
 HRESULT CFace_Zombie::Initialize_Model()

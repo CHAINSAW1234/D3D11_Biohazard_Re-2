@@ -217,6 +217,23 @@ void CRagdoll::set_kinematic(bool state)
     }
 }
 
+void CRagdoll::set_kinematic_Partial(bool state)
+{
+    if (m_rigid_bodies.empty() == false)
+    {
+        for (int i = 0; i < m_rigid_bodies.size(); i++)
+        {
+            if (m_rigid_bodies[i])
+            {
+                m_rigid_bodies[i]->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, state);
+
+                if (!state)
+                    m_rigid_bodies[i]->wakeUp();
+            }
+        }
+    }
+}
+
 AnimRagdoll::AnimRagdoll(Skeleton* skeleton) :
     m_skeleton(skeleton)
 {
@@ -353,7 +370,7 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Leg_R(CRagdoll* ragdoll, _mat
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_R];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
@@ -506,7 +523,7 @@ void AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn(CRagdoll* ragdoll, _matri
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_L];
             PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i];
 
@@ -545,7 +562,7 @@ void AnimRagdoll::apply_BreakPart_Cloth_Arm_R_NoReturn(CRagdoll* ragdoll, _matri
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_R];
             PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i];
 
@@ -584,7 +601,7 @@ void AnimRagdoll::apply_BreakPart_Cloth_Leg_L_NoReturn(CRagdoll* ragdoll, _matri
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_L];
             PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i];
 
@@ -623,7 +640,7 @@ void AnimRagdoll::apply_BreakPart_Cloth_Leg_R_NoReturn(CRagdoll* ragdoll, _matri
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_R];
             PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i];
 
@@ -662,7 +679,7 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Arm_L(CRagdoll* ragdoll, _mat
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_L];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
@@ -702,7 +719,7 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Arm_R(CRagdoll* ragdoll, _mat
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_R];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
@@ -742,7 +759,7 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Leg_L(CRagdoll* ragdoll, _mat
 
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
-            uint32_t        chosen_idx;
+            //uint32_t        chosen_idx;
             PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_L];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
@@ -771,5 +788,5 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Leg_L(CRagdoll* ragdoll, _mat
         }
     }
 
-    return &m_transforms_BreakPart_Cloth_Leg_R;
+    return &m_transforms_BreakPart_Cloth_Leg_L;
 }
