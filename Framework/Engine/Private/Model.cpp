@@ -2721,6 +2721,22 @@ HRESULT CModel::Play_Pose(_uint iPlayingIndex)
 	return S_OK;
 }
 
+HRESULT CModel::Play_T_Pose()
+{
+	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		m_Bones[i]->Set_TransformationMatrix(m_T_Pose_Matrices[i]);
+	}
+
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		m_Bones[i]->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
+	}
+
+	return S_OK;
+}
+
 HRESULT CModel::Play_IK(CTransform* pTransform, _float fTimeDelta)
 {
 	if (nullptr == m_pIK_Solver)

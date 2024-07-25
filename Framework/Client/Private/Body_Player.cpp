@@ -171,6 +171,9 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
+	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
+		m_pModelCom->Play_T_Pose();
+
 	if (false != m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

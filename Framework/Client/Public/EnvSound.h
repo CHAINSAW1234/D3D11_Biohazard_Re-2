@@ -38,6 +38,7 @@ public:
 
 public:
 	void							Set_SoundRegion(_int iPlayerRegion)	{ 
+
 		m_iCurRegion = iPlayerRegion;
 		if (m_iCurRegion != m_iPreRegion && m_fRegionChangeTimeDelay == 0.f)
 			m_fRegionChangeTimeDelay = 2.f;
