@@ -1366,6 +1366,22 @@ void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondIte
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH3_2D, 0.5f);
 	}
 
+	//gunpowder01a,
+	//gunpowder01b,	
+	//strengtheningyellow01a
+
+	else if (gunpowder01a <= eFirstNum && strengtheningyellow01a >= eFirstNum &&
+		gunpowder01a <= eSecondNum && strengtheningyellow01a >= eSecondNum &&
+		handgun_bullet01a <= eItemResult && shotgun_bullet01a >= eItemResult) 
+	{
+		FirstItemUI->Set_ItemNumber(eItemResult);
+		FirstItemUI->Set_ItemQuantity(20);
+		if(eItemResult == handgun_bullet01a)
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Bullet.mp3"), CH3_2D, 0.5f);
+		else
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_ShotgunShell.mp3"), CH3_2D, 0.5f);
+	}
+
 	else
 		FirstItemUI->Set_ItemNumber(eItemResult);
 
@@ -2201,14 +2217,22 @@ void CInventory_Manager::Set_ItemRecipe()
 
 #pragma region 샷건 조합식
 	Add_Recipe(ShotGun, shotgunpartsstock_00, ShotGun);
-
 	Add_Recipe(ShotGun, shotgunpartsbarrel, ShotGun);
-
 	Add_Recipe(shotgunpartsstock_00, ShotGun, ShotGun);
-
 	Add_Recipe(shotgunpartsbarrel, ShotGun, ShotGun);
 #pragma endregion
 
+#pragma region 화약 조합식
+	Add_Recipe(gunpowder01a, gunpowder01a, handgun_bullet01a);
+	Add_Recipe(gunpowder01b, gunpowder01b, handgun_bullet01a);
+	Add_Recipe(gunpowder01b, gunpowder01a, handgun_bullet01a);
+	Add_Recipe(gunpowder01a, gunpowder01b, handgun_bullet01a);
+
+	Add_Recipe(gunpowder01a, strengtheningyellow01a, shotgun_bullet01a);
+	Add_Recipe(gunpowder01b, strengtheningyellow01a, shotgun_bullet01a);
+	Add_Recipe(strengtheningyellow01a, gunpowder01a, shotgun_bullet01a);
+	Add_Recipe(strengtheningyellow01a, gunpowder01b, shotgun_bullet01a);
+#pragma endregion
 }
 
 void CInventory_Manager::Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum)
