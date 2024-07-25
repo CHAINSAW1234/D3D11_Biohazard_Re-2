@@ -131,7 +131,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_MuzzleSmoke_Delay = 50;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f, 20.f, 1.f));
-	m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f,20.f, 1.f));
+	m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f, 20.f, 1.f));
 	m_pTransformCom->Look_At_ForLandObject(XMVectorSet(0.001f, 0.1f, 0.001f, 1.f));
 	ResetCamera();
 
@@ -385,15 +385,18 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region 현진 추가
 
-	Update_Direction();
-	Update_FSM();
-	
-	m_pFSMCom->Update(fTimeDelta);
+	if (m_isPlay) {
+		Update_Direction();
+		Update_FSM();
 
-	Update_KeyInput_Reload();
-	Update_LightCondition();
-	Update_Equip();
-	Update_FootStep_Sound();
+		m_pFSMCom->Update(fTimeDelta);
+
+		Update_KeyInput_Reload();
+		Update_LightCondition();
+		Update_Equip();
+		Update_FootStep_Sound();
+	}
+	
 
 #pragma endregion
 
@@ -419,7 +422,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	Late_Tick_PartObjects(fTimeDelta);
+	if (m_isPlay) {
+		Late_Tick_PartObjects(fTimeDelta);
+	}
 
 	if (m_eEquip == STG)
 	{
@@ -519,13 +524,19 @@ void CPlayer::Start()
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject->Priority_Tick(fTimeDelta);
+	{
+		if (pPartObject)
+			pPartObject->Priority_Tick(fTimeDelta);
+	}
 }
 
 void CPlayer::Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject->Tick(fTimeDelta);
+	{
+		if (pPartObject)
+			pPartObject->Tick(fTimeDelta);
+	}
 
 	for (auto& pWeapon : m_Weapons) {
 		if (nullptr != pWeapon)
@@ -536,7 +547,10 @@ void CPlayer::Tick_PartObjects(_float fTimeDelta)
 void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject->Late_Tick(fTimeDelta);
+	{
+		if (pPartObject)
+			pPartObject->Late_Tick(fTimeDelta);
+	}
 
 	for (auto& pWeapon : m_Weapons) {
 		if (nullptr != pWeapon)
@@ -612,18 +626,6 @@ void CPlayer::Player_First_Behavior()
 				m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::TUTORIAL_AIM] = true;
 		}
 	}
-
-	/* 2. 아이템과 첫 상호작용 시 "인벤토리 열기" 안내 */
-	if (false == m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN])
-	{
-		if (true == m_bInteract)
-		{
-			Set_Tutorial_Start(UI_TUTORIAL_TYPE::INVENTORY_OPEN);
-
-			if (UI_TUTORIAL_TYPE::INVENTORY_OPEN == m_eTutial_Type)
-				m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN] = true;
-		}
-	}
 }
 
 CGameObject* CPlayer::Create_Selector_UI()
@@ -645,7 +647,9 @@ void CPlayer::Player_Mission_Timer(_float fTimeDelta)
 {
 	if (true == m_isFlod_EntranceDoor)
 	{
-		if (false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
+		m_fMissionTimer += fTimeDelta;
+
+		if (m_fMissionTimer >= 1.5f && false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
 		{
 			MissionClear_Font(TEXT("주변 환경 탐색하기"), static_cast<_ubyte>(MISSION_TYPE::EXPLORING_SURROUNDING_MISSION));
 		}
@@ -660,7 +664,7 @@ void CPlayer::MissionClear_Font(wstring _missionText, _ubyte _missionType)
 	{
 		CMissionBar_UI* pMission = dynamic_cast<CMissionBar_UI*>(iter);
 
-		if(nullptr != pMission)
+		if (nullptr != pMission)
 		{
 			if (static_cast<_ubyte>(CMissionBar_UI::MISSION_UI_TYPE::FONT_MISSION) == pMission->Get_MissionType())
 			{
@@ -707,11 +711,12 @@ void CPlayer::Set_Position(_fvector vPos)
 }
 
 void CPlayer::Set_Render(_bool boolean)
-{	
+{
 	m_bRender = boolean;
 
 	for (auto& pPartObject : m_PartObjects) {
-		pPartObject->Set_Render(boolean);
+		if (pPartObject)
+			pPartObject->Set_Render(boolean);
 	}
 
 	if (m_bRender) {
@@ -731,10 +736,18 @@ void CPlayer::Set_Render(_bool boolean)
 
 void CPlayer::Set_Knife_Active(_bool isActive)
 {
-	static_cast<CKnife*>(m_PartObjects[PART_KNIFE])->Set_Active(isActive);
+	//static_cast<CKnife*>(m_PartObjects[PART_KNIFE])->Set_Active(isActive);
 
-	if (isActive && m_bRender) {
-		m_PartObjects[PART_KNIFE]->Set_Render(true);
+	//if (isActive && m_bRender) {
+	//	m_PartObjects[PART_KNIFE]->Set_Render(true);
+	//}
+}
+
+void CPlayer::Set_Play(_bool isPlay)
+{
+	m_isPlay = isPlay;
+	if (!m_isPlay) {
+		Stop_UpperBody();
 	}
 }
 
@@ -997,6 +1010,7 @@ void CPlayer::Throw_Sub()
 
 void CPlayer::Reload()
 {
+	m_isReload = true;
 	Get_Body_Model()->Set_Loop(3, false);
 	Change_Body_Animation_Hold(3, HOLD_RELOAD);
 	Get_Body_Model()->Set_TrackPosition(3, 0.f);
@@ -1007,7 +1021,7 @@ void CPlayer::Reload()
 		Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
 	}
 
-	if (Get_Equip() == STG&& m_isSpotlight) {
+	if (Get_Equip() == STG && m_isSpotlight) {
 		m_isReloadedSpotLight = true;
 		Set_Spotlight(false);
 	}
@@ -1022,7 +1036,7 @@ void CPlayer::Reload()
 		break;
 	}
 
-	
+
 }
 
 void CPlayer::Stop_UpperBody()
@@ -1052,7 +1066,7 @@ void CPlayer::Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint i
 	else {
 		strRandStoundTag = strSoundTag + TEXT(".mp3");
 	}
-	
+
 
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, strRandStoundTag, iIndex);
 }
@@ -1251,6 +1265,7 @@ void CPlayer::Update_FSM()
 
 void CPlayer::Update_KeyInput_Reload()
 {
+
 	if (m_eState == BITE)
 		return;
 
@@ -1268,6 +1283,8 @@ void CPlayer::Update_KeyInput_Reload()
 			Get_Body_Model()->Set_Loop(3, true);
 
 			// 총알 개수 업데이트
+			m_isReload = false;
+
 			ITEM_NUMBER eItem = { ITEM_NUMBER_END };
 			_int iNumBullet = { 0 };
 			switch (Get_Equip_As_ITEM_NUMBER()) {
@@ -1543,7 +1560,7 @@ void CPlayer::Update_Direction()
 void CPlayer::Update_FootStep_Sound()
 {
 	if (m_eState == BITE || !m_isFootStep)
-		return ;
+		return;
 
 	_float4				vL_Ball_Position_Local_Float3 = { *(_float4*)(&m_pL_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
 	_float4				vR_Ball_Position_Local_Float3 = { *(_float4*)(&m_pR_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
@@ -2105,7 +2122,7 @@ void CPlayer::RayCast_Shoot()
 
 	if (CCall_Center::Get_Instance()->Is_Focus_Player()) {		// 조건 들어갈 예정 : 형준형의 변수 들어감
 		if (!isHit &&
-			(rand() % max((5 - iMissCnt ), 1) == 0)
+			(rand() % max((5 - iMissCnt), 1) == 0)
 			) {
 			wstring strSoundTag;
 			_int iRandCnt;
@@ -3051,7 +3068,7 @@ HRESULT CPlayer::Add_PartObjects()
 	m_PartObjects[CPlayer::PART_LIGHT] = pFlashLightObject;
 
 
-	CPartObject* pKnifeObject = { nullptr };
+	/*CPartObject* pKnifeObject = { nullptr };
 	CPartObject::PARTOBJECT_DESC		KnifeDesc{};
 	KnifeDesc.pParentsTransform = m_pTransformCom;
 
@@ -3059,7 +3076,7 @@ HRESULT CPlayer::Add_PartObjects()
 	if (nullptr == pKnifeObject)
 		return E_FAIL;
 	m_PartObjects[CPlayer::PART_KNIFE] = pKnifeObject;
-	static_cast<CKnife*>(pKnifeObject)->Set_Socket_Ptr({ const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) });
+	static_cast<CKnife*>(pKnifeObject)->Set_Socket_Ptr({ const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) });*/
 
 
 	m_Weapons.clear();

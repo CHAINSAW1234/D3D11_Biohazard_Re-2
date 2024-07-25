@@ -99,9 +99,29 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 
 	if (m_bCamera)
 		if ((m_fZoomOut > 0.f) && ((m_fZoomOut -= fTimeDelta) > 0.f))
+		{
 			Camera_Active(PART_BODY, _float3(0.015f, 3.f, -5.55f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector(true));
+
+				m_pSelector = nullptr;
+			}
+
+		}
 		else
+		{
 			Camera_Active(PART_PART3, _float3(0.015f, 0.15f, 0.85f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector(true));
+
+				m_pSelector = nullptr;
+			}
+
+		}
 
 
 	Animation_BaseOn_MedalType();

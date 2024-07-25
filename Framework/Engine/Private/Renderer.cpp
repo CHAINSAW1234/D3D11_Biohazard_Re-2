@@ -38,6 +38,11 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(Render_LUT()))
 		return E_FAIL;
 
+	m_ShaderOptions[SSAO] = true;
+	m_ShaderOptions[SSR] = true;
+	m_ShaderOptions[VOLUMETRIC] = true;
+	m_ShaderOptions[FXAA] = true;
+
 #ifdef _DEBUG
 	if (FAILED(SetUp_Debug()))
 		return E_FAIL;

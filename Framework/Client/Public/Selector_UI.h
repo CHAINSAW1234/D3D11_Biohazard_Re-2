@@ -23,7 +23,7 @@ public:
 
 	
 public :
-	CGameObject*						Destroy_Selector(); /* 해당 객체를 사용하지 않을 것이다. */
+	CGameObject*						Destroy_Selector(_bool _selectCull = false); /* 해당 객체를 사용하지 않을 것이다. */
 	void								Select_Type(_bool _Interact, _float4 _objPos);  /* 해당 객체의 어떤 상태를 사용하고자 하는가? */
 	
 	_bool*								Get_Using() { return &m_isUsing; }
@@ -54,7 +54,6 @@ private :
 	_float3								m_fOriginSize				= {};
 	_bool								m_isInteractive				= { false };
 	_bool								m_isCull					= { false };
-
 private :
 	wstring								m_wstrInteractive_Tag		= { TEXT("") }; /* Interactive 할 때 */
 	wstring								m_wstrNonInteractive_Tag	= { TEXT("") }; /* Interactive 하지 않을 때 */

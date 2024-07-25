@@ -126,6 +126,8 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 		if (Activate_Col(Get_Collider_World_Pos(_float4(0.f, -50.f, 0.f, 1.f))))
 			if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 			{
+				m_pPlayer->Set_Tutorial_Start(UI_TUTORIAL_TYPE::INVENTORY_OPEN);
+
 				Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 
 				Opreate_Selector_UI(true, Get_Object_Pos());

@@ -239,6 +239,11 @@ void CLoading_UI::Render_Text(_float fTimeDelta)
     if (m_vecTextBoxes.empty())
         return;
 
+    if (true == m_isPercent)
+    {
+        m_vecTextBoxes.back()->Set_Text(to_wstring(*m_pPercent));
+    }
+    
     if (m_iTextCnt >= m_iMaxText)
         m_iTextCnt = m_iMaxText - 1;
     
@@ -247,7 +252,7 @@ void CLoading_UI::Render_Text(_float fTimeDelta)
     if (m_fText_Timer >= TEXT_LIFE)
     {
         m_vecTextBoxes[m_iTextCnt]->Set_FontColor(m_vOriginTextColor);
-       
+        
         m_iTextCnt++;
         
         m_fText_Timer = 0.f;

@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Static_Map_UI.h"
 #include "Announcement_Map_UI.h"
+#include "Camera_Free.h"
 
 constexpr _float BACKGROUND_MIN_ALPHA = 0.8f;
 
@@ -79,6 +80,8 @@ void CTab_Window::Start()
 	}
 
 	m_pInventory_Manager->FirstTick_Seting();
+
+	m_pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Layer(g_Level, g_strCameraTag)->front());
 
 	list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 	_bool bReadItemUI = { false };
@@ -414,6 +417,8 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 					static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Region());
 			}
 
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->NotifyObserver();
 			m_vecCollect_ITEM.push_back(static_cast<ITEM_NUMBER>(iCollectNum));
 			PICK_UP_ITEM_SoundPlay(static_cast<ITEM_NUMBER>(iCollectNum));
 			m_pPickedUp_Item->Set_Dead(true);
@@ -751,9 +756,31 @@ _bool CTab_Window::IsInputTab()
 {
 	_bool isInputTab = false;
 
+	if (DOWN == m_pGameInstance->Get_KeyState('M') || true == m_isGetMapItem)
+	{
+		m_isGetMapItem = false;
+
+		m_isGetMapItem_Close = true;
+
+		isInputTab = true;
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) && true == m_isGetMapItem_Close)
+	{
+		CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+		pPlayer->Set_isCamTurn(false);
+
+		m_isGetMapItem_Close = false;
+
+		isInputTab = true;
+	}
+
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
 		m_isMapOpen = false;
+
+		m_isGetMapItem = false;
 
 		isInputTab = true;
 	}
@@ -762,6 +789,8 @@ _bool CTab_Window::IsInputTab()
 	{
 		m_isMapOpen = false;
 
+		m_isGetMapItem_Close = false;
+
 		isInputTab = false;
 	}
 
@@ -769,16 +798,9 @@ _bool CTab_Window::IsInputTab()
 	{
 		m_isMapOpen = false;
 
+		m_isGetMapItem_Close = false;
+
 		isInputTab = false;
-	}
-
-	if(DOWN == m_pGameInstance->Get_KeyState('M') || true == m_isGetMapItem)
-	{
-		m_isGetMapItem = false;
-
-		m_isMapOpen = true;
-
-		isInputTab = true;
 	}
 
 	return isInputTab;
@@ -917,6 +939,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			for (auto& iter : *pUIList)
 			{
 				CStatic_Map_UI* pStaticBackGround = dynamic_cast<CStatic_Map_UI*>(iter);
+
 				CAnnouncement_Map_UI* pAnnounceMap = dynamic_cast<CAnnouncement_Map_UI*>(iter);
 
 				if (nullptr != pStaticBackGround)
@@ -940,7 +963,14 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		}
 
 		m_pHint->Acquire_Document(eIRT);
-		pPickedUp_Item->Set_Dead(true);
+
+		if (ITEM_READ_TYPE::OFFICER_NOTE == eIRT)
+		{
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+			pPlayer->MissionClear_Font(TEXT("메달 3개 모으기"), static_cast<_ubyte>(MISSION_TYPE::MEDAL_MISSION));
+		}
+
 	}
 }
 

@@ -6,6 +6,8 @@
 
 //part-obj
 #include"Body_MovingShelf.h"
+#include "Hold_UI.h"
+
 CMovingShelf::CMovingShelf(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -44,11 +46,16 @@ HRESULT CMovingShelf::Initialize(void* pArg)
 	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
 		return E_FAIL;
 
+	Find_HoldUI();
+
 	return S_OK;
 }
 
 void CMovingShelf::Tick(_float fTimeDelta)
 {
+	if(nullptr == m_pHold_UI)
+		Find_HoldUI();
+
 	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
@@ -72,7 +79,12 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
+	{
+		if (nullptr != m_pHold_UI)
+			m_pHold_UI->Hold_End();
+
 		return;
+	}
 	if (m_bRender == false)
 		return;
 	else
@@ -88,9 +100,30 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f,1.f))))
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+		{
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+
+			if(m_eState == SHELF_START || m_eState == SHELF_MOVE)
+			{
+				_float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+				pos.z -= 0.5f;
+				pos.y += 1.f;
+				if (nullptr != m_pHold_UI)
+					m_pHold_UI->Hold_Position(pos);
+			}
+
+			else if (m_eState == SHELF_STOP || m_eState == SHELF_FINISH)
+			{
+				if (nullptr != m_pHold_UI)
+					m_pHold_UI->Hold_End();
+			}
+		}
 		else
+		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+
+		}
+
 	}
 	else
 	{
@@ -172,6 +205,26 @@ void CMovingShelf::Active()
 
 	m_pPlayer->Set_Shelf_Setting(this);
 
+}
+
+void CMovingShelf::Find_HoldUI()
+{
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pUIList)
+	{
+		CHold_UI* pHold = dynamic_cast<CHold_UI*>(iter);
+
+		if (nullptr != pHold)
+		{
+			if(false == pHold->Get_IsChild())
+			{
+				m_pHold_UI = pHold;
+
+				return;
+			}
+		}
+	}
 }
 
 CMovingShelf* CMovingShelf::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

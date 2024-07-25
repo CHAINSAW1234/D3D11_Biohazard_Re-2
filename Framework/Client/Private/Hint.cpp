@@ -54,6 +54,7 @@ HRESULT CHint::Initialize(void* pArg)
 
 	m_bDead = true;
 
+	m_isAlphaControl = true;
 
 	return S_OK;
 }
@@ -75,12 +76,12 @@ void CHint::Start()
 	Acquire_Document(ITEM_READ_TYPE::HP_HEAL_ITEM);//체력 및 회복 아이템
 #pragma endregion
 
-#pragma region 테스트용
-	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
-	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
-	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE); 
-	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
-#pragma endregion
+//#pragma region 테스트용
+//	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
+//	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
+//	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE); 
+//	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
+//#pragma endregion
 
 }
 
@@ -247,7 +248,7 @@ void CHint::Button_Action()
 {
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 	{
-		if (true == m_pPoliceButton->IsMouseHover() && POLICE != m_eCurrentDC)
+		if (true == m_pPoliceButton->IsMouseHover() && POLICE != m_eCurrentDC && 0 != m_mapAcqDoc[POLICE].size())
 		{
 			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), 0.5f);
 
@@ -347,7 +348,10 @@ void CHint::Set_Dead(_bool bDead)
 	} 
 
 	else{
-		m_eCurrentDC = POLICE;
+		if(m_mapAcqDoc[POLICE].size() != 0)
+			m_eCurrentDC = POLICE;
+		else
+			m_eCurrentDC = TUTORIAL;
 		for (auto& iter : m_vecDirectory) 
 		{
 			iter->Set_Dead(true);

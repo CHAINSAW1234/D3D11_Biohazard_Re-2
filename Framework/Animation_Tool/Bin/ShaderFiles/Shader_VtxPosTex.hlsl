@@ -49,6 +49,10 @@ float g_LightSize;
 
 bool g_isBlackChange;
 
+float2 g_maskCenter = float2(0.5, 0.5); 
+float g_maskRadius = 1; 
+bool g_maskCircle = false;
+
 // 거리 계산 함수
 float calculateDistance(float4 A, float4 target)
 {
@@ -287,7 +291,33 @@ PS_OUT PS_MAIN(PS_IN In)
         }
     }
     
-    return Out;
+    if (true == g_maskCircle)
+    {
+        float2 MaskTexcoord = In.vTexcoord - g_maskCenter;
+        
+        float distance = length(MaskTexcoord);
+        
+        float angle = atan2(MaskTexcoord.y, MaskTexcoord.x); 
+
+        float maskRadius = g_maskRadius + g_fMaskTime * 0.5f;
+
+        float Radvalue = saturate((maskRadius - distance) / maskRadius);
+        
+        Radvalue *= saturate(sin(angle * g_MaskType.y - g_fMaskTime * g_MaskType.x + 3.14 / 2.0f) * 0.5 + 0.5); // 위쪽 센터부터 시작하도록 각도 조정
+
+        float alpha = Out.vColor.a;
+
+        float3 baseColor = Out.vColor.rgb;
+
+        float3 finalColor = lerp(baseColor, float3(0.8, 0.8, 0.8), Radvalue * (1.0 - (MaskTexcoord.y / maskRadius)));
+        
+        if (Out.vColor.r == 1.f && Out.vColor.g == 1.f && Out.vColor.b == 1.f && Out.vColor.a == 1.f)
+            Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+        else
+            Out.vColor = float4(finalColor, alpha);
+    }
+    
+     return Out;
 }
 
 technique11 DefaultTechnique

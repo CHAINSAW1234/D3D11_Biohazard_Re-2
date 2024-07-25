@@ -149,6 +149,7 @@ public:
 	void										Set_FootStep(_bool isFootStep) { m_isFootStep = isFootStep; }
 	virtual void								Set_Render(_bool boolean);
 	void										Set_Knife_Active(_bool isActive);
+	void										Set_Play(_bool isPlay);
 
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
@@ -206,6 +207,7 @@ private:
 
 	_bool										m_isReloadedSpotLight = { false };	// reload중 라이트 끄기
 	_bool										m_isBite = { false };
+	_bool										m_isPlay = { true };
 	_bool										m_isFootStep = { true };
 	_int										m_iBiteAnimIndex = { -1 };
 	_float4x4									m_vBiteInterpolateMatrix;
@@ -240,6 +242,9 @@ public:
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
 	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
 	{ 
+		if (true == m_isPlayer_FirstBehavior[(_int)i])
+			return;
+
 		m_isTutorial_Notify = true;
 		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
@@ -252,11 +257,12 @@ public:
 	_byte										Get_Player_State()						{ return m_eState; } /* Player 상태 반환 */
 	_bool*										Get_ZoomOff()							{ return &m_isZoomOff;  }
 	_bool*										Get_MissionClear_Ptr()					{ return &m_isMissionClear; }
-	
+	_bool										Get_Request_ChangeEquip()				{ return m_isRequestChangeEquip; }
+
 	//////////////////////* For. Fuction *///////////////////
 	void										Player_First_Behavior();
 	void										MissionClear_Font(wstring _missionText, _ubyte _missionType);
-
+	_bool										IsReload() { return m_isReload;  }
 	/* For. Selector UI Interact : */
 	CGameObject*								Create_Selector_UI(); /* 사용할 Selector Obj를 return */
 
@@ -278,7 +284,8 @@ private:
 
 	_bool										m_isMissionClear				= { false };
 	_bool										m_isFlod_EntranceDoor			= { false };
-	
+	_float										m_fMissionTimer = { 0.f };
+	_bool										m_isReload = { false };
 	_bool										m_MissionCollection[MISSION_TYPE::END_MISSION] = { false };
 #pragma
 

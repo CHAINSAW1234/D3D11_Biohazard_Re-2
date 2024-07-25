@@ -264,6 +264,7 @@ HRESULT CKnife::Add_Components()
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Knife"), TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
+	return S_OK;
 }
 
 HRESULT CKnife::Bind_ShaderResources()

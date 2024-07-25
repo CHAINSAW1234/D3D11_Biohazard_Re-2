@@ -50,7 +50,9 @@ private:
 private:
 	_bool							m_isPickUp_Item = { false };
 	_bool							m_isGetMapItem = { false };
+	_bool							m_isGetMapItem_Close = { false };
 
+	class CCamera_Free* m_pCamera = { nullptr };
 #pragma endregion
 
 

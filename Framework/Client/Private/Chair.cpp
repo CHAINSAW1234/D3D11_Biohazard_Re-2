@@ -37,6 +37,15 @@ HRESULT CChair::Initialize(void* pArg)
 	if (m_tagPropDesc.strGamePrototypeName.find("Zombie")!=string::npos)
 	{
 		m_eType = CHAIR_ZOMBIE;
+
+		if (m_tagPropDesc.iRegionNum == EAST_OFFICE)
+			;
+		else if (m_tagPropDesc.iRegionNum == WEST_OFFICE)
+			;
+		else
+			MSG_BOX(TEXT("헐 지역 넘버 빠져있다는데 예은아"));
+		//if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR)))
+		//	return E_FAIL;
 		if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR_EAST)))
 			return E_FAIL;
 	}
@@ -120,7 +129,7 @@ void CChair::Late_Tick(_float fTimeDelta)
 	}
 	if (m_eType == CHAIR_BARRIGATE)
 	{
-		if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))))
+		if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f)))&& m_eBarriState != BARRI_MOVE)
 		{
 			if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 			{
@@ -258,24 +267,24 @@ void CChair::Zombie_Tick(_float fTimeDelta)
 
 void CChair::Barrigate_Tick(_float fTimeDelta)
 {
-	_bool bCam = { false };
+	/*_bool bCam = { false };
 	if (m_isCamera_Reset)
 		bCam = true;
 	if (m_bCamera && (bCam))
 	{
 		Reset_Camera();
 		m_bCamera = false;
-	}
+	}*/
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
 	{
 		if (*m_pPlayerInteract)
 			Barrigate_Active();
 	}
-	if (m_bCamera)
+	/*if (m_bCamera)
 		Camera_Active(PART_BODY, _float3(0.001f, 0.01f, 0.04f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	
 	if (m_eBarriState == BARRI_MOVE && static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Is_Finishied_Anim())
-		m_isCamera_Reset = true;
+		m_isCamera_Reset = true;*/
 }
 
 
@@ -285,8 +294,8 @@ void CChair::Barrigate_Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 
-	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
-	m_bCamera = true;
+	//m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+	//m_bCamera = true;
 	m_eBarriState = BARRI_MOVE;
 	m_pDoor->Set_Lock();	
 }
