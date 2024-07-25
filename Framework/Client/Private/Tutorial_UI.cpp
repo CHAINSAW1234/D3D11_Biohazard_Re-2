@@ -211,6 +211,11 @@ void CTutorial_UI::Player_First_Interact()
             pTutorial_TextBox[0]->Set_Text(TEXT("ÀåÂøÇÏ±â"));
             pTutorial_TextBox[1]->Set_Text(TEXT("2"));
             break;
+
+        case UI_TUTORIAL_TYPE::TUTORIAL_HOLD:
+            pTutorial_TextBox[0]->Set_Text(TEXT("ÁöÅÊÇÏ±â"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("U"));
+            break;
         }
     }
 }

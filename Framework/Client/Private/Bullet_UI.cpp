@@ -65,6 +65,7 @@ HRESULT CBullet_UI::Initialize(void* pArg)
                     m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("10"));
                     m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = iter->Get_FontColor();
                     m_fOrigin_TextColor = iter->Get_FontColor();
+                    m_fOrigin_CurrentTextPos = iter->GetPosition();
 
                     m_fFull_CurrentBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
                     m_fFull_CurrentBullet_Transform.x -= 7.f;
@@ -79,6 +80,7 @@ HRESULT CBullet_UI::Initialize(void* pArg)
                     m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(TEXT("0"));
                     m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = iter->Get_FontColor();
                     m_fOrigin_TextColor = iter->Get_FontColor();
+                    m_fOrigin_StoreTextPos = iter->GetPosition();
 
                     /*임의로 내려주기*/
                     {
@@ -417,26 +419,35 @@ void CBullet_UI::Change_BulletUI()
     {
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet;
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt));
-
+   
+        if (m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt >= 10)
+        {
+            _float4 pos = m_fOrigin_CurrentTextPos;
+            pos.x -= 10;
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Position(pos);
+        }
+        else
+        {
+          
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Position(m_fOrigin_CurrentTextPos);
+        }
     }
 
     if (m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
     {
         m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet;
         m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt));
-    }
-
-    /* 10의 자리 숫자시 살짝 위치 옮겨줌*/
-    if (10 <= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
-    {
-        CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[0].pText->Get_Component(g_strTransformTag));
-        pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_CurrentBullet_Transform);
-    }
-
-    if (10 <= m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
-    {
-        CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[1].pText->Get_Component(g_strTransformTag));
-        pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_StoreBullet_Transform);
+    
+        if (m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt >= 10)
+        {
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Position(m_fOrigin_StoreTextPos);
+        }
+        else
+        {
+            _float4 pos = m_fOrigin_StoreTextPos;
+            pos.x += 2; 
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Position(pos);
+        }
     }
 
     /* 12자리 일 때 색깔 바뀌게 함*/
