@@ -28,6 +28,11 @@ HRESULT CActor_PL00::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	for (auto& pPartObject : m_PartObjects)
+	{
+		static_cast<CActor_PartObject*>(pPartObject)->Set_Render_Spot(false);
+	}
+
 	return S_OK;
 }
 
