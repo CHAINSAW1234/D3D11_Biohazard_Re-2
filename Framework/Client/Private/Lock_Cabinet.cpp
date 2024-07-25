@@ -52,7 +52,8 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
-	m_pModelCom->Active_RootMotion_Rotation(false);
+	m_pModelCom->Active_RootMotion_XZ(true);
+	m_pModelCom->Active_RootMotion_Rotation(true);
 
 	return S_OK;
 }
