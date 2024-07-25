@@ -46,7 +46,7 @@ HRESULT CStatue::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_iNeedItem = statuebookhand;
-	m_iItemIndex = kingscepter01a;
+	m_iItemIndex = blankkey01a;
 	return S_OK;
 }
 
@@ -204,7 +204,7 @@ HRESULT CStatue::Add_PartObjects()
 	ItemDesc.pState = &m_eState;
 	ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 	ItemDesc.isPut_HandItem = &m_isPut_HandItem;
-	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim");
+	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_133_blankkey01a");
 	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::KINGSCEPTER_ITEM);
 	pItemScepter = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), &ItemDesc));
 
@@ -220,7 +220,7 @@ HRESULT CStatue::Add_PartObjects()
 	ItemDesc.pState = &m_eState;
 	ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 	ItemDesc.isPut_HandItem = &m_isPut_HandItem;
-	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim");
+	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_statuebookhand");
 	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::STATUEHAND_ITEM);
 	pItemHand = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), &ItemDesc));
 
