@@ -417,6 +417,8 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 					static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Region());
 			}
 
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->NotifyObserver();
 			m_vecCollect_ITEM.push_back(static_cast<ITEM_NUMBER>(iCollectNum));
 			PICK_UP_ITEM_SoundPlay(static_cast<ITEM_NUMBER>(iCollectNum));
 			m_pPickedUp_Item->Set_Dead(true);

@@ -2105,10 +2105,10 @@ _uint CInventory_Manager::PickUpItem_Quantity_Classify(ITEM_NUMBER eItemNum)
 		break;
 
 	case Client::handgun_bullet01a:
-		return CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
+		return CGameInstance::Get_Instance()->GetRandom_Int(6, 12);
 		break;
 	case Client::shotgun_bullet01a:
-		return CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
+		return CGameInstance::Get_Instance()->GetRandom_Int(6, 12);
 		break;
 
 	case Client::woodbarricade01a:
