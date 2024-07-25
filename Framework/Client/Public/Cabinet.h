@@ -95,6 +95,7 @@ public:
 	string				Get_Electric_Tag() { return m_strElectTag; }
 	void					Set_Electric_Open() { m_fDelayLockTime = 3.f; }
 	void					Set_Lock() { m_bLock = true; }
+
 private:
 	_bool					m_bLeonDesk = { false };
 	_bool					m_bAction = { false };

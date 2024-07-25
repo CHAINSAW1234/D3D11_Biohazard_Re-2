@@ -141,7 +141,7 @@ void CCut_Scene_CF92::Start_CutScene()
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
-	//	pPlayer->Set_Spotlight(true);
+	pPlayer->Set_Spotlight(false);
 	//	pFlashLight->Set_Render(true);
 
 	pShutter->Set_OutOfControll(true);
@@ -157,6 +157,7 @@ void CCut_Scene_CF92::Finish_CutScene()
 
 	CPlayer*				pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(true);
+	pPlayer->Set_Spotlight(true);
 
 	CProp_Controller*		pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
 	CShutter*				pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };

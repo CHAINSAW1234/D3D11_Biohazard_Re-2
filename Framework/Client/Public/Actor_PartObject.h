@@ -39,6 +39,7 @@ public:
 	void					Set_LinkAuto(_bool isLinkAuto) { m_isLink_Auto = isLinkAuto; }
 	void					Set_Pause_Anim(_bool isPause) { m_isPause_Anim = isPause; }
 	void					Set_Local_Transformation(_fmatrix TransformationMatrix) { XMStoreFloat4x4(&m_LocalTransformation, TransformationMatrix); }
+	void					Set_Render_Spot(_bool isRender) { m_isRender_Spot = isRender; }
 
 	void					Play_Pose_FirstTick();
 	void					Play_Animation_Light(_float fTimeDelta) { m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta); }
@@ -68,6 +69,8 @@ private:
 	_float4x4				m_AdditionalRotation_Root = {};
 
 	_float4x4				m_LocalTransformation = {};
+
+	_bool					m_isRender_Spot = { true };
 
 private:
 	HRESULT					Add_Components(const wstring& strModelPrototypeTag);

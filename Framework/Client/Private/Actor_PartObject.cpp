@@ -121,7 +121,8 @@ void CActor_PartObject::Late_Tick(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		if(true == m_isRender_Spot)
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
 }
 

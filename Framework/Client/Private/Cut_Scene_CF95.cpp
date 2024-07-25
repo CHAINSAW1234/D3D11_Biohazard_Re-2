@@ -132,6 +132,7 @@ void CCut_Scene_CF95::Start_CutScene()
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
+	pPlayer->Set_Spotlight(false);
 
 	//	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
 	//	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
@@ -146,9 +147,6 @@ void CCut_Scene_CF95::Start_CutScene()
 	//	pFlashLight->Set_Right_Handed(true);
 	//	pFlashLight->Set_Render(true);
 	//	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
-
-	pPlayer->Set_Spotlight(true);
-
 }
 
 void CCut_Scene_CF95::Finish_CutScene()
@@ -161,6 +159,7 @@ void CCut_Scene_CF95::Finish_CutScene()
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(true);
+	pPlayer->Set_Spotlight(true);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);

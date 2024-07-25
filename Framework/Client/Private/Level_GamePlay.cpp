@@ -66,8 +66,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_RegionCollider()))
 		return E_FAIL;
 
+#ifdef MAP_INTERACT
 	if (FAILED(Ready_CutScene()))
 		return E_FAIL;
+#endif
 
 	if (FAILED(Ready_EnvCube()))
 		return E_FAIL;
@@ -223,8 +225,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -1733,13 +1735,45 @@ HRESULT CLevel_GamePlay::SetUp_DeadMonsters()
 	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
 	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_HIDE_LOCKER;
-	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::RIGHT_WESH_ROOM;
+	//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
 
-	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(0.f, 0.f, 0.f) };
+	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(0.f, -10.f, 0.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
+
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_DEAD_FAKE4;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::WEST_OFFICE;
+	//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+
+	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(0.f, -10.f, 0.f) };
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
+
+
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_DEAD_FAKE4;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::EAST_OFFICE;
+	//	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+
+	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(0.f, -10.f, 0.f) };
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	//		return E_FAIL;
 
 	return S_OK;
 }
