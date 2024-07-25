@@ -234,6 +234,20 @@ void CRagdoll::set_kinematic_Partial(bool state)
     }
 }
 
+void CRagdoll::set_kinematic_JumpScare(bool state)
+{
+    if (m_rigid_bodies.empty() == false)
+    {
+        for (int i = 0; i < m_rigid_bodies.size(); i++)
+        {
+            if (m_rigid_bodies[i])
+            {
+                m_rigid_bodies[i]->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, state);
+            }
+        }
+    }
+}
+
 AnimRagdoll::AnimRagdoll(Skeleton* skeleton) :
     m_skeleton(skeleton)
 {

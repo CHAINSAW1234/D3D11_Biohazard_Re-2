@@ -509,6 +509,11 @@ void CRagdoll_Physics::Set_Kinematic(_bool boolean)
 	m_ragdoll->set_kinematic(boolean);
 }
 
+void CRagdoll_Physics::Set_Kinematic_JumpScare_All(_bool boolean)
+{
+	m_ragdoll->set_kinematic_JumpScare(boolean);
+}
+
 void CRagdoll_Physics::SetSimulate(_bool boolean)
 {
 	Update(1 / 60.f);

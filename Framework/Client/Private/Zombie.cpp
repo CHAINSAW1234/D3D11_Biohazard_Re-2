@@ -116,6 +116,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		m_iPants_ID = static_cast<_int>(pMaleDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE);
 		m_bJumpScare = pDesc->bJumpScare;
+		m_iJumpScare_Type = pDesc->iJumpScareType;
 	}
 
 	else if (ZOMBIE_BODY_TYPE::_FEMALE == eBodyType)
@@ -126,6 +127,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		m_iPants_ID = static_cast<_int>(pFemaleDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_FEMALE);
 		m_bJumpScare = pDesc->bJumpScare;
+		m_iJumpScare_Type = pDesc->iJumpScareType;
 	}
 
 	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == eBodyType)
@@ -136,6 +138,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		m_iPants_ID = static_cast<_int>(pMaleBigDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG);
 		m_bJumpScare = pDesc->bJumpScare;
+		m_iJumpScare_Type = pDesc->iJumpScareType;
 	}
 
 	else
@@ -165,6 +168,14 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	//if (FAILED(Initialize_PartModels()))
 	//	return E_FAIL;
+
+	if(m_bJumpScare)
+	{
+		if (m_iJumpScare_Type != 0)
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 0.f, 1.f, 0.f), 1.1f);
+		}
+	}
 
 	m_iIndex = pDesc->Index;
 	_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
@@ -241,7 +252,27 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	if (m_bJumpScare)
 	{
-		
+		switch (m_iJumpScare_Type)
+		{
+		case 0:
+			m_pBodyModel->Play_T_Pose();
+			SetRagdoll_StartPose();
+			m_bJumpScare_Kinematic = true;
+			m_bJumpScare_Ready = true;
+			break;
+		case 1:
+			m_pBodyModel->Play_T_Pose();
+			SetRagdoll_StartPose();
+			m_bJumpScare_Kinematic = true;
+			m_bJumpScare_Ready = true;
+			break;
+		case 2:
+			m_pBodyModel->Play_T_Pose();
+			SetRagdoll_StartPose();
+			m_bJumpScare_Kinematic = true;
+			m_bJumpScare_Ready = true;
+			break;
+		}
 	}
 
 	return S_OK;
@@ -274,35 +305,26 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (m_bJumpScare_Ready)
-	{
-		SetRagdoll_StartPose();
-		m_bJumpScare = false;
-		m_bJumpScare_Ready = false;
-		m_bJumpScare_Kinematic = true;
-	}
-
 	if (m_bJumpScare)
 	{
-		m_bJumpScare_Ready = true;
-
-		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
-		wstring			strAnimLayerTag = { TEXT("Undiscovered_Dead_Pose") };
-		_int			iRandom = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEDOWN1), static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEUP4)) };
-
-		pBody_Model->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strAnimLayerTag, static_cast<_uint>(iRandom));
-		pBody_Model->Play_Pose(static_cast<_uint>(PLAYING_INDEX::INDEX_0));
-
 		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
 		pBody->Set_pRender(true);
-	}
-	auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-	pBody->Set_pRender(true);
-	if (m_bJumpScare_Kinematic)
-	{
-		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-		pBody->SetKinematic_JumpScare(true, COLLIDER_TYPE::HEAD);
-		pBody->Set_pRender(true);
+
+		if (m_bJumpScare_Kinematic)
+		{
+			switch (m_iJumpScare_Type)
+			{
+			case 0:
+				pBody->SetKinematic_JumpScare(true, COLLIDER_TYPE::HEAD);
+				break;
+			case 1:
+				pBody->SetKinematic_JumpScare_All(true);
+				break;
+			case 2:
+				pBody->SetKinematic_JumpScare(true, COLLIDER_TYPE::HEAD);
+				break;
+			}
+		}
 	}
 
 	if (m_bEvent)
@@ -354,6 +376,37 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (m_bJumpScare_Ready)
+	{
+		switch (m_iJumpScare_Type)
+		{
+		case 0:
+		{
+			auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+			pBody->WakeUp_Ragdoll();
+			break;
+		}
+		case 1:
+		{
+			if(IsPlayerNearBy_JumpScare())
+			{
+				m_bJumpScare_Ready = false;
+				m_bJumpScare_Kinematic = false;
+				auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+				pBody->SetKinematic_JumpScare_All(false);
+				pBody->WakeUp_Ragdoll();
+			}
+			break;
+		}
+		case 2:
+		{
+			auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+			pBody->WakeUp_Ragdoll();
+			break;
+		}
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
@@ -396,9 +449,23 @@ void CZombie::Tick(_float fTimeDelta)
 			{
 				if(m_bJumpScare_Kinematic)
 				{
-					auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-					pBody->SetKinematic_JumpScare(false, COLLIDER_TYPE::HEAD);
-					m_bJumpScare_Kinematic = false;
+					switch (m_iJumpScare_Type)
+					{
+					case 0:
+					{
+						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+						pBody->SetKinematic_JumpScare(false, COLLIDER_TYPE::HEAD);
+						m_bJumpScare_Kinematic = false;
+						m_bJumpScare_Ready = false;
+						break;
+					}
+					case 1:
+				
+						break;
+					case 2:
+				
+						break;
+					}
 				}
 
 				m_bDecal_Hit = true;
@@ -3706,6 +3773,19 @@ _bool CZombie::IsPlayerNearBy()
 
 	_vector vDelta = vPlayerPos - vPos;
 	if (XMVectorGetX(XMVector3Length(vDelta)) < 2.f)
+		return true;
+	else
+		return false;
+}
+
+_bool CZombie::IsPlayerNearBy_JumpScare()
+{
+	auto pPlayer = m_pBlackBoard->Get_Player();
+	auto vPlayerPos = pPlayer->GetPositionVector();
+	auto vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	_vector vDelta = vPlayerPos - vPos;
+	if (XMVectorGetX(XMVector3Length(vDelta)) <5.65f)
 		return true;
 	else
 		return false;
