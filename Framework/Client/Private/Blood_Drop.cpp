@@ -74,6 +74,11 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
+	if (m_bBlood_CutScene)
+	{
+		RayCast_Decal_CutScene();
+	}
+
 	auto vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
 	if(m_vDropDir.y > -0.7f )
@@ -914,6 +919,36 @@ void CBlood_Drop::RayCast_Decal()
 
 			m_bDecalSound = true;
 		}
+	}
+}
+
+void CBlood_Drop::RayCast_Decal_CutScene()
+{
+	_float4 vBlockPoint;
+	_float4 vBlockNormal;
+
+	if (m_pGameInstance->RayCast_Decal(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, -1.f, 0.f, 0.f), &vBlockPoint, &vBlockNormal))
+	{
+		m_vecDecal[m_iDecalCount]->Set_Render(true);
+		m_vecDecal[m_iDecalCount]->SetPosition(vBlockPoint);
+		m_vecDecal[m_iDecalCount]->LookAt(vBlockNormal);
+		m_bDecal = true;
+		++m_iDecalCount;
+
+		if (m_iDecalCount >= DECAL_COUNT)
+		{
+			m_iDecalCount = 0;
+		}
+
+		m_bDecalSound = true;
+
+		m_iFrame = 0;
+		m_fSizeX = m_fSize_X_Default;
+		m_fSizeY = m_fSize_Y_Default;
+		m_fSizeZ = m_fSize_Z_Default;
+		m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);
+		m_fDissolveAmount = 0.f;
+		m_bRender = false;
 	}
 }
 

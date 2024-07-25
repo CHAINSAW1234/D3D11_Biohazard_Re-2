@@ -96,7 +96,7 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 			auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
-			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
+			//m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
 		}
 		if (m_pModelCom->isFinished(0)&&m_uCabinetType==CCabinet::TYPE_ZOMBIE)
 			*m_pState = CCabinet::CABINET_OPENED;

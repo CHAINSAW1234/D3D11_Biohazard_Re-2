@@ -481,6 +481,7 @@ public:
     {
         return m_bPartialRagdoll;
     }
+    void                          Set_Part_Kinematic(_bool boolean, COLLIDER_TYPE eType);
 #pragma endregion
 
 private:

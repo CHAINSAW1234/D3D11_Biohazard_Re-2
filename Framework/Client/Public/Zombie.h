@@ -23,6 +23,7 @@ public:
 		LOCATION_MAP_VISIT			eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 		ZOMBIE_START_TYPE			eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
 		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
+		_bool						bJumpScare = { false };
 	}ZOMBIE_DESC;
 
 	typedef struct tagZombieMaleDesc : public ZOMBIE_DESC
@@ -351,7 +352,9 @@ public:
 	_bool								IsPlayerNearBy();
 private:
 	_bool								m_isManualMove = { false };
-
+	_bool								m_bJumpScare = { false };
+	_bool								m_bJumpScare_Ready = { false };
+	_bool								m_bJumpScare_Kinematic = { false };
 private:
 	LOCATION_MAP_VISIT					m_eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
