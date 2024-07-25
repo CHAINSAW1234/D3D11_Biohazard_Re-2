@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Static_Map_UI.h"
 #include "Announcement_Map_UI.h"
+#include "Camera_Free.h"
 
 constexpr _float BACKGROUND_MIN_ALPHA = 0.8f;
 
@@ -79,6 +80,8 @@ void CTab_Window::Start()
 	}
 
 	m_pInventory_Manager->FirstTick_Seting();
+
+	m_pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Layer(g_Level, g_strCameraTag)->front());
 
 	list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 	_bool bReadItemUI = { false };
@@ -751,9 +754,22 @@ _bool CTab_Window::IsInputTab()
 {
 	_bool isInputTab = false;
 
-	if (DOWN == m_pGameInstance->Get_KeyState('M')/* || true == m_isGetMapItem*/)
+	if (DOWN == m_pGameInstance->Get_KeyState('M') || true == m_isGetMapItem)
 	{
 		m_isGetMapItem = false;
+
+		m_isGetMapItem_Close = true;
+
+		isInputTab = true;
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) && true == m_isGetMapItem_Close)
+	{
+		CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+		pPlayer->Set_isCamTurn(false);
+
+		m_isGetMapItem_Close = false;
 
 		isInputTab = true;
 	}
@@ -914,13 +930,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 
 		if (ITEM_READ_TYPE ::ABOUT_MAP == eIRT)
 		{
-			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
-			m_pHint->Acquire_Document(eIRT);
-		}
-
-		else
-		{
-			//m_isGetMapItem = true;
+			m_isGetMapItem = true;
 
 			list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
@@ -943,6 +953,12 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 					pAnnounceMap->Set_GetMapItem();
 				}
 			}
+		}
+
+		else
+		{
+			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
+			m_pHint->Acquire_Document(eIRT);
 		}
 
 		if (ITEM_READ_TYPE::OFFICER_NOTE == eIRT)

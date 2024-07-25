@@ -54,7 +54,6 @@ private :
 	_float3								m_fOriginSize				= {};
 	_bool								m_isInteractive				= { false };
 	_bool								m_isCull					= { false };
-
 private :
 	wstring								m_wstrInteractive_Tag		= { TEXT("") }; /* Interactive 할 때 */
 	wstring								m_wstrNonInteractive_Tag	= { TEXT("") }; /* Interactive 하지 않을 때 */
