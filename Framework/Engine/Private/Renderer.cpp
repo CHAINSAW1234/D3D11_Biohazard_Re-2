@@ -40,7 +40,7 @@ HRESULT CRenderer::Initialize()
 
 	m_ShaderOptions[SSAO] = true;
 	m_ShaderOptions[SSR] = true;
-	m_ShaderOptions[VOLUMETRIC] = true;
+	m_ShaderOptions[VOLUMETRIC] = false;
 	m_ShaderOptions[FXAA] = true;
 
 #ifdef _DEBUG
@@ -65,6 +65,9 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
+	if (m_pGameInstance->Get_KeyState('5')) {
+		m_ShaderOptions[VOLUMETRIC] = true;
+	}
 	if(FAILED(m_pGameInstance->Clear_RenderTarget_All()))
 		return E_FAIL;
 

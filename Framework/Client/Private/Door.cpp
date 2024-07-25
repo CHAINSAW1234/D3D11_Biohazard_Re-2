@@ -655,13 +655,11 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
 
-				Opreate_Selector_UI(true, Get_Object_Pos());
 			}
 			else
 			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
-				Opreate_Selector_UI(false, Get_Object_Pos());
 			}
 
 		}
@@ -669,13 +667,6 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
-
-			if (nullptr != m_pSelector)
-			{
-				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-				m_pSelector = nullptr;
-			}
 
 			// Destory : 점점 사라진 후에 null 
 		}
@@ -686,13 +677,13 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			{
 				if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
-				Opreate_Selector_UI(true, Get_Object_Pos());
+		
 
 			}
 			else
 			{
 				m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-				Opreate_Selector_UI(false, Get_Object_Pos());
+	
 
 			}
 		}
@@ -701,14 +692,10 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
 
-			if (nullptr != m_pSelector)
-			{
-				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-				m_pSelector = nullptr;
-			}
 
 		}
+
+
 	}
 	else
 	{
@@ -718,14 +705,6 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-			m_pSelector = nullptr;
-		}
-
 
 	}
 
@@ -737,6 +716,9 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		else
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
 	}
+
+	Select_UI();
+
 }
 
 void CDoor::DoubleDoor_Active()
@@ -1011,13 +993,11 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
 
-				Opreate_Selector_UI(true, Get_Object_Pos());
+
 			}
 			else
 			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
-
-				Opreate_Selector_UI(false, Get_Object_Pos());
 
 			}
 		}
@@ -1026,12 +1006,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
-			if (nullptr != m_pSelector)
-			{
-				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
 
-				m_pSelector = nullptr;
-			}
 		}
 	}
 	else
@@ -1040,12 +1015,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
 
-			m_pSelector = nullptr;
-		}
 
 	}
 
@@ -1060,6 +1030,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
 	}
 
+	Select_UI();
 }
 
 _float CDoor::Radian_To_Player()

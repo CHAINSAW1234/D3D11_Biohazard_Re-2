@@ -264,8 +264,14 @@ void CTargeting_Map_UI::Verification_MapType()
         if (m_ItemStore_Vec.empty())
             return;
 
+        if (m_eFloorVerification < 0)
+            return;
+
         for (auto& iter : m_ItemStore_Vec[m_eFloorVerification])
         {
+            if (nullptr == iter)
+                break;
+
             LOCATION_MAP_VISIT a = iter->Get_Map_Location_Type();
 
             if (a == RECEPT_ROOM)

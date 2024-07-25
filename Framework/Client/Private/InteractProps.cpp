@@ -10,6 +10,8 @@
 #include "Camera_Free.h"
 #include "Camera_Gimmick.h"
 
+#define DISTAHCE 1.5f
+
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -165,8 +167,9 @@ void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_
 	m_pCameraGimmick->SetPosition(XMVectorSetW(m_pCameraGimmickTransform->Get_State_Float4(CTransform::STATE_POSITION) + vPos, 1.f));
 	*m_pCameraGimmick->Get_Layout_Type_Ptr() = _layoutType;
 
+	m_pGameInstance->Set_IsPaused(true);
 	m_pPlayer->Set_Render(false);
-	m_pPlayer->Set_Play(false);
+	//m_pPlayer->Set_Play(false);
 }
 
 
@@ -178,8 +181,9 @@ void CInteractProps::Reset_Camera()
 	m_pPlayer->ResetCamera();
 	*m_pCameraGimmick->Get_Layout_Type_Ptr() = INTERACT_GIMMICK_TYPE::NONE_GIMMICK;
 
+	m_pGameInstance->Set_IsPaused(false);
 	m_pPlayer->Set_Render(true);
-	m_pPlayer->Set_Play(true);
+	//m_pPlayer->Set_Play(true);
 }
 
 void CInteractProps::Check_Player()
@@ -339,6 +343,24 @@ void CInteractProps::Opreate_Selector_UI(_bool _Interact, _float4 _pos)
 	else if (nullptr != m_pSelector)
 	{
 		m_pSelector->Select_Type(_Interact, _pos);
+	}
+}
+
+void CInteractProps::Select_UI()
+{
+	if (DISTAHCE >= Check_Player_Distance())
+	{
+		Opreate_Selector_UI(true, Get_Object_Pos());
+	}
+
+	else
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
 	}
 }
 
