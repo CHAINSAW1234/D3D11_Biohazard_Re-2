@@ -89,6 +89,7 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 {
 	if (m_pPlayer == nullptr)
 		return;
+
 	if (m_bDead)
 	{
 		if (nullptr != m_pSelector)
@@ -103,6 +104,8 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 	{
+		Select_UI();
+
 		return;
 	}
 

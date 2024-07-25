@@ -10,7 +10,7 @@
 #include "Camera_Free.h"
 #include "Camera_Gimmick.h"
 
-#define DISTAHCE 1.5f
+#define DISTAHCE 2.f
 
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }

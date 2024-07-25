@@ -691,8 +691,6 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-
-
 		}
 
 
