@@ -156,6 +156,7 @@ public:
     _bool                               load_mesh(const string& name);
     void                                update_transforms();
     void                                Set_Kinematic(_bool boolean);
+    void                                Set_Kinematic_JumpScare_All(_bool boolean);
     void                                update_animations();
     void                                update_animations_partial();
     void                                update_animations_partial_after();

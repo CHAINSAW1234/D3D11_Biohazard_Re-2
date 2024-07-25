@@ -963,6 +963,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		}
 
 		m_pHint->Acquire_Document(eIRT);
+		pPickedUp_Item->Set_Dead(true);
 
 		if (ITEM_READ_TYPE::OFFICER_NOTE == eIRT)
 		{
@@ -970,7 +971,6 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 
 			pPlayer->MissionClear_Font(TEXT("메달 3개 모으기"), static_cast<_ubyte>(MISSION_TYPE::MEDAL_MISSION));
 		}
-
 	}
 }
 

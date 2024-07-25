@@ -117,11 +117,11 @@ void CHold_UI::Tick(_float fTimeDelta)
         {
             m_isRender = true;
 
-            if (m_fBlending <= 0.f)
+            if (m_fBlending <= 0.7f)
             {
-                m_fBlending = 0.f;
+                m_fBlending = 0.7f;
 
-                m_fMaskTimer += fTimeDelta * 0.8f;
+                m_fMaskTimer += fTimeDelta * 0.7f;
             }
             else
                 m_fBlending -= fTimeDelta * 1.8f;
@@ -157,7 +157,9 @@ void CHold_UI::Tick(_float fTimeDelta)
             resultTrans->Set_State(CTransform::STATE_POSITION, result);
 
             if (false == m_isRender)
+            {
                 iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+            }
 
             else if (true == m_isRender)
             {

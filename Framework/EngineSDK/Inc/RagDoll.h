@@ -68,6 +68,7 @@ public:
     PxRigidDynamic* find_recent_body_Cloth_Leg_R(uint32_t idx, class Skeleton* skeleton, uint32_t& chosen_idx);
     void                                        set_kinematic(bool state);
     void                                        set_kinematic_Partial(bool state);
+    void                                        set_kinematic_JumpScare(bool state);
     XMVECTOR                                    pos_from_transform(const XMMATRIX& m)
     {
         return m.r[3];

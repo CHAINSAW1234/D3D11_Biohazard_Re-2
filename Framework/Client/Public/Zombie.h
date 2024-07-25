@@ -24,6 +24,7 @@ public:
 		ZOMBIE_START_TYPE			eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
 		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
 		_bool						bJumpScare = { false };
+		_uint						iJumpScareType = { 0 };
 	}ZOMBIE_DESC;
 
 	typedef struct tagZombieMaleDesc : public ZOMBIE_DESC
@@ -350,11 +351,13 @@ private:
 public:
 	void								Set_ManualMove(_bool isManualMove);
 	_bool								IsPlayerNearBy();
+	_bool								IsPlayerNearBy_JumpScare();
 private:
 	_bool								m_isManualMove = { false };
 	_bool								m_bJumpScare = { false };
 	_bool								m_bJumpScare_Ready = { false };
 	_bool								m_bJumpScare_Kinematic = { false };
+	_uint								m_iJumpScare_Type = { 0 };
 private:
 	LOCATION_MAP_VISIT					m_eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 

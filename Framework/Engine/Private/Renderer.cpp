@@ -65,9 +65,6 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
-	if (m_pGameInstance->Get_KeyState('2') == DOWN)
-		Set_RenderFieldShadow(true);
-
 	if(FAILED(m_pGameInstance->Clear_RenderTarget_All()))
 		return E_FAIL;
 

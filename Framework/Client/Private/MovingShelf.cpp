@@ -103,6 +103,8 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 		{
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 
+			m_pPlayer->Set_Tutorial_Start(UI_TUTORIAL_TYPE::TUTORIAL_HOLD);
+
 			if(m_eState == SHELF_START || m_eState == SHELF_MOVE)
 			{
 				_float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);

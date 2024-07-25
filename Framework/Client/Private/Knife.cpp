@@ -30,7 +30,8 @@ HRESULT CKnife::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_bRender = false;
+	m_bRender = true;
+	m_isActive = true;
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
