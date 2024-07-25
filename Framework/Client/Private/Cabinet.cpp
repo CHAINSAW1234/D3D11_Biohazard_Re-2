@@ -587,10 +587,12 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		
 
 	}
-	if (!m_bLock && !m_bLockLeon && m_bCamera == true)
+	if ((!m_bLock && !m_bLockLeon) && m_bCamera == true)
 	 {
 		m_fDelayLockTime = 5.f;
 		m_bCamera = false;
+		Reset_Camera();
+
 	}
 
 	if (m_bDead)
@@ -604,10 +606,16 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 
 	if (m_bCamera)
 	{
-		if (m_eLockLeonState != CCabinet::STATIC_LOCK && (m_eLockState == CCabinet::STATIC_LOCK || m_eLockState == CCabinet::CLEAR_LOCK))
-			Camera_Active(PART_LOCK1, _float3(-0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
-		else if (m_eLockState != CCabinet::STATIC_LOCK && (m_eLockLeonState == CCabinet::STATIC_LOCK || m_eLockLeonState == CCabinet::CLEAR_LOCK))
+		if(m_bCol[INTER_COL_NORMAL][COL_STEP0]&&m_bActivity)
+		{
 			Camera_Active(PART_LOCK, _float3(0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+			m_bActivity = false;
+		}
+		if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity)
+		{
+			Camera_Active(PART_LOCK1, _float3(-0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+			m_bActivity = false;
+		}
 	}
 
 	if (m_eState == CABINET_OPEN)
@@ -701,15 +709,11 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 
 void CCabinet::Zombie_Tick(_float fTimeDelta)
 {
+	m_tagPropDesc.iRegionNum = 27;
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
 		if (*m_pPlayerInteract&& false == m_pGameInstance->IsPaused())
 			Zombie_Active();
-	}
-	if (m_eState == CABINET_OPEN)
-	{
-		m_bObtain = true;
-		return;
 	}
 	if (m_eState == CABINET_OPENED)
 		m_bOpened = true;
@@ -721,6 +725,8 @@ void CCabinet::Safe_Normal_Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
+
+
 	if (m_bAutoOpen)
 	{
 		if (m_bObtain)
@@ -753,6 +759,7 @@ void CCabinet::LeonDesk_Active()
 
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
+
 	if (m_bAutoOpen )
 	{
 		if (m_bObtain)
@@ -773,7 +780,6 @@ void CCabinet::LeonDesk_Active()
 		{
 			m_eLockState = LIVE_LOCK;
 			m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
-
 			m_bCamera = true;
 		}
 		else if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bLockLeon)
@@ -826,7 +832,7 @@ void CCabinet::Weapon_Active()
 	else
 	{
 		m_eLockState = LIVE_LOCK;
-
+		m_pGameInstance->Set_IsPaused(true);
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 		m_bCamera = true;
 		m_pPlayer->Interact_Props(this);
@@ -839,21 +845,7 @@ void CCabinet::Zombie_Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 
-	if (!m_bLock)
-	{
-		m_eState = CABINET_OPEN;
-		if (m_bObtain)
-			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
-				m_pPlayer->PickUp_Item(this);
-	}
-	else
-	{
-		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
-
-		//tabwindow의 힘을 빌려야 할 차례입니다
-		m_bCamera = true;
-
-	}
+	m_eState = CABINET_OPEN;
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

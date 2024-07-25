@@ -45,6 +45,7 @@ private:
 	class CPlayer*				m_pPlayer = { nullptr };
 	_int						m_iPropsType = { 0 };
 	_bool						m_bVisible = { false };
+	_bool						m_AlwaysRender = { false };
 	PROPS_DESC 					m_tagPropDesc ={};
 
 	list<_uint>					m_NonHideIndices;
