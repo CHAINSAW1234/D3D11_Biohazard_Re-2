@@ -136,6 +136,7 @@ private:
 public:
 	void								WakeUp_Ragdoll();
 	void								SetKinematic_JumpScare(_bool boolean,COLLIDER_TYPE eType);
+	void								SetKinematic_JumpScare_All(_bool boolean);
 private:
 	HRESULT								Add_Components();
 	HRESULT								Bind_ShaderResources();
