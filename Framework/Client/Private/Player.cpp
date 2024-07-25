@@ -131,7 +131,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_MuzzleSmoke_Delay = 50;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f, 20.f, 1.f));
-	m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f,20.f, 1.f));
+	m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.3f, 20.f, 1.f));
 	m_pTransformCom->Look_At_ForLandObject(XMVectorSet(0.001f, 0.1f, 0.001f, 1.f));
 	ResetCamera();
 
@@ -524,13 +524,19 @@ void CPlayer::Start()
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject->Priority_Tick(fTimeDelta);
+	{
+		if (pPartObject)
+			pPartObject->Priority_Tick(fTimeDelta);
+	}
 }
 
 void CPlayer::Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject->Tick(fTimeDelta);
+	{
+		if (pPartObject)
+			pPartObject->Tick(fTimeDelta);
+	}
 
 	for (auto& pWeapon : m_Weapons) {
 		if (nullptr != pWeapon)
@@ -541,7 +547,10 @@ void CPlayer::Tick_PartObjects(_float fTimeDelta)
 void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject->Late_Tick(fTimeDelta);
+	{
+		if (pPartObject)
+			pPartObject->Late_Tick(fTimeDelta);
+	}
 
 	for (auto& pWeapon : m_Weapons) {
 		if (nullptr != pWeapon)
@@ -655,7 +664,7 @@ void CPlayer::MissionClear_Font(wstring _missionText, _ubyte _missionType)
 	{
 		CMissionBar_UI* pMission = dynamic_cast<CMissionBar_UI*>(iter);
 
-		if(nullptr != pMission)
+		if (nullptr != pMission)
 		{
 			if (static_cast<_ubyte>(CMissionBar_UI::MISSION_UI_TYPE::FONT_MISSION) == pMission->Get_MissionType())
 			{
@@ -702,11 +711,12 @@ void CPlayer::Set_Position(_fvector vPos)
 }
 
 void CPlayer::Set_Render(_bool boolean)
-{	
+{
 	m_bRender = boolean;
 
 	for (auto& pPartObject : m_PartObjects) {
-		pPartObject->Set_Render(boolean);
+		if (pPartObject)
+			pPartObject->Set_Render(boolean);
 	}
 
 	if (m_bRender) {
@@ -726,11 +736,11 @@ void CPlayer::Set_Render(_bool boolean)
 
 void CPlayer::Set_Knife_Active(_bool isActive)
 {
-	static_cast<CKnife*>(m_PartObjects[PART_KNIFE])->Set_Active(isActive);
+	//static_cast<CKnife*>(m_PartObjects[PART_KNIFE])->Set_Active(isActive);
 
-	if (isActive && m_bRender) {
-		m_PartObjects[PART_KNIFE]->Set_Render(true);
-	}
+	//if (isActive && m_bRender) {
+	//	m_PartObjects[PART_KNIFE]->Set_Render(true);
+	//}
 }
 
 void CPlayer::Set_Play(_bool isPlay)
@@ -1011,7 +1021,7 @@ void CPlayer::Reload()
 		Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
 	}
 
-	if (Get_Equip() == STG&& m_isSpotlight) {
+	if (Get_Equip() == STG && m_isSpotlight) {
 		m_isReloadedSpotLight = true;
 		Set_Spotlight(false);
 	}
@@ -1026,7 +1036,7 @@ void CPlayer::Reload()
 		break;
 	}
 
-	
+
 }
 
 void CPlayer::Stop_UpperBody()
@@ -1056,7 +1066,7 @@ void CPlayer::Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint i
 	else {
 		strRandStoundTag = strSoundTag + TEXT(".mp3");
 	}
-	
+
 
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, strRandStoundTag, iIndex);
 }
@@ -1550,7 +1560,7 @@ void CPlayer::Update_Direction()
 void CPlayer::Update_FootStep_Sound()
 {
 	if (m_eState == BITE || !m_isFootStep)
-		return ;
+		return;
 
 	_float4				vL_Ball_Position_Local_Float3 = { *(_float4*)(&m_pL_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
 	_float4				vR_Ball_Position_Local_Float3 = { *(_float4*)(&m_pR_Ball_Combined->m[CTransform::STATE_POSITION][0]) };
@@ -2112,7 +2122,7 @@ void CPlayer::RayCast_Shoot()
 
 	if (CCall_Center::Get_Instance()->Is_Focus_Player()) {		// 조건 들어갈 예정 : 형준형의 변수 들어감
 		if (!isHit &&
-			(rand() % max((5 - iMissCnt ), 1) == 0)
+			(rand() % max((5 - iMissCnt), 1) == 0)
 			) {
 			wstring strSoundTag;
 			_int iRandCnt;
@@ -3058,7 +3068,7 @@ HRESULT CPlayer::Add_PartObjects()
 	m_PartObjects[CPlayer::PART_LIGHT] = pFlashLightObject;
 
 
-	CPartObject* pKnifeObject = { nullptr };
+	/*CPartObject* pKnifeObject = { nullptr };
 	CPartObject::PARTOBJECT_DESC		KnifeDesc{};
 	KnifeDesc.pParentsTransform = m_pTransformCom;
 
@@ -3066,7 +3076,7 @@ HRESULT CPlayer::Add_PartObjects()
 	if (nullptr == pKnifeObject)
 		return E_FAIL;
 	m_PartObjects[CPlayer::PART_KNIFE] = pKnifeObject;
-	static_cast<CKnife*>(pKnifeObject)->Set_Socket_Ptr({ const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) });
+	static_cast<CKnife*>(pKnifeObject)->Set_Socket_Ptr({ const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) });*/
 
 
 	m_Weapons.clear();

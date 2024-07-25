@@ -238,6 +238,12 @@ HRESULT CZombie::Initialize(void* pArg)
 	m_RagdollWakeUpDelay = 5000;
 
 #pragma endregion
+
+	if (m_bJumpScare)
+	{
+		
+	}
+
 	return S_OK;
 }
 
