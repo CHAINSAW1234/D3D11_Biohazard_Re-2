@@ -190,6 +190,7 @@ void CSound_Manager_2D::PlayMySound_2D(wstring TypeKey, wstring FileKey, _int eI
 			{
 				return true;
 			}
+			return false;
 		}
 	);
 
@@ -223,6 +224,8 @@ void CSound_Manager_2D::PlayBGM_2D(wstring FileKey, _int _CHID)
 			{
 				return true;
 			}
+
+			return false;
 		});
 
 	if (iter == m_mapSoundSeparate.end())
@@ -248,6 +251,7 @@ void CSound_Manager_2D::PlayLoopSound_2D(wstring TypeKey, wstring FileKey, _int 
 			{
 				return true;
 			}
+			return false;
 		});
 
 	if (iter == m_mapSoundSeparate.end())
