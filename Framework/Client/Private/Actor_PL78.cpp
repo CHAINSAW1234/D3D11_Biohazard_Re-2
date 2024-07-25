@@ -3,6 +3,19 @@
 #include "Actor_PartObject.h"
 
 #include "RagDoll_Physics.h"
+#include "Blood.h"
+#include "Blood_Drop.h"
+
+#define BLOOD_COUNT 10
+#define BIG_ATTACK_BLOOD_SIZE 6.f
+#define BIG_ATTACK_BLOOD_SIZE_DROP 5.f
+#define NORMAL_ATTACK_BLOOD_SIZE 4.f
+#define NORMAL_ATTACK_BLOOD_SIZE_DROP 3.f
+#define SHOTGUN_BLOOD_COUNT 8
+#define BLOOD_DROP_COUNT 10
+#define BLOOD_DROP_COUNT_STG 10
+#define HEADBLOW_BLOOD_SIZE 6.5f
+#define HEADBLOW_BLOOD_SIZE_DROP 6.5f
 
 CActor_PL78::CActor_PL78(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CActor{ pDevice, pContext }
@@ -37,6 +50,33 @@ HRESULT CActor_PL78::Initialize(void* pArg)
 	m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_GUTS)]->Set_Render(false);
 	m_pRagDoll = m_pGameInstance->Create_Ragdoll(pRagDoll_Model->GetBoneVector(), m_pTransformCom, m_pDevice, m_pContext, "../Bin/Resources/Models/CutScene/pl7800/pl7800.fbx");
 
+
+	m_vecBlood.clear();
+	m_vecBlood_Drop.clear();
+
+	for (size_t i = 0; i < BLOOD_COUNT; ++i)
+	{
+		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
+		pBlood->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
+		m_vecBlood.push_back(pBlood);
+		pBlood->Start();
+	}
+
+	for (size_t i = 0; i < BLOOD_DROP_COUNT; ++i)
+	{
+		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
+		pBlood_Drop->SetSize(HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP);
+		m_vecBlood_Drop.push_back(pBlood_Drop);
+		pBlood_Drop->SetDropDir_CutScene();
+		pBlood_Drop->SetCutScene_Blood(true);
+		pBlood_Drop->Start();
+	}
+
+	CModel* pBody_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
+	m_SpineCombined = pBody_Model->Get_CombinedMatrix("spine_2");
+
+	m_BloodDelay =120;
+
 	return S_OK;
 }
 
@@ -48,6 +88,31 @@ void CActor_PL78::Priority_Tick(_float fTimeDelta)
 void CActor_PL78::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	CModel* pBody_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
+
+	_float fTrackPosition = pBody_Model->Get_TrackPosition(0);
+
+	if (abs(fTrackPosition - 810.f) < 1.5f)
+	{
+		m_bBlood = true;
+		m_BloodTime = GetTickCount64();
+	}
+
+	if (m_bBlood)
+	{
+		SetBlood();
+	}
+
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
+	{
+		m_vecBlood_Drop[i]->Tick(fTimeDelta);
+	}
 }
 
 void CActor_PL78::Late_Tick(_float fTimeDelta)
@@ -63,7 +128,26 @@ void CActor_PL78::Late_Tick(_float fTimeDelta)
 		if (fTrackPosition > 1360.f && 0 == iAnimIndex)
 		{
 			Cut_Body();
+
+			if (abs(fTrackPosition - 1360.f) < 1.5f)
+			{
+				CModel* pBody_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
+				m_SpineCombined = pBody_Model->Get_CombinedMatrix("spine_1");
+				m_BloodTime = GetTickCount64();
+				m_BloodDelay = 20;
+				m_bBlood = true;
+			}
 		}
+	}
+
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
+	{
+		m_vecBlood_Drop[i]->Late_Tick(fTimeDelta);
 	}
 }
 
@@ -298,6 +382,54 @@ void CActor_PL78::Apply_LastAnimCombined_RagDoll()
 
 }
 
+void CActor_PL78::SetBlood()
+{
+	if (m_iBloodCount >= m_vecBlood.size())
+	{
+		m_bBlood = false;
+		m_iBloodCount = 0;
+		return;
+	}
+
+	if (m_BloodDelay + m_BloodTime < GetTickCount64())
+	{
+		m_BloodTime = GetTickCount64();
+
+		m_vecBlood[m_iBloodCount]->Set_Render(true);
+		//m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		m_vecBlood[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+		m_vecBlood[m_iBloodCount]->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
+
+		auto vPos = _float4(m_SpineCombined->_41*0.01f, m_SpineCombined->_42*0.01f+0.1f, m_SpineCombined->_43*0.01f, 1.f);
+
+		_float4 vDelta = _float4(m_pGameInstance->GetRandom_Real(-0.1f, 0.1f),
+			m_pGameInstance->GetRandom_Real(0.f, 0.1f),
+			m_pGameInstance->GetRandom_Real(-0.1f, 0.1f),
+			0.f);
+		vPos += vDelta;
+
+		m_vecBlood[m_iBloodCount]->SetPosition(vPos);
+
+		if (m_iBloodCount < BLOOD_DROP_COUNT)
+		{
+			//m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+			m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vecBlood[m_iBloodCount]->GetPosition());
+			m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+			m_vecBlood_Drop[m_iBloodCount]->SetSize(HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP);
+		}
+
+		++m_iBloodCount;
+
+		if (m_iBloodCount >= m_vecBlood.size())
+		{
+			m_bBlood = false;
+			m_iBloodCount = 0;
+			return;
+		}
+	}
+}
+
 CActor_PL78* CActor_PL78::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CActor_PL78*			pInstance = new CActor_PL78(pDevice, pContext);
@@ -329,4 +461,14 @@ CGameObject* CActor_PL78::Clone(void* pArg)
 void CActor_PL78::Free()
 {
 	__super::Free();
+
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		Safe_Release(m_vecBlood[i]);
+	}
+
+	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
+	{
+		Safe_Release(m_vecBlood_Drop[i]);
+	}
 }

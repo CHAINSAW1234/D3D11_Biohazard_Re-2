@@ -115,6 +115,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		m_iShirts_ID = static_cast<_int>(pMaleDesc->eShirtsType);
 		m_iPants_ID = static_cast<_int>(pMaleDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE);
+		m_bJumpScare = pDesc->bJumpScare;
 	}
 
 	else if (ZOMBIE_BODY_TYPE::_FEMALE == eBodyType)
@@ -124,6 +125,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		m_iShirts_ID = static_cast<_int>(pFemaleDesc->eShirtsType);
 		m_iPants_ID = static_cast<_int>(pFemaleDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_FEMALE);
+		m_bJumpScare = pDesc->bJumpScare;
 	}
 
 	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == eBodyType)
@@ -133,6 +135,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		m_iShirts_ID = static_cast<_int>(pMaleBigDesc->eShirtsType);
 		m_iPants_ID = static_cast<_int>(pMaleBigDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG);
+		m_bJumpScare = pDesc->bJumpScare;
 	}
 
 	else
@@ -265,6 +268,37 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 
+	if (m_bJumpScare_Ready)
+	{
+		SetRagdoll_StartPose();
+		m_bJumpScare = false;
+		m_bJumpScare_Ready = false;
+		m_bJumpScare_Kinematic = true;
+	}
+
+	if (m_bJumpScare)
+	{
+		m_bJumpScare_Ready = true;
+
+		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		wstring			strAnimLayerTag = { TEXT("Undiscovered_Dead_Pose") };
+		_int			iRandom = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEDOWN1), static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEUP4)) };
+
+		pBody_Model->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strAnimLayerTag, static_cast<_uint>(iRandom));
+		pBody_Model->Play_Pose(static_cast<_uint>(PLAYING_INDEX::INDEX_0));
+
+		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+		pBody->Set_pRender(true);
+	}
+	auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+	pBody->Set_pRender(true);
+	if (m_bJumpScare_Kinematic)
+	{
+		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+		pBody->SetKinematic_JumpScare(true, COLLIDER_TYPE::HEAD);
+		pBody->Set_pRender(true);
+	}
+
 	if (m_bEvent)
 		m_eBeHavior_Col;
 
@@ -354,6 +388,13 @@ void CZombie::Tick(_float fTimeDelta)
 		{
 			if (m_pController->Is_Hit())
 			{
+				if(m_bJumpScare_Kinematic)
+				{
+					auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+					pBody->SetKinematic_JumpScare(false, COLLIDER_TYPE::HEAD);
+					m_bJumpScare_Kinematic = false;
+				}
+
 				m_bDecal_Hit = true;
 
 				m_iBloodCount = 0;

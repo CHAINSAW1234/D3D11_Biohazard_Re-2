@@ -286,24 +286,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring& strLayerTag)
 
 	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
 	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
-
-	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f) };
+	ObjectDesc.bJumpScare = true;
+	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(35.809f, 2.027f, 2.779f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
 		return E_FAIL;
 
-	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
-
-	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
 #endif
 
 	SetUp_DeadMonsters();

@@ -1182,6 +1182,11 @@ void CBody_Zombie::WakeUp_Ragdoll()
 	m_pRagdoll->WakeUp();
 }
 
+void CBody_Zombie::SetKinematic_JumpScare(_bool boolean,COLLIDER_TYPE eType)
+{
+	m_pRagdoll->Set_Part_Kinematic(boolean, eType);
+}
+
 HRESULT CBody_Zombie::Add_Components()
 {
 	/* For.Com_Shader */

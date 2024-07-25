@@ -36,6 +36,7 @@ public:
 	_float4					GetPosition();
 	virtual void			SetPosition(_float4 Pos) override;
 	void					RayCast_Decal();
+	void					RayCast_Decal_CutScene();
 	virtual void			Start() override;
 	_bool					GetbDecalSound()
 	{
@@ -44,6 +45,14 @@ public:
 	void					SetbDecalSound(_bool boolean)
 	{
 		m_bDecalSound = boolean;
+	}
+	void					SetDropDir_CutScene()
+	{
+		m_vDropDir.y = 1.f;
+	}
+	void					SetCutScene_Blood(_bool boolean)
+	{
+		m_bBlood_CutScene = boolean;
 	}
 private:
 	virtual HRESULT			Add_Components();
@@ -79,6 +88,7 @@ private:
 	_int					m_iDecalCount = { 0 };
 
 	_bool					m_bDecalSound = { false };
+	_bool					m_bBlood_CutScene = { false };
 public:
 	static CBlood_Drop* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
