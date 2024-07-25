@@ -40,19 +40,21 @@ HRESULT CItem_Statue::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Set_RootBone("RootNode");
-	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Active_RootMotion_Rotation(false);
+	//m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 
-#ifndef NON_COLLISION_PROP
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
-#endif
+	//m_pModelCom->Set_RootBone("RootNode");
+	//m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	//m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
+	//m_pModelCom->Active_RootMotion_Rotation(false);
 
-	if (STATUE_ITEM::STATUEHAND_ITEM == m_Item_Type)
-	{
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
-	}
+//#ifndef NON_COLLISION_PROP
+//	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+//#endif
+//
+//	if (STATUE_ITEM::STATUEHAND_ITEM == m_Item_Type)
+//	{
+//		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+//	}
 
 	return S_OK;
 }
@@ -71,11 +73,11 @@ void CItem_Statue::Late_Tick(_float fTimeDelta)
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 
-	_float3	vDirection = { };
-	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
-	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
+	//_float3	vDirection = { };
+	//_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	//_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, 0);
+	//m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, 0);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -93,9 +95,9 @@ void CItem_Statue::Late_Tick(_float fTimeDelta)
 	}
 #endif
 
-#ifdef ANIM_PROPS_SPOT_SHADOW
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-#endif
+//#ifdef ANIM_PROPS_SPOT_SHADOW
+//	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+//#endif
 }
 
 HRESULT CItem_Statue::Render()
@@ -122,8 +124,8 @@ HRESULT CItem_Statue::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
+		//if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+		//	return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
@@ -164,7 +166,7 @@ HRESULT CItem_Statue::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_ALPHABLEND)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
@@ -195,10 +197,8 @@ HRESULT CItem_Statue::Render_LightDepth_Dir()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -234,10 +234,8 @@ HRESULT CItem_Statue::Render_LightDepth_Point()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH_CUBE)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -273,10 +271,10 @@ HRESULT CItem_Statue::Render_LightDepth_Spot()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			//if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+			//	return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -289,7 +287,7 @@ HRESULT CItem_Statue::Render_LightDepth_Spot()
 HRESULT CItem_Statue::Add_Components()
 {
 	/* For.Com_Body_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 

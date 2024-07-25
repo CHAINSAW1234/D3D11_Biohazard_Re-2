@@ -65,6 +65,8 @@ HRESULT CProps::Initialize(void* pArg)
 		m_bLocalized = true;
 		m_vLocal_To_World_Pos = m_pModelCom->GetCenterPoint();
 	}
+	if (m_tagPropDesc.strModelComponent.find(TEXT("301_01_403")) != wstring::npos || m_tagPropDesc.strModelComponent.find(TEXT("301_01_402")) != wstring::npos)
+		m_AlwaysRender = true;
 
 	return S_OK;
 }
@@ -110,6 +112,10 @@ void CProps::Late_Tick(_float fTimeDelta)
 
 HRESULT CProps::Render()
 {
+	if (m_AlwaysRender)
+		m_bRender = true;
+
+
 	if (m_bRender == false)
 		return S_OK;
 	else
@@ -179,6 +185,9 @@ HRESULT CProps::Render()
 
 HRESULT CProps::Render_LightDepth_Dir()
 {
+
+	if (m_AlwaysRender)
+		m_bRender = true;
 	if (m_bRender == false)
 		return S_OK;
 
@@ -218,6 +227,9 @@ HRESULT CProps::Render_LightDepth_Dir()
 
 HRESULT CProps::Render_LightDepth_Spot()
 {
+
+	if (m_AlwaysRender)
+		m_bRender = true;
 	if (m_bRender == false)
 		return S_OK;
 
@@ -256,6 +268,10 @@ HRESULT CProps::Render_LightDepth_Spot()
 
 HRESULT CProps::Render_LightDepth_Point()
 {
+
+	if (m_AlwaysRender)
+		m_bRender = true;
+
 	if (m_bRender == false)
 		return S_OK;
 

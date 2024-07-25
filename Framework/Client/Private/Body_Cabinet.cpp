@@ -32,6 +32,7 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 	{
 		BODY_CABINET_DESC* pDesc = (BODY_CABINET_DESC*)pArg;
 		m_pLock = pDesc->pLock;
+		m_uCabinetType = pDesc->eCabinetType;
 	}
 
 	if (FAILED(Add_Components()))
