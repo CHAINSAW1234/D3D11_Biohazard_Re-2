@@ -117,14 +117,14 @@ void CHold_UI::Tick(_float fTimeDelta)
         {
             m_isRender = true;
 
-            if (m_fBlending <= 0.7f)
+            if (m_fBlending <= 0.0f)
             {
-                m_fBlending = 0.7f;
+                m_fBlending = 0.0f;
 
-                m_fMaskTimer += fTimeDelta * 0.7f;
+                m_fMaskTimer += fTimeDelta * 1.5f;
             }
             else
-                m_fBlending -= fTimeDelta * 1.8f;
+                m_fBlending -= fTimeDelta * 1.5f;
         }
 
         else if (false == m_isHold)
