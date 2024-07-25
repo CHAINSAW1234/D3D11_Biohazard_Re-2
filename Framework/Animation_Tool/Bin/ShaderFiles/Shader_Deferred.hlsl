@@ -1453,7 +1453,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
     accumulation_Dir /= SAMPLE_COUNT;
     accumulation_Spot /= SAMPLE_COUNT;
    
-    Out.vColor = g_vDirLightDiffuse * accumulation_Dir * 0.2f + g_vSpotLightDiffuse * accumulation_Spot * 0.05f;
+    Out.vColor = g_vDirLightDiffuse * accumulation_Dir * 0.1f + g_vSpotLightDiffuse * accumulation_Spot * 0.02f;
     return Out;
 }
 
