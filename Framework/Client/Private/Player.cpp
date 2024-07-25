@@ -385,15 +385,18 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region 현진 추가
 
-	Update_Direction();
-	Update_FSM();
-	
-	m_pFSMCom->Update(fTimeDelta);
+	if (m_isPlay) {
+		Update_Direction();
+		Update_FSM();
 
-	Update_KeyInput_Reload();
-	Update_LightCondition();
-	Update_Equip();
-	Update_FootStep_Sound();
+		m_pFSMCom->Update(fTimeDelta);
+
+		Update_KeyInput_Reload();
+		Update_LightCondition();
+		Update_Equip();
+		Update_FootStep_Sound();
+	}
+	
 
 #pragma endregion
 
@@ -419,7 +422,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	Late_Tick_PartObjects(fTimeDelta);
+	if (m_isPlay) {
+		Late_Tick_PartObjects(fTimeDelta);
+	}
 
 	if (m_eEquip == STG)
 	{
@@ -735,6 +740,14 @@ void CPlayer::Set_Knife_Active(_bool isActive)
 
 	if (isActive && m_bRender) {
 		m_PartObjects[PART_KNIFE]->Set_Render(true);
+	}
+}
+
+void CPlayer::Set_Play(_bool isPlay)
+{
+	m_isPlay = isPlay;
+	if (!m_isPlay) {
+		Stop_UpperBody();
 	}
 }
 
@@ -1251,6 +1264,7 @@ void CPlayer::Update_FSM()
 
 void CPlayer::Update_KeyInput_Reload()
 {
+
 	if (m_eState == BITE)
 		return;
 
