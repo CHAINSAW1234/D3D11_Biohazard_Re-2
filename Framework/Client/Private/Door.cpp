@@ -140,6 +140,7 @@ void CDoor::Tick(_float fTimeDelta)
 	if (m_fDelayLockTime < 0.f)
 	{
 		m_fDelayLockTime = 0.f;
+		m_bAutoOpen = true;
 		m_bLock = false;
 	}
 
@@ -922,7 +923,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		if ((!bCam) && m_bLock)
 		{
 			if ((m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM || m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM) && m_fDelayLockTime == 0.f)
-				m_fDelayLockTime = 2.f;
+				m_fDelayLockTime = 1.5f;
 		}
 		else if (bCam || !m_bLock)
 		{
@@ -952,11 +953,11 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		//m_bActivity = true;
 
 	}
-	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f) && m_eOneState == ONEDOOR_STATIC)
+	else if ((m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity && (m_fDelayLockTime == 0.f) && m_eOneState == ONEDOOR_STATIC)|| m_bAutoOpen)
 	{
 		//UI¶ç¿ì°í
 
-		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2]&&!m_bAttack)
+		if ((*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] && !m_bAttack)|| m_bAutoOpen)
 			OneDoor_Active();
 
 
@@ -1048,8 +1049,9 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 
 	}
 
-	if (!m_bBlock && m_bOnce && m_bCol[INTER_COL_NORMAL][COL_STEP2])
+	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2]||m_bAutoOpen))
 	{
+		m_bAutoOpen = false;
 		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_12.mp3"), 0);
 		m_bOnce = false;
 		if (m_bLock)
@@ -1109,6 +1111,8 @@ void CDoor::OneDoor_Active()
 	}
 	else
 	{
+		if (m_bAutoOpen)
+			m_bOnce = true;
 		m_bInteract = true;
 
 		_float fScala = Radian_To_Player();

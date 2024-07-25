@@ -245,8 +245,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring& strLayerTag)
 	//	return E_FAIL;
 //#endif
 
-	//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-	//	return E_FAIL;
+	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		return E_FAIL;
 
 #ifdef TEST_ZOMBIE_MAINHALL
 	//CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;

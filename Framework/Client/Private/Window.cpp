@@ -6,6 +6,8 @@
 #include"Pannel_Window.h"
 #include"Camera_Gimmick.h"
 
+#include"Selector_UI.h"
+
 CWindow::CWindow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -165,19 +167,35 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-10.f, 1.f, 0.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-10.f, 1.f, 0.f, 1.f)))&&m_bBarrigateInstallable)
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+		{
+			Opreate_Selector_UI(false, Get_Object_Pos());
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		}
 		else
+		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+				m_pSelector = nullptr;
+			}
+		}
 
 	}
 	else
 	{
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
 
+			m_pSelector = nullptr;
+		}
 	}
 	
 	__super::Late_Tick(fTimeDelta);

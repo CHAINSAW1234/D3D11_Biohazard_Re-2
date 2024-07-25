@@ -134,6 +134,7 @@ public :
 	void										Set_Lock(_bool bLock=false) { m_bLock = bLock; }
 private:
 	_bool										m_bLock =	{ false };
+	_bool										m_bAutoOpen =	{ false };
 	_ubyte									m_eDoorTexture = { WOOD };
 	_bool										m_bAttack = { false };
 	_int										m_iHP = { 5 };
