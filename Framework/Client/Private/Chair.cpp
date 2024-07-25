@@ -218,9 +218,10 @@ HRESULT CChair::Add_PartObjects()
 		/*Part_Body*/
 	{
 		CPartObject* pBodyObj = { nullptr };
-		CBody_Chair::PART_INTERACTPROPS_DESC BodyDesc = {};
+		CBody_Chair::BODY_CHAIR_DESC BodyDesc = {};
 		BodyDesc.pParentsTransform = m_pTransformCom;
 		BodyDesc.pSoundCueSign = &m_bSoundCueSign;
+		BodyDesc.eType = m_eType;
 		BodyDesc.pState = &m_eZombieState;
 		BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 		BodyDesc.iPropType = m_tagPropDesc.iPropType;
@@ -235,12 +236,13 @@ HRESULT CChair::Add_PartObjects()
 	case CHAIR_BARRIGATE:
 	{
 		CPartObject* pBodyObj = { nullptr };
-		CBody_Chair::PART_INTERACTPROPS_DESC BodyDesc = {};
+		CBody_Chair::BODY_CHAIR_DESC BodyDesc = {};
 		BodyDesc.pParentsTransform = m_pTransformCom;
 		BodyDesc.pSoundCueSign = &m_bSoundCueSign;
-		BodyDesc.pState = &m_eBarriState;
+		BodyDesc.pState = &m_eBarriState; 
 		BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 		BodyDesc.iPropType = m_tagPropDesc.iPropType;
+		BodyDesc.eType = m_eType;
 		pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 		if (nullptr == pBodyObj)
 			return E_FAIL;

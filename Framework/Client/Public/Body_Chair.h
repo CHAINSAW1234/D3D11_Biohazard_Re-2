@@ -9,6 +9,11 @@ BEGIN(Client)
 
 class CBody_Chair final : public CPart_InteractProps
 {
+public:
+	typedef struct Body_Chair_Desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
+	{
+		_ubyte eType = { 0 };
+	}BODY_CHAIR_DESC;
 private:
 	CBody_Chair(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Chair(const CBody_Chair& rhs);
@@ -33,6 +38,7 @@ public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
 	//virtual void					Get_SpecialBone_Rotation() override;
 private:
+	_ubyte							m_eType = { 0 };
 	list<_uint>					m_NonHideIndices;
 public:
 	static CBody_Chair* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

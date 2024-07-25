@@ -134,19 +134,22 @@ void CCut_Scene_CF95::Start_CutScene()
 	pPlayer->Set_Render(false);
 	pPlayer->Set_Spotlight(false);
 
-	//	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
-	//	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
-	//	
-	//	_float4x4* pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
-	//	
-	//	CModel* pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-	//	_float4x4* pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("r_weapon")) };
+		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+		CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+		
+		_float4x4* pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
+		
+		CModel* pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+		_float4x4* pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("r_weapon")) };
 
-	//	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
-	//	pFlashLight->Set_Origin_Translation(true);
-	//	pFlashLight->Set_Right_Handed(true);
-	//	pFlashLight->Set_Render(true);
-	//	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
+		pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
+		pFlashLight->Set_Origin_Translation(true);
+		pFlashLight->Set_Right_Handed(true);
+		pFlashLight->Set_Render(true);
+		m_pOrigin_SocketMatrix = pOriginSocketMatrix;
+
+		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF95::CF95_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
+		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF95::CF95_ACTOR_TYPE::_WP4530)])->Set_Render(false);
 }
 
 void CCut_Scene_CF95::Finish_CutScene()
@@ -164,14 +167,14 @@ void CCut_Scene_CF95::Finish_CutScene()
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);
 
-	//	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
-	//	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+		CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
 
-	//	pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
-	//	pFlashLight->Set_Origin_Translation(false);
-	//	pFlashLight->Set_Right_Handed(false);
-	//	
-	//	m_pOrigin_SocketMatrix = nullptr;
+		pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
+		pFlashLight->Set_Origin_Translation(false);
+		pFlashLight->Set_Right_Handed(false);
+		
+		m_pOrigin_SocketMatrix = nullptr;
 }
 
 HRESULT CCut_Scene_CF95::Add_Actors()

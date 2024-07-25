@@ -34,8 +34,14 @@ HRESULT CBody_Chair::Initialize(void* pArg)
 	//if (FAILED(Initialize_Model()))
 	//	return E_FAIL;
 
-
-
+	//
+	//typedef struct Body_Chair_Desc() :
+	//
+	if (pArg != nullptr)
+	{
+		BODY_CHAIR_DESC*  desc = (BODY_CHAIR_DESC*) pArg;
+		m_eType = desc->eType;
+	}
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -60,6 +66,11 @@ void CBody_Chair::Tick(_float fTimeDelta)
 
 void CBody_Chair::Late_Tick(_float fTimeDelta)
 {
+	if(m_eType==CChair::CHAIR_BARRIGATE)
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+
+
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);

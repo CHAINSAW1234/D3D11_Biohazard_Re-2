@@ -1263,11 +1263,8 @@ void CInventory_Manager::InteractUseItem()
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::blankkey01a:
-		m_pSelected_ItemUI->Set_ItemVariation(-1);
-		if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
-		{
-			Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
-		}
+		Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+		m_pSelected_ItemUI->Reset_ItemUI();
 		m_pSelected_ItemUI = nullptr;
 		break;
 	case Client::virginmedal01a:
@@ -1347,7 +1344,7 @@ void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondIte
 		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(HandGun, 2); //대용량 탄창
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), CH3_2D, 0.5f);
 	}
-
+	
 	else if (HandGun == eFirstNum && vp70stock == eSecondNum && HandGun == eItemResult){
 		CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
 		static_cast<CTab_Window*>(pTabWindow)->Set_Weapon_Accessories(HandGun, 0); //개머리판
@@ -1374,8 +1371,7 @@ void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondIte
 		gunpowder01a <= eSecondNum && strengtheningyellow01a >= eSecondNum &&
 		handgun_bullet01a <= eItemResult && shotgun_bullet01a >= eItemResult) 
 	{
-		FirstItemUI->Set_ItemNumber(eItemResult);
-		FirstItemUI->Set_ItemQuantity(20);
+		FirstItemUI->Set_ItemUI(eItemResult, ItemType_Classify_ByNumber(eItemResult), m_pSelected_ItemUI->GetPositionVector(), 20);
 		if(eItemResult == handgun_bullet01a)
 			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Bullet.mp3"), CH3_2D, 0.5f);
 		else
