@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "Prop_Controller.h"
 #include "Cut_Scene_CF120.h"
+#include "Cut_Scene_CF94.h"
 #include "Cut_Scene_Manager.h"
 
 #include "Actor_PL00.h"
@@ -122,6 +123,8 @@ void CCut_Scene_CF120::Start_CutScene()
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_6.mp3"), 8);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_7.mp3"), 9);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_8.mp3"), 10);
+
+	static_cast<CCut_Scene_CF94*>(CCut_Scene_Manager::Get_Instance()->Get_CutScene(CCut_Scene_Manager::CF_ID::_94))->Finish_Marvine();
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);

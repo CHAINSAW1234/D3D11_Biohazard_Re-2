@@ -24,6 +24,7 @@ public:
 
 public:
 	void				Play_CutScene(CF_ID eCutScene);
+	CGameObject* Get_CutScene(CF_ID eCutScene);
 
 private:
 	vector<class CCut_Scene*>				m_CutScenes;

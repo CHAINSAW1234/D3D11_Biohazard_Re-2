@@ -295,6 +295,9 @@ void CCut_Scene_CF94::Finish_CutScene()
 	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_SM69_015)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_HEAD))->Set_Render(false);
+
+	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Idle_Loop();
+	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Render_All_Part(true);
 }
 
 HRESULT CCut_Scene_CF94::Add_Actors()
@@ -373,6 +376,12 @@ HRESULT CCut_Scene_CF94::Add_Camera_Event()
 	Safe_AddRef(m_pEvent_Camera);
 
 	return S_OK;
+}
+
+void CCut_Scene_CF94::Finish_Marvine()
+{
+	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Render_All_Part(false);
+	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Pause_Anim_All_Part(true);
 }
 
 void CCut_Scene_CF94::SetBlood()

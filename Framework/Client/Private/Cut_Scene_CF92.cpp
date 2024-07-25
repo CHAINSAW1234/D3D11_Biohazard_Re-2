@@ -142,6 +142,8 @@ void CCut_Scene_CF92::Start_CutScene()
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
 	pPlayer->Set_Spotlight(false);
+
+	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF92::CF92_ACTOR_TYPE::_WP_4530)])->Set_LightSpot(false);
 	//	pFlashLight->Set_Render(true);
 
 	pShutter->Set_OutOfControll(true);

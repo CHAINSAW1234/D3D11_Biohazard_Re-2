@@ -38,6 +38,9 @@ private:
 	virtual	HRESULT								Add_Camera_Event() override;
 
 public:
+	void										Finish_Marvine();
+
+public:
 	void										SetBlood();
 
 	vector<class CBlood*>				m_vecBlood;

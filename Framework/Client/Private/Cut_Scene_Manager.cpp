@@ -35,6 +35,14 @@ void CCut_Scene_Manager::Play_CutScene(CF_ID eCutScene)
     m_CutScenes[static_cast<_uint>(eCutScene)]->Play();
 }
 
+CGameObject* CCut_Scene_Manager::Get_CutScene(CF_ID eCutScene)
+{
+    if (static_cast<_uint>(eCutScene) >= static_cast<_uint>(CF_ID::_END))
+        return nullptr;
+
+    return m_CutScenes[static_cast<_uint>(eCutScene)];
+}
+
 void CCut_Scene_Manager::Free()
 {
     __super::Free();

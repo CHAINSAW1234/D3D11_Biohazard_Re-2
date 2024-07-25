@@ -84,12 +84,12 @@ void CCut_Scene_CF190::Priority_Tick(_float fTimeDelta)
 	if (2 == iSeqLev)
 	{
 		m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(true);
-		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(true);
+		//static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(true);
 	}
 
 	if (3 == iSeqLev)
 	{
-		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
+		//static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
 	}
 
 	if (4 == iSeqLev)
@@ -182,6 +182,8 @@ void CCut_Scene_CF190::Start_CutScene()
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
 	pPlayer->Set_Spotlight(false);
+
+	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF190::CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
 }
 
 void CCut_Scene_CF190::Finish_CutScene()
