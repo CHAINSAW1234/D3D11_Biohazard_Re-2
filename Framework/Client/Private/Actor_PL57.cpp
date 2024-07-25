@@ -47,6 +47,7 @@ HRESULT CActor_PL57::Add_PartObjects()
 	Body_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_PL5700");
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL5700"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL5700"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF190_PL5700"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("Body_PL5700"));
 
 	CActor_PartObject* pPartObject_Body = { CActor_PartObject::Create(m_pDevice, m_pContext, &Body_Desc) };
@@ -60,6 +61,7 @@ HRESULT CActor_PL57::Add_PartObjects()
 	Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_PL5750");
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL5750"));
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL5750"));
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF190_PL5750"));
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("Face_PL5750"));
 
 	CActor_PartObject* pPartObject_Head = { CActor_PartObject::Create(m_pDevice, m_pContext, &Head_Desc) };

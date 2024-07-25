@@ -75,6 +75,7 @@ private:
 #pragma endregion
 
 	class CCall_Center*				m_pCall_Center = { nullptr };
+	class CCut_Scene_Manager*		m_pCutSceneManager = { nullptr };
 
 	//CTexture* m_pTexture = { nullptr };
 	class CEnvCube* m_pCubeMap = { nullptr };

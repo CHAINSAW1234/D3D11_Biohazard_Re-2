@@ -3,6 +3,7 @@
 
 #include "Actor.h"
 #include "Cut_Scene_CF93.h"
+#include "Cut_Scene_Manager.h"
 
 #include "Actor_PL78.h"
 #include "Actor_PL00.h"
@@ -40,6 +41,7 @@ HRESULT CCut_Scene_CF93::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 19);
+	CCut_Scene_Manager::Get_Instance()->Add_CutScene(CCut_Scene_Manager::CF_ID::_93, this);
 
 	return S_OK;
 }
@@ -88,7 +90,7 @@ void CCut_Scene_CF93::Start_CutScene()
 
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_dialogue.bnk.2.stm_1.mp3"), 0);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_dialogue.bnk.2.stm_3.mp3"), 1);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_dialogue.bnk.2.stm_4.mp3"), 2);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_dialogue.bnk.2.stm_4.mp3"), 2);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_music_en.bnk.2_1.mp3"), 3);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_se_en.bnk.2_1.mp3"), 4);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf093_se_en.bnk.2_2.mp3"), 5);
@@ -136,6 +138,7 @@ void CCut_Scene_CF93::Finish_CutScene()
 
 	m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_PL_7800)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
+	m_Actors[static_cast<_uint>(CF93_ACTOR_TYPE::_SM_60_035)]->Set_Render_All_Part(true);
 
 
 	CProp_Controller*		pProp_Controller = { m_PropControllers[static_cast<_uint>(CF93_PROP_TYPE::_SM_60_034)] };

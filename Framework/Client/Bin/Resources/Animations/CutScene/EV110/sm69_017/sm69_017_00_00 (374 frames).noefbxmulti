@@ -1,0 +1,65 @@
+NOESIS_MULTIFBX_FILE_VERSION 1
+
+SequenceEntry
+{
+	name		"sm69_017_00_00 (374 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_00 (374 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_03 (187 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_03 (187 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_04 (197 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_04 (197 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_05 (722 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_05 (722 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_10 (487 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_10 (487 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_11 (75 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_11 (75 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_12 (266 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_12 (266 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_13 (242 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_13 (242 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm69_017_00_17 (354 frames)"
+	filename	"sm69_017_00_00 (374 frames).noefbxmulti - sm69_017_00_17 (354 frames).fbx"
+	framerate	"1.000000"
+}
+

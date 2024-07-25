@@ -1,0 +1,107 @@
+NOESIS_MULTIFBX_FILE_VERSION 1
+
+SequenceEntry
+{
+	name		"pl5750_00 (374 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_00 (374 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_01 (195 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_01 (195 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_02 (381 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_02 (381 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_03 (187 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_03 (187 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_04 (197 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_04 (197 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_05 (722 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_05 (722 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_07 (160 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_07 (160 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_08 (146 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_08 (146 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_10 (487 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_10 (487 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_11 (75 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_11 (75 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_12 (266 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_12 (266 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_13 (242 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_13 (242 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_15 (902 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_15 (902 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_16 (169 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_16 (169 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"pl5750_17 (354 frames)"
+	filename	"pl5750_00 (374 frames).noefbxmulti - pl5750_17 (354 frames).fbx"
+	framerate	"1.000000"
+}
+

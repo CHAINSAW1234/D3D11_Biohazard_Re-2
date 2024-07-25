@@ -46,6 +46,8 @@ public:
 	void					Set_AdditionalRotation_RootBone(_bool isSetAdditionalRotation, _fmatrix RotationMatrix);
 	void					Set_Animation_Light(_bool isLight) { m_isAnimLight = isLight; }
 
+	_bool					Is_Active_Sequence(_uint iSeqLevel);
+
 private:
 	HRESULT					Render_LightDepth_Dir() override;
 	HRESULT					Render_LightDepth_Spot() override;

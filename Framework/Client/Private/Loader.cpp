@@ -40,12 +40,15 @@
 #include "Actor_EM00.h"
 
 #include "Actor_WP4530.h"
+#include "Actor_SM40_133.h"
 #include "Actor_SM60_035.h"
 #include "Actor_SM69_015.h"
+#include "Actor_SM41_024.h"
 #include "Actor_SM42_198.h"
 
 #include "Prop_SM60_033_00.h"
 #include "Prop_SM60_034_00.h"
+#include "Prop_SM41_024.h"
 
 /* CutScene */
 #include "Cut_Scene_CF92.h"
@@ -53,6 +56,11 @@
 #include "Cut_Scene_CF94.h"
 #include "Cut_Scene_CF95.h"
 #include "Cut_Scene_CF120.h"
+#include "Cut_Scene_CF150.h"
+#include "Cut_Scene_CF151.h"
+#include "Cut_Scene_CF152.h"
+#include "Cut_Scene_CF153.h"
+#include "Cut_Scene_CF190.h"
 
 /* Decal*/
 #include "Decal_SSD.h"
@@ -1295,6 +1303,15 @@ HRESULT CLoader::Create_Prototypes_Actor()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_WP4530"),
 		CActor_WP4530::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM40_133"),
+		CActor_SM40_133::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM41_024"),
+		CActor_SM41_024::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM69_015"),
 		CActor_SM69_015::Create(m_pDevice, m_pContext))))
@@ -1308,7 +1325,9 @@ HRESULT CLoader::Create_Prototypes_Actor()
 		CActor_SM42_198::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM41_024"),
+		CProp_SM41_024::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_033"),
 		CProp_SM60_033::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -1340,6 +1359,26 @@ HRESULT CLoader::Create_Prototypes_CutScene()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF120"),
 		CCut_Scene_CF120::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF150"),
+		CCut_Scene_CF150::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF151"),
+		CCut_Scene_CF151::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF152"),
+		CCut_Scene_CF152::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF153"),
+		CCut_Scene_CF153::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF190"),
+		CCut_Scene_CF190::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
@@ -2593,7 +2632,27 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_SM60_033 */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM60_033"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Map/Prop/Gimmick/sm60/sm60_033_pipeshutter01a_Anim.fbx",
-			XMMatrixIdentity()))))
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region	//		SM40_133
+
+	/* Prototype_Component_Model_SM40_133 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM40_133"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm40_133/sm40_133.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region	//		SM41_024
+
+	/* Prototype_Component_Model_SM41_024 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM41_024"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm41_024/sm41_024.fbx",
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
@@ -2603,7 +2662,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_SM69_015 */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM69_015"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm69_015/sm69_015.fbx",
-			XMMatrixIdentity()))))
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
@@ -2613,7 +2672,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_SM60_035 */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM60_035"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm60_035/sm60_035.fbx",
-			XMMatrixIdentity()))))
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
@@ -2623,7 +2682,17 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_SM42_198 */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM42_198"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/sm42_198/sm42_198.fbx",
-			XMMatrixIdentity()))))
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region	//		WP4530
+
+	/* Prototype_Component_Model_SM42_198 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_WP4530"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/wp4530/wp4530.fbx",
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
@@ -3095,6 +3164,65 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 #pragma endregion // CF120
+
+#pragma region CF150
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF150_PL0000"), "../Bin/Resources/Animations/CutScene/CF150/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF150_SM41_024"), "../Bin/Resources/Animations/CutScene/CF150/sm41_024/")))
+		return E_FAIL;
+
+#pragma endregion // CF150
+
+#pragma region CF151
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF151_PL0000"), "../Bin/Resources/Animations/CutScene/CF151/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF151_SM41_024"), "../Bin/Resources/Animations/CutScene/CF151/sm41_024/")))
+		return E_FAIL;
+	 
+#pragma endregion // CF150
+
+#pragma region CF152
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF152_PL0000"), "../Bin/Resources/Animations/CutScene/CF152/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF152_SM41_024"), "../Bin/Resources/Animations/CutScene/CF152/sm41_024/")))
+		return E_FAIL;
+
+#pragma endregion // CF150
+
+#pragma region CF153
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF153_PL0000"), "../Bin/Resources/Animations/CutScene/CF153/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF153_SM41_024"), "../Bin/Resources/Animations/CutScene/CF153/sm41_024/")))
+		return E_FAIL;
+
+#pragma endregion // CF150
+
+#pragma region CF190
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_PL0000"), "../Bin/Resources/Animations/CutScene/CF190/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_PL0050"), "../Bin/Resources/Animations/CutScene/CF190/pl0050/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_PL0070"), "../Bin/Resources/Animations/CutScene/CF190/pl0070/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_PL5700"), "../Bin/Resources/Animations/CutScene/CF190/pl5700/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_PL5750"), "../Bin/Resources/Animations/CutScene/CF190/pl5750/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_SM40_133"), "../Bin/Resources/Animations/CutScene/CF190/sm40_133/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_SM41_024"), "../Bin/Resources/Animations/CutScene/CF190/sm41_024/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_WP0200"), "../Bin/Resources/Animations/CutScene/CF190/wp0200/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF190_WP4530"), "../Bin/Resources/Animations/CutScene/CF190/wp4530/")))
+		return E_FAIL;
+
+#pragma endregion
 
 #pragma region 
 

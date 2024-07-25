@@ -26,6 +26,7 @@
 
 /* Manager */
 #include "Call_Center.h"
+#include "Cut_Scene_Manager.h"
 
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -179,6 +180,13 @@ HRESULT CLevel_GamePlay::Ready_Managers()
 	if (nullptr == m_pCall_Center)
 		return E_FAIL;
 
+	m_pCutSceneManager = CCut_Scene_Manager::Get_Instance();
+	if (nullptr == m_pCall_Center)
+		return E_FAIL;
+
+	if (FAILED(m_pCutSceneManager->Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -209,8 +217,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -239,8 +247,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring& strLayerTag)
 	//	return E_FAIL;
 //#endif
 
-	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-		return E_FAIL;
+#ifdef MAP_INTERACT
+
+	//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+	//	return E_FAIL;
+
+#endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
 	//CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
@@ -367,6 +379,21 @@ HRESULT CLevel_GamePlay::Ready_CutScene()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF120"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF150"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF151"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF152"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF153"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF190"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1727,4 +1754,5 @@ void CLevel_GamePlay::Free()
 	//Safe_Release(m_pTexture);
 
 	Safe_Release(m_pCall_Center);
+	Safe_Release(m_pCutSceneManager);
 }

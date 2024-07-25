@@ -3,11 +3,13 @@
 
 #include "Actor.h"
 #include "Cut_Scene_CF94.h"
+#include "Cut_Scene_Manager.h"
 
 #include "Actor_PL00.h"
 #include "Actor_PL57.h"
 #include "Actor_Em00.h"
 #include "Actor_SM69_015.h"
+#include "Actor_WP4530.h"
 #include "Player.h"
 #include "Call_Center.h"
 #include "Actor_PartObject.h"
@@ -41,6 +43,7 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 25);
+	CCut_Scene_Manager::Get_Instance()->Add_CutScene(CCut_Scene_Manager::CF_ID::_94, this);
 
 	return S_OK;
 }
@@ -125,6 +128,10 @@ HRESULT CCut_Scene_CF94::SetUp_Animation_Layer()
 
 	//	For.SM69_015
 	if (FAILED(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_SM69_015)]->Set_Animation(static_cast<_uint>(CActor_SM69_015::ACTOR_SM69_015_PART::_HEAD), TEXT("CF94_SM69_015_00"), 0)))
+		return E_FAIL;
+
+	//	For.WP4530
+	if (FAILED(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_WP4530)]->Set_Animation(static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY), TEXT("CF94_WP4530_00"), 0)))
 		return E_FAIL;
 
 	return S_OK;
@@ -248,6 +255,14 @@ HRESULT CCut_Scene_CF94::Add_Actors()
 
 	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_SM69_015"), static_cast<_uint>(CF94_ACTOR_TYPE::_SM69_015), &Actor_SM69_015_Desc)))
 		return E_FAIL;	
+
+	CActor::ACTOR_DESC			Actor_WP4530_Desc;
+	XMStoreFloat4x4(&Actor_WP4530_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_WP4530_Desc.iBasePartIndex = static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY);
+	Actor_WP4530_Desc.iNumParts = static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_END);
+
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_WP4530"), static_cast<_uint>(CF94_ACTOR_TYPE::_WP4530), &Actor_WP4530_Desc)))
+		return E_FAIL;
 
 	return S_OK;
 }

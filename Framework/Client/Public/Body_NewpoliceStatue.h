@@ -32,6 +32,9 @@ private:
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
 
+private:
+	_uint						m_iCut_Scene_Lev = { 0 };
+
 public:
 	static CBody_NewpoliceStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

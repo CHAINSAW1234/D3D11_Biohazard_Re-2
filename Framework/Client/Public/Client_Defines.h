@@ -57,7 +57,7 @@ using namespace Client;
 
 //#define TEST_ZOMBIE_MAINHALL
 
-//#define NON_COLLISION_PROP
+//	#define NON_COLLISION_PROP
 //	#define PROPS_COOKING
 
 //#define UI_POS

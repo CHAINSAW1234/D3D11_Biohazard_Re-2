@@ -68,7 +68,7 @@ HRESULT CCamera::Bind_PipeLines()
 
 	if (true == m_isInterpolate)
 	{
-		_float				fRatio = { fminf(m_fAccInterpoaltionTime / 1.f, 1.f) };
+		_float				fRatio = { fminf(m_fAccInterpoaltionTime / 0.2f, 1.f) };
 		if (fRatio < 1.f)
 		{
 			_matrix				WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
@@ -82,7 +82,7 @@ HRESULT CCamera::Bind_PipeLines()
 			XMMatrixDecompose(&vEventScale, &vEventQuaternion, &vEventTranslation, WorldMatrix);
 
 			_vector				vResultScale = { XMVectorLerp(vLastScale,vEventScale, fRatio) };
-			_vector				vResultQuaternion = { XMQuaternionSlerp(vLastQuaternion,vEventQuaternion, fRatio) };
+			_vector				vResultQuaternion = { XMQuaternionSlerp(XMQuaternionNormalize(vLastQuaternion),XMQuaternionNormalize(vEventQuaternion), fRatio) };
 			_vector				vResultTranslation = { XMVectorLerp(vLastTranslation,vEventTranslation, fRatio) };
 
 			WorldMatrix = XMMatrixAffineTransformation(vResultScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation);
@@ -90,6 +90,11 @@ HRESULT CCamera::Bind_PipeLines()
 			m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, WorldMatrixInv);
 
 			fFovY = fFovY * fRatio + (1.f - fRatio) * m_fPreFovY;
+		}
+		else
+		{
+			m_isInterpolate = false;
+			m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 		}
 	}
 	else

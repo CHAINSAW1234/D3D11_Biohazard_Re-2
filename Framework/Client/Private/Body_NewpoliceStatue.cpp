@@ -3,6 +3,7 @@
 
 #include"NewpoliceStatue.h"
 #include"Light.h"
+#include "Cut_Scene_Manager.h"
 
 CBody_NewpoliceStatue::CBody_NewpoliceStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
@@ -53,49 +54,81 @@ void CBody_NewpoliceStatue::Tick(_float fTimeDelta)
 
 void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 {
-	switch (*m_pState)
+	_bool				isOutOfControll = { false };
+	if (nullptr != m_pIsOutOfControll)
 	{
-	case CNewpoliceStatue::POLICEHALLSTATUE_0:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		
-		break;
-	case CNewpoliceStatue::POLICEHALLSTATUE_1:
-		/* LN : 키 클리어 : sound_Map_sm41_new_police_statue2_1 */
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);		
-		Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 0);
-		if (m_pModelCom->isFinished(0))
-			Stop_Sound(0);
-		break;
-	case CNewpoliceStatue::POLICEHALLSTATUE_2:
-		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 1);
-		if (m_pModelCom->isFinished(0))
-			Stop_Sound(1);
-		break;
-	case CNewpoliceStatue::POLICEHALLSTATUE_3:
-		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 2);
-		if (m_pModelCom->isFinished(2))
-			Stop_Sound(0);
-		break;
-	case CNewpoliceStatue::POLICEHALLSTATUE_END:
-		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		break;
+		isOutOfControll = *m_pIsOutOfControll;
 	}
 
+	if (false == isOutOfControll)
+	{
+		switch (*m_pState)
+		{
+		case CNewpoliceStatue::POLICEHALLSTATUE_0:
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+			break;
+		case CNewpoliceStatue::POLICEHALLSTATUE_1:
+			/* LN : 키 클리어 : sound_Map_sm41_new_police_statue2_1 */
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+			if (0 == m_iCut_Scene_Lev)
+			{
+				CCut_Scene_Manager::Get_Instance()->Play_CutScene(CCut_Scene_Manager::CF_ID::_150);
+				++m_iCut_Scene_Lev;
+			}
+
+			Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 0);
+			if (m_pModelCom->isFinished(0))
+				Stop_Sound(0);
+			break;
+		case CNewpoliceStatue::POLICEHALLSTATUE_2:
+			/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+			Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 1);
+
+			if (1 == m_iCut_Scene_Lev)
+			{
+				CCut_Scene_Manager::Get_Instance()->Play_CutScene(CCut_Scene_Manager::CF_ID::_151);
+				++m_iCut_Scene_Lev;
+			}
+
+			if (m_pModelCom->isFinished(0))
+				Stop_Sound(1);
+			break;
+		case CNewpoliceStatue::POLICEHALLSTATUE_3:
+			/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+			Change_Sound(TEXT("sound_Map_sm41_new_police_statue2_1.mp3"), 2);
+
+			if (2 == m_iCut_Scene_Lev)
+			{
+				CCut_Scene_Manager::Get_Instance()->Play_CutScene(CCut_Scene_Manager::CF_ID::_152);
+				++m_iCut_Scene_Lev;
+			}
+
+			if (m_pModelCom->isFinished(2))
+				Stop_Sound(0);
+			break;
+		case CNewpoliceStatue::POLICEHALLSTATUE_END:
+			/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+			break;
+		}
+	}
+	
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &fTransform3);
 
+	
+
 
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
+	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 #ifdef SPOT_FRUSTRUM_CULLING

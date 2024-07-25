@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "Prop_Controller.h"
 #include "Cut_Scene_CF120.h"
+#include "Cut_Scene_Manager.h"
 
 #include "Actor_PL00.h"
 #include "Actor_PL57.h"
@@ -28,8 +29,6 @@ HRESULT CCut_Scene_CF120::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 12);
-
 	return S_OK;
 }
 
@@ -39,6 +38,7 @@ HRESULT CCut_Scene_CF120::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 11);
+	CCut_Scene_Manager::Get_Instance()->Add_CutScene(CCut_Scene_Manager::CF_ID::_120, this);
 
 	return S_OK;
 }

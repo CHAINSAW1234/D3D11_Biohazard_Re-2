@@ -8,7 +8,7 @@ BEGIN(Client)
 class CProp_SM60_034 : public CProp_Controller
 {
 public:
-	enum class ACTOR_SM60_034_PART { _BODY, _END };
+	enum class ACTOR_SM41_024_PART { _BODY, _END };
 
 private:
 	CProp_SM60_034(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

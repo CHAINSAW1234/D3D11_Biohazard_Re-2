@@ -27,7 +27,7 @@ protected:
 	virtual	HRESULT								SetUp_Animation_Layer();
 
 public:
-	inline void									Play() { m_isPlaying = true; }
+	void										Play();
 	inline void									Stop() { m_isPlaying = false; }
 
 public:

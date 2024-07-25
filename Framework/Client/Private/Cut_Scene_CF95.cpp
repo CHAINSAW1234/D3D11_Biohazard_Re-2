@@ -3,9 +3,11 @@
 
 #include "Actor.h"
 #include "Cut_Scene_CF95.h"
+#include "Cut_Scene_Manager.h"
 
 #include "Actor_PL00.h"
 #include "Actor_EM00.h"
+#include "Actor_WP4530.h"
 #include "Player.h"
 #include "Call_Center.h"
 #include "Actor_PartObject.h"
@@ -29,8 +31,6 @@ HRESULT CCut_Scene_CF95::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 12);
-
 	return S_OK;
 }
 
@@ -40,6 +40,7 @@ HRESULT CCut_Scene_CF95::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 11);
+	CCut_Scene_Manager::Get_Instance()->Add_CutScene(CCut_Scene_Manager::CF_ID::_95, this);
 
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Play_Pose_FirstTick(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_BODY));
@@ -102,6 +103,10 @@ HRESULT CCut_Scene_CF95::SetUp_Animation_Layer()
 	if (FAILED(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Animation(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_HEAD), TEXT("CF95_EM0050"), 0)))
 		return E_FAIL;
 
+	//	For.WP4530
+	if (FAILED(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_WP4530)]->Set_Animation(static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY), TEXT("CF95_WP4530_00"), 0)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -128,22 +133,22 @@ void CCut_Scene_CF95::Start_CutScene()
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
 
-	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
-	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+	//	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	//	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+	//	
+	//	_float4x4* pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
+	//	
+	//	CModel* pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
+	//	_float4x4* pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("r_weapon")) };
 
-	_float4x4* pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
-
-	CModel* pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
-	_float4x4* pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("r_weapon")) };
-
-	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
-	pFlashLight->Set_Origin_Translation(true);
-	pFlashLight->Set_Right_Handed(true);
-	pFlashLight->Set_Render(true);
+	//	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
+	//	pFlashLight->Set_Origin_Translation(true);
+	//	pFlashLight->Set_Right_Handed(true);
+	//	pFlashLight->Set_Render(true);
+	//	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
 
 	pPlayer->Set_Spotlight(true);
 
-	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
 }
 
 void CCut_Scene_CF95::Finish_CutScene()
@@ -158,15 +163,16 @@ void CCut_Scene_CF95::Finish_CutScene()
 	pPlayer->Set_Render(true);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
 	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000)]->Set_Render_All_Part(true);
+	m_Actors[static_cast<_uint>(CF95_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);
 
-	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
-	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+	//	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	//	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
 
-	pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
-	pFlashLight->Set_Origin_Translation(false);
-	pFlashLight->Set_Right_Handed(false);
-
-	m_pOrigin_SocketMatrix = nullptr;
+	//	pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
+	//	pFlashLight->Set_Origin_Translation(false);
+	//	pFlashLight->Set_Right_Handed(false);
+	//	
+	//	m_pOrigin_SocketMatrix = nullptr;
 }
 
 HRESULT CCut_Scene_CF95::Add_Actors()
@@ -188,6 +194,14 @@ HRESULT CCut_Scene_CF95::Add_Actors()
 	Actor_EM0000_Desc.eFaceType = CActor_EM00::ACTOR_EM00_FACE_TYPE::_BROKEN;
 
 	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_EM0000"), static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000), &Actor_EM0000_Desc)))
+		return E_FAIL;
+
+	CActor::ACTOR_DESC						Actor_WP4530_Desc;
+	XMStoreFloat4x4(&Actor_WP4530_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_WP4530_Desc.iBasePartIndex = static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY);
+	Actor_WP4530_Desc.iNumParts = static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_END);
+
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_WP4530"), static_cast<_uint>(CF95_ACTOR_TYPE::_WP4530), &Actor_WP4530_Desc)))
 		return E_FAIL;
 
 	return S_OK;

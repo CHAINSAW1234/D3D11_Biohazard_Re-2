@@ -279,6 +279,9 @@ CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer_SameFloor(const wst
 		eZombieFloor = MAP_FLOOR_TYPE::FLOOR_FREE;
 
 	list<CGameObject*>* pTargetLayer = { m_pGameInstance->Find_Layer(g_Level, strLayerTag) };
+	if (nullptr == pTargetLayer)
+		return nullptr;
+
 	for (auto& pGameObject : *pTargetLayer)
 	{
 		_float			fDistance = {};

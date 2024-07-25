@@ -177,6 +177,29 @@ HRESULT CCut_Scene::SetUp_Animation_Layer()
 	return S_OK;
 }
 
+void CCut_Scene::Play()
+{
+	m_isPlaying = true;
+
+	for (auto& pActor : m_Actors)
+	{
+		if (nullptr == pActor)
+			continue;
+
+		pActor->Reset_Animations();
+	}
+
+	for (auto& pProp : m_PropControllers)
+	{
+		if (nullptr == pProp)
+			continue;
+
+		pProp->Reset_Animations();
+	}
+
+	Start_CutScene();
+}
+
 void CCut_Scene::Start_CutScene()
 {
 	m_pEvent_Camera->Set_PlayCamlist(m_strCamera_Event_Tag);
@@ -198,6 +221,12 @@ void CCut_Scene::Finish_CutScene()
 		pActor->Set_Pause_Anim_All_Part(true);
 		pActor->Set_Render_All_Part(false);
 	}
+
+	const LIGHT_DESC* eDesc = m_pGameInstance->Get_LightDesc(TEXT("Light_Flash2"), 0);
+	LIGHT_DESC eNewDesc = *eDesc;
+	eNewDesc.bRender = false;
+
+	m_pGameInstance->Update_Light(TEXT("Light_Flash2"), eNewDesc, 0);
 }
 
 HRESULT CCut_Scene::Add_Actor(const wstring& strPrototypeTag, _uint iActorType, void* pArg)

@@ -15,6 +15,7 @@ public:
 	typedef struct tagActorEm00Desc : public ACTOR_DESC
 	{
 		ACTOR_EM00_FACE_TYPE			eFaceType = { ACTOR_EM00_FACE_TYPE::_END };
+		 
 	}ACTOR_EM00_DESC;
 
 private:

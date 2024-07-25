@@ -49,7 +49,7 @@ HRESULT CActor_SM60_035::Add_PartObjects()
 	if (nullptr == pPartObject_Body)
 		return E_FAIL;
 
-	m_PartObjects[static_cast<_uint>(ACTOR_SM60_035_PART::_BODY)] = pPartObject_Body;
+	m_PartObjects[static_cast<_uint>(ACTOR_SM60_035_PART::_BODY)] = pPartObject_Body;	
 
 	return S_OK;
 }

@@ -520,9 +520,6 @@
     <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PL5700">
       <UniqueIdentifier>{f54268a4-0cdf-4924-b82e-c43af6ce3a06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Props">
-      <UniqueIdentifier>{6ac18d6b-a399-4765-b9ff-635d646eef66}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Cut_Scene\Scene">
       <UniqueIdentifier>{89225f83-474d-48d3-a76a-f36cf3f17f1f}</UniqueIdentifier>
     </Filter>
@@ -730,9 +727,6 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\NewFilter1">
       <UniqueIdentifier>{db06b4df-7290-4a7b-be78-741e74940827}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Set_Focus_Player">
-      <UniqueIdentifier>{3110fbc5-7eac-4c11-be2d-968269282fdd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM69_015">
       <UniqueIdentifier>{72ef3a79-bf2b-4b58-b5e2-9e8bbb3ccdea}</UniqueIdentifier>
     </Filter>
@@ -828,6 +822,36 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\Chair\Body_Chair">
       <UniqueIdentifier>{1bfa1f97-4b8b-4a5c-8358-bbf4ff841523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF190">
+      <UniqueIdentifier>{d52b22f4-fcdc-4aa2-b278-3fe96af1a92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM40_133">
+      <UniqueIdentifier>{f5a363fe-1897-43d9-823d-499cd804c383}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM41_024">
+      <UniqueIdentifier>{1aa87cbb-d349-45e0-be2e-f06ebf4857de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\NewFilter1">
+      <UniqueIdentifier>{bd6d7d40-d5bf-4456-9148-099306912417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF150">
+      <UniqueIdentifier>{3dc15a36-3bc2-4820-9557-33c03d1b9b52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF151">
+      <UniqueIdentifier>{9ae8f111-27c6-4d25-bc66-625f82118254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF152">
+      <UniqueIdentifier>{7544aedf-26e2-482c-a85d-6b83f4b746a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF153">
+      <UniqueIdentifier>{d48eab52-2529-42ee-980b-a2e580917b97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_SM41_024">
+      <UniqueIdentifier>{b5fbb8bd-287f-494d-8f02-c8f837dce5a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Manager">
+      <UniqueIdentifier>{2ec1a50e-175b-4b11-a9a4-06cf8e197e39}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1591,9 +1615,6 @@
     <ClInclude Include="..\Public\EnvSound.h">
       <Filter>02.GameObjects\MapObject\EnvSound</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Chair.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Chair</Filter>
     </ClInclude>
@@ -1611,6 +1632,34 @@
     </ClInclude>
     <ClInclude Include="..\Public\Actor_SM60_035.h">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM60_035</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h" />
+    <ClInclude Include="..\Public\Cut_Scene_CF190.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF190</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_SM40_133.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM40_133</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prop_SM41_024.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM41_024</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF150.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF150</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF151.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF151</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF152.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF152</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF153.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF153</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_SM41_024.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM41_024</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_Manager.h">
+      <Filter>02.GameObjects\Cut_Scene\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2335,9 +2384,6 @@
     <ClCompile Include="..\Private\EnvSound.cpp">
       <Filter>02.GameObjects\MapObject\EnvSound</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Task\Additional\Set_Focus_Player</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Chair.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Chair</Filter>
     </ClCompile>
@@ -2355,6 +2401,34 @@
     </ClCompile>
     <ClCompile Include="..\Private\Actor_SM60_035.cpp">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM60_035</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp" />
+    <ClCompile Include="..\Private\Cut_Scene_CF190.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF190</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_SM40_133.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM40_133</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_SM41_024.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM41_024</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF150.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF150</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF151.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF151</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF152.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF152</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF153.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF153</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_SM41_024.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_SM41_024</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_Manager.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

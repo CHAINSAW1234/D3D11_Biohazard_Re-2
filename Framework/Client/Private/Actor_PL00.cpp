@@ -71,6 +71,11 @@ HRESULT CActor_PL00::Add_PartObjects()
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL0000"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_PL0000"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF150_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF151_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF152_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF153_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF190_PL0000"));
 
 	CActor_PartObject* pPartObject_Body = { CActor_PartObject::Create(m_pDevice, m_pContext, &Body_Desc) };
 	if (nullptr == pPartObject_Body)
@@ -86,6 +91,7 @@ HRESULT CActor_PL00::Add_PartObjects()
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL0050"));
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_PL0050"));
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL0050"));
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF190_PL0050"));
 
 	CActor_PartObject* pPartObject_Head = { CActor_PartObject::Create(m_pDevice, m_pContext, &Head_Desc) };
 	if (nullptr == pPartObject_Head)
@@ -96,6 +102,7 @@ HRESULT CActor_PL00::Add_PartObjects()
 	CActor_PartObject::ACTOR_PART_DESC			Hair_Desc;
 	Hair_Desc.pParentsTransform = m_pTransformCom;
 	Hair_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_LeonHair");
+	Hair_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF190_PL0070"));
 
 	CActor_PartObject* pPartObject_Hair = { CActor_PartObject::Create(m_pDevice, m_pContext, &Hair_Desc) };
 	if (nullptr == pPartObject_Hair)

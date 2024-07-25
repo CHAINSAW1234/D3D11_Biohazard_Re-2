@@ -8,6 +8,8 @@
 #include "Camera_Gimmick.h"
 #include "Player.h"
 #include"Selector_UI.h"
+#include "Call_Center.h"
+
 CNewpoliceStatue::CNewpoliceStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -39,7 +41,7 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 		return E_FAIL;
 	
 
-
+	CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM41_024);
 
 	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
 		return E_FAIL;
@@ -214,6 +216,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
+	BodyDesc.pIsOutOfControll = &m_isOutOfControll;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;

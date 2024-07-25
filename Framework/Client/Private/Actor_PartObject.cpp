@@ -292,6 +292,18 @@ void CActor_PartObject::Set_AdditionalRotation_RootBone(_bool isSetAdditionalRot
 	m_isAnimLight = false;
 }
 
+_bool CActor_PartObject::Is_Active_Sequence(_uint iSeqLev)
+{
+	unordered_map<wstring, vector<string>>::iterator			iter = { m_Animations_Seq.find(m_strAnimLayerTag) };
+	if (iter == m_Animations_Seq.end())
+		return false;
+
+	if (iter->second.size() <= iSeqLev)
+		return false;
+
+	return iter->second[iSeqLev] != "";
+}
+
 HRESULT CActor_PartObject::Render_LightDepth_Dir()
 {
 	if (nullptr == m_pShaderCom)
