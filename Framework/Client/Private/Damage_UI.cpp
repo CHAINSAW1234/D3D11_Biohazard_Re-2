@@ -72,7 +72,7 @@ HRESULT CDamage_UI::Change_Tool()
 {
     m_Mask[0].fMaskControl = _float2(0.3f, 0.8f);
 
-     m_vColor[0].vColor = _float4(0.672f, 0.09f, 0.09f, 0.f);
+     m_vColor[0].vColor = _float4(0.6f, 0.09f, 0.09f, 0.f);
 
     //m_vColor[0].vColor = _float4(0.7f, 0.f, 0.f, 0.f);
 

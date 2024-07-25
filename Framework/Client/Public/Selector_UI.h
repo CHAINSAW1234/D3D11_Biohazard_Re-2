@@ -23,7 +23,7 @@ public:
 
 	
 public :
-	CGameObject*						Destroy_Selector(); /* 해당 객체를 사용하지 않을 것이다. */
+	CGameObject*						Destroy_Selector(_bool _selectCull = false); /* 해당 객체를 사용하지 않을 것이다. */
 	void								Select_Type(_bool _Interact, _float4 _objPos);  /* 해당 객체의 어떤 상태를 사용하고자 하는가? */
 	
 	_bool*								Get_Using() { return &m_isUsing; }

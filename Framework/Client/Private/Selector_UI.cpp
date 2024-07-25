@@ -115,11 +115,23 @@ HRESULT CSelector_UI::Change_Tool()
     return S_OK;
 }
 
-CGameObject* CSelector_UI::Destroy_Selector()
+CGameObject* CSelector_UI::Destroy_Selector(_bool _selectCull)
 {
-    m_isOutDistance = true;
+    if(false == _selectCull)
+    {
+        m_isOutDistance = true;
 
-    return nullptr;
+        return nullptr;
+    }
+
+    else if (true == _selectCull)
+    {
+        m_isOutDistance = true;
+
+        m_isCull = true;
+
+        return nullptr;
+    }
 }
 
 void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)
