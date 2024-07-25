@@ -122,20 +122,20 @@ void CCut_Scene_CF92::Start_CutScene()
 	m_pGameInstance->PlaySoundEffect_2D(TEXT("BGM"), TEXT("cf092_music_en.bnk.2_1.mp3"), 0.5f);
 
 
-	//	CGameObject*			pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
-	//	CFlashLight*			pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+	CGameObject*			pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+	CFlashLight*			pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
 
-	//	_float4x4*				pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
+	_float4x4*				pOriginSocketMatrix = { pFlashLight->Get_Socket_Ptr() };
 	
 	CModel*					pModel = { static_cast<CModel*>(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Get_PartObject(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY))->Get_Component(TEXT("Com_Model"))) };
 	_float4x4*				pNewSocketMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("l_weapon")) };
 
-	//pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
-	//pFlashLight->Set_Origin_Translation(true);
+	pFlashLight->Set_Socket_Ptr(pNewSocketMatrix);
+	pFlashLight->Set_Origin_Translation(true);
 
-	//	m_pOrigin_SocketMatrix = pOriginSocketMatrix;
+		m_pOrigin_SocketMatrix = pOriginSocketMatrix;
 
-	CGameObject*		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
 
@@ -144,7 +144,8 @@ void CCut_Scene_CF92::Start_CutScene()
 	pPlayer->Set_Spotlight(false);
 
 	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF92::CF92_ACTOR_TYPE::_WP_4530)])->Set_LightSpot(false);
-	//	pFlashLight->Set_Render(true);
+	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF92::CF92_ACTOR_TYPE::_WP_4530)])->Set_Render(false);
+	pFlashLight->Set_Render(true);
 
 	pShutter->Set_OutOfControll(true);
 }
@@ -169,13 +170,13 @@ void CCut_Scene_CF92::Finish_CutScene()
 
 	pShutter->Set_OutOfControll(false);
 
-	//	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
-	//	CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
+		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
+		CFlashLight* pFlashLight = { static_cast<CFlashLight*>(pGameObject) };
 
-	//	pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
-	//	pFlashLight->Set_Origin_Translation(false);
+		pFlashLight->Set_Socket_Ptr(m_pOrigin_SocketMatrix);
+		pFlashLight->Set_Origin_Translation(false);
 
-	//	m_pOrigin_SocketMatrix = nullptr;
+		m_pOrigin_SocketMatrix = nullptr;
 
 	m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
 }

@@ -66,7 +66,7 @@ using namespace Client;
 
 //#define NO_COLLISTION
 
-#define DISPLAY_FRAME
+//#define DISPLAY_FRAME
 //#define DISPLAY_NAVMESH
 //#define FRAME_LOCK
 

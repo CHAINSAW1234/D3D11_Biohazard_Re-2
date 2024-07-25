@@ -1505,7 +1505,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		//m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebookhand:
-		m_fPopupHide_EndDist = 0.15f;
+		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;

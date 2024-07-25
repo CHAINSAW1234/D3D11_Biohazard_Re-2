@@ -294,15 +294,8 @@ void CZombie::Tick(_float fTimeDelta)
 
 	if (m_eStartType == ZOMBIE_START_TYPE::_RAG_DOLL)
 	{
-		if (m_bRagdollWakeUp)
-		{
-			if (m_RagdollWakeUpDelay + m_RagdollWakeUpTime < GetTickCount64())
-			{
-				m_bRagdollWakeUp = false;
-				auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-				pBody->WakeUp_Ragdoll();
-			}
-		}
+		auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+		pBody->WakeUp_Ragdoll();
 	}
 
 	if (m_bJumpScare)

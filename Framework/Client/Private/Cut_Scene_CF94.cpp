@@ -298,6 +298,7 @@ void CCut_Scene_CF94::Finish_CutScene()
 
 	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Idle_Loop();
 	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Render_All_Part(true);
+	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Pause_Anim_All_Part(false	);
 }
 
 HRESULT CCut_Scene_CF94::Add_Actors()
