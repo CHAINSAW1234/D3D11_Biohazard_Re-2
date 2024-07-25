@@ -34,11 +34,11 @@ HRESULT CChair::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	if (m_tagPropDesc.strGamePrototypeName.find("zombie")!=string::npos)
+	if (m_tagPropDesc.strGamePrototypeName.find("Zombie")!=string::npos)
 	{
 		m_eType = CHAIR_ZOMBIE;
-		//if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR)))
-		//	return E_FAIL;
+		if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR_EAST)))
+			return E_FAIL;
 	}
 	else
 		m_eType = CHAIR_BARRIGATE;
@@ -329,4 +329,9 @@ void CChair::Free()
 _float4 CChair::Get_Object_Pos()
 {
 	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+}
+
+CGameObject* CChair::Get_Body()
+{
+	return m_PartObjects[static_cast<_uint>(PART_BODY)]; 
 }

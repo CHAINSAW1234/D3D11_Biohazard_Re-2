@@ -20,14 +20,6 @@ HRESULT CActor_WP4530::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	return S_OK;
-}
-
-HRESULT CActor_WP4530::Initialize(void* pArg)
-{
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
-
 	LIGHT_DESC eDesc;
 	eDesc.eType = LIGHT_DESC::TYPE_SPOT;
 	eDesc.bShadow = true;
@@ -57,14 +49,24 @@ HRESULT CActor_WP4530::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CActor_WP4530::Initialize(void* pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;	
+
+	m_PartObjects[static_cast<_uint>(ACTOR_WP4530_PART::_BODY)]->Set_Render_Spot(false);
+
+	return S_OK;
+}
+
 void CActor_WP4530::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
 
-	if(true == m_PartObjects[static_cast<_uint>(ACTOR_WP4530_PART::_BODY)]->Is_Active_Sequence(m_iCurSeqLev))
+	/*if(true == m_PartObjects[static_cast<_uint>(ACTOR_WP4530_PART::_BODY)]->Is_Active_Sequence(m_iCurSeqLev))
 		m_PartObjects[static_cast<_uint>(ACTOR_WP4530_PART::_BODY)]->Set_Render(true);
 	else
-		m_PartObjects[static_cast<_uint>(ACTOR_WP4530_PART::_BODY)]->Set_Render(false);
+		m_PartObjects[static_cast<_uint>(ACTOR_WP4530_PART::_BODY)]->Set_Render(false);*/
 }
 
 void CActor_WP4530::Tick(_float fTimeDelta)
@@ -171,3 +173,4 @@ void CActor_WP4530::Free()
 {
 	__super::Free();
 }
+

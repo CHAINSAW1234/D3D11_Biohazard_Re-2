@@ -14,7 +14,7 @@ class CCall_Center final : public CBase
 	DECLARE_SINGLETON(CCall_Center)
 
 public:
-	enum class CALLER { _ZOMBIE_HIDE_LOCKER, 
+	enum class CALLER { _ZOMBIE_HIDE_LOCKER, _ZOMBIE_CHAIR_EAST, _ZOMBIE_CHAIR_WEST,
 		/* For.CutScene */
 		_PL00, 
 		_SM60_033, _SM60_034, _SM41_024,

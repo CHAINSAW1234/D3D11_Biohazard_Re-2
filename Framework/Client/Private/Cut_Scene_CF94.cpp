@@ -76,10 +76,19 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 	//	1번 시퀀스 240프레임
 
 	_uint			iSeqLev = { m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_0000)]->Get_SeqLev() };
+	if (0 == iSeqLev)
+	{
+		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)]->Set_Render_All_Part(false);
+	}
+
 	if (1 == iSeqLev)
 	{
 		CActor_PartObject* pPartBody = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_BODY));
 		CModel* pBodyModel = { static_cast<CModel*>(pPartBody->Get_Component(TEXT("Com_Model"))) };
+
+		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);
+		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)]->Set_Render_All_Part(true);
+
 
 		_float fTrackPosition = { pBodyModel->Get_TrackPosition(0) };
 		if (550.f < fTrackPosition)
@@ -90,7 +99,10 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 			pPartHead->Set_Render(false);
 			pPartBrokenHead->Set_Render(true);
 		}
+	}
 
+	if (2 == iSeqLev)
+	{
 	}
 	
 	__super::Priority_Tick(fTimeDelta);
@@ -174,6 +186,7 @@ void CCut_Scene_CF94::Start_CutScene()
 
 	CPlayer*			pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
+	pPlayer->Set_Spotlight(false);
 
 	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF94_PROP_TYPE::_SM_60_033)] };
 	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };

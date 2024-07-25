@@ -23,9 +23,9 @@ public:
 	};
 	enum ZOMBIECHAIR_STATE
 	{
-		Zom_Static,
-		Zom_4631_Start,
-		Zom_4632_Start
+		Zom_Static = 2,
+		Zom_4631_Start = 0,
+		Zom_4632_Start = 1
 	};
 	enum BARRIGATE_STATE
 	{
@@ -59,6 +59,8 @@ private:
 
 public:
 	virtual _float4 Get_Object_Pos() override;
+
+	CGameObject* Get_Body();
 
 
 private:
