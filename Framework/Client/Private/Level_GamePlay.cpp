@@ -1772,8 +1772,8 @@ HRESULT CLevel_GamePlay::SetUp_DeadMonsters()
 	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(0.f, -10.f, 0.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
-	//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	//		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
