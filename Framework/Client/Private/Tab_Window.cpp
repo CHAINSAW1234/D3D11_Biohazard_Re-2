@@ -958,8 +958,9 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		else
 		{
 			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
-			m_pHint->Acquire_Document(eIRT);
 		}
+
+		m_pHint->Acquire_Document(eIRT);
 
 		if (ITEM_READ_TYPE::OFFICER_NOTE == eIRT)
 		{
