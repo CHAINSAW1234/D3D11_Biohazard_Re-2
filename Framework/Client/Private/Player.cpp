@@ -729,6 +729,15 @@ void CPlayer::Set_Render(_bool boolean)
 	Set_Spotlight(Get_Spotlight());
 }
 
+void CPlayer::Set_Knife_Active(_bool isActive)
+{
+	static_cast<CKnife*>(m_PartObjects[PART_KNIFE])->Set_Active(isActive);
+
+	if (isActive && m_bRender) {
+		m_PartObjects[PART_KNIFE]->Set_Render(true);
+	}
+}
+
 void CPlayer::Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex)
 {
 	Get_Body_Model()->Change_Animation(iPlayingIndex, Get_AnimSetMoveName(m_eAnimSet_Move), iAnimIndex);
@@ -3040,6 +3049,7 @@ HRESULT CPlayer::Add_PartObjects()
 	if (nullptr == pFlashLightObject)
 		return E_FAIL;
 	m_PartObjects[CPlayer::PART_LIGHT] = pFlashLightObject;
+
 
 	CPartObject* pKnifeObject = { nullptr };
 	CPartObject::PARTOBJECT_DESC		KnifeDesc{};

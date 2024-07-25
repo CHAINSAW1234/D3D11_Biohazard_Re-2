@@ -425,7 +425,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 				{
-					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, 0.4, POPUP_HIDE_START_DIST,
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, 0.4f, POPUP_HIDE_START_DIST,
 						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 				}
 				else
@@ -441,7 +441,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 				{
-					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, 0.4,
+					m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, 0.4f,
 						m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 					m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector() - XMVectorSet(-0.5f, 0.5f, 0.f, 0.f));
 				}

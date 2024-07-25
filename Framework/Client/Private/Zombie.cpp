@@ -3168,7 +3168,7 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 
 		if (m_vecBlood_Drop[i]->GetbDecalSound())
 		{
-			PlayBloodSound(i);
+			PlayBloodSound(static_cast<_uint>(i));
 		}
 	}
 

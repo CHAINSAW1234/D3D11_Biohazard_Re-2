@@ -33,13 +33,13 @@ public:
 public:
 	inline _float4x4* Get_Socket_Ptr() { return m_pSocketMatrix; }
 	inline void						Set_Socket_Ptr(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-
-
+	virtual void Set_Render(_bool isRender);
+	void Set_Active(_bool isActive);
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	_float4x4* m_pSocketMatrix = { nullptr };
-
+	_bool m_isActive = { false };
 private:
 	HRESULT							Add_Components();
 	HRESULT							Bind_ShaderResources();

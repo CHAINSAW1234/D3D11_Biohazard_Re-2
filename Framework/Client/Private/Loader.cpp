@@ -1925,11 +1925,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 #pragma region Players Model 
-	/* Prototype_Component_Model_LeonBody */
-	/*if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
-			LeonTransformMatrix))))
-		return E_FAIL;*/
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1941,11 +1936,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/* Prototype_Component_Model_LeonFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonFace"),
@@ -1959,8 +1949,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	_matrix			KnifeMatrix = { XMMatrixIdentity()};
+	_matrix			KnifeMatrix = { XMMatrixRotationY(XMConvertToRadians(-90.f))};
 	//LightTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(-20.f));
+
 	/* Prototype_Component_Model_LeonHair */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Knife"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/Knife/Knife.fbx",

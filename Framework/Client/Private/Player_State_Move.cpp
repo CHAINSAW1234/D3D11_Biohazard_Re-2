@@ -137,7 +137,6 @@ void CPlayer_State_Move::Update_State()
 			return;
 		}
 	}
-
 }
 
 void CPlayer_State_Move::Open_Door()
@@ -170,7 +169,7 @@ void CPlayer_State_Move::Open_Door()
 		if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
 			m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
 
-			if (m_eState == WALK) {
+			if (m_eState == WALK || m_eState == IDLE) {
 				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_PASS);
 				m_pPlayer->Get_Body_Model()->Set_Loop(4, false);
 				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 10.f);

@@ -30,7 +30,7 @@ HRESULT CKnife::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_bRender = true;
+	m_bRender = false;
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -232,6 +232,26 @@ HRESULT CKnife::Render_LightDepth_Spot()
 	}
 
 	return S_OK;
+}
+
+void CKnife::Set_Render(_bool isRender)
+{
+	if (m_isActive) {
+		m_bRender = isRender;
+	}
+	else {
+		m_bRender = false;
+	}
+		
+}
+
+void CKnife::Set_Active(_bool isActive)
+{
+	m_isActive = isActive;
+
+	if (!m_isActive) {
+		m_bRender = false;
+	}
 }
 
 HRESULT CKnife::Add_Components()
