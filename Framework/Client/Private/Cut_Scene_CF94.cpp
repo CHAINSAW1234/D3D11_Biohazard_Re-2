@@ -141,13 +141,11 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 			pPartBrokenHead->Set_Render(true);
 		}
 
-			if (550.f < fTrackPosition && 580.f > fTrackPosition)
-			{
-				m_bBlood = true;
-			}
+		if (550.f < fTrackPosition && 580.f > fTrackPosition)
+		{
+			m_bBlood = true;
 		}
-	}
-	
+	}	
 	__super::Priority_Tick(fTimeDelta);
 }
 

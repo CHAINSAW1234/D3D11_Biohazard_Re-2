@@ -39,15 +39,20 @@ HRESULT CChair::Initialize(void* pArg)
 		m_eType = CHAIR_ZOMBIE;
 
 		if (m_tagPropDesc.iRegionNum == EAST_OFFICE)
-			;
+		{
+			if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR_EAST)))
+				return E_FAIL;
+		}
 		else if (m_tagPropDesc.iRegionNum == WEST_OFFICE)
-			;
+		{
+			if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR_WEST)))
+				return E_FAIL;
+		}			
 		else
 			MSG_BOX(TEXT("헐 지역 넘버 빠져있다는데 예은아"));
 		//if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR)))
 		//	return E_FAIL;
-		if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR_EAST)))
-			return E_FAIL;
+
 	}
 	else
 		m_eType = CHAIR_BARRIGATE;
