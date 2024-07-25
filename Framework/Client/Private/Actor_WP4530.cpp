@@ -29,6 +29,7 @@ HRESULT CActor_WP4530::Initialize(void* pArg)
 		return E_FAIL;
 
 	LIGHT_DESC eDesc;
+
 	eDesc.eType = LIGHT_DESC::TYPE_SPOT;
 	eDesc.bShadow = true;
 	eDesc.bRender = false;
@@ -115,19 +116,19 @@ void CActor_WP4530::Render_Light()
 {
 	CModel*				pModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
 
-	_float4x4*			pMatrix = { const_cast<_float4x4*>(pModel->Get_CombinedMatrix("root")) };
+	_float4x4			pMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("root")) * XMMatrixScaling(0.01f, 0.01f, 0.01f) };
 	//	const _float4x4 pMatrix = pModel->Get_BonePtr(0)->Get_CombinedTransformationMatrix_Var();
 
-	_matrix					CurrentCombinedMatrix = { pModel->Get_CurrentKeyFrame_Root_CombinedMatrix(0) };
+	//_matrix					CurrentCombinedMatrix = { pModel->Get_CurrentKeyFrame_Root_CombinedMatrix(0) * XMMatrixScaling(0.01f, 0.01f, 0.01) * XMMatrixRotationY(XMConvertToRadians(180.f))};
 
 	_float4x4 fMatrix;
-	XMStoreFloat4x4(&fMatrix, CurrentCombinedMatrix);
+	XMStoreFloat4x4(&fMatrix, pMatrix);
 	_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
 
 
 	const LIGHT_DESC* eDesc = m_pGameInstance->Get_LightDesc(TEXT("Light_Flash2"), 0);
 	LIGHT_DESC eNewDesc = *eDesc;
-	eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(XMVectorSet(0.f, 0.f, -1.f, 0.f), fMatrix), 0.f);
+	eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(XMVectorSet(0.f, -1.f, 0.f, 0.f), fMatrix), 0.f);
 	eNewDesc.vPosition = vPos + eNewDesc.vDirection * 10;
 	//eNewDesc.vDirection = XMVectorSetW(-m_WorldMatrix.Forward(), 0.f);
 
