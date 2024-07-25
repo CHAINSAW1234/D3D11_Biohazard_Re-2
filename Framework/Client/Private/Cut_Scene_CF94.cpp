@@ -19,6 +19,20 @@
 #include "Camera_Event.h"
 #include "Prop_Controller.h"
 
+#include "Blood.h"
+#include "Blood_Drop.h"
+
+#define BLOOD_COUNT 10
+#define BIG_ATTACK_BLOOD_SIZE 6.f
+#define BIG_ATTACK_BLOOD_SIZE_DROP 5.f
+#define NORMAL_ATTACK_BLOOD_SIZE 4.f
+#define NORMAL_ATTACK_BLOOD_SIZE_DROP 3.f
+#define SHOTGUN_BLOOD_COUNT 8
+#define BLOOD_DROP_COUNT 10
+#define BLOOD_DROP_COUNT_STG 10
+#define HEADBLOW_BLOOD_SIZE 6.f
+#define HEADBLOW_BLOOD_SIZE_DROP 6.f
+
 CCut_Scene_CF94::CCut_Scene_CF94(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
 {
@@ -44,6 +58,33 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 
 	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 25);
 	CCut_Scene_Manager::Get_Instance()->Add_CutScene(CCut_Scene_Manager::CF_ID::_94, this);
+
+	m_vecBlood.clear();
+	m_vecBlood_Drop.clear();
+
+	for (size_t i = 0; i < BLOOD_COUNT; ++i)
+	{
+		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
+		pBlood->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
+		m_vecBlood.push_back(pBlood);
+		pBlood->Start();
+	}
+
+	for (size_t i = 0; i < BLOOD_DROP_COUNT; ++i)
+	{
+		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
+		pBlood_Drop->SetSize(HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP);
+		m_vecBlood_Drop.push_back(pBlood_Drop);
+		pBlood_Drop->SetDropDir_CutScene();
+		pBlood_Drop->SetCutScene_Blood(true);
+		pBlood_Drop->Start();
+	}
+
+	CActor_PartObject* pPartBody = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_BODY));
+	CModel* pBodyModel = { static_cast<CModel*>(pPartBody->Get_Component(TEXT("Com_Model"))) };
+	m_SpineCombined = pBodyModel->Get_CombinedMatrix("neck_1");
+
+	m_BloodDelay =20;
 
 	return S_OK;
 }
@@ -89,8 +130,12 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 
 			pPartHead->Set_Render(false);
 			pPartBrokenHead->Set_Render(true);
-		}
 
+			if (550.f < fTrackPosition && 580.f > fTrackPosition)
+			{
+				m_bBlood = true;
+			}
+		}
 	}
 	
 	__super::Priority_Tick(fTimeDelta);
@@ -99,11 +144,36 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 void CCut_Scene_CF94::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if (m_bBlood)
+	{
+		SetBlood();
+	}
+
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
+	{
+		m_vecBlood_Drop[i]->Tick(fTimeDelta);
+	}
 }
 
 void CCut_Scene_CF94::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
+	{
+		m_vecBlood_Drop[i]->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CCut_Scene_CF94::SetUp_Animation_Layer()
@@ -296,6 +366,54 @@ HRESULT CCut_Scene_CF94::Add_Camera_Event()
 	return S_OK;
 }
 
+void CCut_Scene_CF94::SetBlood()
+{
+	if (m_iBloodCount >= m_vecBlood.size())
+	{
+		m_bBlood = false;
+		m_iBloodCount = 0;
+		return;
+	}
+
+	if (m_BloodDelay + m_BloodTime < GetTickCount64())
+	{
+		m_BloodTime = GetTickCount64();
+
+		m_vecBlood[m_iBloodCount]->Set_Render(true);
+		//m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		m_vecBlood[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 10));
+		m_vecBlood[m_iBloodCount]->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
+
+		auto vPos = _float4(m_SpineCombined->_41 * 0.01f+0.15f, m_SpineCombined->_42 * 0.01f, m_SpineCombined->_43 * 0.01f, 1.f);
+
+		_float4 vDelta = _float4(m_pGameInstance->GetRandom_Real(-0.1f, 0.1f),
+			m_pGameInstance->GetRandom_Real(-0.1f, 0.f),
+			m_pGameInstance->GetRandom_Real(-0.1f, 0.1f),
+			0.f);
+		vPos += vDelta;
+
+		m_vecBlood[m_iBloodCount]->SetPosition(vPos);
+
+		if (m_iBloodCount < BLOOD_DROP_COUNT)
+		{
+			//m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+			m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vecBlood[m_iBloodCount]->GetPosition());
+			m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 10));
+			m_vecBlood_Drop[m_iBloodCount]->SetSize(HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP, HEADBLOW_BLOOD_SIZE_DROP);
+		}
+
+		++m_iBloodCount;
+
+		if (m_iBloodCount >= m_vecBlood.size())
+		{
+			m_bBlood = false;
+			m_iBloodCount = 0;
+			return;
+		}
+	}
+}
+
 CCut_Scene_CF94* CCut_Scene_CF94::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCut_Scene_CF94* pInstance = new CCut_Scene_CF94(pDevice, pContext);
@@ -327,4 +445,14 @@ CGameObject* CCut_Scene_CF94::Clone(void* pArg)
 void CCut_Scene_CF94::Free()
 {
 	__super::Free();
+
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		Safe_Release(m_vecBlood[i]);
+	}
+
+	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
+	{
+		Safe_Release(m_vecBlood_Drop[i]);
+	}
 }

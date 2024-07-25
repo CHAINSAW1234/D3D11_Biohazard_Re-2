@@ -38,6 +38,18 @@ private:
 	virtual	HRESULT								Add_Camera_Event() override;
 
 public:
+	void										SetBlood();
+
+	vector<class CBlood*>				m_vecBlood;
+	vector<class CBlood_Drop*>			m_vecBlood_Drop;
+
+	ULONGLONG							m_BloodTime;
+	ULONGLONG							m_BloodDelay;
+	_uint								m_iBloodCount = { 0 };
+	_bool								m_bBlood = { false };
+	const _float4x4* m_SpineCombined = { nullptr };
+
+public:
 	static CCut_Scene_CF94* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual	void Free();
