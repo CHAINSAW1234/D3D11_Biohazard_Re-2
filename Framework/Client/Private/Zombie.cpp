@@ -419,18 +419,6 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 
-	__super::Tick(fTimeDelta);
-
-	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
-
-#pragma region BehaviorTree ÄÚµå
-
-	if (false == m_bRagdoll)
-		m_pBehaviorTree->Initiate(fTimeDelta);
-
-#pragma endregion
-
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
