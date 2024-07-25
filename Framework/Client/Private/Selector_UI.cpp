@@ -134,6 +134,7 @@ CGameObject* CSelector_UI::Destroy_Selector(_bool _selectCull)
 
         return nullptr;
     }
+    return nullptr;
 }
 
 void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)

@@ -177,7 +177,7 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-10.f, 1.f, 0.f, 1.f)))&&m_bBarrigateInstallable)
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-10.f, 1.f, 0.f, 1.f))) && m_bBarrigateInstallable)
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 		{
@@ -197,9 +197,7 @@ void CWindow::Late_Tick(_float fTimeDelta)
 			}
 		}
 
-			Opreate_Selector_UI(true, Get_Object_Pos());
-		}
-
+		Opreate_Selector_UI(true, Get_Object_Pos());
 	}
 	else
 	{
@@ -212,7 +210,7 @@ void CWindow::Late_Tick(_float fTimeDelta)
 			m_pSelector = nullptr;
 		}
 	}
-	
+
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
