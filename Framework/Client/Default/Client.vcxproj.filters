@@ -856,6 +856,9 @@
     <Filter Include="02.GameObjects\UI\11. Map_UI\7. Announcement">
       <UniqueIdentifier>{4cc765dd-e62c-4152-a7cb-0835edbb6f7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\17. Hold">
+      <UniqueIdentifier>{2ac9f5e8-f17f-48da-8129-81c4dc73abfd}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Player\Knife">
       <UniqueIdentifier>{149741d6-3d8e-460b-a770-c730a98cf420}</UniqueIdentifier>
     </Filter>
@@ -1671,6 +1674,9 @@
       <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Set_Focus_Player_Zombie.h" />
+    <ClInclude Include="..\Public\Hold_UI.h">
+      <Filter>02.GameObjects\UI\17. Hold</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Knife.h">
       <Filter>02.GameObjects\Player\Knife</Filter>
     </ClInclude>
@@ -2447,6 +2453,10 @@
       <Filter>02.GameObjects\UI\11. Map_UI\7. Announcement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Set_Focus_Player_Zombie.cpp" />
+    <ClCompile Include="..\Private\Hold_UI.cpp">
+      <Filter>02.GameObjects\UI\17. Hold</Filter>
+    </ClCompile>
+
     <ClCompile Include="..\Private\Knife.cpp">
       <Filter>02.GameObjects\Player\Knife</Filter>
     </ClCompile>

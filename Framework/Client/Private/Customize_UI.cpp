@@ -303,6 +303,9 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isBlackChange", &m_isBackColor_Change, sizeof(_bool))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_maskCircle", &m_isMaskCircle, sizeof(_bool))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

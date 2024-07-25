@@ -751,9 +751,18 @@ _bool CTab_Window::IsInputTab()
 {
 	_bool isInputTab = false;
 
+	if (DOWN == m_pGameInstance->Get_KeyState('M')/* || true == m_isGetMapItem*/)
+	{
+		m_isGetMapItem = false;
+
+		isInputTab = true;
+	}
+
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
 		m_isMapOpen = false;
+
+		m_isGetMapItem = false;
 
 		isInputTab = true;
 	}
@@ -762,6 +771,8 @@ _bool CTab_Window::IsInputTab()
 	{
 		m_isMapOpen = false;
 
+		m_isGetMapItem_Close = false;
+
 		isInputTab = false;
 	}
 
@@ -769,16 +780,9 @@ _bool CTab_Window::IsInputTab()
 	{
 		m_isMapOpen = false;
 
+		m_isGetMapItem_Close = false;
+
 		isInputTab = false;
-	}
-
-	if(DOWN == m_pGameInstance->Get_KeyState('M') || true == m_isGetMapItem)
-	{
-		m_isGetMapItem = false;
-
-		m_isMapOpen = true;
-
-		isInputTab = true;
 	}
 
 	return isInputTab;
@@ -910,13 +914,20 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 
 		if (ITEM_READ_TYPE ::ABOUT_MAP == eIRT)
 		{
-			m_isGetMapItem = true;
+			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
+			m_pHint->Acquire_Document(eIRT);
+		}
+
+		else
+		{
+			//m_isGetMapItem = true;
 
 			list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
 			for (auto& iter : *pUIList)
 			{
 				CStatic_Map_UI* pStaticBackGround = dynamic_cast<CStatic_Map_UI*>(iter);
+
 				CAnnouncement_Map_UI* pAnnounceMap = dynamic_cast<CAnnouncement_Map_UI*>(iter);
 
 				if (nullptr != pStaticBackGround)
@@ -934,13 +945,13 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			}
 		}
 
-		else
+		if (ITEM_READ_TYPE::OFFICER_NOTE == eIRT)
 		{
-			m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+			pPlayer->MissionClear_Font(TEXT("메달 3개 모으기"), static_cast<_ubyte>(MISSION_TYPE::MEDAL_MISSION));
 		}
 
-		m_pHint->Acquire_Document(eIRT);
-		pPickedUp_Item->Set_Dead(true);
 	}
 }
 
