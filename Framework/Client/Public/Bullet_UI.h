@@ -70,6 +70,8 @@ private:
 	_float4					m_fFull_CurrentBullet_Transform = {  };
 	_float4					m_fFull_StoreBullet_Transform = {  };
 	_float4					m_fOrigin_TextColor = {};
+	_float4					m_fOrigin_StoreTextPos = {};
+	_float4					m_fOrigin_CurrentTextPos = {};
 
 	/* ½Ã°£*/
 	_float					m_fBulletTimer = {};
