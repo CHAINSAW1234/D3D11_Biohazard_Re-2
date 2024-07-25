@@ -167,8 +167,9 @@ void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_
 	m_pCameraGimmick->SetPosition(XMVectorSetW(m_pCameraGimmickTransform->Get_State_Float4(CTransform::STATE_POSITION) + vPos, 1.f));
 	*m_pCameraGimmick->Get_Layout_Type_Ptr() = _layoutType;
 
+	m_pGameInstance->Set_IsPaused(true);
 	m_pPlayer->Set_Render(false);
-	m_pPlayer->Set_Play(false);
+	//m_pPlayer->Set_Play(false);
 }
 
 
@@ -180,8 +181,9 @@ void CInteractProps::Reset_Camera()
 	m_pPlayer->ResetCamera();
 	*m_pCameraGimmick->Get_Layout_Type_Ptr() = INTERACT_GIMMICK_TYPE::NONE_GIMMICK;
 
+	m_pGameInstance->Set_IsPaused(false);
 	m_pPlayer->Set_Render(true);
-	m_pPlayer->Set_Play(true);
+	//m_pPlayer->Set_Play(true);
 }
 
 void CInteractProps::Check_Player()
