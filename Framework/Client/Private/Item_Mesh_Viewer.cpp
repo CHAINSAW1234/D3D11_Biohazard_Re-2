@@ -183,7 +183,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE)) {
 			m_eOperType = EXAMIN_PUZZLE;
-			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector() - XMVectorSet(0.f, -10.f, 0.f, 0.f));
+			m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Vector());
 			//m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 1.57f);
 			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), 0.25f);
 			m_fDistCamZ = 0.18f;
@@ -1295,7 +1295,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::strengtheningyellow01a:
-		m_fPopupHide_EndDist = 0.1f;
+		m_fPopupHide_EndDist = 0.3f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
