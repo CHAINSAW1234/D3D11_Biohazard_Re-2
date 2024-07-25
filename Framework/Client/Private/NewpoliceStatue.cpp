@@ -92,7 +92,8 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 		if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
 			Active();
 	}
-	
+	if (m_iEXCode == 4)
+		*m_pCameraGimmick->Get_Layout_Type_Ptr() = INTERACT_GIMMICK_TYPE::NONE_GIMMICK;
 
 	if (m_bCamera)
 		if ((m_fZoomOut > 0.f) && ((m_fZoomOut -= fTimeDelta) > 0.f))
@@ -135,7 +136,7 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))) && m_iEXCode != 4)
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 		{

@@ -778,7 +778,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 	}
 	for (_int i = 0; i < BONE_DIAL_END; i++)
 	{
-		/*m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta*5.f);
+		m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta*5.f);
 
 
 		_float4			vRotate = { m_WorldMatrix.Right()};
@@ -802,45 +802,45 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		{
 			m_fCurAngle[i] = 0.f;
 			m_fGoalAngle[i] += 360.f;
-		}*/
-		m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta * 5.f);
+		}
+		//m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta * 5.f);
 
 
-		_float4         vRotate = { m_WorldMatrix.Right() };
+		//_float4         vRotate = { m_WorldMatrix.Right() };
 
-		string			strBoneDail1Tag = m_strOpenDial[0];
-		string			strBoneDail2Tag = m_strOpenDial[1];
+		//string			strBoneDail1Tag = m_strOpenDial[0];
+		//string			strBoneDail2Tag = m_strOpenDial[1];
 
-		_matrix         BoneDial1CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail1Tag)) };
-		_matrix         BoneDial2CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail2Tag)) };
-		//   _matrix         BoneWorldMatrix = { BoneCombinedMatrix * XMLoadFloat4x4(&m_WorldMatrix) };
+		//_matrix         BoneDial1CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail1Tag)) };
+		//_matrix         BoneDial2CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneDail2Tag)) };
+		////   _matrix         BoneWorldMatrix = { BoneCombinedMatrix * XMLoadFloat4x4(&m_WorldMatrix) };
 
-		_vector         vRotateAxis = XMVector3Normalize(BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION] - BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION]);
+		//_vector         vRotateAxis = XMVector3Normalize(BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION] - BoneDial2CombinedMatrix.r[CTransform::STATE_POSITION]);
 
 
 		//   _vector         vRotateAxis = _vector{ vRotate.x,vRotate.y,vRotate.z,vRotate.w };
 		//   vRotateAxis = XMVector3TransformNormal(vRotateAxis, XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix)));
 
-		if (XMVectorGetX(XMVector3Length(vRotateAxis)) != 0.f)
-		{
-			_vector            vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fCurAngle[i])) };
+		//if (XMVectorGetX(XMVector3Length(vRotateAxis)) != 0.f)
+		//{
+		//	_vector            vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fCurAngle[i])) };
 
-			vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
-			_matrix            RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
-			_float4x4          test = RotationMatrix;
-			m_pModelCom->Add_Additional_Transformation_World(m_strOpenDial[i], RotationMatrix);
+		//	vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
+		//	_matrix            RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+		//	_float4x4          test = RotationMatrix;
+		//	m_pModelCom->Add_Additional_Transformation_World(m_strOpenDial[i], RotationMatrix);
 
-			if (m_fCurAngle[i] >= 359.5f && m_fGoalAngle[i] >= 360.f)
-			{
-				m_fCurAngle[i] = 0.f;
-				m_fGoalAngle[i] -= 360.f;
-			}
-			else if (m_fCurAngle[i] < -359.5f && m_fGoalAngle[i] <= -360.f)
-			{
-				m_fCurAngle[i] = 0.f;
-				m_fGoalAngle[i] += 360.f;
-			}
-		}		
+		//	if (m_fCurAngle[i] >= 359.5f && m_fGoalAngle[i] >= 360.f)
+		//	{
+		//		m_fCurAngle[i] = 0.f;
+		//		m_fGoalAngle[i] -= 360.f;
+		//	}
+		//	else if (m_fCurAngle[i] < -359.5f && m_fGoalAngle[i] <= -360.f)
+		//	{
+		//		m_fCurAngle[i] = 0.f;
+		//		m_fGoalAngle[i] += 360.f;
+		//	}
+		//}		
 	}
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
