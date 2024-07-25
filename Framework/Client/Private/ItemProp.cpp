@@ -91,6 +91,13 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 		return;
 	if (m_bDead)
 	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
+
 		return;
 	}
 

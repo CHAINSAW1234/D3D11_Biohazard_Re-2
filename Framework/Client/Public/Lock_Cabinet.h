@@ -53,8 +53,8 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 	virtual HRESULT				Render_LightDepth_Dir()override;
 	virtual HRESULT				Render_LightDepth_Point() override;
@@ -64,16 +64,16 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	virtual void					Get_SpecialBone_Rotation() override;
+	virtual void				Get_SpecialBone_Rotation() override;
 	HRESULT						Initialize_Model();
 
 private: /* Safe Box */
 	HRESULT						Initialize_SafeBox();
-	void								Safebox_Late_Tick(_float fTimeDelta);
-	void								InPutKey_Sound(_int iRand, _int iRand1);
-	void								Safebox_RotationLock(LOCK_ALLOW_KEY _eKeyType, _float fTimeDelta);
-	void								Safebox_Clear_Condition();
-	void								Safebox_Return();
+	void						Safebox_Late_Tick(_float fTimeDelta);
+	void						InPutKey_Sound(_int iRand, _int iRand1);
+	void						Safebox_RotationLock(LOCK_ALLOW_KEY _eKeyType, _float fTimeDelta);
+	void						Safebox_Clear_Condition();
+	void						Safebox_Return();
 
 
 private : /* Open_Locker */

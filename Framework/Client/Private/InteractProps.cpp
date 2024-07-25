@@ -10,7 +10,7 @@
 #include "Camera_Free.h"
 #include "Camera_Gimmick.h"
 
-#define DISTAHCE 3.f
+#define DISTAHCE 1.5f
 
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -350,6 +350,7 @@ void CInteractProps::Select_UI()
 	{
 		Opreate_Selector_UI(true, Get_Object_Pos());
 	}
+
 	else
 	{
 		if (nullptr != m_pSelector)

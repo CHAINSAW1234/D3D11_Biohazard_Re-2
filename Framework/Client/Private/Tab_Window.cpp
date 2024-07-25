@@ -758,6 +758,8 @@ _bool CTab_Window::IsInputTab()
 	{
 		m_isGetMapItem = false;
 
+		m_isMapOpen = true;
+
 		m_isGetMapItem_Close = true;
 
 		isInputTab = true;
@@ -770,6 +772,8 @@ _bool CTab_Window::IsInputTab()
 		pPlayer->Set_isCamTurn(false);
 
 		m_isGetMapItem_Close = false;
+
+		m_isMapOpen = false;
 
 		isInputTab = true;
 	}
