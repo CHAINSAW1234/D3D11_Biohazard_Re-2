@@ -154,7 +154,7 @@ public:
 
 
 	virtual HRESULT								Render_LightDepth_Dir() override;
-	virtual	HRESULT							Render_LightDepth_Spot() override;
+	virtual	HRESULT								Render_LightDepth_Spot() override;
 	virtual HRESULT								Render_LightDepth_Point() override;
 	
 public:
