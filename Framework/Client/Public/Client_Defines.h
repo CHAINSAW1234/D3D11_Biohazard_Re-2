@@ -48,7 +48,7 @@ using namespace Client;
 
 #pragma endregion
 
-#define IMGUI
+//#define IMGUI
 	
 //#define MAP_NOTHING
 #define MAP_INTERACT
