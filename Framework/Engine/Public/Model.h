@@ -10,11 +10,11 @@ BEGIN(Engine)
 #define MAX_COUNT_BONE				512
 
 #define DISTANCE_FPSMAX				5.f
-#define DISTANCE_FPS45				7.5f
-#define DISTANCE_FPS30				10.f
-#define DISTANCE_FPS20				12.5f
-#define DISTANCE_FPS10				15.f
-#define DISTANCE_FPS5				20.f
+#define DISTANCE_FPS45				10.f
+#define DISTANCE_FPS30				13.f
+#define DISTANCE_FPS20				16.f
+#define DISTANCE_FPS10				20.f
+#define DISTANCE_FPS5				25.f
 
 #define TIME_FPSMAX					(fTimeDelta)
 #define TIME_FPS45					(1.f / 45.f)

@@ -35,6 +35,8 @@ void CKnock_Door_Zombie::Enter()
 	if (nullptr == pDoor)
 		return;
 
+	pDoor->Set_Knock(true);
+
 	_float3				vDirectionFromDoorLocalFloat3 = {};
 	if (false == m_pBlackBoard->Compute_Direction_From_Target_Local(pDoor, &vDirectionFromDoorLocalFloat3))
 		return;
@@ -105,13 +107,16 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 
 	//	필요 조건 => 문 안열리고 막타이상이어야함 ( HP1 초과... ), 문이 잠기지않음
 	_int				iHpDoor = { pDoor->Get_HP() };
-	_bool				isDoorCanKnock = { 0 < iHpDoor };
+	_bool				isDoorCanKnock = { 1 < iHpDoor };
 	if (false == isDoorCanKnock)
 		return false;
 
 	MONSTER_STATE		ePreMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (ePreMonsterState == MONSTER_STATE::MST_KNOCK_DOOR)
 	{
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+			return false;
+
 		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 		if (nullptr == pBody_Model)
 			return false;
@@ -252,6 +257,12 @@ void CKnock_Door_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
+
+	CDoor* pDoor = { m_pBlackBoard->Get_Target_Door() };
+	if (nullptr != pDoor)
+	{
+		pDoor->Set_Knock(false);
+	}
 
 	CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 	if (nullptr != pBody_Model)

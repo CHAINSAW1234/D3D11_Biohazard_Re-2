@@ -26,8 +26,14 @@ private:
 	HRESULT					Add_Components();
 	virtual HRESULT			Add_PartObjects();
 
+public:
+	void					Set_LightSpot(_bool isLightSpot) { m_isLightSpot = isLightSpot; }
+
 private:
 	void					Render_Light();
+	
+private:
+	_bool					m_isLightSpot = { true };
 
 public:
 	static CActor_WP4530* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -74,6 +74,29 @@ void CCut_Scene_CF190::Priority_Tick(_float fTimeDelta)
 		Start_CutScene();
 	}
 
+	_uint			iSeqLev = { m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_PL_0000)]->Get_SeqLev() };
+	if (0 == iSeqLev)
+	{
+		m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);
+		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
+	}
+
+	if (2 == iSeqLev)
+	{
+		m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(true);
+		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(true);
+	}
+
+	if (3 == iSeqLev)
+	{
+		static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
+	}
+
+	if (4 == iSeqLev)
+	{
+		m_Actors[static_cast<_uint>(CF190_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);
+	}
+
 	__super::Priority_Tick(fTimeDelta);
 }
 

@@ -116,7 +116,8 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 
 	else if (eStartType == ZOMBIE_START_TYPE::_IDLE)
 	{
-		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())) ||
+			true == m_pBlackBoard->Get_AI()->Is_In_Linked_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
 		{
 			m_pBlackBoard->Get_AI()->Set_Start(false);
 			m_pBlackBoard->Get_AI()->Set_State(MONSTER_STATE::MST_IDLE);

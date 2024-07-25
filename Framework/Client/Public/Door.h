@@ -132,6 +132,12 @@ public :
 	_bool										Get_FirstInteract()	{ return m_bFirstInteract; } // 접촉만 함 (탐색 - 빨간색)
 	_bool										Get_Interact()		{ return m_bInteract; }			// 열었는지 아닌지(파란색)
 	void										Set_Lock(_bool bLock=false) { m_bLock = bLock; }
+
+	void										Set_Knock(_bool isKnock) { m_isKnock = isKnock; }
+
+public:
+	_bool										Is_Dummy_Door() { return m_eType == DOOR_DUMMY; }
+
 private:
 	_bool										m_bLock =	{ false };
 	_bool										m_bAutoOpen =	{ false };
@@ -142,6 +148,8 @@ private:
 	_float										m_fDelayLockTime = { 0.f };
 	_float										m_fTime = { 0.f };
 	_ubyte										m_eType = {DOOR_ONE};
+
+	_bool										m_isKnock = { false };
 
 	_bool										m_bInteract = { false }; // 문을 열었는지(탐색 완료)
 

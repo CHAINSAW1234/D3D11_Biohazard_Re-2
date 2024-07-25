@@ -74,7 +74,8 @@ void CActor_WP4530::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Render_Light();
+	if(true == m_isLightSpot)
+		Render_Light();
 }
 
 void CActor_WP4530::Late_Tick(_float fTimeDelta)
@@ -126,11 +127,12 @@ void CActor_WP4530::Render_Light()
 	_float4x4 fMatrix;
 	XMStoreFloat4x4(&fMatrix, pMatrix);
 	_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
-
+	_float4 vLook = _float4(fMatrix._31, fMatrix._32, fMatrix._33, 0.f);
 
 	const LIGHT_DESC* eDesc = m_pGameInstance->Get_LightDesc(TEXT("Light_Flash2"), 0);
 	LIGHT_DESC eNewDesc = *eDesc;
-	eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(XMVectorSet(0.f, -1.f, 0.f, 0.f), fMatrix), 0.f);
+	//	eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(XMVectorSet(0.f, -1.f, 0.f, 0.f), fMatrix), 0.f);
+	eNewDesc.vDirection = vLook;
 	eNewDesc.vPosition = vPos + eNewDesc.vDirection * 10;
 	//eNewDesc.vDirection = XMVectorSetW(-m_WorldMatrix.Forward(), 0.f);
 

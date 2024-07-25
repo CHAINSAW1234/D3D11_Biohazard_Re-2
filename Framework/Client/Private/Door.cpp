@@ -1095,6 +1095,9 @@ _float CDoor::Distance_Zombie(class CTransform* pTransform)
 
 void CDoor::OneDoor_Active()
 {
+	if (true == m_isKnock)
+		return;
+
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 

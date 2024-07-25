@@ -105,6 +105,18 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 			if (nullptr == pTarget_Door)
 				return false;
 
+			_vector			vTargetPosition = { pTarget_Door->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+			_vector			vMyPosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+			_vector			vDirectionToTarget = { vTargetPosition - vMyPosition };
+			_vector			vLook = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
+			
+			_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToTarget), XMVector3Normalize(vLook))) };
+			_float			fAngle = { acosf(fDot) };
+
+			if (fAngle > XMConvertToRadians(40.f))
+				return false;
+
 			Safe_Release(m_pTargetObject);
 			m_pTargetObject = pTarget_Door;
 			Safe_AddRef(m_pTargetObject);

@@ -66,10 +66,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_RegionCollider()))
 		return E_FAIL;
 
-#ifdef MAP_INTERACT
+//#ifdef MAP_INTERACT
 	if (FAILED(Ready_CutScene()))
 		return E_FAIL;
-#endif
+//#endif
 
 	if (FAILED(Ready_EnvCube()))
 		return E_FAIL;

@@ -52,15 +52,16 @@ void COpen_Door_Zombie::Enter()
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_OPEN_FROM_B);
 	}
 
+	m_isDummyDoor = pDoor->Is_Dummy_Door();	
 
+	if (0 < pDoor->Get_HP() || false == m_isDummyDoor)
+	{
+		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+		Change_Animation();
+		m_pBlackBoard->Get_AI()->Play_Random_Open_Door_Sound();
+		m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	}
 
-	pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
-	Change_Animation();
-
-	m_pBlackBoard->Get_AI()->Play_Random_Open_Door_Sound();
-
-	m_isDummyDoor = false;
-	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 	//	m_fAccLinearInterpolateTime = 0.f;
 
 #ifdef _DEBUG
@@ -106,7 +107,7 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 	{
 		//	필요 조건 => 문 닫힘 ( 체력 1 => 1대치면 열림), 문잠기지않음		
 		_int				iDoorHP = { pDoor->Get_HP() };
-		_bool				isDoorCanOpen = { 0 == iDoorHP };
+		_bool				isDoorCanOpen = { 2 > iDoorHP };
 		if (false == isDoorCanOpen)
 			return false;
 
@@ -127,6 +128,9 @@ void COpen_Door_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
+
+	m_isDummyDoor = false;
+
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 	CDoor*		pTarget_Door = { m_pBlackBoard->Get_Target_Door() };
