@@ -587,8 +587,11 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		
 
 	}
-	if (!m_bLock && !m_bLockLeon)
+	if (!m_bLock && !m_bLockLeon && m_bCamera == true)
+	 {
 		m_fDelayLockTime = 5.f;
+		m_bCamera = false;
+	}
 
 	if (m_bDead)
 		m_bItemDead = true;
@@ -631,6 +634,10 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 
 		m_bCamera = true;
 	}
+
+	if (m_bDead)
+		m_bItemDead = true;
+
 
 	if (m_bCamera && (bCam||!m_bLock))
 	{

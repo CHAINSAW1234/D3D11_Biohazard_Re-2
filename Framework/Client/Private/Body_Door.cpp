@@ -456,8 +456,14 @@ HRESULT CBody_Door::Model_Hide()
 		vector<string>			ResultMeshTags;
 		for (auto& strMeshTag : MeshTags)
 		{
-			if ((strMeshTag.find("Group_1_") != string::npos))
-				ResultMeshTags.push_back(strMeshTag);
+			if (*m_pDoorTexture == CDoor::IRON)
+			{
+				if ((strMeshTag.find("Group_0_") != string::npos)||(strMeshTag.find("Group_1_") != string::npos))
+					ResultMeshTags.push_back(strMeshTag);
+			}
+			else
+				if ((strMeshTag.find("Group_1_") != string::npos))
+					ResultMeshTags.push_back(strMeshTag);
 		}
 		for (auto& strMeshTag : MeshTags)
 		{
