@@ -67,7 +67,12 @@ void CCursor_UI::Tick(_float fTimeDelta)
 
 void CCursor_UI::Late_Tick(_float fTimeDelta)
 {
-    __super::Late_Tick(fTimeDelta);
+    m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FONT, this);
+
+    for (auto& iter : m_vecTextBoxes)
+    {
+        iter->Late_Tick(fTimeDelta);
+    }
 }
 
 HRESULT CCursor_UI::Render()

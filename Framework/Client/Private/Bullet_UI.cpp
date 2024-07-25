@@ -288,8 +288,7 @@ void CBullet_UI::Mission_Complete()
         return;
 
     m_isTutiorial = true;
-    *pPlayer->Get_Tutorial_Notify() = true;
-    *pPlayer->Get_Tutorial_Type() = UI_TUTORIAL_TYPE::TUTORIAL_REROAD;
+    pPlayer->Set_Tutorial_Start(UI_TUTORIAL_TYPE::TUTORIAL_REROAD);
 }
 
 void CBullet_UI::Bullet_Font()

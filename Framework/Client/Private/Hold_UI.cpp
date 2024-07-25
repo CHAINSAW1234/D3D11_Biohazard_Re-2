@@ -49,13 +49,29 @@ HRESULT CHold_UI::Initialize(void* pArg)
         }
     }
 
+    if (!m_vecTextBoxes.empty())
+    {
+        for (auto& iter : m_vecTextBoxes)
+        {
+            CTransform* pFontTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+            m_fFontDistance.y = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y - pFontTrans->Get_State_Float4(CTransform::STATE_POSITION).y;
+
+            m_fFontDistance.x = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x - pFontTrans->Get_State_Float4(CTransform::STATE_POSITION).x;
+        }
+    }
+
     /* Tool*/
     if (FAILED(Change_Tool()))
         return E_FAIL;
 
+    Find_Player();
+
     m_isMaskCircle = true;
 
     m_isMask = false;
+
+    m_isPlay = false;
 
     return S_OK;
 }
@@ -63,6 +79,11 @@ HRESULT CHold_UI::Initialize(void* pArg)
 void CHold_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    m_isMask = false;
+
+    if(nullptr == m_pPlayer)
+        Find_Player();
 
     if (true == m_IsChild)
     {
@@ -90,8 +111,7 @@ void CHold_UI::Tick(_float fTimeDelta)
 
     else if (false == m_IsChild)
     {
-        if (DOWN == m_pGameInstance->Get_KeyState('7'))
-            m_isHold = !m_isHold;
+        Calc_Position();
 
         if (true == m_isHold)
         {
@@ -101,10 +121,10 @@ void CHold_UI::Tick(_float fTimeDelta)
             {
                 m_fBlending = 0.f;
 
-                m_fMaskTimer += fTimeDelta;
+                m_fMaskTimer += fTimeDelta * 0.8f;
             }
             else
-                m_fBlending -= fTimeDelta;
+                m_fBlending -= fTimeDelta * 1.8f;
         }
 
         else if (false == m_isHold)
@@ -118,14 +138,24 @@ void CHold_UI::Tick(_float fTimeDelta)
                 m_isRender = false;
             }
             else
-                m_fBlending += fTimeDelta;
+                m_fBlending += fTimeDelta * 1.8f;
         }
     }
 
     if (!m_vecTextBoxes.empty())
     {
+        _float4 result = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        result.x = result.x - m_fFontDistance.x;
+
+        result.y = result.y - m_fFontDistance.y;
+
         for (auto& iter : m_vecTextBoxes)
         {
+            CTransform* resultTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+            resultTrans->Set_State(CTransform::STATE_POSITION, result);
+
             if (false == m_isRender)
                 iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
 
@@ -142,6 +172,17 @@ void CHold_UI::Tick(_float fTimeDelta)
 void CHold_UI::Late_Tick(_float fTimeDelta)
 {
     __super::Late_Tick(fTimeDelta);
+}
+
+void CHold_UI::Hold_Position(_float4 _pos)
+{
+    m_isRender = true;
+
+    m_isHold = true;
+
+    m_vTargetPos = _pos;
+
+    m_isPlay = true;
 }
 
 void CHold_UI::Calc_Position()

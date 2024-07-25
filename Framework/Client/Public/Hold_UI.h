@@ -18,17 +18,24 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Change_Tool() override;
 
+public:
+	void Hold_Position(_float4 _pos);
+	void Hold_End() { m_isHold = false; };
+
 private :
 	void Calc_Position();
-
+	
 private :
-	_float4		m_vTargetPos	= {};
-	_bool		m_isCull		 = { false };
-	_float2		m_fDistance		= {};
-	CTransform* m_pParentTransform = { nullptr };
-	CHold_UI* m_pParentObj = { nullptr };
+	_float4				m_vTargetPos			= {};
+	_bool				m_isCull				= { false };
 
-	_bool		m_isHold = { false };
+	_float2				m_fDistance				= {};
+	_float2				m_fFontDistance			= {};
+
+	CTransform*			m_pParentTransform		= { nullptr };
+	CHold_UI*			m_pParentObj			= { nullptr };
+
+	_bool				m_isHold = { false };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

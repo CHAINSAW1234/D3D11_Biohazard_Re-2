@@ -261,6 +261,9 @@ void CTargeting_Map_UI::Verification_MapType()
     if (true == m_isSearchForVerification)
     {
         /* 1. 모든 아이템을 먹었는가? */
+        if (m_ItemStore_Vec.empty())
+            return;
+
         for (auto& iter : m_ItemStore_Vec[m_eFloorVerification])
         {
             LOCATION_MAP_VISIT a = iter->Get_Map_Location_Type();
@@ -270,7 +273,6 @@ void CTargeting_Map_UI::Verification_MapType()
 
             if (m_eLocationVerification == iter->Get_Map_Location_Type())
             {
-                
                 if (false == iter->Get_Dead())
                 {
                     m_isSearchForVerification = false;

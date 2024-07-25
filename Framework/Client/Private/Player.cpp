@@ -611,18 +611,6 @@ void CPlayer::Player_First_Behavior()
 				m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::TUTORIAL_AIM] = true;
 		}
 	}
-
-	/* 2. 아이템과 첫 상호작용 시 "인벤토리 열기" 안내 */
-	if (false == m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN])
-	{
-		if (true == m_bInteract)
-		{
-			Set_Tutorial_Start(UI_TUTORIAL_TYPE::INVENTORY_OPEN);
-
-			if (UI_TUTORIAL_TYPE::INVENTORY_OPEN == m_eTutial_Type)
-				m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN] = true;
-		}
-	}
 }
 
 CGameObject* CPlayer::Create_Selector_UI()
@@ -644,7 +632,9 @@ void CPlayer::Player_Mission_Timer(_float fTimeDelta)
 {
 	if (true == m_isFlod_EntranceDoor)
 	{
-		if (false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
+		m_fMissionTimer += fTimeDelta;
+
+		if (m_fMissionTimer >= 1.5f && false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
 		{
 			MissionClear_Font(TEXT("주변 환경 탐색하기"), static_cast<_ubyte>(MISSION_TYPE::EXPLORING_SURROUNDING_MISSION));
 		}

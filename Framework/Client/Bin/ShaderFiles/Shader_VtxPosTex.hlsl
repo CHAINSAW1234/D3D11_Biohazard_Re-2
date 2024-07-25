@@ -309,7 +309,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
         float3 baseColor = Out.vColor.rgb;
 
-        float3 finalColor = lerp(baseColor, float3(0.5, 0.5, 0.5), Radvalue * (1.0 - (MaskTexcoord.y / maskRadius)));
+        float3 finalColor = lerp(baseColor, float3(0.8, 0.8, 0.8), Radvalue * (1.0 - (MaskTexcoord.y / maskRadius)));
         
         if (Out.vColor.r == 1.f && Out.vColor.g == 1.f && Out.vColor.b == 1.f && Out.vColor.a == 1.f)
             Out.vColor = float4(1.f, 1.f, 1.f, 1.f);

@@ -237,6 +237,9 @@ public:
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
 	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
 	{ 
+		if (true == m_isPlayer_FirstBehavior[(_int)i])
+			return;
+
 		m_isTutorial_Notify = true;
 		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
@@ -276,7 +279,7 @@ private:
 
 	_bool										m_isMissionClear				= { false };
 	_bool										m_isFlod_EntranceDoor			= { false };
-	
+	_float										m_fMissionTimer = { 0.f };
 	_bool										m_isReload = { false };
 	_bool										m_MissionCollection[MISSION_TYPE::END_MISSION] = { false };
 #pragma
