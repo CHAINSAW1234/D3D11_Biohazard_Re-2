@@ -5,6 +5,7 @@
 #include "Selector_UI.h"
 #include"Body_ItemProp.h"
 
+
 CItemProp::CItemProp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -90,22 +91,11 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 		return;
 	if (m_bDead)
 	{
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-			m_pSelector = nullptr;
-		}
-
 		return;
 	}
 
 	if (!Visible())
 	{
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-			m_pSelector = nullptr;
-		}
 		return;
 	}
 
@@ -130,18 +120,11 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 				Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 
-				Opreate_Selector_UI(true, Get_Object_Pos());
 			}
 			else
 			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-
-				if (nullptr != m_pSelector)
-				{
-					m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-					m_pSelector = nullptr;
-				}
+			
 
 			}
 		else
@@ -149,15 +132,10 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 			m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 
-			if (nullptr != m_pSelector)
-			{
-				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-				m_pSelector = nullptr;
-			}
-
 		}
 	}
+	
+	Select_UI();
 
 	__super::Late_Tick(fTimeDelta);
 

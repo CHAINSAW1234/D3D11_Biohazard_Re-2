@@ -183,7 +183,7 @@ public:
 	/* Function */
 	_bool												Create_Selector_UI();
 	void												Opreate_Selector_UI(_bool _Interact, _float4 _pos);
-	
+	void												Select_UI();
 	/* Variable */
 	class CSelector_UI*									m_pSelector = { nullptr }; /* 사용 중인 Selector Obj */
 

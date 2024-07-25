@@ -10,6 +10,8 @@
 #include "Camera_Free.h"
 #include "Camera_Gimmick.h"
 
+#define DISTAHCE 3.f
+
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -339,6 +341,23 @@ void CInteractProps::Opreate_Selector_UI(_bool _Interact, _float4 _pos)
 	else if (nullptr != m_pSelector)
 	{
 		m_pSelector->Select_Type(_Interact, _pos);
+	}
+}
+
+void CInteractProps::Select_UI()
+{
+	if (DISTAHCE >= Check_Player_Distance())
+	{
+		Opreate_Selector_UI(true, Get_Object_Pos());
+	}
+	else
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
 	}
 }
 

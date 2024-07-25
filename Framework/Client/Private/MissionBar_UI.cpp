@@ -402,11 +402,20 @@ void CMissionBar_UI::Operater_MissionFont(_float fTimeDelta)
             }
         }
     }
+
     else
     {
         m_vCurrentColor = ALPHA_ZERO;
 
         m_fMissionFont_Timer = 0.f;
+
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& pFont : m_vecTextBoxes)
+            {
+                pFont->Set_FontColor(ALPHA_ZERO);
+            }
+        }
     }
 }
 

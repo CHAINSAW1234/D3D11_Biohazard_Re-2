@@ -183,18 +183,11 @@ void CWindow::Late_Tick(_float fTimeDelta)
 		{
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 
-			Opreate_Selector_UI(true, Get_Object_Pos());
 		}
 
 		else
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-			if (nullptr != m_pSelector)
-			{
-				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-				m_pSelector = nullptr;
-			}
 		}
 
 		Opreate_Selector_UI(true, Get_Object_Pos());
@@ -203,14 +196,12 @@ void CWindow::Late_Tick(_float fTimeDelta)
 	{
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-			m_pSelector = nullptr;
-		}
 	}
-
+	
+	Select_UI();
+	
+	}
+	
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
