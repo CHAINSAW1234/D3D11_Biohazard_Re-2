@@ -1596,27 +1596,45 @@ void CInventory_Manager::IIO_Seting(ITEM_NUMBER eRequiredItem)
 
 void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 {
+	_int iUse = iUsage;
+
 	for (auto& iter : m_vecItem_UI)
 	{
 		if (eTargetItemNum == iter->Get_ItemNumber() && true == iter->Get_isWorking())
 		{
-			iter->Set_ItemVariation(-iUsage);
-			m_pHotkey->Update_Registed_Item(eTargetItemNum, iter->Get_ItemQuantity());
-			if (0 == iter->Get_ItemQuantity() && HandGun != iter->Get_ItemNumber() && ShotGun != iter->Get_ItemNumber())
+			if (iter->Get_ItemQuantity() >= iUse)
 			{
-				Find_Slot(_float2{ iter->GetPosition().x, iter->GetPosition().y })->Set_IsFilled(false);
+				iter->Set_ItemVariation(-iUse);
+				m_pHotkey->Update_Registed_Item(eTargetItemNum, iter->Get_ItemQuantity());
+				if (0 == iter->Get_ItemQuantity() && HandGun != iter->Get_ItemNumber() && ShotGun != iter->Get_ItemNumber())
+				{
+					Find_Slot(_float2{ iter->GetPosition().x, iter->GetPosition().y })->Set_IsFilled(false);
+				}
+				break;
 			}
-			
-			//todo 재귀하게 만들어보면 좋을듯 남은 수량 다 써버리게
-			//if (iter->Get_ItemQuantity() >= iUsage)
-			//	iter->Set_ItemVariation(-iUsage);
-			//else
-			//{
-			//	_uint iLeftUsage = iUsage - iter->Get_ItemQuantity();
-			//}
+
+			else if (iter->Get_ItemQuantity() < iUse)
+			{
+				iUse -= iter->Get_ItemQuantity();
+				iter->Set_ItemVariation(-(iter->Get_ItemQuantity()));
+				m_pHotkey->Update_Registed_Item(eTargetItemNum, iter->Get_ItemQuantity());
+				if (0 == iter->Get_ItemQuantity() && HandGun != iter->Get_ItemNumber() && ShotGun != iter->Get_ItemNumber())
+				{
+					Find_Slot(_float2{ iter->GetPosition().x, iter->GetPosition().y })->Set_IsFilled(false);
+				}
+				
+			}
 		}
 	}
 }
+
+//todo 재귀하게 만들어보면 좋을듯 남은 수량 다 써버리게
+//if (iter->Get_ItemQuantity() >= iUsage)
+//	iter->Set_ItemVariation(-iUsage);
+//else
+//{
+//	_uint iLeftUsage = iUsage - iter->Get_ItemQuantity();
+//}
 
 void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
 {
