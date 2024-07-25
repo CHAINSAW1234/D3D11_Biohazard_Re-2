@@ -128,7 +128,9 @@ CGameObject* CSelector_UI::Destroy_Selector(_bool _selectCull)
     {
         m_isOutDistance = true;
 
-        m_isCull = true;
+        m_isUsing = false;
+
+        m_fBlending = 1.f;
 
         return nullptr;
     }
@@ -195,7 +197,7 @@ void CSelector_UI::Rendering(_float fTimeDelta)
     {
         if (false == m_isUsing ||
             m_vTargetPos == _float4(0.f, 0.f, 0.f, 0.f) ||
-            m_vTargetPos == _float4(0.f, 0.f, 0.f, 1.f))
+            m_vTargetPos == _float4(0.f, 0.f, 0.f, 1.f)) 
         {
             Reset();
 
