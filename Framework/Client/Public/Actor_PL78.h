@@ -39,10 +39,20 @@ private:
 	void					SetRagdoll();
 	void					Apply_LastAnimCombined_RagDoll();
 
+public:
+	void					SetBlood();
 private:
-	CRagdoll_Physics*		m_pRagDoll = { nullptr };
-	_bool					m_isCutBody = { false };
+	CRagdoll_Physics*					m_pRagDoll = { nullptr };
+	_bool								m_isCutBody = { false };
 
+	vector<class CBlood*>				m_vecBlood;
+	vector<class CBlood_Drop*>			m_vecBlood_Drop;
+
+	ULONGLONG							m_BloodTime;
+	ULONGLONG							m_BloodDelay;
+	_uint								m_iBloodCount = { 0 };
+	_bool								m_bBlood = { false };
+	const _float4x4*					m_SpineCombined = { nullptr };
 public:
 	static CActor_PL78* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
