@@ -695,7 +695,7 @@ void CLock_Cabinet::Safebox_Return()
 
 void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 {
-
+	m_pModelCom->Play_T_Pose();
 	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
@@ -780,7 +780,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		m_fCurAngle[i] = Lerp(m_fCurAngle[i], m_fGoalAngle[i], fTimeDelta*5.f);
 
 
-		_float4			vRotate = { m_WorldMatrix.Right()};
+		_float4			vRotate = { _float4(0.f,0.f,1.f,0.f) };
 		
 		_vector			vRotateAxis = _vector{ vRotate.x,vRotate.y,vRotate.z,vRotate.w };
 		vRotateAxis = XMVector3TransformNormal(vRotateAxis, XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix)));
