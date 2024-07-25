@@ -91,7 +91,7 @@ void CEnvSound::Tick(_float fTimeDelta)
 
 	if (m_fRegionChangeTimeDelay == 0.f && m_fRegionChangeTimeDelay2 == 0.f && !bPlaying)
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("location"), m_BGMSoundMap[m_iPreRegion], BGM_2D, m_fCurSound);
-	_int iRandom = m_pGameInstance->GetRandom_Int(0, m_EnvSoundMap[m_iCurRegion].size()-1);
+	_int iRandom = m_pGameInstance->GetRandom_Int(0, static_cast<_uint>(m_EnvSoundMap[m_iCurRegion].size())-1);
 	for (_int i = 0; i < ENV_CHENNEL_END; i++)
 		m_fSoundTime[i] += fTimeDelta;
 	

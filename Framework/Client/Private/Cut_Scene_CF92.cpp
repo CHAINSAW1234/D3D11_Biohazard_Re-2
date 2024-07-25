@@ -142,6 +142,25 @@ void CCut_Scene_CF92::Start_CutScene()
 	pFlashLight->Set_Render(true);
 
 	pShutter->Set_OutOfControll(true);
+
+
+	LIGHT_DESC eDesc = {};
+	eDesc.vDiffuse = { 1.f,1.f,1.f,1.f };
+	eDesc.vDirection = { 1.f,0.f,0.f,0.f };
+	eDesc.vPosition = { -10.f,3.f,8.f,1.f };
+	eDesc.bRender = true;
+	eDesc.eType = LIGHT_DESC::TYPE_POINT;
+	eDesc.fRange = 10.f;
+
+	eDesc.BelongNumVec = vector<_int>(50);
+
+	for (size_t i = 0; i < 50; i++)
+	{
+		eDesc.BelongNumVec[i] = i;
+	}
+
+	m_pGameInstance->Add_Light(TEXT("CF92_Light"), eDesc);
+
 }
 
 void CCut_Scene_CF92::Finish_CutScene()
@@ -172,6 +191,14 @@ void CCut_Scene_CF92::Finish_CutScene()
 	m_pOrigin_SocketMatrix = nullptr;
 
 	m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Set_Render_All_Part(false);
+
+
+	const LIGHT_DESC* eDesc = m_pGameInstance->Get_LightDesc(TEXT("CF92_Light"), 0);
+
+	LIGHT_DESC eNewDesc = *eDesc;
+	eNewDesc.bRender = false;
+	m_pGameInstance->Update_Light(TEXT("CF92_Light"), eNewDesc, 0, 1.f);
+
 }
 
 HRESULT CCut_Scene_CF92::Add_Actors()

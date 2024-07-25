@@ -148,6 +148,7 @@ public:
 	void										Set_Position(_fvector vPos);
 	void										Set_FootStep(_bool isFootStep) { m_isFootStep = isFootStep; }
 	virtual void								Set_Render(_bool boolean);
+	void										Set_Knife_Active(_bool isActive);
 
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
