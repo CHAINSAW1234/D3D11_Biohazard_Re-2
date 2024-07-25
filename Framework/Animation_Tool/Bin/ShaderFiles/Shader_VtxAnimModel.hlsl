@@ -547,7 +547,7 @@ PS_OUT_COLOR PS_FORWARD_LIGHTING(PS_IN In)
     vColor = vColor / (vColor + 1);
     vColor = pow(vColor, 1 / 2.2f);
     
-    Out.vColor = vColor * g_Color;
+    Out.vColor = vColor * g_vColor;
 
     return Out;
 }
