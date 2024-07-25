@@ -37,6 +37,13 @@ HRESULT CChair::Initialize(void* pArg)
 	if (m_tagPropDesc.strGamePrototypeName.find("zombie")!=string::npos)
 	{
 		m_eType = CHAIR_ZOMBIE;
+
+		if (m_tagPropDesc.iRegionNum == EAST_OFFICE)
+			;
+		else if (m_tagPropDesc.iRegionNum == WEST_OFFICE)
+			;
+		else
+			MSG_BOX(TEXT("헐 지역 넘버 빠져있다는데 예은아"));
 		//if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_CHAIR)))
 		//	return E_FAIL;
 	}
