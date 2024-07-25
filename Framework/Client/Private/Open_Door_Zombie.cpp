@@ -57,6 +57,9 @@ void COpen_Door_Zombie::Enter()
 	if (0 < pDoor->Get_HP() || false == m_isDummyDoor)
 	{
 		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
 		Change_Animation();
 		m_pBlackBoard->Get_AI()->Play_Random_Open_Door_Sound();
 		m_pBlackBoard->Get_AI()->Set_ManualMove(true);
