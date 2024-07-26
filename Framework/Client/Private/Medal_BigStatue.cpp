@@ -79,7 +79,7 @@ void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 				vMedalpos._43 -= fTimeDelta * 1.5f;
 				m_pTransformCom->Set_WorldMatrix(vMedalpos);
 			}
-			Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 0);
+			Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 0);
 		}
 		else
 			m_fStore_ZPos = vMedalpos._43;

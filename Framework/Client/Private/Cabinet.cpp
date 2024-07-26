@@ -505,7 +505,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 		if (!bCam&&m_bLock)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK && m_fDelayLockTime == 0.f)
-				m_fDelayLockTime = 5.f;
+				m_fDelayLockTime = 2.f;
 		}
 		else if (bCam || !m_bLock)
 		{
@@ -606,15 +606,20 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 
 	if (m_bCamera)
 	{
-		if(m_bCol[INTER_COL_NORMAL][COL_STEP0]&&m_bActivity)
+		if(m_bCol[INTER_COL_NORMAL][COL_STEP0]&&m_bActivity&&m_bLock)
 		{
 			Camera_Active(PART_LOCK, _float3(0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 			m_bActivity = false;
 		}
-		if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity)
+		else if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity && m_bLockLeon)
 		{
 			Camera_Active(PART_LOCK1, _float3(-0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 			m_bActivity = false;
+		}
+		else
+		{
+			m_bCamera = false;
+			Reset_Camera();
 		}
 	}
 
@@ -762,6 +767,8 @@ void CCabinet::LeonDesk_Active()
 
 	if (m_bAutoOpen )
 	{
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+		m_bCamera = true;
 		if (m_bObtain)
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);

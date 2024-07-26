@@ -169,7 +169,7 @@ void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_
 
 	m_pGameInstance->Set_IsPaused(true);
 	m_pPlayer->Set_Render(false);
-	//m_pPlayer->Set_Play(false);
+	m_pPlayer->Set_Play(false);
 }
 
 
@@ -183,7 +183,7 @@ void CInteractProps::Reset_Camera()
 
 	m_pGameInstance->Set_IsPaused(false);
 	m_pPlayer->Set_Render(true);
-	//m_pPlayer->Set_Play(true);
+	m_pPlayer->Set_Play(true);
 }
 
 void CInteractProps::Check_Player()

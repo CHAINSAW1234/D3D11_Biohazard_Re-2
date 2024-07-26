@@ -119,7 +119,7 @@ void CDial_BigStatue::Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex < BONE_DIAL1)
 				m_iCurBoneIndex = BONE_DIAL3;
 			*m_pPressKeyState = CBigStatue::KEY_NOTHING;
-			InPutKey_Sound(0,1);
+			InPutKey_Sound(0,3);
 			break;
 
 		case CBigStatue::KEY_S:
@@ -206,19 +206,19 @@ void CDial_BigStatue::InPutKey_Sound(_int iRand, _int iRand1)
 	switch (iRand1)
 	{
 	case 0:
-		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 0);
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 0);
 		break;
 	case 1:
-		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_2.mp3"), 1);
 		break;
 	case 2:
-		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_3.mp3"), 2);
 		break;
 	case 3:
-		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_4.mp3"), 1);
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 1);
 		break;
 	case 4:
-		Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 1);
+		Change_Same_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_1.mp3"), 1);
 		break;
 	}
 
@@ -451,21 +451,30 @@ HRESULT CDial_BigStatue::Initialize_Model()
 	switch (m_eBigStatueType)
 	{
 	case static_cast<_uint>(CBigStatue::BIGSTATUE_UNICON):
-		strFirstTag = "113";
-		strSecondTag = "121";
-		strThirdTag = "131";
+		strFirstTag = "112";
+		strSecondTag = "124";
+		strThirdTag = "133";
+		/*strFirstTag = "132";
+		strSecondTag = "124";
+		strThirdTag = "113";*/
 		break;
 
 	case static_cast<_uint>(CBigStatue::BIGSTATUE_WOMAN):
-		strFirstTag = "111";
+		strFirstTag = "113";
 		strSecondTag = "121";
-		strThirdTag = "131";
+		strThirdTag = "135";
+		/*strFirstTag = "133";
+		strSecondTag = "125";
+		strThirdTag = "115";*/
 		break;
 	
 	case static_cast<_uint>(CBigStatue::BIGSTATUE_LION):
 		strFirstTag = "113";
 		strSecondTag = "121";
 		strThirdTag = "131";
+		/*strFirstTag = "133";
+		strSecondTag = "121";
+		strThirdTag = "111";*/
 		break;
 	}
 

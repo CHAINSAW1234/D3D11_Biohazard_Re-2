@@ -91,7 +91,7 @@ private :
 	_ubyte				m_eStatue_ItemType = { 0 };
 	_bool				m_isPut_HandItem = { false };
 	_bool				m_isMedalAnim = { false };
-
+	//_bool					m_bGetMedal = { false };
 public:
 	static CBigStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

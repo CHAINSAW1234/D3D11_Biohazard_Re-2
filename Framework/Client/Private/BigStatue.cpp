@@ -33,24 +33,24 @@ HRESULT CBigStatue::Initialize(void* pArg)
 	{
 		m_iPassWord[0] = 1; //¿©ÀÚ
 		m_iPassWord[1] = 2;//È°
-		m_iPassWord[2] = 0;//¹ì
+		m_iPassWord[2] = 4;//¹ì
 		m_eType = BIGSTATUE_WOMAN;
 		m_iItemIndex = virginmedal02a ;
 	}
 	else if(m_tagPropDesc.strObjectPrototype.find(TEXT("183")) != wstring::npos)
 	{
-		m_iPassWord[0] = 4;
-		m_iPassWord[1] = 2;
-		m_iPassWord[2] = 5;
+		m_iPassWord[0] = 4; //»çÀÚ
+		m_iPassWord[1] = 1; //³ª¹µÀÙ
+		m_iPassWord[2] = 5; //µ¶¼ö¸®
 		m_eType = BIGSTATUE_LION;
 		m_iItemIndex = virginmedal01a;
 
 	}
 	else
 	{
-		m_iPassWord[0] = 3;
-		m_iPassWord[1] = 3;
-		m_iPassWord[2] = 2;
+		m_iPassWord[0] = 0; // ¹°°í±â
+		m_iPassWord[1] = 3; // Àü°¥
+		m_iPassWord[2] = 2; // ¹°º´
 		m_eType = BIGSTATUE_UNICON;
 		m_iItemIndex = unicornmedal01a;
 
@@ -128,7 +128,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 		}
 	}
 	
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/|| m_bAutoOpen)
+	if ((m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/ || m_bAutoOpen)/*&& m_bGetMedal*/)
 	{
 		if ((*m_pPlayerInteract|| m_bAutoOpen)&& false == m_pGameInstance->IsPaused())
 			Active();
@@ -188,7 +188,7 @@ HRESULT CBigStatue::Render()
 void CBigStatue::Do_Interact_Props()
 {
 	//¸Þ´Þ ¼û±â±â
-
+	//m_bGetMedal = true;
 }
 
 HRESULT CBigStatue::Add_Components()
@@ -323,7 +323,7 @@ HRESULT CBigStatue::Add_PartObjects()
 		DialDesc.pParentsTransform = m_pTransformCom;
 		DialDesc.pParentWorldMatrix = static_cast<CDial_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
 		DialDesc.pPassword = (_int*)m_iPassWord;
-		DialDesc.eBigStatueType = m_eLockState;
+		DialDesc.eBigStatueType = m_eType;
 
 		pDial = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Dial_BigStatue"), &DialDesc));
 		if (nullptr == pDial)
