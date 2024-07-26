@@ -611,15 +611,10 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 			Camera_Active(PART_LOCK, _float3(0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 			m_bActivity = false;
 		}
-		else if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity && m_bLockLeon)
+		 if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity && m_bLockLeon)
 		{
 			Camera_Active(PART_LOCK1, _float3(-0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 			m_bActivity = false;
-		}
-		else
-		{
-			m_bCamera = false;
-			Reset_Camera();
 		}
 	}
 
@@ -673,6 +668,7 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 
 void CCabinet::Weapon_Tick(_float fTimeDelta)
 {
+	
 	_bool bCam = false;
 
 	if (m_eLockState == CCabinet::LIVE_LOCK)
@@ -685,8 +681,8 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 		if (!bCam&& m_bLock)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK&& m_fDelayLockTime==0.f)
-				m_fDelayLockTime = 3.f;
-			m_bLock = false;
+				m_fDelayLockTime = 4.f;
+			//m_bLock = false;
 		}
 		else if (bCam||!m_bLock)
 		{
@@ -695,6 +691,11 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 
 		}
 	}
+
+
+	if (m_bDead)
+		m_bItemDead = true;
+
 	if (m_bCamera)
 		Camera_Active(PART_LOCK, _float3(0.05f, 0.15f, 0.3f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 	

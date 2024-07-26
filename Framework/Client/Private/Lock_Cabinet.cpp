@@ -973,7 +973,7 @@ void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 		m_fCurTranslation = Lerp(m_fCurTranslation, m_fGoalTranslation, fTimeDelta);
 		_float4x4 TranslationMatrix = XMMatrixTranslation(0.f, -m_fCurTranslation, 0.f);
 
-		//`	m_pModelCom->Add_Additional_Transformation_World("ItemSet", TranslationMatrix);
+		m_pModelCom->Add_Additional_Transformation_World("ItemSet", TranslationMatrix);
 		if (m_fGoalTranslation - 0.07f < m_fCurTranslation)
 			InPutKey_Sound(0, 10);
 		else
