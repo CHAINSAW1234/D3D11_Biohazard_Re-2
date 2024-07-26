@@ -256,6 +256,14 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 			m_bPause = !m_bPause;
 		}
 	}
+
+	if (m_bSimulate)
+	{
+		if (DOWN == Get_KeyState(VK_BACK))
+		{
+			m_bPause = false;
+		}
+	}
 }
 
 HRESULT CGameInstance::Begin_Draw(const _float4 & vClearColor)

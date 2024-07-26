@@ -143,7 +143,11 @@ void CDead_Zombie::Change_Animation()
 	if (m_eDeadAnimState == ZOMBIE_DEAD_ANIM_STATE::_LOOK_PLAYER)
 		pChairBodyModel->Change_Animation(0, TEXT("Default"), static_cast<_uint>(CChair::ZOMBIECHAIR_STATE::Zom_4631_Start));
 	else if (m_eDeadAnimState == ZOMBIE_DEAD_ANIM_STATE::_HIT)
+	{
 		pChairBodyModel->Change_Animation(0, TEXT("Default"), static_cast<_uint>(CChair::ZOMBIECHAIR_STATE::Zom_4632_Start));
+		m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+		m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
+	}
 }
 
 CDead_Zombie* CDead_Zombie::Create(void* pArg)

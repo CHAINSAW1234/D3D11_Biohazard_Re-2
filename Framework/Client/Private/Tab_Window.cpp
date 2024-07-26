@@ -756,7 +756,7 @@ _bool CTab_Window::IsInputTab()
 {
 	_bool isInputTab = false;
 
-	if (DOWN == m_pGameInstance->Get_KeyState('M') || true == m_isGetMapItem)
+	/*if (DOWN == m_pGameInstance->Get_KeyState('M') )
 	{
 		m_isGetMapItem = false;
 
@@ -765,26 +765,15 @@ _bool CTab_Window::IsInputTab()
 		m_isGetMapItem_Close = true;
 
 		isInputTab = true;
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) && true == m_isGetMapItem_Close)
-	{
-		CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-
-		pPlayer->Set_isCamTurn(false);
-
-		m_isGetMapItem_Close = false;
-
-		m_isMapOpen = false;
-
-		isInputTab = true;
-	}
+	}*/
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
 		m_isMapOpen = false;
 
 		m_isGetMapItem = false;
+
+		m_isGetMapItem_Close = false;
 
 		isInputTab = true;
 	}

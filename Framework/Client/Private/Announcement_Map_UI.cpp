@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Announcement_Map_UI.h"
 #include "Tab_Window.h"
+#include "Player.h"
 
 CAnnouncement_Map_UI::CAnnouncement_Map_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMap_Manager{ pDevice, pContext }
@@ -69,6 +70,12 @@ void CAnnouncement_Map_UI::Tick(_float fTimeDelta)
     if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
     {
         m_isRender = false;
+
+        CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+        pPlayer->Set_isCamTurn(false);
+
+        m_pGameInstance->Set_IsPaused(false);
 
         m_isGetMap_Item = false;
 
