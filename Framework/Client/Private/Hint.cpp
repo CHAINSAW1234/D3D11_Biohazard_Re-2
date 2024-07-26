@@ -79,7 +79,7 @@ void CHint::Start()
 //#pragma region 테스트용
 //	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
 //	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
-	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE); 
+//  Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE); 
 //	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
 //	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
 //	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
