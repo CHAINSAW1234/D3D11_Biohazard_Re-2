@@ -1489,6 +1489,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 
+
 	/* Read Texture*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadMap"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Map.png")))))
@@ -1526,6 +1527,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/rpddocument01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_LockerHnt6211"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/LockerHnt6211.dds")))))
 		return E_FAIL;
 
 	/* TEXT TYPE */
@@ -1685,6 +1689,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* HP_HEAL_ITEM,//체력 및 회복 아이템*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_TUTORIAL_HP_HEAL"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/TUTORIAL_HP_HEAL.png")))))
+		return E_FAIL;
+
+	/* SEIZURE_REPORT /압수 보고서 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_SEIZURE_REPORT"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/SEIZURE_REPORT.png")))))
 		return E_FAIL;
 
 #pragma endregion

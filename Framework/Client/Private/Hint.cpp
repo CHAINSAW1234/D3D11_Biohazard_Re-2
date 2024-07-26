@@ -54,8 +54,6 @@ HRESULT CHint::Initialize(void* pArg)
 
 	m_bDead = true;
 
-	m_isAlphaControl = true;
-
 	return S_OK;
 }
 
@@ -76,17 +74,27 @@ void CHint::Start()
 	Acquire_Document(ITEM_READ_TYPE::HP_HEAL_ITEM);//체력 및 회복 아이템
 #pragma endregion
 
+	Acquire_Document(ITEM_READ_TYPE::SEIZURE_REPORT);//압수 보고서
+
 //#pragma region 테스트용
 //	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
 //	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
 	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE); 
+//	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
+//	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
+//	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
+//	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE);
+//	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
+//	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
+//	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
+//	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE);
 //	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
 //#pragma endregion
 
 }
 
 void CHint::Tick(_float fTimeDelta)
-{
+{ 
 	if (true == m_bDead)
 		return;
 
@@ -142,13 +150,12 @@ void CHint::Directory_Seting()
 	//아니면 최대 갯수 기준으로
 	else
 	{
-		_int iStartnum = static_cast<int>(m_iCur_TopDoument);
+		m_iCur_TopDoument;
 		for (_uint i = 0; i < MAX_DOCUMENT; i++)
 		{
-			ITEM_READ_TYPE eIRT = m_mapAcqDoc[m_eCurrentDC][iStartnum + i];
+			ITEM_READ_TYPE eIRT = m_mapAcqDoc[m_eCurrentDC][m_iCur_TopDoument + i];
 			wstring wstrName = m_mapDocumentInfo[eIRT].wstrName;
 			m_vecDirectory[i]->Set_Directory(eIRT, wstrName);
-			iStartnum++;
 		}
 	}
 }
@@ -315,6 +322,25 @@ void CHint::Button_Action()
 			m_pDisplay->Set_Display(m_mapAcqDoc[m_eCurrentDC][0], 0, DocuInfo.fPosition, DocuInfo.fSize, false);
 		}
 	}
+
+	if (m_mapAcqDoc[m_eCurrentDC].size() > 8)
+	{
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
+		{
+			if (m_iCur_TopDoument + 1 != m_mapAcqDoc[m_eCurrentDC].size() - 7)
+			{
+				m_iCur_TopDoument++;
+			}
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
+		{
+			if (m_iCur_TopDoument - 1 > -1)
+			{
+				m_iCur_TopDoument--;
+			}
+		}
+	}
 }
 
 void CHint::Set_Dead(_bool bDead)
@@ -324,7 +350,7 @@ void CHint::Set_Dead(_bool bDead)
 	if (0 != m_mapAcqDoc.size()) {
 		m_pHighlighter->Set_Dead(bDead);
 		m_pHL_Trans->Set_State(CTransform::STATE_POSITION, m_vecDirectory[0]->GetPosition());
-		m_iCur_TopDoument = m_mapAcqDoc[m_eCurrentDC][0];
+		m_iCur_TopDoument = 0;
 	}
 		
 	if (false == bDead)
@@ -625,6 +651,7 @@ CHint::DOCUMENT_CLASSIFY CHint::Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_N
 	case Client::ITEM_READ_TYPE::RICKER_NOTE:
 	case Client::ITEM_READ_TYPE::SAFE_PASSWARD_NOTE:
 	case Client::ITEM_READ_TYPE::PAMPHLET_NOTE:
+	case Client::ITEM_READ_TYPE::SEIZURE_REPORT:
 		return POLICE;
 		break;
 
@@ -734,6 +761,8 @@ ITEM_READ_TYPE CHint::Classify_IRT_By_Name(wstring wstrName)
 	else if (TEXT("체력 및 회복 아이템") == wstrName)
 		return ITEM_READ_TYPE::HP_HEAL_ITEM;
 
+	else if (TEXT("압수 보고서") == wstrName)
+		return ITEM_READ_TYPE::SEIZURE_REPORT;
 
 	return ITEM_READ_TYPE::END_NOTE;
 }

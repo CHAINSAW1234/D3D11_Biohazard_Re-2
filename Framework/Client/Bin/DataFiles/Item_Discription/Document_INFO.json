@@ -126,5 +126,13 @@
     "POSITION_Y": 76,
     "SIZE_X": 588,
     "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "압수 보고서",
+    "POSITION_X": 473,
+    "POSITION_Y": 58,
+    "SIZE_X": 400,
+    "SIZE_Y": 400
   }
 ]
