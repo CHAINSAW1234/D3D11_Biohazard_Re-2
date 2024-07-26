@@ -101,7 +101,7 @@ HRESULT CMedal_NewpoliceStatue::Render()
 		m_bRender = false;
 
 	if (false == m_eRender_MedalType[(_int)m_eMedelType])
-		return E_FAIL;
+		return S_OK;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
