@@ -38,5 +38,9 @@
   {
     "NAME": "가이드 책자",
     "TEXTURE_TAG": "Prototype_Component_Texture_GuidePamphlet1"
+  },
+  {
+    "NAME": "압수 보고서",
+    "TEXTURE_TAG": "Prototype_Component_Texture_LockerHnt6211"
   }
 ]

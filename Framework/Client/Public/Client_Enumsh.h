@@ -68,6 +68,7 @@ namespace Client
 		ABOUT_MAP,//지도 활용
 		COMBIND_ITEM,//아이템 조합
 		HP_HEAL_ITEM,//체력 및 회복 아이템
+		SEIZURE_REPORT, //압수 보고서
 		END_NOTE 
 	};
 

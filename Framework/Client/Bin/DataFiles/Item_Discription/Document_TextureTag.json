@@ -126,5 +126,9 @@
   {
     "ITEM_READ_TYPE": "체력 및 회복 아이템",
     "ProtoTypeTag": "Prototype_Component_Texture_TUTORIAL_HP_HEAL"
+  },
+  {
+    "ITEM_READ_TYPE": "압수 보고서",
+    "ProtoTypeTag": "Prototype_Component_Texture_SEIZURE_REPORT"
   }
 ]
