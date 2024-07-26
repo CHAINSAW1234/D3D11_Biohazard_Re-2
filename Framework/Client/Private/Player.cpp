@@ -347,6 +347,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_BACK))
+	{
+		m_isCamTurn = false;
+	}
+
 	if (m_pCamera && false == m_isCamTurn)
 	{
 		Calc_Camera_LookAt_Point(fTimeDelta);

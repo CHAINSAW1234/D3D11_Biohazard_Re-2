@@ -31,6 +31,9 @@ public:
 	virtual void								Start_CutScene() override;
 	virtual void								Finish_CutScene() override;
 
+public:
+	void										Finish_Marvine();
+
 private:
 	virtual HRESULT								Add_Actors() override;
 	virtual HRESULT								Add_Props() override;

@@ -671,7 +671,7 @@ void CZombie::Tick(_float fTimeDelta)
 							{
 								auto iProb = m_pGameInstance->GetRandom_Int(0, 100);
 
-								if(iProb > 40)
+								if(iProb > 25)
 								{
 									if(m_pPart_Breaker->Attack_STG(eBreakType))
 									{

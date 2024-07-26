@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "Prop_Controller.h"
 #include "Cut_Scene_CF190.h"
+#include "Cut_Scene_CF120.h"
 #include "Cut_Scene_Manager.h"
 
 #include "Actor_PL00.h"
@@ -183,6 +184,9 @@ void CCut_Scene_CF190::Start_CutScene()
 	pPlayer->Set_Spotlight(false);
 
 	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF190::CF190_ACTOR_TYPE::_WP4530)])->Set_LightSpot(false);
+
+
+	static_cast<CCut_Scene_CF120*>(CCut_Scene_Manager::Get_Instance()->Get_CutScene(CCut_Scene_Manager::CF_ID::_120))->Finish_Marvine();
 }
 
 void CCut_Scene_CF190::Finish_CutScene()

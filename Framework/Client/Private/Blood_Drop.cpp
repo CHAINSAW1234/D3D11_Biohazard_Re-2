@@ -116,7 +116,7 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 
 	_uint iNumMesh = m_pModelCom->GetNumMesh();
 
-	if (m_iFrame >= iNumMesh)
+	if (m_iFrame > iNumMesh)
 	{
 		m_bDissolving = true;
 	}

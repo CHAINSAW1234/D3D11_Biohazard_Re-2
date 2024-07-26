@@ -1336,10 +1336,10 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		break;
 	case Client::unicornmedal01a:
 		m_fPopupHide_EndDist = 0.4f;
-		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
-		m_fCurSize = 1.f;
-		m_fStartSize = 1.f;
-		m_fEndSize = 0.7f;
+		m_pTransformCom->Set_Scaled(0.001f, 0.001f, 0.001f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::spadekey01a:
