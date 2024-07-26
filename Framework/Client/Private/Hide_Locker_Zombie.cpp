@@ -64,7 +64,11 @@ _bool CHide_Locker_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
-		if (true == m_isStart && true == pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
+		_float				fTrackPosition = { pBody_Model->Get_TrackPosition(static_cast<_uint>(m_eBasePlayingIndex)) };
+		_float				fDuation = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex)) };
+		_float				fRatio = { fTrackPosition / fDuation };
+		//	if (true == m_isStart && true == pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
+		if (true == m_isStart && 0.7f < fRatio)
 		{
 			m_pBlackBoard->Get_AI()->SetRagdoll_StartPose();
 			m_pBlackBoard->Get_AI()->Set_ManualMove(false);

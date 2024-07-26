@@ -672,7 +672,14 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 
 		else
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_OUTTER));
+			if (strMeshTag.find("_210_") != string::npos || (strMeshTag.find("_211_") != string::npos))
+			{
+				m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DEFICIT));
+			}
+			else
+			{
+				m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_OUTTER));
+			}
 		}
 	}
 
