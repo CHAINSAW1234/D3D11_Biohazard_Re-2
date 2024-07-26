@@ -74,8 +74,8 @@ void CActor_WP4530::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if(true == m_isLightSpot)
-		Render_Light();
+	//if(true == m_isLightSpot)
+	//	Render_Light();
 }
 
 void CActor_WP4530::Late_Tick(_float fTimeDelta)

@@ -120,6 +120,7 @@ void CCut_Scene_CF94::Priority_Tick(_float fTimeDelta)
 	if (0 == iSeqLev)
 	{
 		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)]->Set_Render_All_Part(false);
+		m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_WP4530)]->Set_Render_All_Part(false);
 	}
 
 	if (1 == iSeqLev)
@@ -234,13 +235,13 @@ void CCut_Scene_CF94::Start_CutScene()
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_10.mp3"), 12);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_11.mp3"), 13);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_12.mp3"), 14);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_13.mp3"), 15);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_13.mp3"), 15);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_14.mp3"), 16);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_15.mp3"), 17);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_16.mp3"), 18);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_17.mp3"), 19);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_18.mp3"), 20);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_19.mp3"), 21);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_19.mp3"), 21);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_20.mp3"), 22);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_21.mp3"), 23);
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_22.mp3"), 24);
@@ -264,6 +265,7 @@ void CCut_Scene_CF94::Start_CutScene()
 
 	CModel*					pHeadModel = { static_cast<CModel*>(pPartHead->Get_Component(TEXT("Com_Model"))) };
 	CModel*					pBrokenHeadModel = { static_cast<CModel*>(pPartBrokenHead->Get_Component(TEXT("Com_Model"))) };
+
 
 	pBrokenHeadModel->Link_Bone_Auto(pHeadModel);
 
@@ -298,7 +300,7 @@ void CCut_Scene_CF94::Finish_CutScene()
 
 	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Idle_Loop();
 	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Render_All_Part(true);
-	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Pause_Anim_All_Part(false	);
+	static_cast<CActor_PL57*>(m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_PL_5700)])->Set_Pause_Anim_All_Part(false);
 }
 
 HRESULT CCut_Scene_CF94::Add_Actors()

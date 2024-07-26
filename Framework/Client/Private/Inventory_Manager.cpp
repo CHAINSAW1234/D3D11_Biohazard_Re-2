@@ -62,9 +62,9 @@ void CInventory_Manager::FirstTick_Seting()
 	AddItem_ToInven(handgun_bullet01a, 20);
 	//AddItem_ToInven(shotgun_bullet01a, 20);
 
-	//AddItem_ToInven(virginmedal01a, 1);
-	//AddItem_ToInven(virginmedal02a, 1);
-	//AddItem_ToInven(unicornmedal01a, 1);
+	AddItem_ToInven(virginmedal01a, 1);
+	AddItem_ToInven(virginmedal02a, 1);
+	AddItem_ToInven(unicornmedal01a, 1);
 	
 }
 
