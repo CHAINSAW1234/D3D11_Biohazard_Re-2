@@ -109,7 +109,7 @@ HRESULT CItem_Statue::Render()
 
 	if (STATUE_ITEM::STATUEHAND_ITEM == m_Item_Type)
 		if (false == m_isHandRender)
-			return E_FAIL;
+			return S_OK;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
