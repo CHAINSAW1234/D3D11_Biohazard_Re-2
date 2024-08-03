@@ -742,7 +742,15 @@ void CCabinet::Safe_Normal_Active()
 	}
 	if (!m_bLock)
 	{
-		m_eState = CABINET_OPEN;
+		if (m_eState != CABINET_OPENED)
+		{
+			m_eState = CABINET_OPEN;
+			if(m_eCabinetType == TYPE_SAFEBOX)
+				Change_Sound(TEXT("sound_Map_sm44_safebox2_1.mp3"), 0);
+			else
+				Change_Sound(TEXT("sound_Map_sm44_open_locker2_1.mp3"), 0);
+		}
+
 		if (m_bObtain)
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);
@@ -777,7 +785,11 @@ void CCabinet::LeonDesk_Active()
 	}
 	if (!m_bLock&&!m_bLockLeon)
 	{
-		m_eState = CABINET_OPEN;
+		if (m_eState != CABINET_OPENED)
+		{
+			m_eState = CABINET_OPEN;
+			Change_Sound(TEXT("sound_Map_sm44_leon_desk2_1.mp3"), 0);
+		}
 		if (m_bObtain)
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);
@@ -810,7 +822,11 @@ void CCabinet::Electric_Active()
 
 	if (!m_bLock)
 	{
-		m_eState = CABINET_OPEN;
+		if (m_eState != CABINET_OPENED)
+		{
+			m_eState = CABINET_OPEN;
+			Change_Sound(TEXT("sound_Map_sm44_open_locker2_5.mp3"), 0);
+		}
 		if (m_bObtain)
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);
@@ -832,7 +848,11 @@ void CCabinet::Weapon_Active()
 
 	if (!m_bLock)
 	{
-		m_eState = CABINET_OPEN;
+		if (m_eState != CABINET_OPENED)
+		{
+			m_eState = CABINET_OPEN;
+			Change_Sound(TEXT("sound_Map_sm44_open_locker2_5.mp3"), 0);
+		}
 		if (m_bObtain)
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);
@@ -853,7 +873,11 @@ void CCabinet::Zombie_Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 
-	m_eState = CABINET_OPEN;
+	if (m_eState != CABINET_OPENED)
+	{
+		m_eState = CABINET_OPEN;
+		Change_Sound(TEXT("sound_Map_sm44_open_locker2_2.mp3"), 0);
+	}
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
