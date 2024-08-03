@@ -340,6 +340,7 @@ private:
 	_int										m_iCurCol = { 0 };
 	_int										m_iRegion = { 0 };		
 	_int										m_iDir = { 0 };			// 0 : DIRECTION_WEST,  1 : DIRECTION_EAST,  2 : DIRECTION_MID
+	_int										m_iPreDir = { 0 };			// 0 : DIRECTION_WEST,  1 : DIRECTION_EAST,  2 : DIRECTION_MID
 	_int										m_iPreCol = { 1 };
 	_int										m_iFloor = { 2 };
 	_float										m_fTimeTEST = { 0.f };
