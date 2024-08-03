@@ -421,7 +421,7 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 		m_pModelCom->Hide_Mesh(strMeshTag, false);
 	}
 
-	//m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+
 
 	return S_OK;
 }
