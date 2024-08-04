@@ -29,6 +29,12 @@ HRESULT CMovingShelf::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (m_tagPropDesc.strGamePrototypeName.find("232") != string::npos)
+		m_eType = SHELF_232_MOVE;
+	else
+		m_eType = SHELF_197_RICKER;
+
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -37,11 +43,6 @@ HRESULT CMovingShelf::Initialize(void* pArg)
 	
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;	
-	if (m_tagPropDesc.strGamePrototypeName.find("232") != string::npos)
-		m_eType = SHELF_232_MOVE;
-	else
-		m_eType = SHELF_197_RICKER;
-
 
 	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
 		return E_FAIL;
@@ -173,12 +174,13 @@ HRESULT CMovingShelf::Add_PartObjects()
 
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
-	CBody_MovingShlef::PART_INTERACTPROPS_DESC BodyDesc = {};
+	CBody_MovingShlef::BODY_MOVING_SHELF_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	BodyDesc.iPropType = m_tagPropDesc.iPropType;
+	BodyDesc.pShelfType = &m_eType;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;

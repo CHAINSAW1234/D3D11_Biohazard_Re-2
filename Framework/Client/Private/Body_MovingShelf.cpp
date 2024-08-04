@@ -32,10 +32,11 @@ HRESULT CBody_MovingShlef::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	
-	if (FAILED(Initialize_Model()))
-		return E_FAIL;
-
+	if (pArg != nullptr)
+	{
+		BODY_MOVING_SHELF_DESC* desc = (BODY_MOVING_SHELF_DESC*)pArg;
+		m_pShelfType = desc->pShelfType;
+	}
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -69,27 +70,39 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 	{
 	case CMovingShelf::SHELF_FINISH:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_3.mp3"), 0);
+		if(*m_pShelfType == CMovingShelf::SHELF_197_RICKER)
+			Change_Sound(TEXT("sound_Map_sm42_ricker_shelf2_6.mp3"), 0);
+		else
+			Change_Sound(TEXT("sound_Map_sm42_move_shelf2_3.mp3"), 0);
 
 		break;
 	case CMovingShelf::SHELF_MOVE:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_6.mp3"), 0);
+		if (*m_pShelfType == CMovingShelf::SHELF_197_RICKER)
+			Change_Sound(TEXT("sound_Map_sm42_ricker_shelf2_5.mp3"), 0);
+		else
+			Change_Sound(TEXT("sound_Map_sm42_move_shelf2_6.mp3"), 0);
 
 		break;
 	}
 	case CMovingShelf::SHELF_START:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_4.mp3"), 0);
+		if (*m_pShelfType == CMovingShelf::SHELF_197_RICKER)
+			Change_Sound(TEXT("sound_Map_sm42_ricker_shelf2_2.mp3"), 0);
+		else
+			Change_Sound(TEXT("sound_Map_sm42_move_shelf2_4.mp3"), 0);
 
 		break;
 	}
 	case CMovingShelf::SHELF_STOP:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		Change_Sound(TEXT("sound_Map_sm42_move_shelf2_1.mp3"), 0);
+		if (*m_pShelfType == CMovingShelf::SHELF_197_RICKER)
+			Change_Sound(TEXT("sound_Map_sm42_ricker_shelf2_7.mp3"), 0);
+		else
+			Change_Sound(TEXT("sound_Map_sm42_move_shelf2_1.mp3"), 0);
 
 		break;
 	}
@@ -358,50 +371,6 @@ HRESULT CBody_MovingShlef::Initialize_PartObjects()
 {
 
 	return S_OK;
-}
-
-HRESULT CBody_MovingShlef::Initialize_Model_i44()
-{
-	/* Set_Hide_Mesh */
-	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
-
-	vector<string>			ResultMeshTags;
-	for (auto& strMeshTag : MeshTags)
-	{
-		string strFindTag = "10" + to_string(m_iPropType);
-		if (m_iPropType >= 10)
-			strFindTag = "20" + to_string(m_iPropType - 10);
-		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
-			ResultMeshTags.push_back(strMeshTag);
-	}
-
-	for (auto& strMeshTag : MeshTags)
-	{
-		m_pModelCom->Hide_Mesh(strMeshTag, true);
-	}
-
-	for (auto& strMeshTag : ResultMeshTags)
-	{
-		m_pModelCom->Hide_Mesh(strMeshTag, false);
-	}
-
-	m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-
-	return S_OK;
-}
-
-HRESULT CBody_MovingShlef::Initialize_Model()
-{
-
-	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
-	for (auto& strMeshTag : MeshTags)
-	{
-		if ((strMeshTag.find("Group_1_Sub_2") != string::npos)||(strMeshTag.find("Group_3_Sub_1") != string::npos)||(strMeshTag.find("Group_2_Sub_1") != string::npos))
-			m_strMeshTag = strMeshTag;
-	}
-	
-	return S_OK;
-
 }
 
 _float4 CBody_MovingShlef::Get_Pos(_int iArg)
