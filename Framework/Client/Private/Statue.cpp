@@ -79,8 +79,6 @@ void CStatue::Tick(_float fTimeDelta)
 		m_isCamera_Reset = false;
 	}
 
-	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
-	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
 	if (true == m_isPut_HandItem)
 	{
 		m_eState = static_cast<_ubyte>(CStatue::STATE_PLAY);
@@ -262,11 +260,12 @@ void CStatue::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-	m_bCamera = true;
-	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+	
 
 	if(m_eState != static_cast<_ubyte>(CStatue::STATE_PLAY))
 	{
+		m_bCamera = true;
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 		m_pPlayer->Interact_Props(this);
 	}
 	else

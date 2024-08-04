@@ -165,13 +165,16 @@ void CPlayer::Tick(_float fTimeDelta)
 		fTimeDelta = 0.f;
 	}
 #pragma region 예은ColTest - 컬링 방식에 따라 달라질 겁니당
-	if (m_iCurCol != m_iPreCol)
+	if (m_iCurCol != m_iPreCol|| m_iDir != m_iPreDir)
 	{
 		m_iPreCol = m_iCurCol;
+		m_iPreDir = m_iDir;
 		m_bChange = true;
 	}
 	else
 		m_bChange = false;
+
+
 #pragma endregion 예은ColTest
 
 #pragma region 이동과 카메라

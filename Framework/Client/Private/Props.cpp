@@ -367,8 +367,6 @@ HRESULT CProps::Initialize_Model()
 		m_pModelCom->Hide_Mesh(strMeshTag, false);
 	}
 
-	m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
-
 	return S_OK;
 }
 
