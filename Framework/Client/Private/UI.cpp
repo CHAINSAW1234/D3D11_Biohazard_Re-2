@@ -78,7 +78,6 @@ void CUI::Tick(_float fTimeDelta)
 
 	m_fSizeX = fSize.x;
 	m_fSizeY = fSize.y;
-
 }
 
 void CUI::Late_Tick(_float fTimeDelta)

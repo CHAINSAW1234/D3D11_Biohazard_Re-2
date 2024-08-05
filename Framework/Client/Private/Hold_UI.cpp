@@ -73,6 +73,16 @@ HRESULT CHold_UI::Initialize(void* pArg)
 
     m_isPlay = false;
 
+    m_isRender = false;
+
+    if (!m_vecTextBoxes.empty())
+    {
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+        }
+    }
+
     return S_OK;
 }
 

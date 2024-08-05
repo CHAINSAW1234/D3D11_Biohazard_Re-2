@@ -256,11 +256,11 @@ void CTutorial_UI::Find_TextBox()
         pTutorial_TextBox[1] = pTemp;
     }
 
-    _float4 fPosX = pTutorial_TextBox[1]->GetPosition();
+    _float3 fPosX = pTutorial_TextBox[1]->Get_Position_UI();
 
-    fPosX.x += 3.5f;
+    fPosX.x += 10.f; // ÁÂÇ¥ ¼öÁ¤
 
-    pTutorial_TextBox[1]->Set_Position(fPosX);
+    pTutorial_TextBox[1]->Set_Position_UI(fPosX);
 }
 
 void CTutorial_UI::Tutorial_Start()
