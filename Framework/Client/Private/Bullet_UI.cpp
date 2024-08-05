@@ -367,6 +367,53 @@ void CBullet_UI::Start()
 
     pPlayer->RegisterObserver(this);
 
+    if (m_iEqipType == (_int)CPlayer::EQUIP::HG)
+    {
+        if (true == m_IsChild)
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x > pTextTrans->Get_State_Float4(CTransform::STATE_POSITION).x)
+                {
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText = iter;
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("10"));
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = iter->Get_FontColor();
+                    m_fOrigin_TextColor = iter->Get_FontColor();
+                    m_fOrigin_CurrentTextPos = iter->GetPosition();
+
+                    m_fFull_CurrentBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                    m_fFull_CurrentBullet_Transform.x -= 7.f;
+
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet = 10;
+
+                }
+
+                else
+                {
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText = iter;
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(TEXT("0"));
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = iter->Get_FontColor();
+                    m_fOrigin_TextColor = iter->Get_FontColor();
+                    m_fOrigin_StoreTextPos = iter->GetPosition();
+
+                    /*임의로 내려주기*/
+                    {
+                        CTransform* pStoreFont_Pos = static_cast<CTransform*>(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Component(g_strTransformTag));
+                        _float4 vStoreFont_Pos = pStoreFont_Pos->Get_State_Float4(CTransform::STATE_POSITION);
+                        vStoreFont_Pos.y += 30.f;
+                    }
+
+                    m_fFull_StoreBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                    m_fFull_StoreBullet_Transform.x += 7.f;
+
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet = 0;
+                }
+            }
+        }
+    }
+
     OnNotify();
 }
 
