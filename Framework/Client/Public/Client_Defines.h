@@ -5,8 +5,8 @@
 #include "Client_Enumsh.h"
 
 //#define			HD_PLUS
-//	#define			FHD
- #define			QHD
+	#define			FHD
+// #define			QHD
 //	#define			UHD
 
 namespace Client
@@ -66,7 +66,7 @@ using namespace Client;
 
 //#define NO_COLLISTION
 
-//#define DISPLAY_FRAME
+#define DISPLAY_FRAME
 //#define DISPLAY_NAVMESH
 //#define FRAME_LOCK
 
