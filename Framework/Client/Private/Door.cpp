@@ -170,6 +170,8 @@ void CDoor::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 	{
+		Select_UI();
+
 		return;
 	}
 

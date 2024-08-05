@@ -47,8 +47,7 @@ using namespace Client;
 #define ANIM_PROPS_SPOT_SHADOW
 
 #pragma endregion
-
-//#define IMGUI
+#define IMGUI
 	
 //#define MAP_NOTHING
 #define MAP_INTERACT
