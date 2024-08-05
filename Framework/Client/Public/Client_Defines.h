@@ -4,9 +4,9 @@
 #include "GameInstance.h"
 #include "Client_Enumsh.h"
 
-#define			HD_PLUS
+//#define			HD_PLUS
 //	#define			FHD
-// #define			QHD
+ #define			QHD
 //	#define			UHD
 
 namespace Client
@@ -48,7 +48,7 @@ using namespace Client;
 
 #pragma endregion
 
-#define IMGUI
+//#define IMGUI
 	
 //#define MAP_NOTHING
 #define MAP_INTERACT
@@ -66,7 +66,7 @@ using namespace Client;
 
 //#define NO_COLLISTION
 
-#define DISPLAY_FRAME
+//#define DISPLAY_FRAME
 //#define DISPLAY_NAVMESH
 //#define FRAME_LOCK
 
