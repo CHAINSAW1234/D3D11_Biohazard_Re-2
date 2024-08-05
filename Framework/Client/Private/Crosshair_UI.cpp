@@ -45,74 +45,6 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
             m_eGun_Type = (_int)CPlayer::EQUIP::STG;
     }
 
-    if ((_int)CPlayer::EQUIP::HG == m_eGun_Type)
-    {
-        m_vCrosshair_OriginPos = m_fCorsshair_AimPoint = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-        m_vCrosshair_OriginScale = m_pTransformCom->Get_Scaled();
-
-        if (true == m_IsChild)
-        {
-            _float4 vPoint = {};
-
-            /* 부모 찾기 */
-            list<class CGameObject*>* pUiLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
-
-            for (auto& iter : *pUiLayer)
-            {
-                m_pCenterDot = dynamic_cast<CCrosshair_UI*>(iter);
-
-                if (nullptr != m_pCenterDot && m_pCenterDot->m_IsChild == false)
-                {
-                    CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-                    vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
-
-                    break;
-                }
-            }
-
-            // -Crosshair.x
-            if (vPoint.x > m_vCrosshair_OriginPos.x && Zero == m_vCrosshair_OriginPos.y)
-            {
-                m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_LEFT;
-                m_fCorsshair_AimPoint.x = vPoint.x - m_fCrosshair_ControlDistance;
-                m_vCrosshair_OriginPos.y = m_fCorsshair_AimPoint.y = vPoint.y;
-                // NY : 초기화 고정 : 불러올 때 Crosshair 중 하나가 엇나가 있음
-            }
-
-            // +Crosshair.x  
-            else if (vPoint.x < m_vCrosshair_OriginPos.x && Zero == m_vCrosshair_OriginPos.y)
-            {
-                m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_RIGHT;
-                m_fCorsshair_AimPoint.x = vPoint.x + m_fCrosshair_ControlDistance;
-                m_vCrosshair_OriginPos.y = m_fCorsshair_AimPoint.y = vPoint.y;
-            }
-
-            //  +Crosshair.y 
-            else if (vPoint.y > m_vCrosshair_OriginPos.y && Zero == m_vCrosshair_OriginPos.x)
-            {
-                m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_UP;
-                m_fCorsshair_AimPoint.y = vPoint.y - m_fCrosshair_ControlDistance;
-                m_vCrosshair_OriginPos.x = m_fCorsshair_AimPoint.x = vPoint.x;
-            }
-
-            // -Crosshair.y 
-            else //if (vPoint.y > vCrosshair_Trans.y)
-            {
-                m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_DOWN;
-                m_fCorsshair_AimPoint.y = vPoint.y + m_fCrosshair_ControlDistance;
-                m_vCrosshair_OriginPos.x = m_fCorsshair_AimPoint.x = vPoint.x;
-            }
-        }
-
-        /* Point */
-        else if (false == m_IsChild)
-        {
-            /* 만들 때 실수해서 임의로 크기 조정할 거임*/
-            m_pTransformCom->Set_Scaled(10.f, 10.f, 1.f);
-        }
-    }
-
-
     m_pTabWindow = static_cast<CTab_Window*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0));
     
     Find_Player();
@@ -127,6 +59,78 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    if (false == m_isReady)
+    {
+        m_isReady = true;
+
+        if ((_int)CPlayer::EQUIP::HG == m_eGun_Type)
+        {
+            m_vCrosshair_OriginPos = m_fCorsshair_AimPoint = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            m_vCrosshair_OriginScale = m_pTransformCom->Get_Scaled();
+
+            if (true == m_IsChild)
+            {
+                _float4 vPoint = {};
+
+                /* 부모 찾기 */
+                list<class CGameObject*>* pUiLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+                for (auto& iter : *pUiLayer)
+                {
+                    m_pCenterDot = dynamic_cast<CCrosshair_UI*>(iter);
+
+                    if (nullptr != m_pCenterDot && m_pCenterDot->m_IsChild == false)
+                    {
+                        CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+                        vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
+
+                        break;
+                    }
+                }
+
+                // -Crosshair.x
+                if (vPoint.x > m_vCrosshair_OriginPos.x && Zero == m_vCrosshair_OriginPos.y)
+                {
+                    m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_LEFT;
+                    m_fCorsshair_AimPoint.x = vPoint.x - m_fCrosshair_ControlDistance;
+                    m_vCrosshair_OriginPos.y = m_fCorsshair_AimPoint.y = vPoint.y;
+                    // NY : 초기화 고정 : 불러올 때 Crosshair 중 하나가 엇나가 있음
+                }
+
+                // +Crosshair.x  
+                else if (vPoint.x < m_vCrosshair_OriginPos.x && Zero == m_vCrosshair_OriginPos.y)
+                {
+                    m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_RIGHT;
+                    m_fCorsshair_AimPoint.x = vPoint.x + m_fCrosshair_ControlDistance;
+                    m_vCrosshair_OriginPos.y = m_fCorsshair_AimPoint.y = vPoint.y;
+                }
+
+                //  +Crosshair.y 
+                else if (vPoint.y > m_vCrosshair_OriginPos.y && Zero == m_vCrosshair_OriginPos.x)
+                {
+                    m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_UP;
+                    m_fCorsshair_AimPoint.y = vPoint.y - m_fCrosshair_ControlDistance;
+                    m_vCrosshair_OriginPos.x = m_fCorsshair_AimPoint.x = vPoint.x;
+                }
+
+                // -Crosshair.y 
+                else //if (vPoint.y > vCrosshair_Trans.y)
+                {
+                    m_eCrosshair_Type = CROSSHAIR_TYPE::CROSSHAIR_DOWN;
+                    m_fCorsshair_AimPoint.y = vPoint.y + m_fCrosshair_ControlDistance;
+                    m_vCrosshair_OriginPos.x = m_fCorsshair_AimPoint.x = vPoint.x;
+                }
+            }
+
+            /* Point */
+            else if (false == m_IsChild)
+            {
+                /* 만들 때 실수해서 임의로 크기 조정할 거임*/
+                m_pTransformCom->Set_Scaled(10.f, 10.f, 1.f);
+            }
+        }
+
+    }
     /* 예시 코드 : 총이 쏘기 시작했을 때와 쏘지 않았을 때를 받아와야 한다. */
     if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
         m_isAiming = true;

@@ -178,6 +178,14 @@ void CTutorial_UI::Player_First_Interact()
     if (nullptr == pTutorial_TextBox[0] || nullptr == pTutorial_TextBox[1])
         MSG_BOX(TEXT("Tutorial UI에서 생성된 TextBox가 없습니다."));
 
+    pTutorial_TextBox[1]->Set_Position_UI(m_fTextPosition);
+    
+    _float3 pos = pTutorial_TextBox[1]->Get_Position_UI();
+
+    pos.x += 5.f;
+
+    pTutorial_TextBox[1]->Set_Position_UI(pos);
+
     if (true == (*m_pisTutorial_Notify) && false == m_isTutorial_Start)
     {
         switch (*m_eTutorial_Type)
@@ -256,11 +264,7 @@ void CTutorial_UI::Find_TextBox()
         pTutorial_TextBox[1] = pTemp;
     }
 
-    _float3 fPosX = pTutorial_TextBox[1]->Get_Position_UI();
-
-    fPosX.x += 10.f; // 좌표 수정
-
-    pTutorial_TextBox[1]->Set_Position_UI(fPosX);
+    m_fTextPosition = pTutorial_TextBox[1]->Get_Position_UI();
 }
 
 void CTutorial_UI::Tutorial_Start()

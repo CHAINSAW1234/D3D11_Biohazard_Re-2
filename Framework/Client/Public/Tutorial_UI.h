@@ -49,7 +49,7 @@ private :
 	_bool				m_isTutorial[100]			= { false };
 	_bool				m_isStart					= { false };
 	_float				m_fPlayTimer				= {};
-
+	_float3				m_fTextPosition = {};
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
