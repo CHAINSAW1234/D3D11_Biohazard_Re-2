@@ -86,6 +86,8 @@ private :
 
 	class CTab_Window*			m_pTapWindow			= { nullptr };
 	_bool						m_isTab = { false };
+
+	_bool						m_isEx = { false };
 public:
 	static CMini_BigStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

@@ -261,7 +261,7 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
     {
         if(TEXT("½ºÅä¸®") == m_vecTextBoxes.back()->Get_Text())
         {
-            if(m_pGameInstance->Get_KeyState(VK_LBUTTON))
+            if(DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))   
             {
                 m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleInGame.mp3"), CH_TICK_2D, 0.2f);
 

@@ -46,8 +46,6 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
         Find_Player();
 
         Find_MissionVariable();
-
-        // Mission_Text();
     }
 
     else if (true == m_IsChild) /* 부모 찾기 */
@@ -82,8 +80,6 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
             if (nullptr != pParent && false == pParent->m_IsChild)
             {
                 m_pMissionBar = pParent;
-
-               // Safe_AddRef<CMissionBar_UI*>(m_pMissionBar);
                 break;
             }
         }
@@ -106,6 +102,7 @@ void CMissionBar_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION); // 800 300
     if (nullptr == m_pTabWindow)
         return;
 
@@ -371,7 +368,6 @@ void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
 
             if (m_fBlending >= 1.f)
                 m_fBlending = 1.f;
-
         }
 
         else if (m_fMissionArrow_Timer >= 1.f)
@@ -380,7 +376,6 @@ void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
 
             if (m_fBlending <= 0.2f)
                 m_fBlending = 0.2f;
-
         }
     }
 

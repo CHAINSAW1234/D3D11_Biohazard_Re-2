@@ -91,6 +91,7 @@ void CHold_UI::Tick(_float fTimeDelta)
         {
             if (true == m_pParentObj->m_isRender)
                 m_isRender = true;
+
             else if (false == m_pParentObj->m_isRender)
                 m_isRender = false;
 

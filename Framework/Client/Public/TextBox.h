@@ -18,6 +18,7 @@ public:
 		_vector		vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
 		_bool		isUI_Render = { false };
 
+
 	}TextBox_DESC;
 
 private:
@@ -31,6 +32,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	HRESULT Convert_Resolution();
 
 public:
 	void Set_Text(wstring strText){ m_wstrText = strText; }
