@@ -85,9 +85,6 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_UNICON) == m_eMiniType)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState('6'))
-			*m_isMoveStart = true;
-
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
 			if(true == *m_isMoveStart)
@@ -97,35 +94,17 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_WOMAN) == m_eMiniType)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState('7'))
-			*m_isMoveStart = true;
-
 		if (true == *m_isMoveStart)
 			Woman_Statue(fTimeDelta);
 	}
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState('5'))
-			m_isEx = true;
-
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-			if (true == *m_isMoveStart || true == m_isEx)
+			if (true == *m_isMoveStart)
 				Lion_Statue(fTimeDelta);
 		}
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState('9'))
-	{
-		m_isEx = false;
-		/*m_fAdditionalHeight = 0.f;
-		m_fAdditionalHeight_D = 0.f;
-		m_fAdditionalZ = 0.f;
-		m_fZTimer = 0.f;
-		m_fRotationAngle = 0.f;
-		m_isMoveStart = false;
-		m_isMoveEnd = false;*/
 	}
 }
 
@@ -422,7 +401,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 
 		else
 		{
-			if(m_fRotationAngle >= ROTATION)
+			if (m_fRotationAngle >= ROTATION)
 			{
 				if (m_fAdditionalZ >= PUT_Z)
 					m_fAdditionalZ -= 3.5f * fTimeDelta;
@@ -436,8 +415,8 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 
 		if (m_fZTimer >= 0.8f)
 		{
-			m_fAdditionalHeight_D -= 5.f * fTimeDelta;
-			m_fAdditionalHeight += 5.f * fTimeDelta;
+			m_fAdditionalHeight_D += 5.f * fTimeDelta;
+			m_fAdditionalHeight -= 5.f * fTimeDelta;
 		}
 
 		/* Rotation */
@@ -454,7 +433,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 		}
 
 		/* 1. 아래로 내리기 */
-		_matrix			TranslationMatrix1 = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
+		_matrix			TranslationMatrix1 = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight, m_fAdditionalZ) };
 		list<_uint>		ChildJointIndices_1;
 		m_pModelCom->Get_Child_ZointIndices("_00", "_01_end_end_end", ChildJointIndices_1);
 
@@ -464,7 +443,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 		}
 
 		/* 2. 위로 올려야 함 */
-		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, m_fAdditionalHeight, m_fAdditionalZ) };
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(m_fAdditionalHeight_D ,-m_fAdditionalHeight, m_fAdditionalZ) };
 
 		list<_uint> ChildJointIndices_2;
 		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
@@ -474,7 +453,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
 		}
 
-		if (m_fAdditionalHeight >= 9.f)
+		if (m_fAdditionalHeight_D >= 8.f)
 		{
 			m_isMoveEnd = true;
 			*m_isMedalAnim = true;
@@ -651,7 +630,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 		}
 
 		/* 1. 아래로 내리기 */
-		_matrix			TranslationMatrix1 = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ)};
+		_matrix			TranslationMatrix1 = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight, m_fAdditionalZ)};
 		list<_uint>		ChildJointIndices_1;
 		m_pModelCom->Get_Child_ZointIndices("_00", "_01_end_end_end", ChildJointIndices_1);
 
@@ -661,7 +640,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 		}
 
 		/* 2. 위로 올려야 함 */
-		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight , m_fAdditionalHeight, m_fAdditionalZ) };
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(m_fAdditionalHeight_D ,-m_fAdditionalHeight, m_fAdditionalZ) };
 
 		list<_uint> ChildJointIndices_2;
 		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
@@ -671,7 +650,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
 		}
 
-		if (m_fAdditionalHeight >= 9.f)
+		if (m_fAdditionalHeight_D >= 8.f)
 		{
 			m_isMoveEnd = true;
 			*m_isMedalAnim = true;
