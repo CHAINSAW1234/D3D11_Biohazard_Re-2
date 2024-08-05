@@ -81,13 +81,13 @@ void CReaderMachine::Tick(_float fTimeDelta)
 
 	if (m_eMachine_Key_State == CReaderMachine::READERMACHINE_KEY_LIVE)
 	{
-		if (DOWN == m_pGameInstance->Get_KeyState('D'))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RIGHT))
 			m_eKeyInput = KEY_D;
-		else if (DOWN == m_pGameInstance->Get_KeyState('A'))
+		else if (DOWN == m_pGameInstance->Get_KeyState(VK_LEFT))
 			m_eKeyInput = KEY_A;
-		else if (DOWN == m_pGameInstance->Get_KeyState('W'))
+		else if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
 			m_eKeyInput = KEY_W;
-		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
+		else if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
 			m_eKeyInput = KEY_S;
 		else if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
 			m_eKeyInput = KEY_SPACE;

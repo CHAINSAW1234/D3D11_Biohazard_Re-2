@@ -646,7 +646,9 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		}
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(-30.f, 1.f, 0.f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(-150.f, 1.f, 0.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(-30.f, 1.f, 0.f, 1.f))) 
+		|| Activate_Col(Get_Collider_World_Pos(_float4(-150.f, 1.f, 0.f, 1.f))) || m_bCol[INTER_COL_NORMAL][COL_STEP0] || m_bCol[INTER_COL_DOUBLE][COL_STEP0]
+		)
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // 인지?
 		{
@@ -858,7 +860,9 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 
 	if (m_fTime > 2.f)
 	{
-		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bAttack)
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP0])
+			m_fTime = 0.f;
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP0]/* && !m_bAttack*/)
 		{
 			m_fTime = 0.f;
 			m_bActivity = false;
@@ -874,6 +878,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 				m_eOneState = ONEDOOR_STATIC;
 			}
 		}
+
 		//else if(!m_bOnce)
 		//{
 		//	m_fTime = 0.f;
@@ -948,7 +953,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	}
 	else
 	{
-		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		//m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 	}
@@ -982,7 +987,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	}
 
 
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-60.f, 1.f, 0.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-60.f, 1.f, 0.f, 1.f)))|| m_bCol[INTER_COL_NORMAL][COL_STEP0])
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // 인지?
 		{
