@@ -4,9 +4,9 @@
 #include "GameInstance.h"
 #include "Client_Enumsh.h"
 
-//#define			HD_PLUS
+#define			HD_PLUS
 //	#define			FHD
-	#define			QHD
+//	#define			QHD
 //	#define			UHD
 
 namespace Client
@@ -50,8 +50,8 @@ using namespace Client;
 
 //#define IMGUI
 	
-#define MAP_NOTHING
-//#define MAP_INTERACT
+//#define MAP_NOTHING
+#define MAP_INTERACT
 //#define MAP_TEST
 //#define Map_NA
 //#define Map_Ye

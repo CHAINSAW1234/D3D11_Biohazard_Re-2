@@ -56,6 +56,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             if (false == m_IsChild)
             {
                 CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
                 m_pZoomOff = pPlayer->Get_ZoomOff();
             }
 
@@ -74,9 +75,6 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 
                     else
                         m_eRead_type = READ_UI_TYPE::TEXTURE_READ;
-
-                    m_vOriginScaled = m_pTransformCom->Get_Scaled();
-
                 }
 
                 else if (2 == CustomUIDesc->iWhich_Child)
@@ -92,39 +90,10 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         else if (CustomUIDesc->wstrFileName == TEXT("UI_Item_Read_Arrow"))
         {
             m_eRead_type = READ_UI_TYPE::ARROW_READ;
+
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
+
             m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::MAIN_READ, false);
-            CRead_Item_UI* pTexture_UI = Find_ReadUI(READ_UI_TYPE::TEXTURE_READ, true);
-
-            if (nullptr != pTexture_UI)
-            {
-                CTransform* pMain_Trans = static_cast<CTransform*>(pTexture_UI->Get_Component(g_strTransformTag));
-                if (0.f <= m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x)
-                {
-                    m_eRead_Arrow_Type = READ_ARROW_TYPE::RIGHT_ARROW;
-
-                    _float4 vMainTrans = pMain_Trans->Get_State_Float4(CTransform::STATE_POSITION);
-                    _float3 vMainScaled = pMain_Trans->Get_Scaled();
-
-                    vMainTrans.x += (vMainScaled.x + ARROW_DISTANCE);
-                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainTrans);
-                }
-
-                else
-                {
-                    m_eRead_Arrow_Type = READ_ARROW_TYPE::LEFT_ARROW;
-
-                    _float4 vMainTrans = pMain_Trans->Get_State_Float4(CTransform::STATE_POSITION);
-
-                    _float3 vMainScaled = pMain_Trans->Get_Scaled();
-
-                    vMainTrans.x -= (vMainScaled.x - ARROW_DISTANCE);
-
-                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainTrans);
-                }
-            }
-            else
-                MSG_BOX(TEXT("Read Item UI 사용 중임에도 [ Arrow ] 가 설정되지 않았습니다"));
         }
 
         else if (TEXT("UI_ReadUI_ItemType") == CustomUIDesc->wstrFileName)
@@ -169,6 +138,51 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 void CRead_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if (false == m_isReady)
+    {
+        m_isReady = true;
+
+        if(READ_UI_TYPE::ARROW_READ == m_eRead_type)
+        {
+            CRead_Item_UI* pTexture_UI = Find_ReadUI(READ_UI_TYPE::TEXTURE_READ, true);
+
+            if (nullptr != pTexture_UI)
+            {
+                CTransform* pMain_Trans = static_cast<CTransform*>(pTexture_UI->Get_Component(g_strTransformTag));
+                if (0.f <= m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x)
+                {
+                    m_eRead_Arrow_Type = READ_ARROW_TYPE::RIGHT_ARROW;
+
+                    _float4 vMainTrans = pMain_Trans->Get_State_Float4(CTransform::STATE_POSITION);
+                    _float3 vMainScaled = pMain_Trans->Get_Scaled();
+
+                    vMainTrans.x += (vMainScaled.x + ARROW_DISTANCE);
+                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainTrans);
+                }
+
+                else
+                {
+                    m_eRead_Arrow_Type = READ_ARROW_TYPE::LEFT_ARROW;
+
+                    _float4 vMainTrans = pMain_Trans->Get_State_Float4(CTransform::STATE_POSITION);
+
+                    _float3 vMainScaled = pMain_Trans->Get_Scaled();
+
+                    vMainTrans.x -= (vMainScaled.x - ARROW_DISTANCE);
+
+                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainTrans);
+                }
+            }
+            else
+                MSG_BOX(TEXT("Read Item UI 사용 중임에도 [ Arrow ] 가 설정되지 않았습니다"));
+        }
+
+        if (m_eRead_type == READ_UI_TYPE::TEXT_LEFT_READ || m_eRead_type == READ_UI_TYPE::TEXTURE_READ)
+        {
+            m_vOriginScaled = m_pTransformCom->Get_Scaled();
+        }
+    }
 
     if(nullptr == m_pCursor)
     {
@@ -399,7 +413,6 @@ void CRead_Item_UI::Arrow_Read()
                 }
             }
         }
-
         m_isRender = true;
     }
 }
@@ -455,8 +468,6 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
 
     if (false == m_pRead_Supervise->m_isChange)
         return;
-
-    // Render_Destory(false);
 
     if (ITEM_READ_TYPE::OFFICER_NOTE == m_pIntro_UI->m_eBook_Type)
     {
