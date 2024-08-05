@@ -249,15 +249,20 @@ public:
 		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
 	}
-	void										Set_MissionEntrance(_bool _isEntrance)	{ m_isFlod_EntranceDoor = _isEntrance;  }
-	_int*										Get_Hp_Ptr()							{ return &m_iHp; }
+	void										Set_MissionEntrance(_bool _isEntrance)				{ m_isFlod_EntranceDoor = _isEntrance;  }
+	_int*										Get_Hp_Ptr()										{ return &m_iHp; }
 
-	_bool*										Get_Tutorial_Notify()					{ return &m_isTutorial_Notify; }
-	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()						{ return &m_eTutial_Type; }
-	_byte										Get_Player_State()						{ return m_eState; } /* Player 상태 반환 */
-	_bool*										Get_ZoomOff()							{ return &m_isZoomOff;  }
-	_bool*										Get_MissionClear_Ptr()					{ return &m_isMissionClear; }
-	_bool										Get_Request_ChangeEquip()				{ return m_isRequestChangeEquip; }
+	_bool*										Get_Tutorial_Notify()								{ return &m_isTutorial_Notify; }
+	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()									{ return &m_eTutial_Type; }
+	_byte										Get_Player_State()									{ return m_eState; } /* Player 상태 반환 */
+	_bool*										Get_ZoomOff()										{ return &m_isZoomOff;  }
+	_bool*										Get_MissionClear_Ptr()								{ return &m_isMissionClear; }
+	_bool										Get_Request_ChangeEquip()							{ return m_isRequestChangeEquip; }
+	_bool										Get_UsingGimmickCamera()							{ return m_isUseGimmickCamera; }
+	void										Set_UsingGimmickCamera(_bool _using)				{ m_isUseGimmickCamera = _using;  }
+
+	void										Set_CutScene(_bool _cutScene)	{ m_isCutScene = _cutScene; }
+	_bool										Get_CutScene()					{ return m_isCutScene; }
 
 	//////////////////////* For. Fuction *///////////////////
 	void										Player_First_Behavior();
@@ -287,6 +292,8 @@ private:
 	_float										m_fMissionTimer = { 0.f };
 	_bool										m_isReload = { false };
 	_bool										m_MissionCollection[MISSION_TYPE::END_MISSION] = { false };
+	_bool										m_isUseGimmickCamera = { false };
+	_bool										m_isCutScene = { false };
 #pragma
 
 #pragma region 예은 추가 

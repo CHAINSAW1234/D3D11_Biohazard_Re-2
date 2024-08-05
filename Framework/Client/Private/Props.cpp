@@ -65,7 +65,7 @@ HRESULT CProps::Initialize(void* pArg)
 		m_bLocalized = true;
 		m_vLocal_To_World_Pos = m_pModelCom->GetCenterPoint();
 	}
-	if (m_tagPropDesc.strModelComponent.find(TEXT("301_01_403")) != wstring::npos || m_tagPropDesc.strModelComponent.find(TEXT("301_01_402")) != wstring::npos)
+	if (m_tagPropDesc.strModelComponent.find(TEXT("301_01_403")) != wstring::npos || m_tagPropDesc.strModelComponent.find(TEXT("301_01_402")) != wstring::npos|| m_tagPropDesc.strModelComponent.find(TEXT("sm39_159")) != wstring::npos)
 		m_AlwaysRender = true;
 
 	return S_OK;

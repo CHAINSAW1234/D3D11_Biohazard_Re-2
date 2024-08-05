@@ -7,6 +7,9 @@
 
 #include "Call_Center.h"
 
+#include "LayOut_UI.h"
+#include "Player.h"
+
 CCut_Scene::CCut_Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -50,6 +53,14 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 
 	if (true == m_isPlaying)
 	{
+#pragma region 나영
+		m_pLayOut->Set_Typing_LayOut(false, static_cast<_uint>(CLayOut_UI::MENU_HOVER_TYPE::END_MENU));
+
+		CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+		pPlayer->Set_CutScene(true);
+#pragma endregion
+
 		m_pEvent_Camera->Play_MCAM(fTimeDelta);
 
 		if (true == m_pEvent_Camera->Is_All_Finsihed())
@@ -170,6 +181,27 @@ void CCut_Scene::Start()
 	{
 		pProp->Start();
 	}
+
+#pragma region 나영
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pUIList)
+	{
+		CLayOut_UI* pLayOut = dynamic_cast<CLayOut_UI*>(iter);
+
+		if (nullptr != pLayOut)
+		{
+			if (true == pLayOut->Get_IsCheckTyping_Type())
+			{
+				m_pLayOut = pLayOut;
+
+				Safe_AddRef<CLayOut_UI*>(m_pLayOut);
+
+				break;
+			}
+		}
+	}
+#pragma endregion
 }
 
 HRESULT CCut_Scene::SetUp_Animation_Layer()
@@ -227,6 +259,10 @@ void CCut_Scene::Finish_CutScene()
 	eNewDesc.bRender = false;
 
 	m_pGameInstance->Update_Light(TEXT("Light_Flash2"), eNewDesc, 0);
+
+	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+	pPlayer->Set_CutScene(false);
 }
 
 HRESULT CCut_Scene::Add_Actor(const wstring& strPrototypeTag, _uint iActorType, void* pArg)

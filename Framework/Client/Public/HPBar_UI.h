@@ -63,6 +63,7 @@ private : /* HP BAR */
 
 private : /* FONT */
 	_float2						m_fDistance_Font		= {};
+	_float3						m_fFont_Position		= {};
 
 private : /* HP Calc */
 	_int						m_iPrevHP_Type			= { 2 };

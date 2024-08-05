@@ -3,6 +3,7 @@
 #include "Tab_Window.h"
 #include "Camera_Gimmick.h"
 #include "InteractProps.h"
+#include "Player.h"
 
 #define WHITE_COLOR     _float4(1, 1, 1, 1)
 #define ALPHA_ZERO      _float4(0, 0, 0, 0)
@@ -109,6 +110,8 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
 
     m_pLayout_BackGround = static_cast<CLayOut_UI*>(Find_Layout_BackGround());
 
+    Find_Player();
+
     return S_OK;
 }
 
@@ -120,6 +123,13 @@ void CLayOut_UI::Start()
 void CLayOut_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if (nullptr == m_pPlayer)
+    {
+        Find_Player();
+
+        return;
+    }
 
     if (nullptr == m_isGimmickCamera_Layout_Type)
     {
@@ -165,6 +175,7 @@ void CLayOut_UI::Tick(_float fTimeDelta)
     Layout_Key();
 
     Layout_Statue();
+
 }   
 
 void CLayOut_UI::Late_Tick(_float fTimeDelta)
@@ -174,6 +185,19 @@ void CLayOut_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CLayOut_UI::Render()
 {
+    if (true == m_pPlayer->Get_CutScene())
+    {
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(ALPHA_ZERO);
+            }
+        }
+
+        return E_FAIL;
+    }
+
     if (FAILED(__super::Render()))
         return E_FAIL;
 
