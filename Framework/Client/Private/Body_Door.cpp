@@ -61,7 +61,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 		m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-		m_pModelCom->Set_TotalLinearInterpolation(0.2f);
+		m_pModelCom->Set_TotalLinearInterpolation(0.3f);
 
 		/*
 		if (m_eType == DOOR_DOUBLE)

@@ -6,7 +6,7 @@
 
 //#define			HD_PLUS
 //	#define			FHD
-	#define			QHD
+ #define			QHD
 //	#define			UHD
 
 namespace Client
