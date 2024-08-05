@@ -81,6 +81,12 @@ void CSelector_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CSelector_UI::Render()
 {
+    if (true == m_pPlayer->Get_CutScene())
+        return E_FAIL;
+
+    if(true == m_pPlayer->Get_UsingGimmickCamera())
+        return E_FAIL;
+
     if (false == *m_pTab_Window->Get_MainRender_Ptr())
         return E_FAIL;
 
