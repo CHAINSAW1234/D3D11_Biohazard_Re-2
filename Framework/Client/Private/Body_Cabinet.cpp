@@ -91,7 +91,7 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	case CCabinet::CABINET_OPEN:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-
+		
 		if (m_pPx_Collider && m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR])
 		{
 			auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
@@ -99,7 +99,7 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 			XMStoreFloat4x4(&ResultMat, Combined);
 			//m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
 		}
-		if (m_pModelCom->isFinished(0)&&m_uCabinetType==CCabinet::TYPE_ZOMBIE)
+		if (m_pModelCom->isFinished(0)/*&&m_uCabinetType==CCabinet::TYPE_ZOMBIE*/)
 			*m_pState = CCabinet::CABINET_OPENED;
 		break;
 	}
@@ -421,7 +421,7 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 		m_pModelCom->Hide_Mesh(strMeshTag, false);
 	}
 
-	//m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+
 
 	return S_OK;
 }

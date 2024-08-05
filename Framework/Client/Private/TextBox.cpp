@@ -78,6 +78,30 @@ HRESULT CTextBox::Render()
 	return S_OK;
 }
 
+HRESULT CTextBox::Convert_Resolution()
+{
+	_float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;
+	_float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
+
+	_float4 originalPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 originalScale = m_pTransformCom->Get_Scaled();
+
+	_float newPosX = originalPos.x * widthRatio;
+	_float newPosY = originalPos.y * heightRatio;
+
+	_float newWidth = originalScale.x * widthRatio;
+	_float newHeight = originalScale.y * heightRatio;
+
+	_float4 newPos = originalPos;
+	newPos.x = newPosX;
+	newPos.y = newPosY;
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, newPos);
+	m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z); // Z축 크기는 기존 값 유지
+
+	return S_OK;
+}
+
 CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
 {
 	TextBox_DESC TextBoxDesc = {};

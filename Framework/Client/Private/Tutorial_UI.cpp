@@ -36,17 +36,6 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
             m_pTutorial_Supervise = this;
     }
 
-    /* 1. Font */
-    if (!m_vecTextBoxes.empty())
-    {
-        m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
-
-        m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
-
-        m_Origin_TextPosition.x = m_vecTextBoxes.back()->GetPosition().x;
-        m_Origin_TextPosition.y = m_vecTextBoxes.back()->GetPosition().y;
-    }
-
     /* 2. Parent */
     if(false == m_IsChild)
     {
@@ -71,6 +60,22 @@ void CTutorial_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
     
+    if(false == m_isReady)
+    {
+        m_isReady = true;
+
+        /* 1. Font */
+        if (!m_vecTextBoxes.empty())
+        {
+            m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
+
+            m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
+
+            m_Origin_TextPosition.x = m_vecTextBoxes.back()->GetPosition().x;
+            m_Origin_TextPosition.y = m_vecTextBoxes.back()->GetPosition().y;
+        }
+    }
+
     if (false == m_IsChild)
     {
         Find_TextBox();
@@ -81,6 +86,7 @@ void CTutorial_UI::Tick(_float fTimeDelta)
     {
         if (true == m_pTutorial_Supervise->m_isRender)
             m_isRender = true;
+
         else if (false == m_pTutorial_Supervise->m_isRender)
             m_isRender = false;
     }
@@ -90,7 +96,6 @@ void CTutorial_UI::Tick(_float fTimeDelta)
     Tutorial_Start();
 
     Operation_Tutorial(fTimeDelta);
-
 }
 
 void CTutorial_UI::Late_Tick(_float fTimeDelta)

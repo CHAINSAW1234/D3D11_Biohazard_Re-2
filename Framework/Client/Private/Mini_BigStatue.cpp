@@ -85,6 +85,9 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_UNICON) == m_eMiniType)
 	{
+		if (DOWN == m_pGameInstance->Get_KeyState('6'))
+			*m_isMoveStart = true;
+
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
 			if(true == *m_isMoveStart)
@@ -94,17 +97,35 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_WOMAN) == m_eMiniType)
 	{
+		if (DOWN == m_pGameInstance->Get_KeyState('7'))
+			*m_isMoveStart = true;
+
 		if (true == *m_isMoveStart)
 			Woman_Statue(fTimeDelta);
 	}
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
 	{
+		if (DOWN == m_pGameInstance->Get_KeyState('5'))
+			m_isEx = true;
+
 		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
 		{
-			if (true == *m_isMoveStart)
+			if (true == *m_isMoveStart || true == m_isEx)
 				Lion_Statue(fTimeDelta);
 		}
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState('9'))
+	{
+		m_isEx = false;
+		/*m_fAdditionalHeight = 0.f;
+		m_fAdditionalHeight_D = 0.f;
+		m_fAdditionalZ = 0.f;
+		m_fZTimer = 0.f;
+		m_fRotationAngle = 0.f;
+		m_isMoveStart = false;
+		m_isMoveEnd = false;*/
 	}
 }
 
@@ -612,8 +633,8 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 
 		if (m_fZTimer >= 0.8f)
 		{
-			m_fAdditionalHeight_D -= 5.f * fTimeDelta;
-			m_fAdditionalHeight += 5.f * fTimeDelta;
+			m_fAdditionalHeight_D += 5.f * fTimeDelta;
+			m_fAdditionalHeight -= 5.f * fTimeDelta;
 		}
 
 		/* Rotation */

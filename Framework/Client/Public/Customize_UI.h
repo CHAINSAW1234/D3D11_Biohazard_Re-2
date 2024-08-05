@@ -118,6 +118,7 @@ protected :
 	HRESULT Bind_ShaderResources();
 	HRESULT Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag);
 	virtual HRESULT Change_Tool() = 0;
+	HRESULT	Convert_Resolution();
 
 protected :
 	/* Frame */
@@ -494,6 +495,8 @@ protected :
 	_bool						m_isLoop = { false };
 	_bool						m_isLoopStop = { false };
 	_bool						m_ReStart = { false };
+	_bool						m_isResolution = { false };
+
 #pragma endregion
 
 	_bool						m_isMap = { false };
@@ -532,6 +535,8 @@ protected : /* Client*/
 	_bool						m_isLight = {};
 
 	_bool						m_isKeepPlay = {};
+
+	_bool						m_isReady = { false };
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -47,9 +47,6 @@ private:
 	_bool						m_bVisible = { false };
 	_bool						m_AlwaysRender = { false };
 	PROPS_DESC 					m_tagPropDesc ={};
-
-	list<_uint>					m_NonHideIndices;
-
 private:
 	HRESULT						Add_Components();
 	HRESULT						Initialize_Model();

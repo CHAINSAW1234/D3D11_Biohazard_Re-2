@@ -47,16 +47,6 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
-#pragma region GPU 가속 설정 - RigidBody
-	//PxCudaContextManagerDesc cudaContextManagerDesc;
-	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc, PxGetProfilerCallback());
-
-	//sceneDesc.cudaContextManager = m_CudaContextManager;
-
-	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
-	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
-#pragma endregion
-
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
 	m_FilterCallBack = new CFilterCallBack();
@@ -1366,7 +1356,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 				if (bBigAttack)
 				{
-					if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 15)
+					if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 100)
 					{
 						/*Ragdoll을 구동하려면 살려야 함.*/
 						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
@@ -1376,7 +1366,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 				}
 				else
 				{
-					if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 15)
+					if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 30)
 					{
 						/*Ragdoll을 구동하려면 살려야 함.*/
 						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);

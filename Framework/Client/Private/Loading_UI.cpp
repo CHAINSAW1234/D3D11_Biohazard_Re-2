@@ -67,28 +67,6 @@ HRESULT CLoading_UI::Initialize(void* pArg)
     /* 2. 조건 */
     if (LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI == m_eLoadingType)
     {
-        m_vOrigin_Position = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-        /* 목표 위치 잡기 */
-        for (auto& iter : *pUIList)
-        {
-            CLoading_UI* pBody_UI = dynamic_cast<CLoading_UI*>(iter);
-
-            if (nullptr != pBody_UI)
-            {
-                if (LOADING_UI_TYPE::TYPING_BODY_LOADING_UI == pBody_UI->m_eLoadingType)
-                {
-                    CTransform* pBodyTrans = static_cast<CTransform*>(pBody_UI->Get_Component(g_strTransformTag));
-
-                    m_fBody_Position = pBodyTrans->Get_State_Float4(CTransform::STATE_POSITION);
-
-                    break;
-                }
-            }
-        }
-
         /* 텍스트 */
         if (!m_vecTextBoxes.empty())
         {
@@ -125,6 +103,36 @@ void CLoading_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
   
+    if(false == m_isReady)
+    {
+        m_isReady = true;
+
+        if (LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI == m_eLoadingType)
+        {
+            m_vOrigin_Position = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+            list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+            /* 목표 위치 잡기 */
+            for (auto& iter : *pUIList)
+            {
+                CLoading_UI* pBody_UI = dynamic_cast<CLoading_UI*>(iter);
+
+                if (nullptr != pBody_UI)
+                {
+                    if (LOADING_UI_TYPE::TYPING_BODY_LOADING_UI == pBody_UI->m_eLoadingType)
+                    {
+                        CTransform* pBodyTrans = static_cast<CTransform*>(pBody_UI->Get_Component(g_strTransformTag));
+
+                        m_fBody_Position = pBodyTrans->Get_State_Float4(CTransform::STATE_POSITION);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     Operate_Typing(fTimeDelta);
 
     Operate_Ending(fTimeDelta);

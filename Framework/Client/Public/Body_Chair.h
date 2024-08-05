@@ -39,7 +39,6 @@ public:
 	//virtual void					Get_SpecialBone_Rotation() override;
 private:
 	_ubyte							m_eType = { 0 };
-	list<_uint>					m_NonHideIndices;
 public:
 	static CBody_Chair* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
