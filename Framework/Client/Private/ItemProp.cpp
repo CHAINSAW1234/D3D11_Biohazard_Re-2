@@ -65,7 +65,10 @@ void CItemProp::Tick(_float fTimeDelta)
 	}
 
 	if (!m_bVisible)
+	{
+
 		return;
+	}
 //
 //#ifdef _DEBUG
 //#ifdef UI_POS
