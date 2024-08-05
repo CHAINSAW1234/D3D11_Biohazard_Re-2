@@ -110,18 +110,6 @@ HRESULT CTitle_UI::Initialize(void* pArg)
                     m_isGameStart_Text = true;
                     pText->Set_FontColor(ALPHA_ZERO);
                 }
-
-                if (true == m_IsChild) 
-                {
-                    m_vOriginTextColor = pText->Get_FontColor();
-
-                    pText->Set_FontColor(ALPHA_ZERO);
-
-                    /*Position 저장 */
-                    CTransform* pTextTrans = static_cast<CTransform*>(pText->Get_Component(g_strTransformTag));
-
-                    m_vOriginOption_Pos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
-                }
             }
         }
     }
@@ -140,6 +128,34 @@ HRESULT CTitle_UI::Initialize(void* pArg)
 void CTitle_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if(false == m_isReady)
+    {
+        m_isReady = true;
+
+        if (static_cast<TITLE_TYPE>(TITLE_TYPE::MAIN_TITLE) == m_eTitleType)
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                CTextBox* pText = dynamic_cast<CTextBox*>(iter);
+
+                if (nullptr != pText)
+                {
+                    if (true == m_IsChild)
+                    {
+                        m_vOriginTextColor = pText->Get_FontColor();
+
+                        pText->Set_FontColor(ALPHA_ZERO);
+
+                        /*Position 저장 */
+                        CTransform* pTextTrans = static_cast<CTransform*>(pText->Get_Component(g_strTransformTag));
+
+                        m_vOriginOption_Pos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                    }
+                }
+            }
+        }
+    }
 
     if(false == m_isSound)
     {

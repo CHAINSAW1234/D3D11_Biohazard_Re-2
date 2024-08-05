@@ -105,6 +105,20 @@ void CHPBar_UI::Tick(_float fTimeDelta)
   
     if (false == m_IsChild)
         Operation_HPBar(fTimeDelta);
+
+    if (!m_vecTextBoxes.empty())
+    {
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_Position_UI(m_fFont_Position);
+            _float3 pos = iter->Get_Position_UI();
+
+            pos.x -= 600.f;
+            pos.y -= 250.f;
+
+            iter->Set_Position_UI(pos);
+        }
+    }
 }
 
 void CHPBar_UI::Late_Tick(_float fTimeDelta)
@@ -136,6 +150,13 @@ void CHPBar_UI::Start()
         if (nullptr == m_pDamage_Scene)
             MSG_BOX(TEXT("HPBar_UI() : Damage UI를 찾을 수 없습니다. "));
         // 생성 자체를 안 해줬을 가능성이 큼
+    }
+
+    if (!m_vecTextBoxes.empty())
+    {
+        _float3 vFontPos = m_vecTextBoxes.back()->Get_Position_UI();
+
+        m_fFont_Position = _float3(vFontPos.x, vFontPos.y, vFontPos.z);
     }
 }
 
