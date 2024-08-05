@@ -473,6 +473,11 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	Player_First_Behavior();
 
 	Player_Mission_Timer(fTimeDelta);
+
+	/*if (DOWN == m_pGameInstance->Get_KeyState('Z'))
+	{
+		Set_Tutorial_Start(UI_TUTORIAL_TYPE::TUTORIAL_AIM);
+	}*/
 #pragma endregion 
 
 #ifdef _DEBUG

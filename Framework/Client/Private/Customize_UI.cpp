@@ -112,13 +112,14 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_isLoad)
+	if (true == m_isLoad)
 	{
 		m_isLoad = false;
+
 		Non_Frame();
 	}
 
-	if (m_isPlay)
+	if (true == m_isPlay)
 		Color_Frame(fTimeDelta);
 
 	else if(false == m_isTimerControl)
@@ -146,6 +147,13 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 			m_fMaskTimer += fTimeDelta;
 		else
 			m_fMaskTimer = 0.f;
+	}
+
+	if (false == m_isResolution)
+	{
+		m_isResolution = true;
+
+		Convert_Resolution();
 	}
 
 	for (auto& iter : m_vecTextBoxes)
@@ -503,7 +511,9 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 	if (TEXT("Com_DefaultTexture") == strComponentTag)
 	{
 		Safe_Release(m_pTextureCom);
+
 		m_pTextureCom = nullptr;
+		
 		if (FAILED(__super::Change_Component(g_Level, strPrototypeTag, strComponentTag, (CComponent**)&m_pTextureCom)))
 		{
 			return E_FAIL;
@@ -513,12 +523,37 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 	return S_OK;
 }
 
+HRESULT CCustomize_UI::Convert_Resolution()
+{
+	_float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;		
+	_float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
+
+	_float4 originalPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 originalScale = m_pTransformCom->Get_Scaled(); 
+
+	_float newPosX = originalPos.x * widthRatio; 
+	_float newPosY = originalPos.y * heightRatio; 
+
+	_float newWidth = originalScale.x * widthRatio; 
+	_float newHeight = originalScale.y * heightRatio; 
+
+	_float4 newPos = originalPos;
+	newPos.x = newPosX;
+	newPos.y = newPosY;
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, newPos);
+	m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z); // Z축 크기는 기존 값 유지
+
+	return S_OK;
+}
+
 void CCustomize_UI::Non_Frame(_uint i)
 {
 	/* ▶ 보간이 필요하지 않다면
-		=> 정확하게는 Client가 직접 Play를 지정해주기 위해서,
-		Shader에서 실시간으로 변환시켜줄 변수 = 내가 처음 지정했던 변수
-		를 넣어주는 과정임 */
+	=> 정확하게는 Client가 직접 Play를 지정해주기 위해서,
+	Shader에서 실시간으로 변환시켜줄 변수 = 내가 처음 지정했던 변수
+	를 넣어주는 과정임 */
+
 	m_vCurrentColor = m_vColor[i].vColor;
 	m_fBlending = m_vColor[i].fBlender_Value;
 	m_fSplit = m_vColor[i].fSplit;
@@ -539,7 +574,7 @@ void CCustomize_UI::Non_Frame(_uint i)
 	m_fMaskControl = m_Mask[i].fMaskControl;
 
 	/* World Matrix Change */
-	m_pTransformCom->Set_WorldMatrix(m_SavePos[i]);
+	//m_pTransformCom->Set_WorldMatrix(m_SavePos[i]);
 
 }
 
@@ -652,11 +687,11 @@ void CCustomize_UI::Frame_Defalut(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = start * (1 - fRatio) + end * fRatio;
 
 		/* World Matrix Change */
-		_matrix saveMatrix = {};
-		_float4x4 myFloat4x4 = {};
-		saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[0]), fRatio);
-		XMStoreFloat4x4(&myFloat4x4, saveMatrix);
-		m_pTransformCom->Set_WorldMatrix(myFloat4x4);
+		//_matrix saveMatrix = {};
+		//_float4x4 myFloat4x4 = {};
+		//saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[0]), fRatio);
+		//XMStoreFloat4x4(&myFloat4x4, saveMatrix);
+		//m_pTransformCom->Set_WorldMatrix(myFloat4x4);
 	}
 
 	else
@@ -702,11 +737,11 @@ void CCustomize_UI::Frame_Defalut(_float fRatio, _float fColorRatio)
 
 		/* Mask */
 		/* World Matrix Change */
-		_matrix saveMatrix = {};
-		_float4x4 myFloat4x4 = {};
-		saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
-		XMStoreFloat4x4(&myFloat4x4, saveMatrix);
-		m_pTransformCom->Set_WorldMatrix(myFloat4x4);
+		//_matrix saveMatrix = {};
+		//_float4x4 myFloat4x4 = {};
+		//saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
+		//XMStoreFloat4x4(&myFloat4x4, saveMatrix);
+		//m_pTransformCom->Set_WorldMatrix(myFloat4x4);
 	}
 
 	m_isColorChange = m_vColor[m_iColorCurNum].isColorChange;
@@ -739,7 +774,7 @@ void CCustomize_UI::Frame_Change(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = m_vColor[m_iColorMaxNum].fPushSpeed.y;
 		m_fBlending = m_vColor[m_iColorMaxNum].fBlender_Value;
 		/* World Matrix Change */
-		m_pTransformCom->Set_WorldMatrix(m_SavePos[m_iColorMaxNum]);
+		//m_pTransformCom->Set_WorldMatrix(m_SavePos[m_iColorMaxNum]);
 
 		m_isColorChange = m_vColor[m_iColorMaxNum].isColorChange;
 		m_isAlphaChange = m_vColor[m_iColorMaxNum].isAlphaChange;
@@ -787,11 +822,11 @@ void CCustomize_UI::Frame_Change(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = start * (1 - fRatio) + end * fRatio;
 
 		/* World Matrix Change */
-		_matrix saveMatrix = {};
-		_float4x4 myFloat4x4 = {};
-		saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
-		XMStoreFloat4x4(&myFloat4x4, saveMatrix);
-		m_pTransformCom->Set_WorldMatrix(myFloat4x4);
+		//_matrix saveMatrix = {};
+		//_float4x4 myFloat4x4 = {};
+		//saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
+		//XMStoreFloat4x4(&myFloat4x4, saveMatrix);
+		//m_pTransformCom->Set_WorldMatrix(myFloat4x4);
 
 		m_isColorChange = m_vColor[m_iColorCurNum].isColorChange;
 		m_isAlphaChange = m_vColor[m_iColorCurNum].isAlphaChange;
