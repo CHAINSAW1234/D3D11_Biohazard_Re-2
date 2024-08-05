@@ -43,7 +43,11 @@ _bool CExecute_PreTask_Zombie::Execute(_float fTimeDelta)
 		CStun_Zombie*			pTaskStun = { dynamic_cast<CStun_Zombie*>(m_pPreTaskNode) };
 		if (nullptr != pTaskStun)
 		{
-			pTaskStun->Reset_Entry();
+			_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
+			if (0 == iRandom)
+			{
+				pTaskStun->Reset_Entry();
+			}
 		}
 	}
 

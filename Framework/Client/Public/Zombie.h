@@ -67,7 +67,7 @@ public:
 	enum class LOST_STATE_L_ARM { _END };												//	소분류
 	enum class LOST_STATE_R_ARM { _END };												//	소분류
 
-	enum class USE_STAMINA { _BITE, _STAND_UP, _TURN_OVER, _END };
+	enum class USE_STAMINA { _HOLD, _STAND_UP, _TURN_OVER, _END };
 
 private:
 	CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

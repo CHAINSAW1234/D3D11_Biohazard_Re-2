@@ -47,6 +47,8 @@ public:
 		_float				fStaminaChargingPerSec = { 0.f };
 		_float				fMaxStamina = { 0.f };
 
+		_float				fPivotTurnCoolDown = { 0.f };
+
 		_float				fViewAngle = { 0.f };
 		_float				fMaxMoveAngle = { 0.f };			//	이 범위 이내면 무브 프론트 아니면 피벗 턴
 		_float				fAttack = { 0.f };

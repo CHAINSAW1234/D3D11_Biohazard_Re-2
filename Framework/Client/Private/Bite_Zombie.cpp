@@ -614,10 +614,7 @@ _bool CBite_Zombie::Is_Can_Start_Bite()
 		return false;
 
 	if (false == pMonster_Status->fBiteRange >= fDistanceToPlayer)
-		return false;
-
-	if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_BITE))
-		return false;
+		return false;	
 
 	return true;
 }

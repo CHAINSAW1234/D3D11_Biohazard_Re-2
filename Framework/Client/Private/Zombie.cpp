@@ -986,7 +986,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_Interact_Window = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_OutDoorCheck->Insert_Child_Node(pSelectorNode_Interact_Window);
 
-	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_WindowTrigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_WINDOW, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STARARIGHT) };
+	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_WindowTrigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_WINDOW, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STRAIGHT) };
 	pDeco_Is_Collision_WindowTrigger->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Interact_Window->Insert_Decorator_Node(pDeco_Is_Collision_WindowTrigger);
 
@@ -1055,7 +1055,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 //	pTask_Rub_Door->SetBlackBoard(m_pBlackBoard);
 //	pSelectorNode_StartSetUp->Insert_Child_Node(pTask_Rub_Door);
 //
-//	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STARARIGHT) };
+//	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STRAIGHT) };
 //	pDeco_Is_Collision_Door_Trigger->SetBlackBoard(m_pBlackBoard);
 //	pTask_Rub_Door->Insert_Decorator_Node(pDeco_Is_Collision_Door_Trigger);
 //
@@ -1119,7 +1119,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_Interact_Door = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelector_Move_To_Door_Interact_Door->Insert_Child_Node(pSelectorNode_Interact_Door);
 
-	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STARARIGHT) };
+	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STRAIGHT) };
 	pDeco_Is_Collision_Door_Trigger->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Interact_Door->Insert_Decorator_Node(pDeco_Is_Collision_Door_Trigger);
 
@@ -1568,6 +1568,8 @@ HRESULT CZombie::Initialize_Status()
 	m_pStatus->fStamina = STATUS_ZOMBIE_STAMINA;
 	m_pStatus->fMaxStamina = STATUS_ZOMBIE_STAMINA_MAX;
 	m_pStatus->fStaminaChargingPerSec = STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC;
+
+	m_pStatus->fPivotTurnCoolDown = STATUS_ZOMBIE_PIVOT_TURN_COOL_DOWN;
 
 	return S_OK;
 }
@@ -2840,7 +2842,7 @@ HRESULT CZombie::Initialize_PartModels()
 _bool CZombie::Is_Enough_Stamina(USE_STAMINA eAction)
 {
 	_bool		isEnough = { false };
-	if (USE_STAMINA::_BITE == eAction)
+	if (USE_STAMINA::_HOLD == eAction)
 	{
 		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_BITE;
 	}
@@ -2863,7 +2865,7 @@ _bool CZombie::Use_Stamina(USE_STAMINA eAction)
 	if (false == Is_Enough_Stamina(eAction))
 		return false;
 
-	if (USE_STAMINA::_BITE == eAction)
+	if (USE_STAMINA::_HOLD == eAction)
 	{
 		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_BITE;
 	}

@@ -114,12 +114,13 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 			_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToTarget), XMVector3Normalize(vLook))) };
 			_float			fAngle = { acosf(fDot) };
 
-			if (fAngle > XMConvertToRadians(40.f))
+			if (fAngle > XMConvertToRadians(60.f))
 				return false;
 
 			Safe_Release(m_pTargetObject);
 			m_pTargetObject = pTarget_Door;
 			Safe_AddRef(m_pTargetObject);
+			m_isIncludeRotation = true;
 		}
 
 		else
@@ -145,7 +146,6 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 				return false;
 
 			Safe_Release(m_pTargetObject);
-
 			m_pTargetObject = m_pBlackBoard->Get_Player();
 			Safe_AddRef(m_pTargetObject);
 			m_isIncludeRotation = true;

@@ -88,6 +88,8 @@ _bool CBite_Lost_Zombie::Execute(_float fTimeDelta)
 		else
 			return false;
 
+		if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_HOLD))
+			return false;
 
 		Change_Animation();
 	}

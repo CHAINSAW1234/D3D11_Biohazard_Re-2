@@ -9,7 +9,7 @@ class CIs_Collision_Prop_Zombie : public CDecorator_Node
 {
 public:
 	enum class COLL_PROP_TYPE { _WINDOW, _DOOR, _END };
-	enum class RETURN_TYPE { _STARARIGHT, _REVERSE, _END };
+	enum class RETURN_TYPE { _STRAIGHT, _REVERSE, _END };
 
 private:
 	CIs_Collision_Prop_Zombie();

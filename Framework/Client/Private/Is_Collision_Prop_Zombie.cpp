@@ -61,7 +61,7 @@ _bool CIs_Collision_Prop_Zombie::Condition_Check()
 
 	_bool						isCollision = { pMyCollider->Intersect(pPropsCollider) };
 
-	if (RETURN_TYPE::_STARARIGHT == m_eReturnType)
+	if (RETURN_TYPE::_STRAIGHT == m_eReturnType)
 		return isCollision;
 
 	else if (RETURN_TYPE::_REVERSE == m_eReturnType)

@@ -40,6 +40,8 @@ private:
 	_bool							m_isStart = { false };
 
 	_float							m_fMaxAngle = { 0.f };
+	_float							m_fPreAngle = { 0.f };
+	_float							m_fRotatePerSec = { 0.f };
 
 public:
 	static CTurn_Spine_Head_Zombie* Create(void* pArg = nullptr);

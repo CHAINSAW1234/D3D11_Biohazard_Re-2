@@ -45,7 +45,7 @@ _bool CPivot_Turn_Zombie::Execute(_float fTimeDelta)
 
 	if (Check_Permition_To_Execute() == false)
 		return false;
-#pragma endregion
+#pragma endregion	
 
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	_bool					isEntry = { eMonsterState != MST_TURN };
@@ -57,6 +57,16 @@ _bool CPivot_Turn_Zombie::Execute(_float fTimeDelta)
 
 		if (false == m_pBlackBoard->Is_LookTarget())
 			return false;
+
+		CMonster::MONSTER_STATUS* pStatus = { m_pBlackBoard->Get_AI()->Get_Status_Ptr() };
+		if (nullptr == pStatus)
+			return false;
+
+		if (pStatus->fPivotTurnCoolDown > 0.f)
+			return false;
+
+		else
+			pStatus->fPivotTurnCoolDown = STATUS_ZOMBIE_PIVOT_TURN_COOL_DOWN;
 
 		Change_Animation(fTimeDelta);
 	}

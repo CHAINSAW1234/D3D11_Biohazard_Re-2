@@ -110,6 +110,9 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 
 		else
 		{
+			if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_HOLD))
+				return false;
+
 			Change_Animation();	
 			pStatus->fAccHoldTime = 0.f;
 		}

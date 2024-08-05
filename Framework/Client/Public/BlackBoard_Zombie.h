@@ -63,6 +63,7 @@ private:
 	void							Update_Status(_float fTimeDelta);
 
 	void							Update_Status_Stamina(_float fTimeDelta);
+	void							Update_Status_CoolDowns(_float fTimeDelta);
 
 	void							Update_New_Part_Break();
 

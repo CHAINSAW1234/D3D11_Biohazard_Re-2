@@ -381,6 +381,7 @@ CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Door_CustomCollider()
 void CBlackBoard_Zombie::Update_Status(_float fTimeDelta)
 {
 	Update_Status_Stamina(fTimeDelta);
+	Update_Status_CoolDowns(fTimeDelta);
 }
 
 void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
@@ -391,6 +392,13 @@ void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
 
 	if (pMonsterStatus->fStamina > pMonsterStatus->fMaxStamina)
 		pMonsterStatus->fStamina = pMonsterStatus->fMaxStamina;
+}
+
+void CBlackBoard_Zombie::Update_Status_CoolDowns(_float fTimeDelta)
+{
+	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
+	pMonsterStatus->fPivotTurnCoolDown -= fTimeDelta;
 }
 
 void CBlackBoard_Zombie::Update_New_Part_Break()

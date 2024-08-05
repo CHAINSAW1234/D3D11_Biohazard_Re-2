@@ -18,6 +18,7 @@ CTurn_Spine_Head_Zombie::CTurn_Spine_Head_Zombie(const CTurn_Spine_Head_Zombie& 
 HRESULT CTurn_Spine_Head_Zombie::Initialize(void* pArg)
 {
 	m_isStart = true;
+	m_fRotatePerSec = XMConvertToRadians(90.f);
 
 	return S_OK;
 }
@@ -57,9 +58,12 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
-		m_fMaxAngle -= XMConvertToRadians(30.f) * fTimeDelta;
+		m_fMaxAngle -= XMConvertToRadians(90.f) * fTimeDelta;
 		if (m_fMaxAngle < 0.f)
-			m_fMaxAngle = 0.f;
+		{
+			m_fMaxAngle = XMConvertToRadians(0.f);
+			m_fPreAngle = XMConvertToRadians(0.f);
+		}
 	}
 
 	if (true == m_isStart)
@@ -99,6 +103,7 @@ void CTurn_Spine_Head_Zombie::Set_Spine_To_Head_AdditionalMatrices(_float fTimeD
 
 	_vector				vDirectionToPlayer = { XMVector3Normalize(vPlayerPosition - vZombiePosition) };
 	_vector				vDirectionToPlayerLocal = { XMVector3TransformNormal(vDirectionToPlayer, ZombieWorldMatrixInv) };
+	vDirectionToPlayerLocal = XMVectorSetY(vDirectionToPlayerLocal, 0.f);
 
 	_vector				vCross = { XMVector3Cross(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToPlayerLocal)) };
 	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToPlayerLocal)))};
@@ -106,10 +111,33 @@ void CTurn_Spine_Head_Zombie::Set_Spine_To_Head_AdditionalMatrices(_float fTimeD
 	if (fDot >= 0.999f)
 		return;
 
-	//	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f) * fTimeDelta) };
-	_float				fAngle = { fminf(acosf(fDot), m_fMaxAngle) };
+	//	_float				fTargetAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f) * fTimeDelta) };
+	_float				fTargetAngle = { fminf(acosf(fDot), m_fMaxAngle) };
 
-	_vector				vTotalRotateQuaternionLocal = { XMQuaternionRotationAxis(XMVector3Normalize(vCross), fAngle) };
+	if (XMVectorGetY(vCross) < 0.f)
+	{
+		vCross = XMVectorSetY(vCross, XMVectorGetY(vCross) * -1.f);
+		fTargetAngle = fTargetAngle * -1.f;
+	}
+	_float				fResultAngle = { 0.f };
+
+	if (m_fPreAngle > fTargetAngle)
+	{
+		fResultAngle = m_fPreAngle - (m_fRotatePerSec * fTimeDelta);
+		if (fResultAngle < fTargetAngle)
+			fResultAngle = fTargetAngle;
+	}
+
+	else
+	{
+		fResultAngle = m_fPreAngle + (m_fRotatePerSec * fTimeDelta);
+		if (fResultAngle > fTargetAngle)
+			fResultAngle = fTargetAngle;
+	}
+
+	m_fPreAngle = fResultAngle;
+
+	_vector				vTotalRotateQuaternionLocal = { XMQuaternionRotationAxis(XMVector3Normalize(vCross), fResultAngle) };
 
 	list<_uint>			ChildJointIndices;
 	pBody_Model->Get_Child_ZointIndices(m_strSpineBoneTag, m_strHeadBoneTag, ChildJointIndices);
