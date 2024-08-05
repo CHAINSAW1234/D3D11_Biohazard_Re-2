@@ -153,10 +153,10 @@
 /* Interact */
 #define ZOMBIE_NUM_SOUND_KNOCK_WINDOW					6		
 #define ZOMBIE_NUM_SOUND_BREAK_WINDOW					0		//	미설정 => 윈도우 자체에서 재생
-#define ZOMBIE_NUM_SOUND_KNOCK_DOOR						4		
+#define ZOMBIE_NUM_SOUND_KNOCK_DOOR						2		
 #define ZOMBIE_NUM_SOUND_OPEN_DOOR						7		
 
-#define ZOMBIE_VOLUME_INTERACT							0.6f	//	미설정
+#define ZOMBIE_VOLUME_INTERACT							1.f	//	미설정
 
 #pragma endregion
 
