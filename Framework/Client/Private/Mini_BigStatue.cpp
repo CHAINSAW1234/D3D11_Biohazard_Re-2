@@ -391,7 +391,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 {
 	vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
 
-	if(false == m_isMoveEnd)
+	if (false == m_isMoveEnd)
 	{
 		/* 1. 처음에 Z 축으로 들어감*/
 		if (m_fAdditionalZ <= PUT_Z)
@@ -478,7 +478,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 		}
 
 
-		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
+		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight, m_fAdditionalZ - 0.5f) };
 
 		list<_uint> ChildJointIndices_1;
 		// root / RootNode 위치도 함께 흘러 내림
@@ -488,7 +488,7 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix);
 		}
 
-		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, m_fAdditionalHeight, m_fAdditionalZ) };
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, -m_fAdditionalHeight, m_fAdditionalZ - 0.5f) };
 
 		list<_uint> ChildJointIndices_2;
 		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
@@ -497,19 +497,6 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 		{
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
 		}
-
-		
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState('K'))
-	{
-		m_fAdditionalHeight = 0.f;
-		m_fAdditionalHeight_D = 0.f;
-		m_fAdditionalZ = 0.f;
-		m_fZTimer = 0.f;
-		m_fRotationAngle = 0.f;
-		m_isMoveStart = false;
-		m_isMoveEnd = false;
 	}
 }
 
@@ -660,7 +647,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 	else if (true == m_isMoveEnd)
 	{
 		MiniMap_Statue(ITEM_NUMBER::virginmedal02a);
-		
+
 		/* Rotation */
 		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
@@ -675,7 +662,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 		}
 
 
-		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
+		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight, m_fAdditionalZ - 0.5f) };
 
 		list<_uint> ChildJointIndices_1;
 		// root / RootNode 위치도 함께 흘러 내림
@@ -685,7 +672,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix);
 		}
 
-		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, m_fAdditionalHeight, m_fAdditionalZ) };
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, -m_fAdditionalHeight, m_fAdditionalZ - 0.5f) };
 
 		list<_uint> ChildJointIndices_2;
 		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
@@ -694,17 +681,6 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 		{
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
 		}
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState('K'))
-	{
-		m_fAdditionalHeight = 0.f;
-		m_fAdditionalHeight_D = 0.f;
-		m_fAdditionalZ = 0.f;
-		m_fZTimer = 0.f;
-		m_fRotationAngle = 0.f;
-		m_isMoveStart = false;
-		m_isMoveEnd = false;
 	}
 }
 

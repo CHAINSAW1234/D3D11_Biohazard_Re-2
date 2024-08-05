@@ -61,6 +61,9 @@ protected:
 
 	_bool										m_isPlaying = { false };
 
+private :
+	class CLayOut_UI*							m_pLayOut = { nullptr };
+
 public:
 	virtual	void Free();
 };

@@ -88,6 +88,8 @@ private :
 	_bool						m_isTab = { false };
 
 	_bool						m_isEx = { false };
+	_bool						m_isEnd_Render = { false };
+
 public:
 	static CMini_BigStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
