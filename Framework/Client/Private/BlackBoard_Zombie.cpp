@@ -101,13 +101,24 @@ void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 	Update_New_Part_Break();
 
 	_bool			isSameLocation = { m_pAI->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region())) };
-	if (true == isSameLocation)
+
+	ZOMBIE_START_TYPE				eStart = { m_pAI->Get_StartType() };
+
+	if (eStart != ZOMBIE_START_TYPE::_HIDE_LOCKER)
 	{
-		m_pAI->Set_Render_RoomCulling(true);
+		if (true == isSameLocation)
+		{
+			m_pAI->Set_Render_RoomCulling(true);
+		}
+		else
+		{
+			m_pAI->Set_Render_RoomCulling(CRoom_Finder::Get_Instance()->Is_Linked_Location_From_Location(m_pAI->Get_Location(), static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region())));
+		}
 	}
+	
 	else
 	{
-		m_pAI->Set_Render_RoomCulling(CRoom_Finder::Get_Instance()->Is_Linked_Location_From_Location(m_pAI->Get_Location(), static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region())));
+		m_pAI->Set_Render_RoomCulling(true);
 	}
 }
 

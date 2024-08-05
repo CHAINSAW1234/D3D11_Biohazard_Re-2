@@ -4,8 +4,8 @@
 #include "GameInstance.h"
 #include "Client_Enumsh.h"
 
-#define			HD_PLUS
-//	#define			FHD
+//	#define			HD_PLUS
+#define			FHD
 //	#define			QHD
 //	#define			UHD
 
