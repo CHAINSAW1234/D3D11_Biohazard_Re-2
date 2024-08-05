@@ -31,8 +31,13 @@ HRESULT CTextBox::Initialize(void* pArg)
 		m_vFontColor = TextBoxDesc->vFontColor;
 		m_iFontSize = TextBoxDesc->iFontSize;
 		m_isOuterLine = TextBoxDesc->isOuterLine;
-		m_vOutLineColor = TextBoxDesc->vOutLineColor ;
+		m_vOutLineColor = TextBoxDesc->vOutLineColor;
 		m_isUIRender = TextBoxDesc->isUI_Render;
+
+		m_fX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+		m_fY *= static_cast<_float>(g_iWinSizeY) / 900.f;
+
+		m_vTextPos = { m_fX, m_fY, 0.5f };
 	}
 
 	return S_OK;
@@ -60,19 +65,34 @@ HRESULT CTextBox::Render()
 
 	//_float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
+	//if (true == m_isOuterLine)
+	//{
+	//	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX - 2, m_fY, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+	//		return E_FAIL;
+	//	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX + 2, m_fY, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+	//		return E_FAIL;
+	//	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY - 2, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+	//		return E_FAIL;
+	//	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY + 2, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+	//		return E_FAIL;
+	//}
+
+	//if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY, m_fZ, 0.f), m_vFontColor, 0.f)))
+	//	return E_FAIL;
+
 	if (true == m_isOuterLine)
 	{
-		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX - 2, m_fY, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_vTextPos.x - 2, m_vTextPos.y , m_vTextPos.z, 0.f), m_vOutLineColor, 0.f, static_cast<_float>(g_iWinSizeX) / 1600.f)))
 			return E_FAIL;
-		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX + 2, m_fY, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_vTextPos.x + 2, m_vTextPos.y , m_vTextPos.z, 0.f), m_vOutLineColor, 0.f, static_cast<_float>(g_iWinSizeX) / 1600.f)))
 			return E_FAIL;
-		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY - 2, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_vTextPos.x, m_vTextPos.y - 2, m_vTextPos.z, 0.f), m_vOutLineColor, 0.f, static_cast<_float>(g_iWinSizeX) / 1600.f)))
 			return E_FAIL;
-		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY + 2, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_vTextPos.x, m_vTextPos.y + 2, m_vTextPos.z, 0.f), m_vOutLineColor, 0.f, static_cast<_float>(g_iWinSizeX) / 1600.f)))
 			return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY, m_fZ, 0.f), m_vFontColor, 0.f)))
+	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_vTextPos.x, m_vTextPos.y, m_vTextPos.z, 0.f), m_vFontColor, 0.f, static_cast<_float>(g_iWinSizeX) / 1600.f)))
 		return E_FAIL;
 
 	return S_OK;
@@ -80,24 +100,29 @@ HRESULT CTextBox::Render()
 
 HRESULT CTextBox::Convert_Resolution()
 {
-	_float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;
-	_float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
+	_float		widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;
+	_float		heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
 
-	_float4 originalPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-	_float3 originalScale = m_pTransformCom->Get_Scaled();
+	_float4		originalPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3		originalScale = m_pTransformCom->Get_Scaled();
 
-	_float newPosX = originalPos.x * widthRatio;
-	_float newPosY = originalPos.y * heightRatio;
+	_float		newPosX = originalPos.x * widthRatio;
+	_float		newPosY = originalPos.y * heightRatio;
 
-	_float newWidth = originalScale.x * widthRatio;
-	_float newHeight = originalScale.y * heightRatio;
+	_float		newWidth = originalScale.x * widthRatio;
+	_float		newHeight = originalScale.y * heightRatio;
 
-	_float4 newPos = originalPos;
+	_float4		newPos = originalPos;
 	newPos.x = newPosX;
 	newPos.y = newPosY;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, newPos);
 	m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z); // Z축 크기는 기존 값 유지
+
+	m_fX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+	m_fY *= static_cast<_float>(g_iWinSizeY) / 900.f;
+
+	//m_vTextPos = { m_fX, m_fY, 0.5f };
 
 	return S_OK;
 }
@@ -127,16 +152,27 @@ CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
 
 void CTextBox::Move(_float3 fMove)
 {
-	m_fX += fMove.x;
+	/*m_fX += fMove.x;
 	m_fY += -fMove.y;
-	m_fZ += fMove.z;
+	m_fZ += fMove.z;*/
+
+	
+	
+
+	m_vTextPos.x += fMove.x * static_cast<_float>(g_iWinSizeX) / 1600.f;
+	m_vTextPos.y += -fMove.y * static_cast<_float>(g_iWinSizeY) / 900.f;
+	m_vTextPos.z += fMove.z;
 }
 
 void CTextBox::Set_Position_UI(_float3 fMove)
 {
-	m_fX = fMove.x;
+	/*m_fX = fMove.x;
 	m_fY = -fMove.y;
-	m_fZ = fMove.z;
+	m_fZ = fMove.z;*/
+
+	m_vTextPos.x = fMove.x;
+	m_vTextPos.y = -fMove.y;
+	m_vTextPos.z = fMove.z;
 }
 
 CTextBox* CTextBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

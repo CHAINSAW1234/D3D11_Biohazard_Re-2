@@ -16,11 +16,11 @@ HRESULT CCustomFont::Initialize(const wstring & strFontFilePath)
 	return S_OK;
 }
 
-HRESULT CCustomFont::Render(const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian)
+HRESULT CCustomFont::Render(const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian, _float fScale)
 {
 	m_pBatch->Begin();
 
-	m_pFont->DrawString(m_pBatch, strText.c_str(), vPosition, vColor, fRadian);
+	m_pFont->DrawString(m_pBatch, strText.c_str(), vPosition, vColor, fRadian, XMVectorZero(), fScale);
 
 	m_pBatch->End();
 

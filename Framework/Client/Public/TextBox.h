@@ -67,6 +67,8 @@ private:
 	_bool	m_isOuterLine = { false };
 	_vector m_vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
 
+	_float3	m_vTextPos = {};
+
 private :
 	_bool	m_isUIRender = { false };
 	_bool	m_isTransformBase = { true };
