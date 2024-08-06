@@ -56,6 +56,11 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
 
     __super::Tick(fTimeDelta);
 
+    if(!m_vecTextBoxes.empty())
+    {
+        m_vecTextBoxes.front()->Set_FontColor(ALPHA_ZERO);
+    }
+
     if (false == m_isReady)
     {
         m_isReady = true;
@@ -153,7 +158,7 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
             {
                 _float4 vTextBox_Texture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-                _float4 vText = m_vecTextBoxes.back()->Get_Position_UI();
+                _float4 vText = m_vecTextBoxes.back()->GetPosition();
 
                 m_fTargetNotify_TextBox_Distance.x = vTextBox_Texture.x - vText.x;
                 m_fTargetNotify_TextBox_Distance.y = vTextBox_Texture.y - vText.y;
@@ -335,7 +340,9 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
         {
             if (!m_vecTextBoxes.empty())
             {
+                m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
                 m_vecTextBoxes.back()->Set_isTransformBase(false);
+
                 _float4 vTextBoxTexture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
                 _float3 fTextBox = m_vecTextBoxes.back()->GetPosition();
 
@@ -344,7 +351,11 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 
                 for (auto& iter : m_vecTextBoxes)
                 {
-                    iter->Set_Position_UI(fTextBox);
+                    CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                    fTextBox.x += 90.f;
+                    fTextBox.y -= 41.f;
+                    iter->State(fTextBox);
                 }
 
                 m_isNotifyRender = true;
@@ -510,7 +521,9 @@ void CTargeting_Map_UI::Notify_Font_Position()
 
             for (auto& iter : m_vecTextBoxes)
             {
-                iter->Set_Position_UI(fTextBox);
+                CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                iter->State(fTextBox);
 
                 m_isFont_Render = m_isRender;
             }

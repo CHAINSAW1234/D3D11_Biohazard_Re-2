@@ -137,6 +137,13 @@ void CTextBox::Set_Position(_vector vPos)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 }
 
+void CTextBox::State(_float3 fTrans)
+{
+	m_vTextPos.x = fTrans.x + g_iWinSizeX * 0.5f;
+	m_vTextPos.y = -fTrans.y + g_iWinSizeY * 0.5f;
+	m_vTextPos.z = fTrans.z;
+}
+
 CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
 {
 	TextBox_DESC TextBoxDesc = {};
