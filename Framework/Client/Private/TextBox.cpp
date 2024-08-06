@@ -122,9 +122,19 @@ HRESULT CTextBox::Convert_Resolution()
 	m_fX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
 	m_fY *= static_cast<_float>(g_iWinSizeY) / 900.f;
 
-	//m_vTextPos = { m_fX, m_fY, 0.5f };
+	m_vTextPos = { m_fX, m_fY, 0.5f };
 
 	return S_OK;
+}
+
+void CTextBox::Set_Position(_float fPosX, _float fPosY, _float fPosZ)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(fPosX, fPosY, fPosZ, 0));
+}
+
+void CTextBox::Set_Position(_vector vPos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 }
 
 CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
@@ -152,9 +162,9 @@ CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
 
 void CTextBox::Move(_float3 fMove)
 {
-	/*m_fX += fMove.x;
-	m_fY += -fMove.y;
-	m_fZ += fMove.z;*/
+	// m_fX += fMove.x;
+	// m_fY += -fMove.y;
+	// m_fZ += fMove.z;
 
 	
 	
@@ -166,9 +176,9 @@ void CTextBox::Move(_float3 fMove)
 
 void CTextBox::Set_Position_UI(_float3 fMove)
 {
-	/*m_fX = fMove.x;
-	m_fY = -fMove.y;
-	m_fZ = fMove.z;*/
+	// m_fX = fMove.x;
+	// m_fY = -fMove.y;
+	// m_fZ = fMove.z;
 
 	m_vTextPos.x = fMove.x;
 	m_vTextPos.y = -fMove.y;
