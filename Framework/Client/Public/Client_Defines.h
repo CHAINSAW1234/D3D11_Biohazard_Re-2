@@ -5,7 +5,7 @@
 #include "Client_Enumsh.h"
 
 //	#define			HD_PLUS
-#define			FHD
+#define				FHD
 //	#define			QHD
 //	#define			UHD
 
@@ -49,8 +49,8 @@ using namespace Client;
 #pragma endregion
 #define IMGUI
 	
-//#define MAP_NOTHING
-#define MAP_INTERACT
+#define MAP_NOTHING
+//#define MAP_INTERACT
 //#define MAP_TEST
 //#define Map_NA
 //#define Map_Ye

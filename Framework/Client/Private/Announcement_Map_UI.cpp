@@ -56,6 +56,8 @@ void CAnnouncement_Map_UI::Tick(_float fTimeDelta)
 
     if (true == m_isGetMap_Item)
     {
+        __super::Tick(fTimeDelta);
+
         m_isRender = true;
 
         if (!m_vecTextBoxes.empty())

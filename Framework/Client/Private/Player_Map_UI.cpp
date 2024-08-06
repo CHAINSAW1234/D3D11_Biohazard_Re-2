@@ -36,6 +36,7 @@
 #define MODELMAP_X_FLOO3     70.7840423f
 #define MODELMAP_Y_FLOO3     38.0877256f
 
+
 CPlayer_Map_UI::CPlayer_Map_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMap_Manager{ pDevice, pContext }
 {
@@ -78,7 +79,7 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
 
     m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO1;
     m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO1;
-    
+
     m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
     m_vPlayer_InitPos.x = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
@@ -87,8 +88,6 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
     m_isMouse_Control = true;
 
     m_isPrevRender = true;
-
-    
 
     return S_OK;
 }
@@ -321,6 +320,8 @@ void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
 
 void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 {
+  	_float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;
+  	_float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
     _float2 fComparison = {};
     _float2 Moving_Value = {};
 
@@ -363,6 +364,8 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 
 
     // MINMAP 비율에 맞춰 이동 값을 조정
+
+
     Moving_Value.x *= fComparison.x;
     Moving_Value.y *= fComparison.y;
 

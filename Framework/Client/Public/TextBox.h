@@ -54,6 +54,8 @@ public:
 	virtual void Set_Position(_float fPosX, _float fPosY, _float fPosZ) override;
 	virtual void Set_Position(_vector vPos) override;
 
+	virtual void State(_float3 fTrans) override;
+
 public:
 	TextBox_DESC Get_TextBoxDesc() const;
 	virtual void Move(_float3 fMove) override;

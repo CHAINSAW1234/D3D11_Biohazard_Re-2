@@ -93,7 +93,7 @@ void CMap_Manager::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Exception_Handle();
-
+	
 	Rendering(fTimeDelta);
 
 	Transform_Control(fTimeDelta);

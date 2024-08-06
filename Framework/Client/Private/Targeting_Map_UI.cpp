@@ -27,8 +27,6 @@ HRESULT CTargeting_Map_UI::Initialize_Prototype()
 
 HRESULT CTargeting_Map_UI::Initialize(void* pArg)
 {
-    CGameObject* pSupervisor = { nullptr };
-
     if (pArg != nullptr)
     {
         if (FAILED(__super::Initialize(pArg)))
@@ -37,109 +35,6 @@ HRESULT CTargeting_Map_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
         
         pSupervisor = CustomUIDesc->pSupervisor;
-    }
-
-    if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
-    {
-        if (true == m_IsChild)
-        {
-            list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-            if (nullptr != pMapUI_List)
-            {
-                CGameObject* pMainObj = pMapUI_List->back();
-                CTargeting_Map_UI* pMainTarget = static_cast<CTargeting_Map_UI*>(pSupervisor);
-
-                if (nullptr != pMainObj)
-                {
-                    if (pMainTarget->m_eMapComponent_Type == MAP_UI_TYPE::TARGET_MAP)
-                    {
-                        m_pMain_Target = static_cast<CTargeting_Map_UI*>(pSupervisor);
-
-                        if (nullptr != m_pMain_Target)
-                        {
-                            CTransform* pMainTarget_Transform = static_cast <CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
-
-                            m_pMainTarget_Transform = pMainTarget_Transform;
-
-                            _float4 vMainTarget_Trans = pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-                            _float4 vSubTarget_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-                            if (vMainTarget_Trans.x > vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
-                            {
-                                m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::LEFT_TARGET;
-                                m_fTarget_Distance = vMainTarget_Trans.x - vSubTarget_Trans.x;
-                            }
-
-                            else if (vMainTarget_Trans.x < vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
-                            {
-                                m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::RIGHT_TARGET;
-                                m_fTarget_Distance = vSubTarget_Trans.x - vMainTarget_Trans.x;
-                            }
-
-                            else if (vMainTarget_Trans.y > vSubTarget_Trans.y)
-                            {
-                                m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::DOWN_TARGET;
-                                m_fTarget_Distance = vMainTarget_Trans.y - vSubTarget_Trans.y;
-                            }
-
-                            else
-                            {
-                                m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::UP_TARGET;
-                                m_fTarget_Distance = vSubTarget_Trans.y - vMainTarget_Trans.y;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
-    {
-        /* 1. Player Targeting */
-        list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-        if (nullptr != pUIList)
-        {
-            for (auto& iter : *pUIList)
-            {
-                CTargeting_Map_UI* pTarget_UI = dynamic_cast<CTargeting_Map_UI*>(iter);
-
-                if (nullptr != pTarget_UI && MAP_UI_TYPE::TARGET_MAP == pTarget_UI->m_eMapComponent_Type)
-                {
-                    m_pMain_Target = static_cast<CTargeting_Map_UI*>(iter);
-
-                    break;
-                }
-            }
-        }
-
-        m_pMainTarget_Transform = static_cast<CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
-
-        /* 2. Between Object Distance */
-        if (nullptr != m_pMain_Target)
-        {
-            CTransform* pMainTarget_Transform = static_cast<CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
-
-            m_fTargetNotify_Distance.x = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x - pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION).x;
-            m_fTargetNotify_Distance.y = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y - pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION).y;
-        }
-        else
-            MSG_BOX(TEXT("CMap_UI : Target_Notify에서 Player Main Target이 설정되지 않았습니다."));
-
-        if (!m_vecTextBoxes.empty())
-        {
-            _float4 vTextBox_Texture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-            _float4 vText = m_vecTextBoxes.back()->GetPosition();
-
-            m_fTargetNotify_TextBox_Distance.x = vTextBox_Texture.x - vText.x;
-            m_fTargetNotify_TextBox_Distance.y = vTextBox_Texture.y - vText.y;
-        }
-
-        /* 3. Store Items */
-        Find_Item(); /* 아이템 */
     }
 
     /* Tool */
@@ -160,6 +55,119 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
     Verification_MapType();
 
     __super::Tick(fTimeDelta);
+
+    if(!m_vecTextBoxes.empty())
+    {
+        m_vecTextBoxes.front()->Set_FontColor(ALPHA_ZERO);
+    }
+
+    if (false == m_isReady)
+    {
+        m_isReady = true;
+
+        if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+        {
+            if (true == m_IsChild)
+            {
+                list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+                if (nullptr != pMapUI_List)
+                {
+                    CGameObject* pMainObj = pMapUI_List->back();
+                    CTargeting_Map_UI* pMainTarget = static_cast<CTargeting_Map_UI*>(pSupervisor);
+
+                    if (nullptr != pMainObj)
+                    {
+                        if (pMainTarget->m_eMapComponent_Type == MAP_UI_TYPE::TARGET_MAP)
+                        {
+                            m_pMain_Target = static_cast<CTargeting_Map_UI*>(pSupervisor);
+
+                            if (nullptr != m_pMain_Target)
+                            {
+                                CTransform* pMainTarget_Transform = static_cast <CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
+
+                                m_pMainTarget_Transform = pMainTarget_Transform;
+
+                                _float4 vMainTarget_Trans = pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+                                _float4 vSubTarget_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                                if (vMainTarget_Trans.x > vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
+                                {
+                                    m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::LEFT_TARGET;
+                                    m_fTarget_Distance = vMainTarget_Trans.x - vSubTarget_Trans.x;
+                                }
+
+                                else if (vMainTarget_Trans.x < vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
+                                {
+                                    m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::RIGHT_TARGET;
+                                    m_fTarget_Distance = vSubTarget_Trans.x - vMainTarget_Trans.x;
+                                }
+
+                                else if (vMainTarget_Trans.y > vSubTarget_Trans.y)
+                                {
+                                    m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::DOWN_TARGET;
+                                    m_fTarget_Distance = vMainTarget_Trans.y - vSubTarget_Trans.y;
+                                }
+
+                                else
+                                {
+                                    m_eCrosshair_Type = CROSSHAIR_TARGET_TYPE::UP_TARGET;
+                                    m_fTarget_Distance = vSubTarget_Trans.y - vMainTarget_Trans.y;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
+        {
+            /* 1. Player Targeting */
+            list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+            if (nullptr != pUIList)
+            {
+                for (auto& iter : *pUIList)
+                {
+                    CTargeting_Map_UI* pTarget_UI = dynamic_cast<CTargeting_Map_UI*>(iter);
+
+                    if (nullptr != pTarget_UI && MAP_UI_TYPE::TARGET_MAP == pTarget_UI->m_eMapComponent_Type)
+                    {
+                        m_pMain_Target = static_cast<CTargeting_Map_UI*>(iter);
+
+                        break;
+                    }
+                }
+            }
+
+            m_pMainTarget_Transform = static_cast<CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
+
+            /* 2. Between Object Distance */
+            if (nullptr != m_pMain_Target)
+            {
+                CTransform* pMainTarget_Transform = static_cast<CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
+
+                m_fTargetNotify_Distance.x = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x - pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION).x;
+                m_fTargetNotify_Distance.y = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y - pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION).y;
+            }
+            else
+                MSG_BOX(TEXT("CMap_UI : Target_Notify에서 Player Main Target이 설정되지 않았습니다."));
+
+            if (!m_vecTextBoxes.empty())
+            {
+                _float4 vTextBox_Texture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                _float4 vText = m_vecTextBoxes.back()->GetPosition();
+
+                m_fTargetNotify_TextBox_Distance.x = vTextBox_Texture.x - vText.x;
+                m_fTargetNotify_TextBox_Distance.y = vTextBox_Texture.y - vText.y;
+            }
+
+            /* 3. Store Items */
+            Find_Item(); /* 아이템 */
+        }
+    }
 }
 
 void CTargeting_Map_UI::Late_Tick(_float fTimeDelta)
@@ -332,6 +340,9 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
         {
             if (!m_vecTextBoxes.empty())
             {
+                m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
+                m_vecTextBoxes.back()->Set_isTransformBase(false);
+
                 _float4 vTextBoxTexture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
                 _float3 fTextBox = m_vecTextBoxes.back()->GetPosition();
 
@@ -341,6 +352,9 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
                 for (auto& iter : m_vecTextBoxes)
                 {
                     CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                    fTextBox.x += 90.f;
+                    fTextBox.y -= 41.f;
                     iter->State(fTextBox);
                 }
 

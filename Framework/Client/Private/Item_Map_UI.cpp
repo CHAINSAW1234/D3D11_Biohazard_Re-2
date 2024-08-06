@@ -170,6 +170,12 @@ void CItem_Map_UI::Player_BetweenDistance()
 
             m_vMapOpen_Player_Distance = Main - Player;
 
+            _float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;
+            _float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
+
+            m_vMapOpen_Player_Distance.m128_f32[0] *= widthRatio;
+            m_vMapOpen_Player_Distance.m128_f32[1] *= heightRatio;
+
             m_isItemEnd = true;
         }
     }
