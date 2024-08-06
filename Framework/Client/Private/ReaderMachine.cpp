@@ -89,7 +89,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			m_eKeyInput = KEY_W;
 		else if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
 			m_eKeyInput = KEY_S;
-		else if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
+		else if (DOWN == m_pGameInstance->Get_KeyState(VK_RETURN))
 			m_eKeyInput = KEY_SPACE;
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
