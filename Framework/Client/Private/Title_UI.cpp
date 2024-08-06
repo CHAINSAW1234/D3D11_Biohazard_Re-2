@@ -150,7 +150,7 @@ void CTitle_UI::Tick(_float fTimeDelta)
                         /*Position ¿˙¿Â */
                         CTransform* pTextTrans = static_cast<CTransform*>(pText->Get_Component(g_strTransformTag));
 
-                        m_vOriginOption_Pos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                        m_vOriginOption_Pos = iter->Get_Position_UI();
                     }
                 }
             }
@@ -271,7 +271,7 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
 {
     CTransform* pOptionTextTrans = static_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
 
-    _float4 fOptionTextTrans = pOptionTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+    _float3 fOptionTextTrans = m_vecTextBoxes.back()->Get_Position_UI();
 
     if(true == IsMouseHover())
     {
@@ -281,7 +281,6 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
             {
                 m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_titleInGame.mp3"), CH_TICK_2D, 0.2f);
 
-                // m_isSelectCharector = true;
                 m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_GAMEPLAY));
             }
         }
@@ -300,15 +299,14 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
 
             fOptionTextTrans.x += fTimeDelta * 200.f;
             
-            pOptionTextTrans->Set_State(CTransform::STATE_POSITION, fOptionTextTrans);
+            *m_vecTextBoxes.back()->Get_Position_UI_Ptr() = fOptionTextTrans;
         }
         else
         {
             fOptionTextTrans.x = m_vOriginOption_Pos.x + OPTION_MOVE_DISTANCE;
             
-            pOptionTextTrans->Set_State(CTransform::STATE_POSITION, fOptionTextTrans);
+            *m_vecTextBoxes.back()->Get_Position_UI_Ptr() = fOptionTextTrans;
         }
-
     }
     else
     {
@@ -320,11 +318,11 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         if (fOptionTextTrans.x > m_vOriginOption_Pos.x)
         {
             fOptionTextTrans.x -= fTimeDelta * 200.f;
-            pOptionTextTrans->Set_State(CTransform::STATE_POSITION, fOptionTextTrans);
+            *m_vecTextBoxes.back()->Get_Position_UI_Ptr() = fOptionTextTrans;
         }
         else
         {
-            pOptionTextTrans->Set_State(CTransform::STATE_POSITION, m_vOriginOption_Pos);
+            *m_vecTextBoxes.back()->Get_Position_UI_Ptr() = m_vOriginOption_Pos;
         }
     }
 }

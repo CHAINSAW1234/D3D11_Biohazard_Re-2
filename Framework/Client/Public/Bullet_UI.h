@@ -73,6 +73,10 @@ private:
 	_float4					m_fOrigin_StoreTextPos = {};
 	_float4					m_fOrigin_CurrentTextPos = {};
 
+	_float3					m_fOrigin_CurrentTextPos_A = {};
+	_float3					m_fOrigin_CurrentTextPos_B = {};
+
+
 	/* ½Ã°£*/
 	_float					m_fBulletTimer = {};
 	
@@ -83,6 +87,9 @@ private:
 
 	_ubyte*					m_isGimmickCamera_Layout_Type = { nullptr };
 
+	_bool					m_isTargetA = { false };
+	_bool					m_isTargetB = { false };
+	_bool					m_isFirstTarget = { false };
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

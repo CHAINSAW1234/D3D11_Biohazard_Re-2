@@ -52,7 +52,7 @@ private :
 	_float				m_fLogoStart_Timer			= { 0.f };
 
 private :
-	_float4				m_vOriginOption_Pos			= {};
+	_float3				m_vOriginOption_Pos			= {};
 	_bool				m_isSelectCharector			= { false };
 
 private :

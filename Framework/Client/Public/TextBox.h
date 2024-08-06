@@ -59,7 +59,7 @@ public:
 	virtual void Move(_float3 fMove) override;
 	void Set_Position_UI(_float3 fMove);
 	_float3 Get_Position_UI() { return _float3(m_vTextPos.x, m_vTextPos.y, m_vTextPos.z); }
-
+	_float3* Get_Position_UI_Ptr() { return &m_vTextPos; }
 private:
 	wstring m_wstrText = { TEXT("") };
 	wstring m_wstrFontType = { TEXT("") };
