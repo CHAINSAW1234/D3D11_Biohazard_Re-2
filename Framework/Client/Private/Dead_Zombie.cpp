@@ -60,7 +60,8 @@ _bool CDead_Zombie::Execute(_float fTimeDelta)
 		HIT_TYPE			eHitType = { m_pBlackBoard->Get_AI()->Get_Current_HitType() };
 		_bool				isLookPlayer = { m_pBlackBoard->Is_LookTarget() };
 
-		m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region()));
+		if (false == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+			return true;
 
 		if (true == isLookPlayer || HIT_TYPE::HIT_END != eHitType)
 		{

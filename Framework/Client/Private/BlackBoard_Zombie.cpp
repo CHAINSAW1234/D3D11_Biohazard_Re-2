@@ -66,8 +66,6 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 
 HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
 {
-
-
 	if (ZOMBIE_START_TYPE::_DOOR_RUB != m_pAI->Get_StartType())
 		return S_OK;
 
@@ -141,6 +139,22 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
+	LOCATION_MAP_VISIT				ePlayerLocation = { static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region()) };
+	if (false == m_pAI->Is_In_Location(ePlayerLocation))
+	{
+		_bool			isDummyDoor = { false };		
+
+		if (true == m_pAI->Is_In_Linked_Location_CheckDummyDoor(ePlayerLocation, &isDummyDoor))
+		{
+			if (true == isDummyDoor)
+			{
+				pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
+				if (pMonsterStatus->fAccRecognitionTime < 0.f)
+					pMonsterStatus->fAccRecognitionTime = 0.f;
+			}
+		}
+	}
 
 	HIT_TYPE						eHitType = { m_pAI->Get_Current_HitType() };
 	if (HIT_TYPE::HIT_END != eHitType)

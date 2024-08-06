@@ -180,6 +180,7 @@ public:		/* For.Start_Trigger */
 public:		/* For.Location Controll */
 	_bool								Is_In_Location(LOCATION_MAP_VISIT eLocation);
 	_bool								Is_In_Linked_Location(LOCATION_MAP_VISIT eLocation);
+	_bool								Is_In_Linked_Location_CheckDummyDoor(LOCATION_MAP_VISIT eLocation, _bool* pIsDummyDoor);
 	inline LOCATION_MAP_VISIT			Get_Location() { return m_eLocation; }
 	inline void							Set_Location(LOCATION_MAP_VISIT eLocation) { m_eLocation = eLocation; }
 

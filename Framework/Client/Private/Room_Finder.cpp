@@ -73,13 +73,31 @@ list<LOCATION_MAP_VISIT> CRoom_Finder::Find_Linked_Loctaion_From_Door(CDoor* pDo
 	return Linked_Locations;
 }
 
-_bool CRoom_Finder::Is_Linked_Location_From_Location(LOCATION_MAP_VISIT eMyLocation, LOCATION_MAP_VISIT eTargetLocation)
+_bool CRoom_Finder::Is_Linked_Location_From_Location(LOCATION_MAP_VISIT eMyLocation, LOCATION_MAP_VISIT eTargetLocation, _bool* pIsDummyDoor)
 {
 	if (static_cast<size_t>(eMyLocation) >= m_LinkedLocations.size())
 		return false;
 
 	unordered_set<LOCATION_MAP_VISIT>::iterator		iter = { m_LinkedLocations[eMyLocation].find(eTargetLocation) };
 	_bool			isLink = { iter != m_LinkedLocations[eMyLocation].end()};
+
+	if (nullptr != pIsDummyDoor)
+	{
+		list<CDoor*>			DoorsInMyLocation = { m_Doors_In_Locations[static_cast<_uint>(eMyLocation)] };
+		list<CDoor*>			DoorsInTargetLocation = { m_Doors_In_Locations[static_cast<_uint>(eTargetLocation)] };
+		
+		for (auto& pMyDoor : DoorsInMyLocation)
+		{
+			for (auto& pTargetDoor : DoorsInTargetLocation)
+			{
+				if (pMyDoor == pTargetDoor)
+				{
+					*pIsDummyDoor = pMyDoor->Is_Dummy_Door();
+				}
+			}
+		}
+
+	}
 
 	return isLink;
 }

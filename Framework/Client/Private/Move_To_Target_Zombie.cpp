@@ -98,32 +98,46 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 	if (false == m_pBlackBoard->Get_AI()->Is_OutDoor())
 	{
 		LOCATION_MAP_VISIT			ePlayerLocation = { static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region()) };
-		_bool			isSameLocation_To_Target = { m_pBlackBoard->Get_AI()->Is_In_Location(ePlayerLocation) };
+		_bool						isSameLocation_To_Target = { m_pBlackBoard->Get_AI()->Is_In_Location(ePlayerLocation) };
+		_bool						isLinkedLocation_To_Target = { m_pBlackBoard->Get_AI()->Is_In_Linked_Location(ePlayerLocation) };
+
+		_bool						isDoorTarget = { false };
 		if (false == isSameLocation_To_Target)
 		{
+			if (false == isLinkedLocation_To_Target)
+				return false;
+
+			if (false == m_pBlackBoard->Is_LookTarget())
+				return false;
+
 			CDoor*			pTarget_Door = { m_pBlackBoard->Get_Target_Door() };
 			if (nullptr == pTarget_Door)
 				return false;
-
-			_vector			vTargetPosition = { pTarget_Door->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
-			_vector			vMyPosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
-
-			_vector			vDirectionToTarget = { vTargetPosition - vMyPosition };
-			_vector			vLook = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
 			
-			_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToTarget), XMVector3Normalize(vLook))) };
-			_float			fAngle = { acosf(fDot) };
+			if (false == pTarget_Door->Is_Dummy_Door())
+			{
+				/*_vector			vTargetPosition = { pTarget_Door->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+				_vector			vMyPosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
 
-			if (fAngle > XMConvertToRadians(60.f))
-				return false;
+				_vector			vDirectionToTarget = { vTargetPosition - vMyPosition };
+				_vector			vLook = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
 
-			Safe_Release(m_pTargetObject);
-			m_pTargetObject = pTarget_Door;
-			Safe_AddRef(m_pTargetObject);
-			m_isIncludeRotation = true;
+				_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToTarget), XMVector3Normalize(vLook))) };
+				_float			fAngle = { acosf(fDot) };
+
+				if (fAngle > XMConvertToRadians(60.f))
+				return false;*/
+
+				Safe_Release(m_pTargetObject);
+				m_pTargetObject = pTarget_Door;
+				Safe_AddRef(m_pTargetObject);
+				m_isIncludeRotation = true;
+
+				isDoorTarget = true;
+			}		
 		}
 
-		else
+		if (false == isDoorTarget)
 		{
 			if (false == m_pBlackBoard->Is_LookTarget())
 				return false;

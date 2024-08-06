@@ -275,6 +275,12 @@ HRESULT CZombie::Initialize(void* pArg)
 		}
 	}
 
+
+	if (m_eLocation == LOCATION_MAP_VISIT::LEFTSIDE_PRESSROOM_HALLWAY)
+	{
+		m_pStatus->fRecognitionRange *= 1.5f;
+	}
+
 	return S_OK;
 }
 
@@ -2803,6 +2809,11 @@ _bool CZombie::Is_In_Location(LOCATION_MAP_VISIT eLocation)
 _bool CZombie::Is_In_Linked_Location(LOCATION_MAP_VISIT eLocation)
 {
 	return CRoom_Finder::Get_Instance()->Is_Linked_Location_From_Location(m_eLocation, eLocation);
+}
+
+_bool CZombie::Is_In_Linked_Location_CheckDummyDoor(LOCATION_MAP_VISIT eLocation, _bool* pIsDummyDoor)
+{
+	return CRoom_Finder::Get_Instance()->Is_Linked_Location_From_Location(m_eLocation, eLocation, pIsDummyDoor);
 }
 
 HRESULT CZombie::Initialize_PartModels()

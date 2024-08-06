@@ -22,7 +22,7 @@ public:
 	list<class CDoor*>						Find_Linked_Doors_From_Location(LOCATION_MAP_VISIT eLocation);
 	list<LOCATION_MAP_VISIT>				Find_Linked_Loctaion_From_Door(class CDoor* pDoor);
 
-	_bool									Is_Linked_Location_From_Location(LOCATION_MAP_VISIT eMyLocation, LOCATION_MAP_VISIT eTargetLocation);
+	_bool									Is_Linked_Location_From_Location(LOCATION_MAP_VISIT eMyLocation, LOCATION_MAP_VISIT eTargetLocation, _bool* pIsDummyDoor = nullptr);
 
 public:
 	HRESULT									Add_Door(LOCATION_MAP_VISIT eLocation, class CDoor* pDoor);
