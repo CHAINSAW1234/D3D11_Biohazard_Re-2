@@ -90,7 +90,7 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		if (*m_pShelfType == CMovingShelf::SHELF_197_RICKER)
-			Change_Sound(TEXT("sound_Map_sm42_ricker_shelf2_2.mp3"), 0);
+			Change_Sound(TEXT("sound_Map_sm42_ricker_shelf2_1.mp3"), 0);
 		else
 			Change_Sound(TEXT("sound_Map_sm42_move_shelf2_4.mp3"), 0);
 
