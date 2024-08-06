@@ -51,7 +51,8 @@ public:
 	wstring Get_FontType() { return m_wstrFontType; }
 	_bool Get_isOutLine() { return m_isOuterLine; }
 	_vector Get_OutLineColor() { return m_vOutLineColor; }
-
+	virtual void Set_Position(_float fPosX, _float fPosY, _float fPosZ) override;
+	virtual void Set_Position(_vector vPos) override;
 
 public:
 	TextBox_DESC Get_TextBoxDesc() const;
