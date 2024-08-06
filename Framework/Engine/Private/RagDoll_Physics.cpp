@@ -11,6 +11,7 @@
 #define CHEST_SIZE 7.f
 #define SIZE_MAG 1.5f
 
+#define DROP_SOUND_VOLUME 0.2f
 
 #pragma region Zombie Bone - Joint
 
@@ -2794,6 +2795,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 0);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[0] = true;
 			}
@@ -2809,6 +2811,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 0);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[0] = true;
 			}
@@ -2826,6 +2829,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 1);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[1] = true;
 			}
@@ -2841,6 +2845,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 1);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[1] = true;
 			}
@@ -2858,6 +2863,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 2);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[2] = true;
 			}
@@ -2873,6 +2879,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 2);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[2] = true;
 			}
@@ -2890,6 +2897,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 3);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[3] = true;
 			}
@@ -2905,6 +2913,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 3);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[3] = true;
 			}
@@ -2923,6 +2932,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 4);
+			m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 			m_vecRagdollSound_Filter[4] = true;
 		}
@@ -2940,6 +2950,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 			std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 			m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 5);
+			m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 			m_vecRagdollSound_Filter[5] = true;
 		}
@@ -2956,6 +2967,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 6);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[6] = true;
 			}
@@ -2971,6 +2983,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 6);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[6] = true;
 			}
@@ -2988,6 +3001,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 7);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[7] = true;
 			}
@@ -3003,6 +3017,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 7);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[7] = true;
 			}
@@ -3020,6 +3035,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 8);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[8] = true;
 			}
@@ -3035,6 +3051,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 8);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[8] = true;
 			}
@@ -3052,6 +3069,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 9);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[9] = true;
 			}
@@ -3067,6 +3085,7 @@ void CRagdoll_Physics::PlaySound_Ragdoll(COLLIDER_TYPE eType)
 				std::swprintf(result, sizeof(result) / sizeof(wchar_t), L"%ls%d.mp3", str, inum);
 
 				m_pGameInstance->Change_Sound_3D(m_pTransformCom_Sound, result, 9);
+				m_pGameInstance->Set_Volume_3D(m_pTransformCom_Sound, inum, DROP_SOUND_VOLUME);
 
 				m_vecRagdollSound_Filter[9] = true;
 			}
