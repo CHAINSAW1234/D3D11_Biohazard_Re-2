@@ -485,7 +485,9 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 		break;
 
 	case CCabinet::CLEAR_LOCK:
-		InPutKey_Sound(iRand, 2);
+
+		if(!m_bClear)
+			InPutKey_Sound(iRand, 2);
 
 		m_bClear = true;
 		break;
@@ -526,13 +528,13 @@ void CLock_Cabinet::InPutKey_Sound(_int iRand, _int iRand1)
 		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_1.mp3"), iRand);
 		break;
 	case 5:
-		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), iRand);
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_2.mp3"), iRand);
 		break;
 	case 6:
-		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), iRand);
+		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_3.mp3"), iRand);
 		break;
 	case 7:
-		Change_Same_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), iRand);
+		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_17.mp3"), iRand);
 		break;
 	case 8:
 		Change_Sound(TEXT("sound_Map_sm42_dial_lock2_7.mp3"), iRand);
@@ -792,7 +794,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			m_fGoalAngle[m_iCurBoneIndex] += 60.f;
 			/*if (360.f <= m_fGoalAngle[m_iCurBoneIndex] )
 				m_fGoalAngle[m_iCurBoneIndex] = 360.f;*/
-			InPutKey_Sound(iRand, 4);
+			InPutKey_Sound(0, 4);
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
 			break;
 
@@ -802,7 +804,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			if (m_iCurBoneIndex < BONE_DIAL1)
 				m_iCurBoneIndex = BONE_DIAL3;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
-			InPutKey_Sound(iRand, 6);
+			InPutKey_Sound(0, 6);
 
 			break;
 
@@ -813,7 +815,7 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 			/*if (-360.f >= m_fGoalAngle[m_iCurBoneIndex])
 				m_fGoalAngle[m_iCurBoneIndex] = -360.f;*/
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
-			InPutKey_Sound(iRand, 5);
+			InPutKey_Sound(0, 5);
 
 			break;
 
@@ -901,15 +903,18 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), (_int)(*m_pLockState));
 		if (m_pModelCom->isFinished(0))
 			*m_pLockState = CCabinet::LIVE_LOCK;
-		InPutKey_Sound(0, 7);
+		else
+			InPutKey_Sound(0, 7);
 		break;
 
 	case CCabinet::CLEAR_LOCK:
-		InPutKey_Sound(0, 8);
-
+		
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
 		if (m_pModelCom->isFinished(0))
 			m_bClear = true;
+		else
+			InPutKey_Sound(0, 8);
+
 		break;
 	}
 
