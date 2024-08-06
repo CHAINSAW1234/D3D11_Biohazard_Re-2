@@ -44,14 +44,19 @@ HRESULT CItem_Map_UI::Initialize(void* pArg)
 
     m_isMouse_Control = true;
 
-    m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
     return S_OK;
 }
 
 void CItem_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if (false == m_isReady)
+    {
+        m_isReady = true;
+
+        m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    }
 
     Rendering();
 

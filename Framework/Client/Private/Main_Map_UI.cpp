@@ -152,6 +152,7 @@ void CMain_Map_UI::Rendering()
     if (false == m_pTab_Window->Get_MinMapRender())
     {
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vOriginPos);
+
         m_isPrevRender = m_pTab_Window->Get_MinMapRender();
     }
 
@@ -166,6 +167,7 @@ void CMain_Map_UI::Rendering()
             _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
             _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
 
+            /* 여기서 뭔가를 해야할까? */
             m_vMapOpen_Player_Distance = Main - Player;
 
             m_isMainEnd = true;

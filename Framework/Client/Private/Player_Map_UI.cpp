@@ -73,29 +73,32 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
         m_vBackGround_Center = pBackGroundTrans->Get_State_Float4(CTransform::STATE_POSITION);
     }
 
-    if (nullptr != m_pPlayer)
-        m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
-
-    m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO1;
-    m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO1;
-    
-    m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-    m_vPlayer_InitPos.x = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
-    m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
-
-    m_isMouse_Control = true;
-
-    m_isPrevRender = true;
-
-    
-
     return S_OK;
 }
 
 void CPlayer_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if (false == m_isReady)
+    {
+        m_isReady = true;
+
+        if (nullptr != m_pPlayer)
+            m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+
+        m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO1;
+        m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO1;
+
+        m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        m_vPlayer_InitPos.x = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
+        m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
+
+        m_isMouse_Control = true;
+
+        m_isPrevRender = true;
+    }
 
     Open_Map();
 

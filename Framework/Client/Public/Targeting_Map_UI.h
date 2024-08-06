@@ -47,6 +47,8 @@ private :
 private :
 	CTargeting_Map_UI*							m_pMain_Target			= { nullptr };
 	CTransform*									m_pMainTarget_Transform = { nullptr };
+	CGameObject*								pSupervisor = { nullptr };
+
 	_bool										m_isFont_Render			= { false };
 
 private : /* Crosshair Targeting */
