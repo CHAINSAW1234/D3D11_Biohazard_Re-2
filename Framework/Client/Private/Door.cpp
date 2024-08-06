@@ -519,24 +519,18 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 	if (m_fTime > 2.f)
 	{
-		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bCol[INTER_COL_DOUBLE][COL_STEP1] && !m_bAttack)
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP0]|| m_bCol[INTER_COL_DOUBLE][COL_STEP0])
+			m_fTime = 0.f;
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP0] && !m_bCol[INTER_COL_DOUBLE][COL_STEP0] /*&& !m_bAttack*/)
 		{
 			m_fTime = 0.f;
 			m_bActivity = false;
 			m_eDoubleState = DOUBLEDOOR_STATIC;
 		}
-		else if (m_bAttack && m_pZombieTransform != nullptr)
-		{
-			if (Distance_Zombie(m_pZombieTransform) > 2.f)
-			{
-				m_bAttack = false;
-				m_fTime = 0.f;
-				m_bActivity = false;
-				m_eDoubleState = DOUBLEDOOR_STATIC;
-			}
-		}
+		
 	}
-
+	if (m_pZombieTransform == nullptr)
+		m_bAttack = false;
 	if (!m_bActivity && (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
 	{
 		if ((*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2])&&!m_bAttack)
@@ -544,7 +538,6 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
-
 
 		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
@@ -710,7 +703,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 	}
 
-	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
+	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]) && !m_bAttack)
 	{
 		m_bOnce = false;
 		if (m_bLock)
@@ -837,7 +830,7 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 		{
 
 		}
-		m_pZombieTransform = pTransform;
+		m_pZombieTransform = nullptr;
 		m_bActivity = true;
 
 
@@ -845,9 +838,10 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 	}
 	else
 	{
+		m_bAttack = true;
 		m_iHP -= 1;
 		static_cast<CBody_Door*>(m_PartObjects[PART_BODY])->Hit(pTransform);
-
+		m_pZombieTransform = pTransform;
 		return false;
 	}
 }
@@ -870,25 +864,11 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 			m_bActivity = false;
 			m_eOneState = ONEDOOR_STATIC;
 		}
-		else if (m_bAttack && m_pZombieTransform != nullptr)
-		{
-			if (Distance_Zombie(m_pZombieTransform) > 1.f)
-			{
-				m_bAttack = false;
-				m_fTime = 0.f;
-				m_bActivity = false;
-				m_eOneState = ONEDOOR_STATIC;
-			}
-		}
-
-		//else if(!m_bOnce)
-		//{
-		//	m_fTime = 0.f;
-		//	m_bActivity = false;
-		//}
 
 	}
-
+	if (m_pZombieTransform == nullptr)
+		m_bAttack = false;
+	
 	_bool bCam = { false };
 
 
@@ -1024,7 +1004,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 
 	}
 
-	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2]||m_bAutoOpen))
+	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2]||m_bAutoOpen)&&!m_bAttack)
 	{
 		m_bAutoOpen = false;
 		Change_Same_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_12.mp3"), 0);
