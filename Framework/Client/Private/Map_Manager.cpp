@@ -93,12 +93,15 @@ void CMap_Manager::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Exception_Handle();
+	if(MAP_FLOOR_TYPE ::FLOOR_1== m_eFloorType)
+		m_isRender = true;
+	else
+		m_isRender = false;
+	//Rendering(fTimeDelta);
 
-	Rendering(fTimeDelta);
+	//Transform_Control(fTimeDelta);
 
-	Transform_Control(fTimeDelta);
-
-	Mouse_Pos(fTimeDelta);
+	//Mouse_Pos(fTimeDelta);
 }
 
 void CMap_Manager::Late_Tick(_float fTimeDelta)

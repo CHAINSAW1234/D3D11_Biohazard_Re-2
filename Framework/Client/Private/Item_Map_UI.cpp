@@ -44,19 +44,14 @@ HRESULT CItem_Map_UI::Initialize(void* pArg)
 
     m_isMouse_Control = true;
 
+    m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
     return S_OK;
 }
 
 void CItem_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
-
-    if (false == m_isReady)
-    {
-        m_isReady = true;
-
-        m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-    }
 
     Rendering();
 
@@ -174,6 +169,12 @@ void CItem_Map_UI::Player_BetweenDistance()
             _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
 
             m_vMapOpen_Player_Distance = Main - Player;
+
+            _float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;
+            _float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
+
+            m_vMapOpen_Player_Distance.m128_f32[0] *= widthRatio;
+            m_vMapOpen_Player_Distance.m128_f32[1] *= heightRatio;
 
             m_isItemEnd = true;
         }

@@ -153,7 +153,7 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
             {
                 _float4 vTextBox_Texture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-                _float4 vText = m_vecTextBoxes.back()->GetPosition();
+                _float4 vText = m_vecTextBoxes.back()->Get_Position_UI();
 
                 m_fTargetNotify_TextBox_Distance.x = vTextBox_Texture.x - vText.x;
                 m_fTargetNotify_TextBox_Distance.y = vTextBox_Texture.y - vText.y;
@@ -344,8 +344,7 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 
                 for (auto& iter : m_vecTextBoxes)
                 {
-                    CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-                    iter->State(fTextBox);
+                    iter->Set_Position_UI(fTextBox);
                 }
 
                 m_isNotifyRender = true;
@@ -511,9 +510,7 @@ void CTargeting_Map_UI::Notify_Font_Position()
 
             for (auto& iter : m_vecTextBoxes)
             {
-                CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-
-                iter->State(fTextBox);
+                iter->Set_Position_UI(fTextBox);
 
                 m_isFont_Render = m_isRender;
             }

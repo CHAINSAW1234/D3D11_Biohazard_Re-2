@@ -170,6 +170,9 @@ void CMain_Map_UI::Rendering()
             /* 여기서 뭔가를 해야할까? */
             m_vMapOpen_Player_Distance = Main - Player;
 
+            m_vMapOpen_Player_Distance.m128_f32[0] = m_vMapOpen_Player_Distance.m128_f32[0] * ((_float)g_iWinSizeX / 1600.f);
+            m_vMapOpen_Player_Distance.m128_f32[1] = m_vMapOpen_Player_Distance.m128_f32[1] * ((_float)g_iWinSizeY / 900.f);
+
             m_isMainEnd = true;
         }
     }
