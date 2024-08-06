@@ -132,7 +132,6 @@ HRESULT CBullet_UI::Initialize(void* pArg)
     if (FAILED(Change_Tool()))
         return E_FAIL;
 
-
     return S_OK;
 }
 
@@ -467,39 +466,54 @@ void CBullet_UI::Change_BulletUI()
     if (nullptr == m_pTextUI[0].pText || nullptr == m_pTextUI[1].pText)
         return;
 
-    if (m_iCurrentBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
+    if (false == m_isTargetA)
+    {
+        m_isTargetA = true;
+        m_fOrigin_CurrentTextPos_A = *m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Get_Position_UI_Ptr();
+    }
+
+    if (false == m_isTargetB)
+    {
+        m_isTargetB = true;
+        m_fOrigin_CurrentTextPos_B = *m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Position_UI_Ptr();
+    }
+
+
+    if (m_iCurrentBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt || false == m_isFirstTarget)
     {
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet;
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt));
    
         if (m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt >= 10)
         {
-            _float4 pos = m_fOrigin_CurrentTextPos;
-            pos.x -= 10;
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Position(pos);
+            _float3 a = m_fOrigin_CurrentTextPos_A;
+            a.x -= 10.f;
+            *m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Get_Position_UI_Ptr() = a;
         }
         else
         {
-          
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Position(m_fOrigin_CurrentTextPos);
+            *m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Get_Position_UI_Ptr() =m_fOrigin_CurrentTextPos_A;
         }
     }
 
-    if (m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
+    if (m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt || false == m_isFirstTarget)
     {
         m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet;
         m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt));
     
         if (m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt >= 10)
         {
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Position(m_fOrigin_StoreTextPos);
+            _float3 a = m_fOrigin_CurrentTextPos_B;
+            *m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Position_UI_Ptr() = a;
         }
         else
         {
-            _float4 pos = m_fOrigin_StoreTextPos;
-            pos.x += 2; 
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Position(pos);
+            _float3 a = m_fOrigin_CurrentTextPos_B;
+            a.x += 5.f;
+            *m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Position_UI_Ptr() = a;
         }
+
+        m_isFirstTarget = true;
     }
 
     /* 12자리 일 때 색깔 바뀌게 함*/
