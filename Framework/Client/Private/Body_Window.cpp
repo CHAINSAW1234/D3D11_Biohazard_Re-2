@@ -92,7 +92,7 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 		}
 		break;
 	case CWindow::WINDOW_BREAK:
-		Change_Sound(TEXT("sound_Map_sm40_zombie_window2_6.mp3"), 1);
+		Change_Sound(TEXT("sound_Map_sm40_zombie_window2_6.mp3"), 2);
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	}

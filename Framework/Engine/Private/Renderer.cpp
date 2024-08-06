@@ -1054,8 +1054,8 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 
 
-	//if (FAILED(m_pRandomTexture->Bind_ShaderResource(m_pShader, "g_RandomNormalTexture")))
-	//	return E_FAIL;
+	if (FAILED(m_pRandomTexture->Bind_ShaderResource(m_pShader, "g_RandomNormalTexture")))
+		return E_FAIL;
 
 #pragma region SSAO
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Normal"), "g_NormalTexture")))
