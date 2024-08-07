@@ -434,9 +434,6 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 	{
 		m_vecChildUI[i]->Set_Dead(false);
 	}
-
-
-
 }
 
 void CContextMenu::Set_Dead(_bool bDead)
