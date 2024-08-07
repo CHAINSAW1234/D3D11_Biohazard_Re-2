@@ -126,6 +126,33 @@ void CTab_Window::Start()
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
+	if (DOWN == m_pGameInstance->Get_KeyState('M'))
+	{
+		m_isGetMapItem = true;
+
+		list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+		for (auto& iter : *pUIList)
+		{
+			CStatic_Map_UI* pStaticBackGround = dynamic_cast<CStatic_Map_UI*>(iter);
+
+			CAnnouncement_Map_UI* pAnnounceMap = dynamic_cast<CAnnouncement_Map_UI*>(iter);
+
+			if (nullptr != pStaticBackGround)
+			{
+				if (CMap_Manager::MAP_UI_TYPE::BACKGROUND_MAP == pStaticBackGround->Get_MapComponent_Type())
+				{
+					*pStaticBackGround->Get_Map_Ptr() = true;
+				}
+			}
+
+			else if (nullptr != pAnnounceMap)
+			{
+				pAnnounceMap->Set_GetMapItem();
+			}
+		}
+	}
+
 	if (true == IsInputTab())
 	{
 		OnOff_EventHandle();
@@ -1166,6 +1193,13 @@ HRESULT CTab_Window::Create_Button()
 	Safe_AddRef(m_pHintButton);
 	Safe_AddRef(m_pInvenButton);
 	Safe_AddRef(m_pMapButton);
+
+
+#ifdef FHD
+	m_pHintButton->Move(_float3{ 70.f, 70.f, 0.f});
+	m_pInvenButton->Move(_float3{ 70.f, 70.f, 0.f });
+	m_pMapButton->Move(_float3{ 70.f, 70.f, 0.f });
+#endif
 
 	return S_OK;
 }

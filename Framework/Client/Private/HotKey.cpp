@@ -48,14 +48,13 @@ HRESULT CHotKey::Initialize(void* pArg)
 
 void CHotKey::Start()
 {
-
 	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
 		m_fPopUp_Pos[i] = _float2(m_fPositions[i].x, m_fPositions[i].y - Y_DEF);
 
 		m_pEQItemUI[i]->Set_Text(HOTKEY_DISPLAY, to_wstring(i + 1));
 		m_pEQItemUI[i]->Set_PartUI_TextColor(HOTKEY_DISPLAY, XMVectorSet(1.f, 1.f, 1.f, 1.f));
-		m_pEQItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, Z_POS_ITEM_UI, 1.f), 0);
+		m_pEQItemUI[i]->Set_ItemUI_WinSize(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, Z_POS_ITEM_UI, 1.f), 0);
 	}
 }
 
@@ -260,10 +259,25 @@ CUI::UI_DESC CHotKey::Read_HotKeyDat()
 
 	UIDesc.worldMatrix = vecCustomInvenUIDesc[0].worldMatrix;
 
+#ifdef FHD
+	UIDesc.worldMatrix._41 *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+	UIDesc.worldMatrix._42 *= static_cast<_float>(g_iWinSizeY) / 900.f;
+
+	for (_uint i = 1; i < 5; i++)
+	{
+		m_fPositions[i - 1] = { 
+			vecCustomInvenUIDesc[i].worldMatrix._41 * static_cast<_float>(g_iWinSizeX) / 1600.f,
+			vecCustomInvenUIDesc[i].worldMatrix._42 * static_cast<_float>(g_iWinSizeY) / 900.f
+			, Z_POS_ITEM_UI };
+	}
+#endif
+
+#ifdef HD_PLUS
 	for (_uint i = 1; i < 5; i++)
 	{
 		m_fPositions[i - 1] = { vecCustomInvenUIDesc[i].worldMatrix._41, vecCustomInvenUIDesc[i].worldMatrix._42, Z_POS_ITEM_UI };
 	}
+#endif
 
 	return UIDesc;
 }

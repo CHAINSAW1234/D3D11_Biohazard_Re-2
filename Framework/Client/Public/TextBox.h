@@ -54,9 +54,14 @@ public:
 	virtual void Set_Position(_float fPosX, _float fPosY, _float fPosZ) override;
 	virtual void Set_Position(_vector vPos) override;
 
+	virtual void State(_float3 fTrans) override;
+
+	void Set_m_isCHFirst() { m_isCHFirst = true; }
+
 public:
 	TextBox_DESC Get_TextBoxDesc() const;
 	virtual void Move(_float3 fMove) override;
+	void Move_WinSize(_float3 fMove);
 	void Set_Position_UI(_float3 fMove);
 	_float3 Get_Position_UI() { return _float3(m_vTextPos.x, m_vTextPos.y, m_vTextPos.z); }
 	_float3* Get_Position_UI_Ptr() { return &m_vTextPos; }
@@ -74,6 +79,7 @@ private:
 private :
 	_bool	m_isUIRender = { false };
 	_bool	m_isTransformBase = { true };
+	_bool	m_isCHFirst = { false }; //하드코디용
 
 public:
 	static CTextBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
