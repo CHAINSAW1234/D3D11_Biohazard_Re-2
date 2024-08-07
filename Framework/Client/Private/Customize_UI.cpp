@@ -523,7 +523,7 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 	return S_OK;
 }
 
-HRESULT CCustomize_UI::Convert_Resolution()
+HRESULT CCustomize_UI::Convert_Resolution(_bool isScaleOnly)
 {
 	_float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;		
 	_float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
@@ -541,8 +541,17 @@ HRESULT CCustomize_UI::Convert_Resolution()
 	newPos.x = newPosX;
 	newPos.y = newPosY;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, newPos);
-	m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z); // Z축 크기는 기존 값 유지
+	if (true == isScaleOnly)
+	{
+		m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z);
+	}
+
+	else
+	{
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, newPos);
+		m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z); // Z축 크기는 기존 값 유지
+	}
+
 
 	return S_OK;
 }

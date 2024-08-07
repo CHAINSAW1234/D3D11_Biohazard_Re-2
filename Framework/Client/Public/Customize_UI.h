@@ -118,7 +118,7 @@ protected :
 	HRESULT Bind_ShaderResources();
 	HRESULT Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag);
 	virtual HRESULT Change_Tool() = 0;
-	HRESULT	Convert_Resolution();
+	HRESULT	Convert_Resolution(_bool isScaleOnly = false);
 
 protected :
 	/* Frame */

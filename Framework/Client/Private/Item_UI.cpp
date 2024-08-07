@@ -31,6 +31,7 @@ HRESULT CItem_UI::Initialize(void* pArg)
 		m_bDead = true;
 	}
 
+
 	return S_OK;
 }
 
@@ -56,7 +57,6 @@ void CItem_UI::Start()
 		{
 			iter->Set_isTransformBase(false);
 			iter->Set_isUIRender(true);
-			iter->Set_m_isCHFirst();
 		}
 
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
@@ -275,6 +275,18 @@ void CItem_UI::Set_Text(wstring Target, wstring strSetText)
 	if (false == m_IsChild)
 	{
 		m_mapPartUI[Target]->Set_Text(0, strSetText);
+	}
+}
+
+void CItem_UI::Set_Resolution(_bool isResolution)
+{
+	m_isResolution = isResolution;
+
+	Convert_Resolution(true);
+
+	for (auto iter : m_vecChildUI)
+	{
+		static_cast<CItem_UI*>(iter)->Set_Resolution(isResolution);
 	}
 }
 
