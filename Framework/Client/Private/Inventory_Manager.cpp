@@ -57,15 +57,16 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	AddItem_ToInven(HandGun, 10);
+	AddItem_ToInven_WinSize(HandGun, 10);
 	//AddItem_ToInven(ShotGun, 7);
-	AddItem_ToInven(handgun_bullet01a, 20);
+	AddItem_ToInven_WinSize(handgun_bullet01a, 20);
 	//AddItem_ToInven(shotgun_bullet01a, 20);
 
-	AddItem_ToInven(virginmedal01a, 1);
-	AddItem_ToInven(virginmedal02a, 1);
-	AddItem_ToInven(unicornmedal01a, 1);
-	
+	AddItem_ToInven_WinSize(virginmedal01a, 1);
+	AddItem_ToInven_WinSize(virginmedal02a, 1);
+	AddItem_ToInven_WinSize(unicornmedal01a, 1);
+
+	m_pContextMenu->TextPosSet();
 }
 
 void CInventory_Manager::SecondTick_Seting()
@@ -84,7 +85,8 @@ void CInventory_Manager::SecondTick_Seting()
 			iter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
 		}
 	}
-
+	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
+	m_fSlotHighlighterResetPos.z = Z_POS_HIGH_LIGHTER;
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 }
 
@@ -1520,6 +1522,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 		{
 			iter->Set_Dead(bInput);
 			m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, m_fSlotHighlighterResetPos);
 		}
 	}
 
@@ -1645,9 +1648,34 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 				continue;
 
 			_vector vSlotPos = Slotiter->GetPositionVector();
+
 			vSlotPos = XMVectorSetZ(vSlotPos, Z_POS_ITEM_UI);
 			Slotiter->Set_IsFilled(true);
+			
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
+			return;
+		}
+	}
+}
+
+void CInventory_Manager::AddItem_ToInven_WinSize(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
+{
+	for (auto& Itemiter : m_vecItem_UI)
+	{
+		if (true == Itemiter->Get_isWorking())
+			continue;
+
+		for (auto& Slotiter : m_vecInvenSlot)
+		{
+			if (true == Slotiter->Get_IsFilled())
+				continue;
+
+			_vector vSlotPos = Slotiter->GetPositionVector();
+
+			vSlotPos = XMVectorSetZ(vSlotPos, Z_POS_ITEM_UI);
+			Slotiter->Set_IsFilled(true);
+
+			Itemiter->Set_ItemUI_WinSize(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
 			return;
 		}
 	}
@@ -1660,6 +1688,42 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 		if (false == Itemiter->Get_isWorking())
 		{
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x, fItemPos.y, Z_POS_ITEM_UI, 1.f), iItemQuantity);
+			Itemiter->Set_Dead(false);
+			if (ShotGun == eAcquiredItem)
+			{
+				_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, Itemiter->Get_ItemNumber(), Itemiter->Get_ItemQuantity());
+				Itemiter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
+			}
+
+			break;
+		}
+	}
+
+	for (auto& Slotiter : m_vecInvenSlot)
+	{
+		if (true == Slotiter->IsPTInRect(_float2(fItemPos.x, fItemPos.y)))
+		{
+			Slotiter->Set_IsFilled(true);
+			break;
+		}
+	}
+}
+
+void CInventory_Manager::AddItem_ToInven_WinSize(ITEM_NUMBER eAcquiredItem, _int iItemQuantity, _float3 fItemPos)
+{
+	for (auto& Itemiter : m_vecItem_UI)
+	{
+		if (false == Itemiter->Get_isWorking())
+		{
+#ifdef FHD
+			//Itemiter->Set_ItemUI_WinSize(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x - 69.f, fItemPos.y - 25.f, Z_POS_ITEM_UI, 1.f), iItemQuantity);
+			Itemiter->Set_ItemUI_WinSize(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x, fItemPos.y, Z_POS_ITEM_UI, 1.f), iItemQuantity);
+#endif // FHD
+
+#ifdef HD_PLUS
+			Itemiter->Set_ItemUI_WinSize(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x, fItemPos.y, Z_POS_ITEM_UI, 1.f), iItemQuantity);
+#endif // HD_PLUS
+			
 			Itemiter->Set_Dead(false);
 			if (ShotGun == eAcquiredItem)
 			{
@@ -1777,8 +1841,7 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 	m_pSlotHighlighter->CCustomize_UI::Set_Dead(true);
 	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
 
-	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
-	m_fSlotHighlighterResetPos.z = Z_POS_HIGH_LIGHTER;
+
 
 	Safe_AddRef(m_pSlotHighlighter);
 	Safe_AddRef(m_pSlotHighlighterTransform);

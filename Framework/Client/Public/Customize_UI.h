@@ -135,8 +135,10 @@ protected :
 
 public:
 	virtual void Move(_float3 fMoveMent) override;
+	void Move_WinSize(_float3 fMoveMent);
 	void Move_To_Target(_float4 vTargetPos, _float fTimeDelta, _float fMinDistance);
 	virtual void Set_Position(_vector vPos) override;
+	virtual void Set_Position_Winsize(_vector vPos);
 
 
 public:
@@ -325,6 +327,11 @@ public:// for. Set inline
 		m_vecTextBoxes[iTextNum]->Set_Text(wstrSetText);
 	}
 
+	void Move_Text(_uint iTextNum, _float3 fMove)
+	{
+		m_vecTextBoxes[iTextNum]->Move(fMove);
+	}
+
 	void Set_Text_Color(_uint iTextNum, _vector vTextColor) {
 		m_vecTextBoxes[iTextNum]->Set_FontColor(vTextColor);
 	}
@@ -333,6 +340,9 @@ public:// for. Set inline
 
 	void Set_MyChild_Text(_uint iChildNum, _uint iTextNum, wstring wstrSetText) {
 		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Text(iTextNum, wstrSetText);
+	}
+	void Move_MyChild_Text(_uint iChildNum, _uint iTextNum, _float3 fMove) {
+		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Move_Text(iTextNum, fMove);
 	}
 	void Set_MyChild_TextColor(_uint iChildNum, _uint iTextNum, _vector vTextColor) {
 		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Text_Color(iTextNum, vTextColor);

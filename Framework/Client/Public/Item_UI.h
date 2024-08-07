@@ -59,6 +59,7 @@ public:/*±â´É¼º*/
 	void				Reset_ItemUI();
 	void				Set_Activ_ItemUI(_bool Active);
 	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation);
+	void				Set_ItemUI_WinSize(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation);
 	void				Set_PartUI_TextColor(wstring Target, _vector vTextColor);
 	void				Set_Text(wstring Target, wstring strSetText);
 

@@ -1167,6 +1167,13 @@ HRESULT CTab_Window::Create_Button()
 	Safe_AddRef(m_pInvenButton);
 	Safe_AddRef(m_pMapButton);
 
+
+#ifdef FHD
+	m_pHintButton->Move(_float3{ 70.f, 70.f, 0.f});
+	m_pInvenButton->Move(_float3{ 70.f, 70.f, 0.f });
+	m_pMapButton->Move(_float3{ 70.f, 70.f, 0.f });
+#endif
+
 	return S_OK;
 }
 

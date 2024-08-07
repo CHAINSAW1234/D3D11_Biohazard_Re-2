@@ -1,0 +1,138 @@
+[
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "사건 일지",
+    "POSITION_X": 492,
+    "POSITION_Y": 63,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "작전 보고서",
+    "POSITION_X": 470,
+    "POSITION_Y": 66,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "신입의 첫 번째 과제",
+    "POSITION_X": 412,
+    "POSITION_Y": 74,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "약초의 의학적 효능",
+    "POSITION_X": 461,
+    "POSITION_Y": 71,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "경관의 노트",
+    "POSITION_X": 473,
+    "POSITION_Y": 58,
+    "SIZE_X": 400,
+    "SIZE_Y": 400
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "화약 사용",
+    "POSITION_X": 447,
+    "POSITION_Y": 68,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "물품 보관함 단말기 관련 쪽지",
+    "POSITION_X": 440,
+    "POSITION_Y": 80,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "휴대용 금고 지침",
+    "POSITION_X": 440,
+    "POSITION_Y": 80,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "만일의 생존자에게",
+    "POSITION_X": 440,
+    "POSITION_Y": 80,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "내부용 쪽지",
+    "POSITION_X": 440,
+    "POSITION_Y": 80,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "가이드 책자",
+    "POSITION_X": 440,
+    "POSITION_Y": 80,
+    "SIZE_X": 700,
+    "SIZE_Y": 550
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "아이템 검사",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "열쇠 아이템 사용",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "지도 활용",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "아이템 조합",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "체력 및 회복 아이템",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "POLICE",
+    "NAME": "압수 보고서",
+    "POSITION_X": 473,
+    "POSITION_Y": 58,
+    "SIZE_X": 400,
+    "SIZE_Y": 400
+  }
+]
