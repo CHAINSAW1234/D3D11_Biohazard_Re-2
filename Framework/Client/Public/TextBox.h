@@ -53,10 +53,7 @@ public:
 	_vector Get_OutLineColor() { return m_vOutLineColor; }
 	virtual void Set_Position(_float fPosX, _float fPosY, _float fPosZ) override;
 	virtual void Set_Position(_vector vPos) override;
-
 	virtual void State(_float3 fTrans) override;
-
-	void Set_m_isCHFirst() { m_isCHFirst = true; }
 
 public:
 	TextBox_DESC Get_TextBoxDesc() const;
@@ -79,7 +76,7 @@ private:
 private :
 	_bool	m_isUIRender = { false };
 	_bool	m_isTransformBase = { true };
-	_bool	m_isCHFirst = { false }; //하드코디용
+	_bool	m_isConvertRetion = { false }; //하드코디용
 
 public:
 	static CTextBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

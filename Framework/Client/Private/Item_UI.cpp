@@ -57,7 +57,6 @@ void CItem_UI::Start()
 		{
 			iter->Set_isTransformBase(false);
 			iter->Set_isUIRender(true);
-			iter->Set_m_isCHFirst();
 		}
 
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
