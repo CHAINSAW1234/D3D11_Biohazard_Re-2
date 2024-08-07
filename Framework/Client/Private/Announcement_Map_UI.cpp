@@ -69,7 +69,7 @@ void CAnnouncement_Map_UI::Tick(_float fTimeDelta)
         }
     }
 
-    if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
+    if (m_isRender && DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
     {
         m_isRender = false;
 
