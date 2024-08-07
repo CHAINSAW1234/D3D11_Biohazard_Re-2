@@ -925,6 +925,19 @@ void CCustomize_UI::Move(_float3 fMoveMent)
 		static_cast<CCustomize_UI*>(iter)->Move(fMoveMent);
 }
 
+void CCustomize_UI::Move_WinSize(_float3 fMoveMent)
+{
+	_vector	vPosition = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	vPosition += XMLoadFloat3(&fMoveMent);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+
+	for (auto& iter : m_vecTextBoxes)
+		iter->Move_WinSize(fMoveMent);
+
+	for (auto& iter : m_vecChildUI)
+		static_cast<CCustomize_UI*>(iter)->Move_WinSize(fMoveMent);
+}
+
 void CCustomize_UI::Move_To_Target(_float4 vTargetPos, _float fTimeDelta, _float fMinDistance)
 {
 	_float3 fPrePos = { GetPosition().x, GetPosition().y, GetPosition().z };
@@ -957,6 +970,23 @@ void CCustomize_UI::Set_Position(_vector vPos)
 
 	for (auto& iter : m_vecChildUI)
 		static_cast<CCustomize_UI*>(iter)->Move(fMovement);
+}
+
+void CCustomize_UI::Set_Position_Winsize(_vector vPos)
+{
+	_vector vprePos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+
+	_float3 fMovement = {};
+	XMStoreFloat3(&fMovement, vPos - vprePos);
+	fMovement.z = 0.f;
+
+	for (auto& iter : m_vecTextBoxes)
+		iter->Move_WinSize(fMovement);
+
+	for (auto& iter : m_vecChildUI)
+		static_cast<CCustomize_UI*>(iter)->Move_WinSize(fMovement);
 }
 
 void CCustomize_UI::PushBack_Child(CGameObject* pGameOBJ)

@@ -140,6 +140,9 @@ private:
 	UI_OPERRATION		m_eSequence = { STATE_END };
 
 	vector<ITEM_NUMBER> m_vecCollect_ITEM;
+	
+
+	_bool isFirst = true;
 
 private:
 	HRESULT Add_Components();

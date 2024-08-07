@@ -42,6 +42,16 @@ HRESULT CContextMenu::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CContextMenu::TextPosSet()
+{
+#ifdef FHD
+	static_cast<CContextMenu*>(m_vecChildUI[0])->Move_MyChild_Text(0, 0, _float3{ -75.f, -52.f, 0.f });
+	static_cast<CContextMenu*>(m_vecChildUI[1])->Move_MyChild_Text(0, 0, _float3{ -75.f, -45.f, 0.f });
+	static_cast<CContextMenu*>(m_vecChildUI[2])->Move_MyChild_Text(0, 0, _float3{ -75.f, -35.f, 0.f });
+	static_cast<CContextMenu*>(m_vecChildUI[3])->Move_MyChild_Text(0, 0, _float3{ -75.f, -30.f, 0.f });
+#endif // FHD
+}
+
 void CContextMenu::Tick(_float fTimeDelta)
 {
 #pragma region ³ª¿µ
@@ -424,6 +434,9 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 	{
 		m_vecChildUI[i]->Set_Dead(false);
 	}
+
+
+
 }
 
 void CContextMenu::Set_Dead(_bool bDead)

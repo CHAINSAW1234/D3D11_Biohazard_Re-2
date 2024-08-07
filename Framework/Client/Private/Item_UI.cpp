@@ -56,6 +56,7 @@ void CItem_UI::Start()
 		{
 			iter->Set_isTransformBase(false);
 			iter->Set_isUIRender(true);
+			iter->Set_m_isCHFirst();
 		}
 
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
@@ -325,6 +326,22 @@ void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSe
 	m_eInvenItemType = eItmeType;
 
 	Set_Position(vSetPos);
+
+	m_iItemQuantity = iVariation;
+
+	if (DRAG_SHADOW == m_eInvenItemType)
+		Set_Value_Color(&m_vColor[1]);
+}
+
+void CItem_UI::Set_ItemUI_WinSize(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation)
+{
+	//m_bDead = false;
+	m_isWorking = true;
+	m_eItemNumber = eItmeNum;
+	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+	m_eInvenItemType = eItmeType;
+
+	Set_Position_Winsize(vSetPos);
 
 	m_iItemQuantity = iVariation;
 

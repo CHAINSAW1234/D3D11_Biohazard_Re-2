@@ -63,7 +63,8 @@ void CHint::Start()
 	for (auto& iter : m_vecDirectory)
 	{
 		iter->Move(fMove);
-		fMove += _float3{ 0.f, -63.f, 0.f };
+		iter->Get_TexBox(0)->Move(_float3{-300.f, -25.f, 0.f});
+		fMove += _float3{ 0.f, -63.f * static_cast<_float>(g_iWinSizeX) / 1600.f, 0.f };
 	}
 
 #pragma region 초기화
@@ -455,11 +456,19 @@ HRESULT CHint::Load_DocumentINFO()
 		{
 			wstring wstrDocumentClassify = m_pGameInstance->ConvertToWString((*itr)["CLASSIFY"].GetString(), (*itr)["CLASSIFY"].GetStringLength());
 			wstring wstrDocumentName = m_pGameInstance->ConvertToWString((*itr)["NAME"].GetString(), (*itr)["NAME"].GetStringLength());
+
+#ifdef HD_PLUS
 			_float fPosX = (*itr)["POSITION_X"].GetFloat();
 			_float fPosY = (*itr)["POSITION_Y"].GetFloat();
 			_float fSizeX = (*itr)["SIZE_X"].GetFloat();
 			_float fSizeY = (*itr)["SIZE_Y"].GetFloat();
-
+#endif
+#ifdef FHD
+			_float fPosX = (*itr)["POSITION_X"].GetFloat() * static_cast<_float>(g_iWinSizeX) / 1600.f;
+			_float fPosY = (*itr)["POSITION_Y"].GetFloat() * static_cast<_float>(g_iWinSizeX) / 1600.f;
+			_float fSizeX = (*itr)["SIZE_X"].GetFloat() * static_cast<_float>(g_iWinSizeX) / 1600.f;
+			_float fSizeY = (*itr)["SIZE_Y"].GetFloat() * static_cast<_float>(g_iWinSizeX) / 1600.f;
+#endif
 			DOCUMENT_INFO DocumentInfo = {};
 
 			if (TEXT("POLICE") == wstrDocumentClassify)
@@ -472,6 +481,8 @@ HRESULT CHint::Load_DocumentINFO()
 			DocumentInfo.wstrName = wstrDocumentName;
 			DocumentInfo.fPosition = { fPosX , fPosY };
 			DocumentInfo.fSize = { fSizeX , fSizeY };
+
+
 
 			m_mapDocumentInfo.emplace(Classify_IRT_By_Name(DocumentInfo.wstrName), DocumentInfo);
 		}
@@ -527,7 +538,12 @@ HRESULT CHint::Create_Directory()
 	{
 		ifstream inputFileStream;
 		wstring selectedFilePath;
+#ifdef HD_PLUS
 		selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Directory.dat");
+#endif
+#ifdef FHD
+		selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Directory2.dat");
+#endif
 		inputFileStream.open(selectedFilePath, ios::binary);
 		CHint_Directory* pDirectory = { nullptr };
 		CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Hint_Directory"),
@@ -555,7 +571,12 @@ HRESULT CHint::Create_Directory_Highlighter()
 {
 	ifstream inputFileStream;
 	wstring selectedFilePath;
+#ifdef HD_PLUS
 	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Highlighter.dat");
+#endif
+#ifdef FHD
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Highlighter2.dat");
+#endif
 	inputFileStream.open(selectedFilePath, ios::binary);
 
 	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Hint_Highliter"),
@@ -672,7 +693,6 @@ CHint::DOCUMENT_CLASSIFY CHint::Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_N
 
 HRESULT CHint::Create_Text_Button()
 {
-
 	CTextBox::TextBox_DESC TextBox_Desc= {};
 	TextBox_Desc.wstrText = TEXT("경찰서");
 	TextBox_Desc.wstrFontType = TEXT("Font_CGBold");
