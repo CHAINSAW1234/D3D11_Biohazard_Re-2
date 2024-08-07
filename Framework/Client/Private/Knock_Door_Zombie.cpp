@@ -63,10 +63,22 @@ void CKnock_Door_Zombie::Enter()
 		iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_B_START);
 	}
 
-	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pDoor->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), iAnimIndex, m_strAnimLayerTag, &m_InterpolateDeltaMatrix))
+	CTransform*			pDoorTransform = { pDoor->Get_Transform() };
+
+	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pDoorTransform, static_cast<_uint>(m_eBasePlayingIndex), iAnimIndex, m_strAnimLayerTag, &m_InterpolateDeltaMatrix))
 		return;
 
-	/*_matrix				TargetDoorWorldMatrix = { pDoor->Get_Transform()->Get_WorldMatrix() };
+	_matrix				OriginDeltaMatrix = { XMLoadFloat4x4(&m_InterpolateDeltaMatrix) };
+	_vector				vDeltaLook = { XMVector3Normalize(OriginDeltaMatrix.r[CTransform::STATE_LOOK]) };
+	_vector				vPosition = { OriginDeltaMatrix.r[CTransform::STATE_POSITION] };
+	vPosition += vDeltaLook * -1.f * 0.2f;
+
+	OriginDeltaMatrix.r[CTransform::STATE_POSITION] = vPosition;
+
+	XMStoreFloat4x4(&m_InterpolateDeltaMatrix, OriginDeltaMatrix);
+
+	/*
+	_matrix				TargetDoorWorldMatrix = { pDoor->Get_Transform()->Get_WorldMatrix() };
 	_matrix				Zombie_WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
 	
 	_vector				vTargetScale, vTargetQuaternion, vTargetTranslation;
@@ -76,7 +88,8 @@ void CKnock_Door_Zombie::Enter()
 	XMMatrixDecompose(&vZombieScale, &vZombieQuaternion, &vZombieTranslation, Zombie_WorldMatrix);
 
 	_matrix				NewWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vTargetQuaternion, vTargetTranslation) };
-	m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(NewWorldMatrix);*/
+	m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(NewWorldMatrix);
+	*/
 
 	pBodyModel->Set_TotalLinearInterpolation(0.3f);
 

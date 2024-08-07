@@ -220,31 +220,31 @@ void CCut_Scene_CF94::Start_CutScene()
 {
 	__super::Start_CutScene();
 
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_dailogue.bnk.2.stm_1.mp3"), 0);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_dailogue.bnk.2.stm_3.mp3"), 1);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_music_en.bnk.2_1.mp3"), 2);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_1.mp3"), 3);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_2.mp3"), 4);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_3.mp3"), 5);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_4.mp3"), 6);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_5.mp3"), 7);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_6.mp3"), 8);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_7.mp3"), 9);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_8.mp3"), 10);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_9.mp3"), 11);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_10.mp3"), 12);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_11.mp3"), 13);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_12.mp3"), 14);
-	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_13.mp3"), 15);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_14.mp3"), 16);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_15.mp3"), 17);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_16.mp3"), 18);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_17.mp3"), 19);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_18.mp3"), 20);
-	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_19.mp3"), 21);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_20.mp3"), 22);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_21.mp3"), 23);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_22.mp3"), 24);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_dailogue.bnk.2.stm_1.mp3"), 0);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_dailogue.bnk.2.stm_3.mp3"), 1);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_music_en.bnk.2_1.mp3"), 2);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_1.mp3"), 3);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_2.mp3"), 4);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_3.mp3"), 5);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_4.mp3"), 6);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_5.mp3"), 7);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_6.mp3"), 8);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_7.mp3"), 9);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_8.mp3"), 10);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_9.mp3"), 11);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_10.mp3"), 12);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_11.mp3"), 13);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_12.mp3"), 14);
+	//	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_13.mp3"), 15);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_14.mp3"), 16);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_15.mp3"), 17);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_16.mp3"), 18);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_17.mp3"), 19);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_18.mp3"), 20);
+	//	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_19.mp3"), 21);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_20.mp3"), 22);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_21.mp3"), 23);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf094_se_en.bnk.2_22.mp3"), 24);
 
 
 	CGameObject*		pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };

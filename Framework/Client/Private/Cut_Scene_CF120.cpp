@@ -112,17 +112,17 @@ void CCut_Scene_CF120::Start_CutScene()
 	if (nullptr == pGameObject)
 		return;
 
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_dialogue.bnk.2.stm_1.mp3"), 0);
-	//m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_dialogue.bnk.2.stm_1.mp3"), 1);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_dialogue.bnk.2.stm_3.mp3"), 2);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_1.mp3"), 3);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_2.mp3"), 4);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_3.mp3"), 5);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_4.mp3"), 6);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_5.mp3"), 7);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_6.mp3"), 8);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_7.mp3"), 9);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_8.mp3"), 10);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_dialogue.bnk.2.stm_1.mp3"), 0);
+	//	//m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_dialogue.bnk.2.stm_1.mp3"), 1);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_dialogue.bnk.2.stm_3.mp3"), 2);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_1.mp3"), 3);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_2.mp3"), 4);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_3.mp3"), 5);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_4.mp3"), 6);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_5.mp3"), 7);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_6.mp3"), 8);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_7.mp3"), 9);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf120_se_en.bnk.2_8.mp3"), 10);
 
 	static_cast<CCut_Scene_CF94*>(CCut_Scene_Manager::Get_Instance()->Get_CutScene(CCut_Scene_Manager::CF_ID::_94))->Finish_Marvine();
 

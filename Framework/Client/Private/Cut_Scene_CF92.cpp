@@ -113,13 +113,13 @@ void CCut_Scene_CF92::Start_CutScene()
 	if (nullptr == pShutter)
 		return;
 
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_dialogue.bnk.2.x64_2_00000001.mp3"), 0);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_1.mp3"), 1);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_2.mp3"), 2);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_3.mp3"), 3);
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_4.mp3"), 4);
-
-	m_pGameInstance->PlaySoundEffect_2D(TEXT("BGM"), TEXT("cf092_music_en.bnk.2_1.mp3"), 0.5f);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_dialogue.bnk.2.x64_2_00000001.mp3"), 0);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_1.mp3"), 1);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_2.mp3"), 2);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_3.mp3"), 3);
+	//	m_pGameInstance->Change_Sound_3D(m_pTransformCom, TEXT("cf092_se_en.bnk.2_4.mp3"), 4);
+	//	
+	//	m_pGameInstance->PlaySoundEffect_2D(TEXT("BGM"), TEXT("cf092_music_en.bnk.2_1.mp3"), 0.5f);
 
 
 	CGameObject*			pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_WP_4530) };
@@ -145,6 +145,7 @@ void CCut_Scene_CF92::Start_CutScene()
 
 	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF92::CF92_ACTOR_TYPE::_WP_4530)])->Set_LightSpot(false);
 	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF92::CF92_ACTOR_TYPE::_WP_4530)])->Set_Render(false);
+	static_cast<CActor_WP4530*>(m_Actors[static_cast<_uint>(CCut_Scene_CF92::CF92_ACTOR_TYPE::_WP_4530)])->Set_Render_All_Part(false);
 	pFlashLight->Set_Render(true);
 
 	pShutter->Set_OutOfControll(true);
