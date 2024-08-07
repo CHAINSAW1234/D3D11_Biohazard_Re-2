@@ -87,6 +87,10 @@ void CInventory_Manager::SecondTick_Seting()
 	}
 	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
 	m_fSlotHighlighterResetPos.z = Z_POS_HIGH_LIGHTER;
+
+	m_fSlotHighlighterResetPos.x *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+	m_fSlotHighlighterResetPos.y *= static_cast<_float>(g_iWinSizeY) / 900.f;
+
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 }
 
@@ -1522,7 +1526,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 		{
 			iter->Set_Dead(bInput);
 			m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
-			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, m_fSlotHighlighterResetPos);
+			//m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, m_fSlotHighlighterResetPos);
 		}
 	}
 
@@ -1653,6 +1657,7 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 			Slotiter->Set_IsFilled(true);
 			
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
+			Itemiter->Set_Resolution(true);
 			return;
 		}
 	}
@@ -1689,6 +1694,7 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 		{
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x, fItemPos.y, Z_POS_ITEM_UI, 1.f), iItemQuantity);
 			Itemiter->Set_Dead(false);
+			Itemiter->Set_Resolution(true);
 			if (ShotGun == eAcquiredItem)
 			{
 				_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, Itemiter->Get_ItemNumber(), Itemiter->Get_ItemQuantity());
