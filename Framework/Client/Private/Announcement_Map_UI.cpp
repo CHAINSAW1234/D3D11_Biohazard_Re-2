@@ -81,7 +81,7 @@ void CAnnouncement_Map_UI::Tick(_float fTimeDelta)
 
         m_isGetMap_Item = false;
 
-        if (!m_vecTextBoxes.empty())
+        if (!m_vecTextBoxes.empty())    
         {
             for (auto& iter : m_vecTextBoxes)
             {
