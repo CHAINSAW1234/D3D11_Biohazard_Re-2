@@ -179,7 +179,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 
 	_float3		vMoveDir = {};
 
-	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &_float3());
 
 	if (false != m_bRender)
 	{

@@ -45,6 +45,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Hide_Mesh("LOD_1_Group_200_Sub_1__pl0001_Gun_Mat_mesh0007", true);
 
 	m_pModelCom->Add_IK("l_arm_radius", "l_weapon", TEXT("IK_SHOTGUN"), 3, 1.f);
+	m_pModelCom->Add_IK("l_arm_clavicle", "l_wrist", TEXT("IK_FLASHLIGHT"), 3, 1.f);
+	//	m_pModelCom->Add_IK("l_arm_humerus", "l_", TEXT("IK_FLASHLIGHT"), 3, 1.f);
 
 	m_pModelCom->Set_OptimizationCulling(false);
 
@@ -539,6 +541,42 @@ HRESULT CBody_Player::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CBody_Player::Apply_FlashLight_IK(_float fTimeDelta)
+{
+	_matrix				R_Arm_Wrist_CombiendMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_arm_wrist")) };
+	_vector				vR_Arm_Wrist_LocalPosition = { R_Arm_Wrist_CombiendMatrix.r[CTransform::STATE_POSITION] };
+	_vector				vR_Arm_Wrist_WorldPosition = { XMVector3TransformCoord(vR_Arm_Wrist_LocalPosition, m_pParentsTransform->Get_WorldMatrix()) };
+
+	_matrix				R_Arm_Clavicle_CombiendMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_arm_humerus")) };
+	_vector				vR_Arm_Clavicle_LocalPosition = { R_Arm_Clavicle_CombiendMatrix.r[CTransform::STATE_POSITION] };
+	_vector				vR_Arm_Clavicle_WorldPosition = { XMVector3TransformCoord(vR_Arm_Clavicle_LocalPosition, m_pParentsTransform->Get_WorldMatrix()) };
+
+	_vector				vDir_Clavicle_To_Wrist = { vR_Arm_Wrist_WorldPosition - vR_Arm_Clavicle_WorldPosition };
+	_vector				vLookPlayer = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_LOOK) };
+
+	_vector				vAxis = { XMVector3Cross(XMVector3Normalize(vLookPlayer), XMVector3Normalize(vDir_Clavicle_To_Wrist)) };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vLookPlayer), XMVector3Normalize(vDir_Clavicle_To_Wrist))) };
+	_float				fAngle = { acosf(fDot) };
+
+	_vector				vRotateQuaternion = { XMQuaternionRotationAxis(XMVector3Normalize(vAxis), fAngle) };
+	_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vRotateQuaternion) };
+
+	_vector				vRightPlayer = { XMVector3TransformNormal(m_pParentsTransform->Get_State_Vector(CTransform::STATE_RIGHT), XMMatrixIdentity()) };
+	_vector				vUpPlayer = { XMVector3TransformNormal(m_pParentsTransform->Get_State_Vector(CTransform::STATE_UP), RotationMatrix) };
+
+	/*CTransform*			pCameraTransform = { m_pGameInstance->Get_Camera_Transform() };
+	_vector				vCameraUp = { XMVector3Normalize(pCameraTransform->Get_State_Vector(CTransform::STATE_UP)) };
+	_vector				vCameraRight= { XMVector3Normalize(pCameraTransform->Get_State_Vector(CTransform::STATE_RIGHT)) };*/
+
+	//	_vector				vTargetPosition = { vR_Arm_Wrist_WorldPosition + vUpPlayer * -0.1f + vRightPlayer * 0.1f };
+	_vector				vTargetPosition = { vR_Arm_Wrist_WorldPosition /*+ vUpPlayer * -0.1f + vRightPlayer * 0.1f*/ };
+
+	m_pModelCom->Set_Blend_IK(TEXT("IK_FLASHLIGHT"), 1.f);
+	m_pModelCom->Set_TargetPosition_IK(TEXT("IK_FLASHLIGHT"), vTargetPosition);
+
+	m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
 }
 
 CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

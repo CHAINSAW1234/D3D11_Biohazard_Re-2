@@ -467,6 +467,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
 	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
 
+	//	static_cast<CBody_Player*>(m_PartObjects[CPlayer::PART_BODY])->Apply_FlashLight_IK(fTimeDelta);
 
 #pragma region 예은 추가
 	Col_Section();

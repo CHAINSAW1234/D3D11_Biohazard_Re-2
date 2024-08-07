@@ -61,6 +61,9 @@ private:
 	HRESULT					Bind_ShaderResources();
 
 public:
+	void					Apply_FlashLight_IK(_float fTimeDelta);
+
+public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
