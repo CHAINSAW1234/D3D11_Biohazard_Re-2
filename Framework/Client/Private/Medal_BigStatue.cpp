@@ -100,7 +100,6 @@ void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 
 HRESULT CMedal_BigStatue::Render()
 {
-	return S_OK;
 	if (m_bRender == false)
 		return S_OK;
 	else
