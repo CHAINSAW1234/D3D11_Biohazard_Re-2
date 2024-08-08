@@ -30,7 +30,7 @@ private :
 	_bool				m_isCull				= { false };
 
 	_float2				m_fDistance				= {};
-	_float2				m_fFontDistance			= {};
+	_float3				m_fFontDistance			= {};
 
 	CTransform*			m_pParentTransform		= { nullptr };
 	CHold_UI*			m_pParentObj			= { nullptr };
