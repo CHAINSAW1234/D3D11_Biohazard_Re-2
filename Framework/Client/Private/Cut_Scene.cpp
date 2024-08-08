@@ -355,5 +355,6 @@ void CCut_Scene::Free()
 	}
 	m_PropControllers.clear();
 
+	Safe_Release(m_pLayOut);
 	Safe_Release(m_pEvent_Camera);
 }
