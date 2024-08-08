@@ -159,6 +159,11 @@ HRESULT CBody_Player::Initialize(void* pArg)
 void CBody_Player::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
+
+	if (DOWN == m_pGameInstance->Get_KeyState('M'))
+	{
+		m_isActive_IK_FlashLight = !m_isActive_IK_FlashLight;
+	}
 }
 
 void CBody_Player::Tick(_float fTimeDelta)
@@ -182,8 +187,21 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
 
-	if(true == m_isActive_IK_FlashLight)
+	if (true == m_isActive_IK_FlashLight)
+	{
+		m_fAccIK_Flsash_Time += fTimeDelta;
+		if (m_fAccIK_Flsash_Time > m_fMaxIK_Flsash_Time)
+			m_fAccIK_Flsash_Time = m_fMaxIK_Flsash_Time;
+
 		Apply_FlashLight_IK(fTimeDelta);	
+	}
+
+	else
+	{
+		m_fAccIK_Flsash_Time -= fTimeDelta;
+		if (m_fAccIK_Flsash_Time < 0.f)
+			m_fAccIK_Flsash_Time = 0.f;
+	}
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -573,7 +591,7 @@ void CBody_Player::Apply_FlashLight_IK(_float fTimeDelta)
 	_vector				vRightPlayer = { XMVector3TransformNormal(XMLoadFloat4x4(&m_WorldMatrix).r[CTransform::STATE_RIGHT], XMMatrixIdentity()) };
 	_vector				vUpPlayer = { XMVector3TransformNormal(XMLoadFloat4x4(&m_WorldMatrix).r[CTransform::STATE_UP], RotationMatrix) };
 
-	/*CTransform*			pCameraTransform = { m_pGameInstance->Get_Camera_Transform() };
+	/*CTransform*		pCameraTransform = { m_pGameInstance->Get_Camera_Transform() };
 	_vector				vCameraUp = { XMVector3Normalize(pCameraTransform->Get_State_Vector(CTransform::STATE_UP)) };
 	_vector				vCameraRight= { XMVector3Normalize(pCameraTransform->Get_State_Vector(CTransform::STATE_RIGHT)) };*/
 
@@ -581,10 +599,21 @@ void CBody_Player::Apply_FlashLight_IK(_float fTimeDelta)
 	//	_vector				vTargetPosition = { vR_Arm_Wrist_WorldPosition /*+ vUpPlayer * -0.1f + vRightPlayer * 0.1f*/ };
 	//	_vector				vTargetPosition = { vL_Arm_Wrist_WorldPosition /*+ vUpPlayer * -0.1f + vRightPlayer * 0.1f*/ };
 
-	m_pModelCom->Set_Blend_IK(TEXT("IK_FLASHLIGHT"), 1.f);
+	_float				fRatio = { m_fAccIK_Flsash_Time / m_fMaxIK_Flsash_Time };
+
+	m_pModelCom->Set_Blend_IK(TEXT("IK_FLASHLIGHT"), fRatio);
 	m_pModelCom->Set_TargetPosition_IK(TEXT("IK_FLASHLIGHT"), vTargetPosition);
 
 	m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
+}
+
+void CBody_Player::Calibration_Left_Wrist()
+{
+	if (false == m_isActive_IK_FlashLight)
+		return;
+
+	//	m_pModelCom->Add_Additional_Transformation_World("l_arm_wrist", XMMatrixRotationY(XMConvertToRadians(180.f)));
+	m_pModelCom->Apply_Rotation_Bone_Once(m_pParentsTransform, "l_arm_wrist", XMMatrixRotationZ(XMConvertToRadians(20.f)));
 }
 
 CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -2744,7 +2744,51 @@ HRESULT CModel::Play_IK(CTransform* pTransform, _float fTimeDelta)
 
 	m_pIK_Solver->Play_IK(m_Bones, pTransform);
 	//	Apply_AdditionalForces(pTransform);
-	Clear_AdditionalForces();
+	//	Clear_AdditionalForces();
+
+	return S_OK;
+}
+
+HRESULT CModel::Apply_Rotation_Bone_Once(CTransform* pTransform, const string& strBoneName, _fmatrix RotationMatrix)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneName) };
+	if (-1 == iBoneIndex)
+		return E_FAIL;
+
+	list<_uint>			ChildBoneIndices;
+	Get_Child_BoneIndices(strBoneName, ChildBoneIndices);
+
+	ChildBoneIndices.sort();
+
+	_matrix			TransformMatrix = { m_Bones[iBoneIndex]->Get_TrasformationMatrix() };
+	_vector			vPosition = { TransformMatrix.r[CTransform::STATE_POSITION] };
+	TransformMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	TransformMatrix = TransformMatrix * RotationMatrix;
+	TransformMatrix.r[CTransform::STATE_POSITION] = vPosition;
+
+	_matrix			CombinedMatrix = { XMMatrixIdentity() };
+	_int			iParentsIndex = { m_Bones[iBoneIndex]->Get_ParentIndex() };
+	if (-1 == iParentsIndex)
+	{
+		CombinedMatrix = TransformMatrix * XMLoadFloat4x4(&m_TransformationMatrix);
+	}
+	else
+	{
+		CombinedMatrix = TransformMatrix * XMLoadFloat4x4(m_Bones[iParentsIndex]->Get_CombinedTransformationMatrix());
+	}
+
+	m_Bones[iBoneIndex]->Set_TransformationMatrix(TransformMatrix);
+	m_Bones[iBoneIndex]->Set_Combined_Matrix(CombinedMatrix);
+
+	for (auto& iChildIndices : ChildBoneIndices)
+	{
+		iParentsIndex = m_Bones[iChildIndices]->Get_ParentIndex();
+		_matrix			ParentsCombinedMatrix = { XMLoadFloat4x4(m_Bones[iParentsIndex]->Get_CombinedTransformationMatrix()) };
+		TransformMatrix = m_Bones[iChildIndices]->Get_TrasformationMatrix();
+
+		CombinedMatrix = TransformMatrix * ParentsCombinedMatrix;
+		m_Bones[iBoneIndex]->Set_Combined_Matrix(CombinedMatrix);
+	}
 
 	return S_OK;
 }

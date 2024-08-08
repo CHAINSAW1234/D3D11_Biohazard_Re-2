@@ -262,6 +262,7 @@ public:
 	HRESULT									Play_Pose(_uint iPlayingIndex);
 	HRESULT									Play_T_Pose();
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
+	HRESULT									Apply_Rotation_Bone_Once(class CTransform* pTransform, const string& strBoneName, _fmatrix RotationMatrix);
 	HRESULT									Render(_uint iMeshIndex);
 
 private:

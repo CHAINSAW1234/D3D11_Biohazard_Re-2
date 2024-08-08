@@ -467,10 +467,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	/*if (m_pController)
 		m_pController->Update_Collider();*/
 
-
-
-	//	static_cast<CBody_Player*>(m_PartObjects[CPlayer::PART_BODY])->Apply_FlashLight_IK(fTimeDelta);
-
 #pragma region 예은 추가
 	Col_Section();
 #pragma endregion 

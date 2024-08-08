@@ -58,6 +58,8 @@ private:
 	_bool					m_bDecal_Player = { false };
 
 	_bool					m_isActive_IK_FlashLight = { false };
+	_float					m_fAccIK_Flsash_Time = { 0.f };
+	_float					m_fMaxIK_Flsash_Time = { 0.2f };
 
 public:
 	HRESULT					Add_Animations();
@@ -68,6 +70,7 @@ private:
 
 public:
 	void					Apply_FlashLight_IK(_float fTimeDelta);
+	void					Calibration_Left_Wrist();
 
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
