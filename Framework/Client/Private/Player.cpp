@@ -394,9 +394,9 @@ void CPlayer::Tick(_float fTimeDelta)
 #pragma region 현진 추가
 
 	if (m_isPlay) {
+
 		Update_Direction();
 		Update_FSM();
-
 		m_pFSMCom->Update(fTimeDelta);
 
 		Update_KeyInput_Reload();
@@ -764,6 +764,8 @@ void CPlayer::Set_Play(_bool isPlay)
 	m_isPlay = isPlay;
 	if (!m_isPlay) {
 		Stop_UpperBody();
+		Change_State(HOLD);
+		Change_State(MOVE);
 	}
 }
 
@@ -1244,6 +1246,7 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 
 void CPlayer::Update_FSM()
 {
+
 	switch (m_eState) {
 	case MOVE:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
