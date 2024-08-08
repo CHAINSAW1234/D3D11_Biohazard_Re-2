@@ -404,7 +404,6 @@ void CPlayer::Tick(_float fTimeDelta)
 		Update_Equip();
 		Update_FootStep_Sound();
 	}
-	
 
 #pragma endregion
 
