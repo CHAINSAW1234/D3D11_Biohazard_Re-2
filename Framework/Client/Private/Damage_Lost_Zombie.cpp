@@ -98,6 +98,9 @@ _bool CDamage_Lost_Zombie::Execute(_float fTimeDelta)
 		}
 
 		Change_Animation();
+
+		m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+		m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -111,8 +114,6 @@ _bool CDamage_Lost_Zombie::Execute(_float fTimeDelta)
 
 void CDamage_Lost_Zombie::Exit()
 {
-	m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
-	m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 }
 
 void CDamage_Lost_Zombie::Change_Animation()

@@ -60,6 +60,9 @@ protected:
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;
 
 	_float							m_fRemainSoundTime = { 0.f };
+	_bool							m_isEnterNextRoom = { false };
+	_bool							m_isMoveToPlayer_LinkedRoom = { false };
+	LOCATION_MAP_VISIT				m_eNextRoom = { LOCATION_MAP_VISIT_END };
 
 public:
 	static CMove_To_Target_Zombie* Create(void* pArg = nullptr);

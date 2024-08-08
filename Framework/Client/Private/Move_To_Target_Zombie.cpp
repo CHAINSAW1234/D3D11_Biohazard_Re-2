@@ -73,6 +73,9 @@ void CMove_To_Target_Zombie::Enter()
 		return;
 
 	m_fAccBlendTime = 0.f;
+	m_isEnterNextRoom = false;
+	m_isMoveToPlayer_LinkedRoom = false; 
+	m_eNextRoom = LOCATION_MAP_VISIT_END;
 
 #ifdef _DEBUG
 
@@ -135,6 +138,22 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 
 				isDoorTarget = true;
 			}		
+
+			else
+			{
+				m_isMoveToPlayer_LinkedRoom = true;
+
+				list<LOCATION_MAP_VISIT>				LinkedLocations = { pTarget_Door->Get_LinkedLocations() };
+				LOCATION_MAP_VISIT						eCurrentLocation = { m_pBlackBoard->Get_AI()->Get_Location() };
+				for (auto& eLocation : LinkedLocations)
+				{
+					if (eCurrentLocation != eLocation)
+						m_eNextRoom = eLocation;
+				}
+
+				if (m_eNextRoom == LOCATION_MAP_VISIT_END)
+					return false;
+			}
 		}
 
 		if (false == isDoorTarget)
@@ -186,6 +205,26 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 	{
 		m_fRemainSoundTime = m_pGameInstance->GetRandom_Real(ZOMBIE_MOVE_SOUND_MIN_REMAIN, ZOMBIE_MOVE_SOUND_MAX_REMAIN);
 		m_pBlackBoard->Get_AI()->Play_Random_Move_Sound();
+	}
+
+	if (true == m_isMoveToPlayer_LinkedRoom)
+	{
+		CDoor*					pTargetDoor = { m_pBlackBoard->Get_Target_Door() };
+		if (nullptr != pTargetDoor)
+		{
+			_vector				vDoorPosition = { pTargetDoor->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+			_vector				vZombiePosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+			
+			_float				fDistance = { XMVectorGetX(XMVector3Length(vDoorPosition - vDoorPosition)) };
+			if (fDistance < 1.f)
+			{
+				if (m_eNextRoom != LOCATION_MAP_VISIT_END)
+				{
+					m_pBlackBoard->Get_AI()->Set_Location(m_eNextRoom);
+					m_isMoveToPlayer_LinkedRoom = false;
+				}
+			}
+		}
 	}
 
 	auto pAI = m_pBlackBoard->Get_AI();

@@ -114,6 +114,10 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (ePoseState != CZombie::POSE_STATE::_UP)
+		return false;
+
 	CDoor*				pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return false;

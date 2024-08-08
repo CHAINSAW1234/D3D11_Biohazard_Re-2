@@ -404,7 +404,6 @@ void CPlayer::Tick(_float fTimeDelta)
 		Update_Equip();
 		Update_FootStep_Sound();
 	}
-	
 
 #pragma endregion
 
@@ -432,32 +431,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	if (m_isPlay) {
 		Late_Tick_PartObjects(fTimeDelta);
-	}
-
-	if (m_eEquip == STG)
-	{
-		CModel* pBodyModel = { Get_Body_Model() };
-		CModel* pWeaponModel = { Get_Weapon_Model() };
-
-		_matrix				LWeaponMatrix = { XMLoadFloat4x4(pBodyModel->Get_CombinedMatrix("l_weapon")) };
-
-		_vector				vPositionLWeapon = { LWeaponMatrix.r[CTransform::STATE_POSITION] };
-
-		_vector				vPositionShotGunHandle = { XMLoadFloat4(&Get_Weapon()->Get_BonePosition("_04")) };
-		_vector				vPositionShotGunHandle2 = { XMLoadFloat4(&Get_Weapon()->Get_BonePosition("chain00_00")) };
-
-
-		_vector				vNeedDirection = { vPositionShotGunHandle - vPositionLWeapon };
-
-
-		_vector				vLWeaponPositionWorld = { XMVector3TransformCoord(vPositionLWeapon, m_pTransformCom->Get_WorldMatrix()) };
-		_vector				vNeedDirectionWorld = { XMVector3TransformNormal(vNeedDirection, m_pTransformCom->Get_WorldMatrix()) };
-
-		_vector				vTargetPositionWorld = { vPositionShotGunHandle2 };
-
-		pBodyModel->Set_TargetPosition_IK(TEXT("IK_SHOTGUN"), vTargetPositionWorld);
-
-		//pBodyModel->Play_IK(m_pTransformCom, fTimeDelta);
 	}
 
 	Turn_Spine_Default(fTimeDelta);

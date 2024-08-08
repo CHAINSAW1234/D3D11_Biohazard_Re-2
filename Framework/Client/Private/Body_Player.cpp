@@ -159,11 +159,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 void CBody_Player::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
-
-	if (DOWN == m_pGameInstance->Get_KeyState('M'))
-	{
-		m_isActive_IK_FlashLight = !m_isActive_IK_FlashLight;
-	}
 }
 
 void CBody_Player::Tick(_float fTimeDelta)
@@ -570,10 +565,6 @@ void CBody_Player::Apply_FlashLight_IK(_float fTimeDelta)
 	_vector				vR_Arm_Wrist_LocalPosition = { R_Arm_Wrist_CombiendMatrix.r[CTransform::STATE_POSITION] };
 	_vector				vR_Arm_Wrist_WorldPosition = { XMVector3TransformCoord(vR_Arm_Wrist_LocalPosition, XMLoadFloat4x4(&m_WorldMatrix)) };
 
-	_matrix				L_Arm_Wrist_CombiendMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_arm_wrist")) };
-	_vector				vL_Arm_Wrist_LocalPosition = { L_Arm_Wrist_CombiendMatrix.r[CTransform::STATE_POSITION] };
-	_vector				vL_Arm_Wrist_WorldPosition = { XMVector3TransformCoord(vL_Arm_Wrist_LocalPosition, XMLoadFloat4x4(&m_WorldMatrix)) };
-
 	_matrix				R_Arm_Clavicle_CombiendMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_arm_humerus")) };
 	_vector				vR_Arm_Clavicle_LocalPosition = { R_Arm_Clavicle_CombiendMatrix.r[CTransform::STATE_POSITION] };
 	_vector				vR_Arm_Clavicle_WorldPosition = { XMVector3TransformCoord(vR_Arm_Clavicle_LocalPosition, XMLoadFloat4x4(&m_WorldMatrix)) };
@@ -591,13 +582,7 @@ void CBody_Player::Apply_FlashLight_IK(_float fTimeDelta)
 	_vector				vRightPlayer = { XMVector3TransformNormal(XMLoadFloat4x4(&m_WorldMatrix).r[CTransform::STATE_RIGHT], XMMatrixIdentity()) };
 	_vector				vUpPlayer = { XMVector3TransformNormal(XMLoadFloat4x4(&m_WorldMatrix).r[CTransform::STATE_UP], RotationMatrix) };
 
-	/*CTransform*		pCameraTransform = { m_pGameInstance->Get_Camera_Transform() };
-	_vector				vCameraUp = { XMVector3Normalize(pCameraTransform->Get_State_Vector(CTransform::STATE_UP)) };
-	_vector				vCameraRight= { XMVector3Normalize(pCameraTransform->Get_State_Vector(CTransform::STATE_RIGHT)) };*/
-
 	_vector				vTargetPosition = { vR_Arm_Wrist_WorldPosition + XMVector3Normalize(vUpPlayer) * -0.05f + XMVector3Normalize(vRightPlayer) * 0.05f };
-	//	_vector				vTargetPosition = { vR_Arm_Wrist_WorldPosition /*+ vUpPlayer * -0.1f + vRightPlayer * 0.1f*/ };
-	//	_vector				vTargetPosition = { vL_Arm_Wrist_WorldPosition /*+ vUpPlayer * -0.1f + vRightPlayer * 0.1f*/ };
 
 	_float				fRatio = { m_fAccIK_Flsash_Time / m_fMaxIK_Flsash_Time };
 

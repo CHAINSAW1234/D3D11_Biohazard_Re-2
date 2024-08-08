@@ -33,7 +33,6 @@ HRESULT CTextBox::Initialize(void* pArg)
 		m_isOuterLine = TextBoxDesc->isOuterLine;
 		m_vOutLineColor = TextBoxDesc->vOutLineColor;
 		m_isUIRender = TextBoxDesc->isUI_Render;
-
 		
 		m_fX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
 		m_fY *= static_cast<_float>(g_iWinSizeY) / 900.f;
@@ -46,7 +45,6 @@ HRESULT CTextBox::Initialize(void* pArg)
 		}
 
 		m_vTextPos = { m_fX, m_fY, 0.5f };
-
 	}
 
 	return S_OK;
