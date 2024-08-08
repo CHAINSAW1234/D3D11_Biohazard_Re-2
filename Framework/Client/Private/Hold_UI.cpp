@@ -163,6 +163,7 @@ void CHold_UI::Tick(_float fTimeDelta)
 
         for (auto& iter : m_vecTextBoxes)
         {
+            iter->Set_isTransformBase(false);
             CTransform* resultTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
 
             resultTrans->Set_State(CTransform::STATE_POSITION, result);

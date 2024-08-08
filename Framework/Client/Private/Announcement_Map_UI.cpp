@@ -69,23 +69,26 @@ void CAnnouncement_Map_UI::Tick(_float fTimeDelta)
         }
     }
 
-    if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
+    if(true == m_isRender)
     {
-        m_isRender = false;
-
-        CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-
-        pPlayer->Set_isCamTurn(false);
-
-        m_pGameInstance->Set_IsPaused(false);
-
-        m_isGetMap_Item = false;
-
-        if (!m_vecTextBoxes.empty())
+        if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
         {
-            for (auto& iter : m_vecTextBoxes)
+            m_isRender = false;
+
+            CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+
+            pPlayer->Set_isCamTurn(false);
+
+            m_pGameInstance->Set_IsPaused(false);
+
+            m_isGetMap_Item = false;
+
+            if (!m_vecTextBoxes.empty())
             {
-                iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+                for (auto& iter : m_vecTextBoxes)
+                {
+                    iter->Set_FontColor(_float4(0.f, 0.f, 0.f, 0.f));
+                }
             }
         }
     }
