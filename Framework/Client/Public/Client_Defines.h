@@ -54,7 +54,7 @@ using namespace Client;
 //#define MAP_TEST
 //#define Map_NA
 //#define Map_Ye
-//	#define Map_TEST2
+//#define Map_TEST2
 
 #define TEST_ZOMBIE_MAINHALL
 
