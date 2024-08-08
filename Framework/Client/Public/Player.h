@@ -113,6 +113,7 @@ public:
 	static wstring								Get_AnimSetEtcName(ANIMSET_ETC eAnimEtcHold) { return strAnimSetEtcName[eAnimEtcHold]; }
 
 	// =============================== GET ===============================
+	class CBody_Player*							Get_Body();
 	CModel*										Get_Body_Model();
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
