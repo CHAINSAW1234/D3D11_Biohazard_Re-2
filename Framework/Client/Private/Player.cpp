@@ -704,6 +704,11 @@ void CPlayer::MissionClear_Font(wstring _missionText, _ubyte _missionType)
 #pragma endregion
 
 #pragma region 현진 추가
+CBody_Player* CPlayer::Get_Body()
+{
+	return static_cast<CBody_Player*>(m_PartObjects[PART_BODY]);
+}
+
 CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(g_strModelTag));
@@ -1353,7 +1358,6 @@ void CPlayer::Update_LightCondition()
 		}
 	}
 
-	// test
 	// 이후 실제 라이트와 비교해서 처리하셈
 	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
@@ -1362,6 +1366,7 @@ void CPlayer::Update_LightCondition()
 			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
 			Get_Body_Model()->Set_Loop(4, false);
 			Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+
 		}
 	}
 }
