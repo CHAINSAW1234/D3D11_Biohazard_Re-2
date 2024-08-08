@@ -18,6 +18,8 @@ public:
 		_vector		vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
 		_bool		isUI_Render = { false };
 
+		_bool		isResolution = { false };
+		_bool		isResolution_PerantsValue = { false };
 
 	}TextBox_DESC;
 
@@ -76,7 +78,8 @@ private:
 private :
 	_bool	m_isUIRender = { false };
 	_bool	m_isTransformBase = { true };
-	_bool	m_isConvertRetion = { false }; //하드코디용
+	_bool	m_isResolution = { false };
+	_bool	m_isResolution_PerantsValue = { false };
 
 public:
 	static CTextBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

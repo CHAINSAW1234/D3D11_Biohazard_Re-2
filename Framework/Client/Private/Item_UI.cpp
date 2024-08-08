@@ -61,6 +61,17 @@ void CItem_UI::Start()
 
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_FontColor(XMVectorSet(1.f, 1.f, 1.f, 1.f));
+
+#ifdef FHD
+		//_float3 fTextConvertPos = m_mapPartUI[COUNT_DISPLAY]->Get_TexBox(0)->Get_Position_UI();
+		//
+		//_float2 fTextPos = { fTextConvertPos.x / (static_cast<_float>(g_iWinSizeX) / 1600.f) , fTextConvertPos.y / (static_cast<_float>(g_iWinSizeY) / 900.f) };
+
+		//_float2 fTextPosDif = { fTextConvertPos.x - fTextPos.x, fTextConvertPos.y - fTextPos.y };
+		//
+		//m_mapPartUI[COUNT_DISPLAY]->Get_TexBox(0)->Move(_float3{ -fTextPosDif.x/2 , -fTextPosDif.y/2, 0.f });
+#endif // FHD
+
 	}
 }
 

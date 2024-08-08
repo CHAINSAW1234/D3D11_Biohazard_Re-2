@@ -31,9 +31,18 @@ HRESULT CInventory_Slot::Initialize(void* pArg)
 
 		m_pEmptyTexture = m_pTextureCom;
 
+		m_isResolution = true;
+
+
+
 	}
 
 	return S_OK;
+}
+
+void CInventory_Slot::Start()
+{
+	Convert_Resolution();
 }
 
 void CInventory_Slot::Tick(_float fTimeDelta)
