@@ -17,8 +17,9 @@ void CPlayer_State_Hold::OnStateEnter()
 	Change_State(START);
 	m_pPlayer->Set_TurnSpineHold(true);
 	m_pPlayer->Set_TurnSpineLight(false);
-	m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::HOLD);
-
+	if (nullptr != m_pPlayer->Get_Weapon()) {
+		m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::HOLD);
+	}
 }
 
 void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
