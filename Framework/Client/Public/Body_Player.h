@@ -31,6 +31,9 @@ public:
 	HRESULT					Render_LightDepth_Spot()override;
 
 public:
+	inline void				Active_IK_FlashLight(_bool isActive) { m_isActive_IK_FlashLight = isActive; }
+
+public:
 	_float3*				Get_RootTranslation() { return m_pRootTranslation; }
 
 public:
@@ -53,6 +56,9 @@ private:
 
 	class CRagdoll_Physics* m_pRagdoll = { nullptr };
 	_bool					m_bDecal_Player = { false };
+
+	_bool					m_isActive_IK_FlashLight = { false };
+
 public:
 	HRESULT					Add_Animations();
 

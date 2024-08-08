@@ -460,12 +460,14 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		//pBodyModel->Play_IK(m_pTransformCom, fTimeDelta);
 	}
 
-	/*if (m_pController)
-		m_pController->Update_Collider();*/
-
 	Turn_Spine_Default(fTimeDelta);
 	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
 	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
+
+	/*if (m_pController)
+		m_pController->Update_Collider();*/
+
+
 
 	//	static_cast<CBody_Player*>(m_PartObjects[CPlayer::PART_BODY])->Apply_FlashLight_IK(fTimeDelta);
 
