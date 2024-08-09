@@ -144,7 +144,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 
 	Button_Act(fTimeDelta);
 
-	m_isPickUp_Item = false;
+	//m_isPickUp_Item = false;
 
 	switch (m_eWindowType)
 	{
@@ -185,7 +185,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	/* Cursor */
 	if (nullptr != m_pCursor[1])
 		Select_UI();
-
+	
 	__super::Tick(fTimeDelta);
 }
   
@@ -269,6 +269,7 @@ void CTab_Window::MINIMAP_Operation(_float fTimeDelta)
 
 void CTab_Window::INVENTORY_Operation(_float fTimeDelta)
 {
+	m_isPickUp_Item = false;
 	m_pInventory_Manager->Tick(fTimeDelta);
 	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
 	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
@@ -370,6 +371,8 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		{
 			if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 			{
+				//m_isPickUp_Item = false;
+
 				/*Item_Discription ¼¼ÆÃ*/
 				m_eSequence = UI_IDLE;
 
@@ -785,6 +788,10 @@ _bool CTab_Window::IsInputTab()
 		m_isGetMapItem_Close = false;
 
 		isInputTab = false;
+	}
+	else
+	{
+		m_isPickUp_Item = false;
 	}
 
 	if(INTERACT_PROPS == m_eWindowType)
