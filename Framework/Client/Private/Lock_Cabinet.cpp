@@ -441,6 +441,9 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
 
+	if (DOWN == m_pGameInstance->Get_KeyState('N'))
+		*m_pLockState = CCabinet::CLEAR_LOCK;
+	
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
@@ -495,10 +498,6 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	{
 		if (!m_bClear)
 			InPutKey_Sound(iRand, 2);
-
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
-
-		Safebox_Return();
 
 		m_bClear = true;
 	}

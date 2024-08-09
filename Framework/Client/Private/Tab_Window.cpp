@@ -240,7 +240,6 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 		break;
 	}
 
-
 	default:
 		break;
 	}
@@ -758,17 +757,6 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 _bool CTab_Window::IsInputTab()
 {
 	_bool isInputTab = false;
-
-	/*if (DOWN == m_pGameInstance->Get_KeyState('M') )
-	{
-		m_isGetMapItem = false;
-
-		m_isMapOpen = true;
-
-		m_isGetMapItem_Close = true;
-
-		isInputTab = true;
-	}*/
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
