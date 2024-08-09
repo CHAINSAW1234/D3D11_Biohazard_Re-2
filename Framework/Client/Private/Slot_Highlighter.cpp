@@ -25,6 +25,9 @@ HRESULT CSlot_Highlighter::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
+	m_isResolution = true;
+	Convert_Resolution(true);
+
 	return S_OK;
 }
 

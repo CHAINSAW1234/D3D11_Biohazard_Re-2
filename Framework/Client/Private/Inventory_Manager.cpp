@@ -88,8 +88,8 @@ void CInventory_Manager::SecondTick_Seting()
 	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
 	m_fSlotHighlighterResetPos.z = Z_POS_HIGH_LIGHTER;
 
-	m_fSlotHighlighterResetPos.x *= static_cast<_float>(g_iWinSizeX) / 1600.f;
-	m_fSlotHighlighterResetPos.y *= static_cast<_float>(g_iWinSizeY) / 900.f;
+	//m_fSlotHighlighterResetPos.x *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+	//m_fSlotHighlighterResetPos.y *= static_cast<_float>(g_iWinSizeY) / 900.f;
 
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 }
@@ -150,9 +150,7 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 		INTERACT_ITEM_Operation(fTimeDelta);
 		break;
 	}
-
-
-								 
+						 
 	default:
 		break;
 	}
@@ -181,7 +179,6 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 			}
 			m_IsNoOneHover = false;
 			pHoveredSlot = m_vecInvenSlot[i];
-			
 		}
 	}
 
@@ -1586,6 +1583,7 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 	_vector TempTrashCanValue = XMVectorSet(EmptyPos.x, EmptyPos.y, Z_POS_ITEM_UI, 1.f);
 	m_pDragShadow->Set_ItemUI(eAcquiredItem, DRAG_SHADOW, TempTrashCanValue, iItemQuantity);
 	m_pDragShadow->Set_Dead(false);
+
 	m_eTaskSequence = SETING;
 }
 
@@ -1899,6 +1897,7 @@ HRESULT CInventory_Manager::Init_DragShdow()
 
 	Safe_AddRef(m_pDragShadow);
 	Safe_AddRef(m_pDragShadowTransform);
+
 	return S_OK;
 }
 

@@ -36,25 +36,23 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 		m_pPlayer->Get_Body()->Active_IK_FlashLight(false);
 	}
 
-
-
 	if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
 		if (m_pPlayer->Get_Spotlight()) {
 			if (m_pPlayer->Get_Equip() == CPlayer::HG) {
 				// ¿ÞÆÈ µé¾î³õ±â
 				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
-
-
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, .1f);
 			}
 			else if (m_pPlayer->Get_Equip() == CPlayer::STG) {
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.01f);
+
 				// ½ºÆ÷Æ®¶óÀÌÆ® ·»´õ´Â ²ô°í ºÒÀº ÄÑ
 				;
 			}
 		}
 		else {
-			if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(4) == 10) {
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+			if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(4) == 10.f) {
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.01f);
 			}
 		}
 	}	
@@ -63,7 +61,7 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 void CPlayer_State_Hold::OnStateExit()
 {
 	m_pPlayer->Get_Body()->Active_IK_FlashLight(false);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.01f);
 	
 	if (nullptr != m_pPlayer->Get_Weapon()) {
 		m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);

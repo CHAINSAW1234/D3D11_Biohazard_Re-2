@@ -81,9 +81,6 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 		return;
 	if (!Visible())
 	{
-		if (nullptr != m_pHold_UI)
-			m_pHold_UI->Hold_End();
-
 		return;
 	}
 	if (m_bRender == false)

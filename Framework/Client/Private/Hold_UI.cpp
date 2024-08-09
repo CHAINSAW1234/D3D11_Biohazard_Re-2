@@ -49,18 +49,6 @@ HRESULT CHold_UI::Initialize(void* pArg)
         }
     }
 
-    if (!m_vecTextBoxes.empty())
-    {
-        for (auto& iter : m_vecTextBoxes)
-        {
-            CTransform* pFontTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-
-            m_fFontDistance.y = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y - pFontTrans->Get_State_Float4(CTransform::STATE_POSITION).y;
-
-            m_fFontDistance.x = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x - pFontTrans->Get_State_Float4(CTransform::STATE_POSITION).x;
-        }
-    }
-
     /* Tool*/
     if (FAILED(Change_Tool()))
         return E_FAIL;
@@ -128,9 +116,9 @@ void CHold_UI::Tick(_float fTimeDelta)
         {
             m_isRender = true;
 
-            if (m_fBlending <= 0.0f)
+            if (m_fBlending <= 0.5f)
             {
-                m_fBlending = 0.0f;
+                m_fBlending = 0.5f;
 
                 m_fMaskTimer += fTimeDelta * 1.5f;
             }
@@ -153,19 +141,36 @@ void CHold_UI::Tick(_float fTimeDelta)
         }
     }
 
+    if (false == m_isReady)
+    {
+        m_isReady = true;
+
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                m_fFontDistance = iter->Get_Position_UI();
+            }
+        }
+    }
+
     if (!m_vecTextBoxes.empty())
     {
-        _float4 result = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        result.x = result.x - m_fFontDistance.x;
-
-        result.y = result.y - m_fFontDistance.y;
+        _float3 result = {};
 
         for (auto& iter : m_vecTextBoxes)
         {
-            CTransform* resultTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+            _float4 texturePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-            resultTrans->Set_State(CTransform::STATE_POSITION, result);
+            _float3 b = { texturePos };
+
+            b.x += (g_iWinSizeX / 2);
+            b.y -= (g_iWinSizeY / 2);
+
+            b.x -= 20.f;
+            b.y += 50.f;
+            iter->Set_Position_UI(b);
+            iter->Set_FontColor(_float4(1, 1, 1, 1));
 
             if (false == m_isRender)
             {

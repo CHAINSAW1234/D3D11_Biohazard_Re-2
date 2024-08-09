@@ -79,7 +79,15 @@ void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 				vMedalpos._43 -= fTimeDelta * 1.5f;
 				m_pTransformCom->Set_WorldMatrix(vMedalpos);
 			}
+
 			Change_Sound(TEXT("sound_Map_sm42_hieroglyphic_dial_lock2_11.mp3"), 0);
+
+			/* NY : Tab 쪽에서 먹는 시점 확인 하는 방법 있으면 그걸로 바꿔주세요*/
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				m_bDead = true;
+				m_bRender = false;
+			}
 		}
 		else
 			m_fStore_ZPos = vMedalpos._43;

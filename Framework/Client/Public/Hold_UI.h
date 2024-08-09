@@ -30,12 +30,13 @@ private :
 	_bool				m_isCull				= { false };
 
 	_float2				m_fDistance				= {};
-	_float2				m_fFontDistance			= {};
+	_float3				m_fFontDistance			= {};
 
 	CTransform*			m_pParentTransform		= { nullptr };
 	CHold_UI*			m_pParentObj			= { nullptr };
 
 	_bool				m_isHold = { false };
+	CGameObject*		m_pSupervisor = { nullptr };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

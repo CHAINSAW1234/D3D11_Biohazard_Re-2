@@ -33,18 +33,23 @@ HRESULT CTextBox::Initialize(void* pArg)
 		m_isOuterLine = TextBoxDesc->isOuterLine;
 		m_vOutLineColor = TextBoxDesc->vOutLineColor;
 		m_isUIRender = TextBoxDesc->isUI_Render;
-		
-		m_fX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
-		m_fY *= static_cast<_float>(g_iWinSizeY) / 900.f;
+		m_isResolution = TextBoxDesc->isResolution;
+		m_isResolution_PerantsValue = TextBoxDesc->isResolution_PerantsValue;
 
-		if (m_isConvertRetion == true)
+		if (m_isResolution == false)
 		{
-			m_fSizeX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
-			m_fSizeY *= static_cast<_float>(g_iWinSizeY) / 900.f;
-			Set_Position(XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, 0.f, 1.f));
-		}
+			m_fX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+			m_fY *= static_cast<_float>(g_iWinSizeY) / 900.f;
 
-		m_vTextPos = { m_fX, m_fY, 0.5f };
+			if (m_isResolution_PerantsValue == true)
+			{
+				m_fSizeX *= static_cast<_float>(g_iWinSizeX) / 1600.f;
+				m_fSizeY *= static_cast<_float>(g_iWinSizeY) / 900.f;
+				Set_Position(XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, 0.f, 1.f));
+			}
+
+			m_vTextPos = { m_fX, m_fY, 0.5f };
+		}
 	}
 
 	return S_OK;

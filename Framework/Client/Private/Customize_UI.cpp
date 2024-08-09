@@ -992,7 +992,7 @@ void CCustomize_UI::Set_Position_Winsize(_vector vPos)
 	fMovement.z = 0.f;
 
 	for (auto& iter : m_vecTextBoxes)
-		iter->Move_WinSize(fMovement);
+		iter->Move(fMovement);
 
 	for (auto& iter : m_vecChildUI)
 		static_cast<CCustomize_UI*>(iter)->Move_WinSize(fMovement);

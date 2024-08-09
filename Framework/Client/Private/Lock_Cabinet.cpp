@@ -114,13 +114,18 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CLock_Cabinet::Render()
 {
-	if (m_bClear && m_eLockType != CLock_Cabinet::CARD_KEY)
-		return S_OK;
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
+	if (SAFEBOX_DIAL != m_eLockType)
+	{
+		if (m_bClear && m_eLockType != CLock_Cabinet::CARD_KEY)
+			return S_OK;
 
+		if (m_bRender == false)
+			return S_OK;
+		else
+			m_bRender = false;
+	}
+
+	
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -432,10 +437,10 @@ HRESULT CLock_Cabinet::Initialize_SafeBox()
 
 void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 {
-
-	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
+	_int iRand = m_pGameInstance->GetRandom_Int(0, 2); 
 	_int iRand1 = m_pGameInstance->GetRandom_Int(0, 2);
 	_int iRand2 = m_pGameInstance->GetRandom_Int(3, 5);
+
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
@@ -477,19 +482,26 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	break;
 
 	case CCabinet::WRONG_LOCK:
+	{
 		/* LN : 키 클리어 : sound_Map_sm42_safebox_dial2_4*/
 		m_eMoveingKey = LOCK_ALLOW_KEY::RIGHT_LOCK_KEY;
 		InPutKey_Sound(iRand, 3);
 
 		Safebox_RotationLock(m_eMoveingKey, fTimeDelta);
+	}
 		break;
 
 	case CCabinet::CLEAR_LOCK:
-
-		if(!m_bClear)
+	{
+		if (!m_bClear)
 			InPutKey_Sound(iRand, 2);
 
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
+
+		Safebox_Return();
+
 		m_bClear = true;
+	}
 		break;
 	}
 
@@ -502,7 +514,7 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 
-	if (*m_pLockState == CCabinet::STATIC_LOCK || LOCK_ALLOW_KEY::END_LOCK_KEY != m_eMoveingKey || m_eMoveingKey == LOCK_ALLOW_KEY::LEFT_LOCK_KEY)
+	if (*m_pLockState == CCabinet::CLEAR_LOCK || *m_pLockState == CCabinet::STATIC_LOCK || LOCK_ALLOW_KEY::END_LOCK_KEY != m_eMoveingKey || m_eMoveingKey == LOCK_ALLOW_KEY::LEFT_LOCK_KEY)
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 
 	Get_SpecialBone_Rotation(); // for UI
@@ -701,7 +713,6 @@ void CLock_Cabinet::Safebox_Return()
 
 void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 {
-
 	//m_pModelCom->Play_T_Pose();
 
 	_int iRand = m_pGameInstance->GetRandom_Int(0, 2);
