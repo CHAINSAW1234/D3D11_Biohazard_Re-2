@@ -151,9 +151,8 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 
 	if (false == m_isResolution)
 	{
-		m_isResolution = true;
-
 		Convert_Resolution();
+		m_isResolution = true;
 	}
 
 	for (auto& iter : m_vecTextBoxes)
@@ -525,6 +524,9 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 
 HRESULT CCustomize_UI::Convert_Resolution(_bool isScaleOnly)
 {
+	if (true == m_isResolution)
+		return E_FAIL;
+
 	_float widthRatio = static_cast<_float>(g_iWinSizeX) / 1600.f;		
 	_float heightRatio = static_cast<_float>(g_iWinSizeY) / 900.0f;
 
@@ -552,6 +554,7 @@ HRESULT CCustomize_UI::Convert_Resolution(_bool isScaleOnly)
 		m_pTransformCom->Set_Scaled(newWidth, newHeight, originalScale.z); // Z축 크기는 기존 값 유지
 	}
 
+	m_isResolution = true;
 
 	return S_OK;
 }

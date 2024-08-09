@@ -28,6 +28,8 @@ HRESULT CHint_Highliter::Initialize(void* pArg)
 
 	m_isLoad = false;
 
+	Convert_Resolution(true);
+
 	return S_OK;
 }
 

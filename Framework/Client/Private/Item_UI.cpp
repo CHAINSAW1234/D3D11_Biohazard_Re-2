@@ -29,6 +29,10 @@ HRESULT CItem_UI::Initialize(void* pArg)
 		Set_IsLoad(false);
 
 		m_bDead = true;
+
+		//m_isResolution = true;
+
+		Convert_Resolution();
 	}
 
 
@@ -62,17 +66,21 @@ void CItem_UI::Start()
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_FontColor(XMVectorSet(1.f, 1.f, 1.f, 1.f));
 
-#ifdef FHD
-		//_float3 fTextConvertPos = m_mapPartUI[COUNT_DISPLAY]->Get_TexBox(0)->Get_Position_UI();
-		//
-		//_float2 fTextPos = { fTextConvertPos.x / (static_cast<_float>(g_iWinSizeX) / 1600.f) , fTextConvertPos.y / (static_cast<_float>(g_iWinSizeY) / 900.f) };
 
-		//_float2 fTextPosDif = { fTextConvertPos.x - fTextPos.x, fTextConvertPos.y - fTextPos.y };
-		//
-		//m_mapPartUI[COUNT_DISPLAY]->Get_TexBox(0)->Move(_float3{ -fTextPosDif.x/2 , -fTextPosDif.y/2, 0.f });
-#endif // FHD
+
+//#ifdef FHD
+//		_float3 fTextConvertPos = m_mapPartUI[COUNT_DISPLAY]->Get_TexBox(0)->Get_Position_UI();
+//		
+//		_float2 fTextPos = { fTextConvertPos.x / (static_cast<_float>(g_iWinSizeX) / 1600.f) , fTextConvertPos.y / (static_cast<_float>(g_iWinSizeY) / 900.f) };
+//
+//		_float2 fTextPosDif = { fTextConvertPos.x - fTextPos.x, fTextConvertPos.y - fTextPos.y };
+//		
+//		m_mapPartUI[COUNT_DISPLAY]->Get_TexBox(0)->Move(_float3{ -fTextPosDif.x , -fTextPosDif.y, 0.f });
+//#endif // FHD
 
 	}
+
+	__super::Tick(0.f);
 }
 
 void CItem_UI::Tick(_float fTimeDelta)
@@ -289,17 +297,17 @@ void CItem_UI::Set_Text(wstring Target, wstring strSetText)
 	}
 }
 
-void CItem_UI::Set_Resolution(_bool isResolution)
-{
-	m_isResolution = isResolution;
-
-	Convert_Resolution(true);
-
-	for (auto iter : m_vecChildUI)
-	{
-		static_cast<CItem_UI*>(iter)->Set_Resolution(isResolution);
-	}
-}
+//void CItem_UI::Set_Resolution(_bool isResolution)
+//{
+//	m_isResolution = isResolution;
+//
+//	Convert_Resolution(true);
+//
+//	for (auto iter : m_vecChildUI)
+//	{
+//		static_cast<CItem_UI*>(iter)->Set_Resolution(isResolution);
+//	}
+//}
 
 void CItem_UI::Reset_ItemUI()
 {

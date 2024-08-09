@@ -267,6 +267,18 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 
 				m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, ZERO, PICK_UP_IDLE_X_DIST,
 					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+				//if (m_eItem_Number != blankkey01a)
+				//{
+				//	m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, ZERO, PICK_UP_IDLE_X_DIST,
+				//		m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+				//}
+				//else
+				//{
+				//	m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, ZERO, -0.1f,
+				//		m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+				//}
+
 			}
 		}
 
@@ -1336,7 +1348,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		break;
 	case Client::unicornmedal01a:
 		m_fPopupHide_EndDist = 0.4f;
-		m_pTransformCom->Set_Scaled(0.001f, 0.001f, 0.001f);
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
@@ -1391,7 +1403,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::blankkey01a:
-		m_fPopupHide_EndDist = 0.15f;
+		m_fPopupHide_EndDist = 0.3f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 		m_fCurSize = 0.01f;
 		m_fStartSize = 0.01f;
@@ -1415,7 +1427,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::virginmedal01a:
-		m_fPopupHide_EndDist = 0.2f;
+		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
@@ -1431,7 +1443,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::virginmedal02a:
-		m_fPopupHide_EndDist = 0.2f;
+		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;

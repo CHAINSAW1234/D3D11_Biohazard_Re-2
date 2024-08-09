@@ -2,30 +2,30 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Animation_Tool.exe</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Animation_Tool.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxAnimModel.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxAnimModel.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxCube.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxCube.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxInstance_Point.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxInstance_Point.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxInstance_Rect.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxInstance_Rect.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxModel.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxModel.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxNorTex.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxNorTex.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\jms10\OneDrive\바탕 화면\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxPosTex.cso</FullPath>
+      <FullPath>D:\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Bin\Shader_VtxPosTex.cso</FullPath>
     </ContentFile>
   </ContentFiles>
   <SatelliteDlls />

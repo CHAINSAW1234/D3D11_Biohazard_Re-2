@@ -701,6 +701,7 @@ HRESULT CHint::Create_Text_Button()
 	TextBox_Desc.isUI_Render = { false };
 	TextBox_Desc.vPos = { 740.f, 120.f };
 	TextBox_Desc.vSize = { 100.f, 50.f };
+	TextBox_Desc.isResolution_PerantsValue = true;
 
 	CGameObject* pPoliceButton = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBox_Desc);
 	m_pPoliceButton = dynamic_cast<CTextBox*>(pPoliceButton);
@@ -718,7 +719,7 @@ HRESULT CHint::Create_Text_Button()
 	TextBox_Desc.isUI_Render = { false };
 	TextBox_Desc.vPos = { 840.f, 120.f };
 	TextBox_Desc.vSize = { 100.f, 50.f };
-
+	TextBox_Desc.isResolution_PerantsValue = true;
 
 	CGameObject* pTutorialButton = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBox_Desc);
 	m_pTutorialButton = dynamic_cast<CTextBox*>(pTutorialButton);
