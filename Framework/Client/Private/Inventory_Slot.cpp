@@ -30,11 +30,6 @@ HRESULT CInventory_Slot::Initialize(void* pArg)
 			return E_FAIL;
 
 		m_pEmptyTexture = m_pTextureCom;
-
-		m_isResolution = true;
-
-
-
 	}
 
 	return S_OK;

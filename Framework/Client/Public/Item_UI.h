@@ -62,7 +62,7 @@ public:/*±â´É¼º*/
 	void				Set_ItemUI_WinSize(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation);
 	void				Set_PartUI_TextColor(wstring Target, _vector vTextColor);
 	void				Set_Text(wstring Target, wstring strSetText);
-	void				Set_Resolution(_bool isResolution);
+	//void				Set_Resolution(_bool isResolution);
 
 private:
 	_bool				m_isWorking = { false };

@@ -505,10 +505,13 @@ protected :
 	_bool						m_isLoop = { false };
 	_bool						m_isLoopStop = { false };
 	_bool						m_ReStart = { false };
+
+private:
 	_bool						m_isResolution = { false };
 
-#pragma endregion
 
+#pragma endregion
+protected:
 	_bool						m_isMap = { false };
 
 	CGameObject*				m_pSupervisor			= { nullptr };

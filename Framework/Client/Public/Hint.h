@@ -58,8 +58,8 @@ private:
 	CTextBox*					m_pTutorialButton = { nullptr };
 
 private:
-	_int												m_iCur_TopDoument = { 0 };	//현재 맨위에있는 이름
-	DOCUMENT_CLASSIFY									m_eCurrentDC = { TUTORIAL };							//현재 탭
+	_int												m_iCur_TopDoument = { 0 };							//현재 맨위에있는 이름
+	DOCUMENT_CLASSIFY									m_eCurrentDC = { TUTORIAL };						//현재 탭
 	map <DOCUMENT_CLASSIFY, vector<ITEM_READ_TYPE>>		m_mapAcqDoc;										//습득한 문서
 	map <ITEM_READ_TYPE, DOCUMENT_INFO>					m_mapDocumentInfo;									//문서 정보
 	_bool												m_bLeftRight_Flip = { false };

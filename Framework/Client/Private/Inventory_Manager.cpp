@@ -57,20 +57,23 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	AddItem_ToInven_WinSize(HandGun, 10);
-	//AddItem_ToInven(ShotGun, 7);
-	AddItem_ToInven_WinSize(handgun_bullet01a, 20);
-	//AddItem_ToInven(shotgun_bullet01a, 20);
 
-	AddItem_ToInven_WinSize(virginmedal01a, 1);
-	AddItem_ToInven_WinSize(virginmedal02a, 1);
-	AddItem_ToInven_WinSize(unicornmedal01a, 1);
-
-	m_pContextMenu->TextPosSet();
 }
 
 void CInventory_Manager::SecondTick_Seting()
 {
+
+	AddItem_ToInven(HandGun, 10);
+	//AddItem_ToInven(ShotGun, 7);
+	AddItem_ToInven(handgun_bullet01a, 20);
+	//AddItem_ToInven(shotgun_bullet01a, 20);
+
+	//AddItem_ToInven(virginmedal01a, 1);
+	//AddItem_ToInven(virginmedal02a, 1);
+	//AddItem_ToInven(unicornmedal01a, 1);
+
+	m_pContextMenu->TextPosSet();
+
 	for (auto& iter : m_vecItem_UI)
 	{
 		if (HandGun == iter->Get_ItemNumber())
@@ -92,6 +95,7 @@ void CInventory_Manager::SecondTick_Seting()
 	//m_fSlotHighlighterResetPos.y *= static_cast<_float>(g_iWinSizeY) / 900.f;
 
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
+
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -1655,7 +1659,7 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 			Slotiter->Set_IsFilled(true);
 			
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
-			Itemiter->Set_Resolution(true);
+			//Itemiter->Set_Resolution(true);
 			return;
 		}
 	}
@@ -1677,7 +1681,6 @@ void CInventory_Manager::AddItem_ToInven_WinSize(ITEM_NUMBER eAcquiredItem, _int
 
 			vSlotPos = XMVectorSetZ(vSlotPos, Z_POS_ITEM_UI);
 			Slotiter->Set_IsFilled(true);
-
 			Itemiter->Set_ItemUI_WinSize(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
 			return;
 		}
@@ -1692,7 +1695,7 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQu
 		{
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), XMVectorSet(fItemPos.x, fItemPos.y, Z_POS_ITEM_UI, 1.f), iItemQuantity);
 			Itemiter->Set_Dead(false);
-			Itemiter->Set_Resolution(true);
+			//Itemiter->Set_Resolution(true);
 			if (ShotGun == eAcquiredItem)
 			{
 				_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, Itemiter->Get_ItemNumber(), Itemiter->Get_ItemQuantity());
