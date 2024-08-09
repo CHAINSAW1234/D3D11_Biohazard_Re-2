@@ -34,6 +34,8 @@ void CStand_Up_Zombie::Enter()
 
 	m_pBlackBoard->Get_AI()->Play_Random_StandUp_Sound();
 
+	m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_UP);
+
 #ifdef _DEBUG
 
 	cout << "Enter StandUp " << endl;
@@ -50,6 +52,14 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
+
+	if (true == m_pBlackBoard->Is_New_Part_Break())
+	{
+		_int			iPartType = { m_pBlackBoard->Get_New_Break_PartType() };
+		if (iPartType >= static_cast<_int>(BREAK_PART::_R_UPPER_FEMUR) &&
+			iPartType < static_cast<_int>(BREAK_PART::_HEAD))
+			return false;
+	}
 
 	if (m_pBlackBoard->Get_AI()->Get_Current_MonsterState() == MONSTER_STATE::MST_STANDUP)
 	{
