@@ -157,13 +157,7 @@ void CWindow::Late_Tick(_float fTimeDelta)
 		return;
 	if (!Visible())
 	{
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-			m_pSelector = nullptr;
-		}
-
+		Select_UI();
 		return;
 	}
 
@@ -191,8 +185,6 @@ void CWindow::Late_Tick(_float fTimeDelta)
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		}
-
-		Opreate_Selector_UI(true, Get_Object_Pos());
 	}
 	else
 	{
@@ -316,7 +308,7 @@ _float4 CWindow::Get_Object_Pos()
 {
 	if (!m_bBarrigateInstallable)
 		return _float4(0.f, 0.f, 0.f, 1.f); // 
-	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,50.f,0.f,0.f);
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,1.5f,0.f,0.f);
 }
 
 void CWindow::Do_Interact_Props()

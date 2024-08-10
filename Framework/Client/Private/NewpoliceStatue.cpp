@@ -62,12 +62,7 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 	__super::Tick_Col();
 	if (!m_bVisible)
 	{
-		if (nullptr != m_pSelector)
-		{
-			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-			m_pSelector = nullptr;
-		}
+		Select_UI();
 		return;
 	}
 
@@ -136,7 +131,6 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 	{
-
 		if (nullptr != m_pSelector)
 		{
 			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
@@ -164,7 +158,6 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 		{
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 			Opreate_Selector_UI(true, Get_Object_Pos());
-
 		}
 		else
 		{
@@ -176,12 +169,12 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 				m_pSelector = nullptr;
 			}
 		}
+
 	}
 	else
 	{
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-
 		if (nullptr != m_pSelector)
 		{
 			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
@@ -190,7 +183,6 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 		}
 	}
 	__super::Late_Tick(fTimeDelta);
-
 
 #ifdef _DEBUG
 	__super::Add_Col_DebugCom();
@@ -357,12 +349,7 @@ void CNewpoliceStatue::Do_Interact_Props()
 
 _float4 CNewpoliceStatue::Get_Object_Pos()
 {
-
-	
 	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
-
-
-	return _float4();
 }
 
 void CNewpoliceStatue::Animation_BaseOn_MedalType()

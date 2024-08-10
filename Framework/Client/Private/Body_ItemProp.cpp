@@ -255,6 +255,8 @@ HRESULT CBody_ItemProp::Initialize_Model()
 
 _float4 CBody_ItemProp::Get_Pos(_int iArg)
 {
+	if (*m_pItemDead)
+		return _float4();
 
 	if (m_pSocketMatrix == nullptr)
 	{
@@ -282,7 +284,7 @@ _float4 CBody_ItemProp::Get_Pos(_int iArg)
 	{
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
 		_float4 vLocalPos = m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag) + _float4(0.f, 10.f, 0.f, 0.f);
-
+		vLocalPos.w = 0.f;
 		_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
 		Local_Mesh_Matrix.r[3] += vLocalPos;
 		_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
@@ -290,7 +292,7 @@ _float4 CBody_ItemProp::Get_Pos(_int iArg)
 		_float4x4 WorldMatrix = (Local_Mesh_Matrix)*XMLoadFloat4x4(m_pSocketMatrix) *TransformationMatrix;
 
 		_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
-		if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos)
+		if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos && m_strMeshTag.find("Shotgun") == string::npos)
 			m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 #ifdef _DEBUG
 #ifdef UI_POS
@@ -298,6 +300,7 @@ _float4 CBody_ItemProp::Get_Pos(_int iArg)
 		m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
 #endif
 #endif
+		//return XMVectorSetW(m_WorldMatrix.Translation(), 1.f);
 		return vPos;
 	}
 

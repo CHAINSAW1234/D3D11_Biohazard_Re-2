@@ -111,7 +111,6 @@ private:
 
 private:
 	void						Active();
-	void						Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio);
 	_bool						Open_Cabinet();
 public:
 	virtual _float4				Get_Object_Pos() override;
@@ -121,7 +120,8 @@ private:
 	_bool				m_bActivity = { false };
 	_bool				m_bDoOpen = { false };
 	_bool				m_bCameraReset = { false };
-	_float				m_fTime = { 0.f };
+	_bool				m_bCamera_Back= { false };
+	_float				m_fTime = { 2.f };
 	_ubyte				m_eState = { READERMACHINE_STATIC };
 	_ubyte				m_eMachine_Key_State = { READERMACHINE_KEY_STATIC };
 	_ubyte				m_eKeyInput = { KEY_NOTHING };

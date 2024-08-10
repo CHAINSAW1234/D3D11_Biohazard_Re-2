@@ -103,11 +103,21 @@ void CReaderMachine::Tick(_float fTimeDelta)
 	else
 		m_eKeyInput = KEY_NOTHING;
 
-	if (m_bCamera && (bCam|| m_bCameraReset))
+	if (m_bCamera && (bCam || m_bCameraReset))
 	{
 		Reset_Camera();
 		m_bCamera = false;
 		m_bCameraReset = false;
+	}
+
+	if (m_bCamera_Back)
+		m_fTime -= fTimeDelta;
+
+	if (m_fTime < 0.f)
+	{
+		m_fTime = 2.f;
+		m_bCamera_Back = false;
+		m_bCamera = true;
 	}
 
 	if (m_bDoOpen)
@@ -117,8 +127,9 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			Change_Sound(TEXT("sound_Map_sm42_key_device2_1.mp3"),0);
 			m_iSelectPushNum = 0;
 			m_bDoOpen = false;
-			m_bCameraReset = true;
-			m_eMachine_Key_State = CReaderMachine::READERMACHINE_KEY_STATIC;
+			m_bCamera_Back = true;
+
+			//m_eMachine_Key_State = CReaderMachine::READERMACHINE_KEY_STATIC;
 
 		}
 		else
@@ -136,19 +147,12 @@ void CReaderMachine::Tick(_float fTimeDelta)
 	}
 
 
-	if (m_bCamera)
-		Camera_Active(PART_READER, _float3(-0.5f, -1.f, -0.5f));
+	if (m_bCamera&&!m_bCamera_Back)
+		Camera_Active(PART_READER, _float3(0.015f, 0.1f, -0.55f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
+		
 
 	__super::Tick(fTimeDelta);
 
-}
-
-void CReaderMachine::Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio)
-{
-	CPart_InteractProps* pPartLock = { nullptr };
-	pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
-	m_pCameraGimmick->SetPosition(XMVectorSetW(pPartLock->Get_Pos_vector() + pPartLock->Get_World_Look_Dir() * _vector { vRatio.x, vRatio.y, vRatio.z }, 1.f));
-	m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
 }
 
 _bool CReaderMachine::Open_Cabinet()
@@ -157,13 +161,19 @@ _bool CReaderMachine::Open_Cabinet()
 	auto& iter = m_Cabinets.find(to_string(iNum));
 	if (iter != m_Cabinets.end())
 	{
+		if (iter->second->Get_Electric_Open())
+		{
+			m_iPush[0] = -1;
+			m_iPush[1] = -1;
+			m_iPush[2] = -1;
+			m_eMachine_Key_State = READERMACHINE_KEY_CORRECT;
+			iter->second->Set_Electric_Open();
+			return true;
+		}
 		m_iPush[0] = -1;
 		m_iPush[1] = -1;
 		m_iPush[2] = -1;
-		m_eMachine_Key_State = READERMACHINE_KEY_CORRECT;
-		iter->second->Set_Electric_Open();
-		return true;
-
+		return false;
 	}
 	else
 	{
@@ -181,7 +191,10 @@ void CReaderMachine::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
+	{
+		Select_UI();
 		return;
+	}
 
 	if (m_bRender == false)
 		return;
@@ -210,7 +223,7 @@ void CReaderMachine::Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
 	}
-
+	Select_UI();
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
@@ -330,9 +343,9 @@ void CReaderMachine::Active()
 	m_bActivity = true;
 	m_eMachine_Key_State = READERMACHINE_KEY_LIVE;
 
-	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 
 	m_bCamera = true;
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 
 	if (!m_bKey[0] || !m_bKey[1])
 			m_pPlayer->Interact_Props(this);
@@ -342,7 +355,10 @@ void CReaderMachine::Active()
 
 _float4 CReaderMachine::Get_Object_Pos()
 {
-	return _float4();
+	if (!m_bCamera)
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_READER])->Get_Pos();
+	else
+		return _float4();
 }
 
 CReaderMachine* CReaderMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

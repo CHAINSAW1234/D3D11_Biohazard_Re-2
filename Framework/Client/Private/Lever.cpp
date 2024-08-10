@@ -136,7 +136,7 @@ void CLever::Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 	}
-
+	Select_UI();
 	__super::Late_Tick(fTimeDelta);
 
 

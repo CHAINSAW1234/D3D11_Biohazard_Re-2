@@ -31,8 +31,8 @@ HRESULT CBody_Lever::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	//if (FAILED(Initialize_Model()))
-	//	return E_FAIL;
+	if (FAILED(Initialize_Model()))
+		return E_FAIL;
 
 
 
@@ -345,7 +345,7 @@ HRESULT CBody_Lever::Initialize_Model()
 	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
 	for (auto& strMeshTag : MeshTags)
 	{
-		if ((strMeshTag.find("Group_1_Sub_2") != string::npos)||(strMeshTag.find("Group_3_Sub_1") != string::npos)||(strMeshTag.find("Group_2_Sub_1") != string::npos))
+		if ((strMeshTag.find("LOD_1_Group_0_Sub_2") != string::npos))
 			m_strMeshTag = strMeshTag;
 	}
 	
@@ -357,7 +357,7 @@ _float4 CBody_Lever::Get_Pos(_int iArg)
 {
 	_float4 vLocalPos =m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag);
 	_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
-	Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
+	Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-(vLocalPos.y),vLocalPos.z };
 	_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
 
 	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(m_vRotation);

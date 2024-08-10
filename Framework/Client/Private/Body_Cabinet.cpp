@@ -430,12 +430,20 @@ HRESULT CBody_Cabinet::Initialize_Model()
 {
 
 	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
-	for (auto& strMeshTag : MeshTags)
-	{
-		if ((strMeshTag.find("Group_1_Sub_2") != string::npos)||(strMeshTag.find("Group_3_Sub_1") != string::npos)||(strMeshTag.find("Group_2_Sub_1") != string::npos))
-			m_strMeshTag = strMeshTag;
-	}
-	
+
+	if (m_uCabinetType == CCabinet::TYPE_ZOMBIE)
+		for (auto& strMeshTag : MeshTags)
+		{
+			if ((strMeshTag.find("Group_1_Sub_2") != string::npos))
+				m_strMeshTag = strMeshTag;
+		}
+	else
+		for (auto& strMeshTag : MeshTags)
+		{
+			if ((strMeshTag.find("Group_1_Sub_2") != string::npos) || (strMeshTag.find("Group_3_Sub_1") != string::npos) || (strMeshTag.find("Group_2_Sub_1") != string::npos))
+				m_strMeshTag = strMeshTag;
+		}
+
 	return S_OK;
 
 }
