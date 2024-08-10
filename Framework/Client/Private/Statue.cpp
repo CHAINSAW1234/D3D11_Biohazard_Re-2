@@ -104,7 +104,10 @@ void CStatue::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
+	{
+		Select_UI();
 		return;
+	}
 	if (m_bRender == false)
 		return;
 	else
@@ -132,6 +135,7 @@ void CStatue::Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
 	}
+	Select_UI();
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
@@ -277,7 +281,12 @@ void CStatue::Active()
 
 _float4 CStatue::Get_Object_Pos()
 {
-	return _float4();
+	if (m_bObtain && !m_bItemDead)
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_SCEPTER])->Get_Pos();
+	else if (!m_bItemDead)
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_HAND])->Get_Pos();
+	else
+		return _float4();
 }
 
 CStatue* CStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

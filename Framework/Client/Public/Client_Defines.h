@@ -31,7 +31,6 @@ namespace Client
 	const unsigned int	g_iWinSizeX = 3840;
 	const unsigned int	g_iWinSizeY = 2160;
 #endif
-	//		static _int g_i44_005Type = 0; //저희 게임 디테일을 위해 죄송합니다- 예은
 
 }
 

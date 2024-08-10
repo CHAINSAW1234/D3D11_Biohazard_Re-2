@@ -402,7 +402,6 @@ _float4 CBody_NewpoliceStatue::Get_Pos(_int iArg)
 #endif
 #endif
 	return vPos;
-	return _float4();
 }
 
 CBody_NewpoliceStatue* CBody_NewpoliceStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -80,9 +80,8 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
-	{
 		return;
-	}
+	
 	if (m_bRender == false)
 		return;
 	else
@@ -130,7 +129,6 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 	}
-
 	__super::Late_Tick(fTimeDelta);
 
 

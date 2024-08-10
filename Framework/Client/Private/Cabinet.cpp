@@ -94,7 +94,10 @@ void CCabinet::Tick(_float fTimeDelta)
 	//#endif
 	__super::Tick_Col();
 	if (!m_bVisible)
+	{
+		Select_UI();
 		return;
+	}
 	if (m_fDelayLockTime > 0.f)
 		m_fDelayLockTime -= fTimeDelta;
 	if (m_fDelayLockTime < 0.f)
@@ -182,8 +185,8 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 		}
 	}
 
+	Select_UI();
 	__super::Late_Tick(fTimeDelta);
-
 
 #ifdef _DEBUG
 	__super::Add_Col_DebugCom();
@@ -505,7 +508,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 		if (!bCam&&m_bLock)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK && m_fDelayLockTime == 0.f)
-				m_fDelayLockTime = 2.f;
+				m_fDelayLockTime = 1.5f;
 		}
 		else if (bCam || !m_bLock)
 		{
@@ -583,13 +586,14 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		 if(bCam || bCamera_Reset)
 		{
 			 Reset_Camera();
+			 m_bCamera = false;
 		}
 		
 
 	}
 	if ((!m_bLock && !m_bLockLeon) && m_bCamera == true)
 	 {
-		m_fDelayLockTime = 5.f;
+		m_fDelayLockTime = 2.f;
 		m_bCamera = false;
 		Reset_Camera();
 
@@ -606,12 +610,12 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 
 	if (m_bCamera)
 	{
-		if(m_bCol[INTER_COL_NORMAL][COL_STEP0]&&m_bActivity&&m_bLock)
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP0] && m_bActivity && m_bLock)
 		{
 			Camera_Active(PART_LOCK, _float3(0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 			m_bActivity = false;
 		}
-		 if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity && m_bLockLeon)
+		else if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bActivity && m_bLockLeon)
 		{
 			Camera_Active(PART_LOCK1, _float3(-0.015f, -0.1f, 0.2f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 			m_bActivity = false;
@@ -630,28 +634,31 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 void CCabinet::Electric_Tick(_float fTimeDelta)
 {
 	_bool bCam = false;
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
-	{
-		bCam = true;
-	}
+	
 	if (m_bCamera)
 		Camera_Active(PART_BODY, _float3(-0.001f, 1.5f, -0.4f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	if (m_fDelayLockTime > 0.f)
 	{
 		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
-
 		m_bCamera = true;
+	}
+	if (m_fDelayLockTime > 0.f&& m_fDelayLockTime < 1.7f)
+		m_bLock = false;
+
+	else if (m_fDelayLockTime == 0.f)
+	{
+		m_bCamera = false;
 	}
 
 	if (m_bDead)
 		m_bItemDead = true;
 
 
-	if (m_bCamera && (bCam||!m_bLock))
-	{
-		Reset_Camera();
-		m_bCamera = false;
-	}
+	//if (m_bCamera && (bCam||!m_bLock))
+	//{
+	//	Reset_Camera();
+	//	m_bCamera = false;
+	//}
 
 	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
@@ -681,7 +688,7 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 		if (!bCam&& m_bLock)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK&& m_fDelayLockTime==0.f)
-				m_fDelayLockTime = 4.f;
+				m_fDelayLockTime = 2.5f;
 			//m_bLock = false;
 		}
 		else if (bCam||!m_bLock)
@@ -776,8 +783,8 @@ void CCabinet::LeonDesk_Active()
 
 	if (m_bAutoOpen )
 	{
-		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
-		m_bCamera = true;
+		/*m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+		m_bCamera = true;*/
 		if (m_bObtain)
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);
@@ -925,10 +932,30 @@ _float4 CCabinet::Get_Object_Pos()
 			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
 		else
 			return _float4(0.f, 0.f, 0.f, 1.f);
+	if (m_eCabinetType == TYPE_LEON)
+	{
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP0]&&m_bLock)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos();
+		else if (m_bCol[INTER_COL_DOUBLE][COL_STEP0]&& m_bLockLeon)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK1])->Get_Pos();
+		else
+			return _float4(0.f, 0.f, 0.f, 1.f);
+	}
+	else if(m_eCabinetType == TYPE_ZOMBIE)
+	{
+		if(m_eState== CABINET_CLOSED)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+		else
+			return _float4(0.f, 0.f, 0.f, 1.f);
 
-	if (m_PartObjects[PART_LOCK] == nullptr)
-		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+	}
 	else
-		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos();
+	{
+		if (m_PartObjects[PART_LOCK] == nullptr)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+		else
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos();
+	}
+	
 
 }

@@ -56,7 +56,7 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 	if (m_eLockType == OPENLOCKER_DIAL)
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), CCabinet::WRONG_LOCK);
-		m_pModelCom->Play_Animation_Light(m_pParentsTransform, 0.000001);
+		m_pModelCom->Play_Animation_Light(m_pParentsTransform, 0.000001f);
 	}
 	return S_OK;
 }

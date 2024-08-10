@@ -28,7 +28,7 @@ public:
 		CABINET_END,
 	};
 	enum LOCK_STATE
-	{
+	{	
 		STATIC_LOCK, // 그냥 정지상태0 0
 		LIVE_LOCK, //락을 푸는 행동을 할때 => 뼈를 돌릴때임1
 		WRONG_LOCK, // 락이 틀렸을 때2 1
@@ -93,7 +93,8 @@ public:
 	void					Set_Lock_False() { m_bLock = false; }
 	_int					Get_Cabinet_Type() {return m_eCabinetType; }
 	string				Get_Electric_Tag() { return m_strElectTag; }
-	void					Set_Electric_Open() { m_fDelayLockTime = 3.f; }
+	void					Set_Electric_Open() { m_fDelayLockTime = 2.f; }
+	_bool					Get_Electric_Open() { return m_bLock; }
 	void					Set_Lock() { m_bLock = true; }
 
 private:
