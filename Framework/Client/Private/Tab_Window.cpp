@@ -943,6 +943,15 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 					pAnnounceMap->Set_GetMapItem();
 				}
 			}
+			m_pPickedUp_Item = pProp->Get_Item_Props();
+			_int iFloorType = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Floor();
+			_int iLocation_map_visit = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Region();
+			_int iCollectNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
+
+			m_pMapItem_UI->Destory_Item(static_cast<MAP_FLOOR_TYPE>(iFloorType),
+				static_cast<LOCATION_MAP_VISIT>(iLocation_map_visit),
+				static_cast<ITEM_NUMBER>(iCollectNum));
+			m_pPickedUp_Item = nullptr;
 		}
 
 		else

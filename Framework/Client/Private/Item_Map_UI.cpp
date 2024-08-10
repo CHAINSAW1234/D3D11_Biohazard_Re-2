@@ -78,6 +78,8 @@ HRESULT CItem_Map_UI::Change_Tool()
 
 void CItem_Map_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType)
 {
+    if (_locationType == OPERATION_RECORD_ROOM)
+        _locationType = OPERATION_ROOM;
     CGameObject* pItem = Search_Item(_floorType, _locationType, _ItemType);
 
     if (nullptr == pItem)
@@ -280,6 +282,8 @@ CGameObject* CItem_Map_UI::Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_V
 
         if (nullptr != pUI)
         {
+            if (_ItemType == vp70longmagazine)
+                _ItemType = shotgunpartsstock_00;
             if (_ItemType == pUI->m_eItem_Type)
             {
                 if (_locationType == pUI->m_eMap_Location)
