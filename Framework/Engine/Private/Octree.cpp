@@ -390,8 +390,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		CMesh* newObject = new CMesh(m_pDevice, m_pContext);
 		newObject->SetNumVertices(pObject->GetNumVertices());
-		//newObject->SetVertices(pObject->GetVertices());
-
+		newObject->SetVertices(pObject->GetVertices());
 		NewMeshes->push_back(newObject);
 
 		_uint numOfFaces = pObject->GetNumFaces();
@@ -415,6 +414,12 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 				pIndices[j + 1] = (*Faces)[j / 3]->VertexIndex[1];
 				pIndices[j + 2] = (*Faces)[j / 3]->VertexIndex[2];
 			}
+
+
+			/*if(numOfFaces != 0)
+			{
+				(*NewMeshes)[i]->Static_Mesh_Cooking(nullptr, nullptr);
+			}*/
 		}
 
 		(*NewMeshes)[i]->Ready_Buffer_For_Octree(m_vTranslation);

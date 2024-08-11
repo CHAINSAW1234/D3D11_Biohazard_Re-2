@@ -333,7 +333,9 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 
 	PxFilterData StaticMeshFilter;
 	StaticMeshFilter.word0 = COLLISION_CATEGORY::STATIC_MESH;
-	StaticMeshFilter.word3 = *pIndex;
+
+	if(pIndex)
+		StaticMeshFilter.word3 = *pIndex;
 
 	Shape->setSimulationFilterData(StaticMeshFilter);
 
