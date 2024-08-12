@@ -198,6 +198,7 @@
     <ClInclude Include="..\Public\Actor_SM69_015.h" />
     <ClInclude Include="..\Public\Actor_WP4530.h" />
     <ClInclude Include="..\Public\Announcement_Map_UI.h" />
+    <ClInclude Include="..\Public\BGM_Player.h" />
     <ClInclude Include="..\Public\Body_Chair.h" />
     <ClInclude Include="..\Public\Break_Sound_Zombie.h" />
     <ClInclude Include="..\Public\Chair.h" />
@@ -507,6 +508,7 @@
     <ClCompile Include="..\Private\Actor_SM69_015.cpp" />
     <ClCompile Include="..\Private\Actor_WP4530.cpp" />
     <ClCompile Include="..\Private\Announcement_Map_UI.cpp" />
+    <ClCompile Include="..\Private\BGM_Player.cpp" />
     <ClCompile Include="..\Private\Body_Chair.cpp" />
     <ClCompile Include="..\Private\Break_Sound_Zombie.cpp" />
     <ClCompile Include="..\Private\Chair.cpp" />

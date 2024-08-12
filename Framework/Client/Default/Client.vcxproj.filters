@@ -859,6 +859,9 @@
     <Filter Include="02.GameObjects\Monster\Zombie\Body\AIController\Zombie\Decorator\Checker_Is_Start_Rub_Door">
       <UniqueIdentifier>{99c78821-66c2-45e9-bc26-eaa7bf3ae28c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BGM_Player">
+      <UniqueIdentifier>{c8b7d341-cc30-440a-847d-b5252749b34d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1677,6 +1680,9 @@
     <ClInclude Include="..\Public\Knife.h">
       <Filter>02.GameObjects\Player\Knife</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BGM_Player.h">
+      <Filter>BGM_Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2455,6 +2461,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Knife.cpp">
       <Filter>02.GameObjects\Player\Knife</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BGM_Player.cpp">
+      <Filter>BGM_Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 #include "Room_Finder.h"
 
 #include "Part_Breaker_Zombie.h"
+#include "BGM_Player.h"
 
 CBlackBoard_Zombie::CBlackBoard_Zombie()
 	: CBlackBoard()
@@ -437,6 +438,9 @@ void CBlackBoard_Zombie::Update_Look_Target(_float fTImeDelta)
 	{
 		m_pAI->Set_LookTarget(false);
 	}
+
+	if (true == m_pAI->Is_LookTarget() && false == m_pAI->Is_RagDoll())
+		CBGM_Player::Get_Instance()->Set_Focused(true);
 }
 
 _bool CBlackBoard_Zombie::Hit_Player()

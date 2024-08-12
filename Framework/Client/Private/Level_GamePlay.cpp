@@ -27,6 +27,7 @@
 /* Manager */
 #include "Call_Center.h"
 #include "Cut_Scene_Manager.h"
+#include "BGM_Player.h"
 
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -94,6 +95,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
+	m_pBGM_Player->Tick(fTimeDelta);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 }
 
@@ -189,6 +191,10 @@ HRESULT CLevel_GamePlay::Ready_Managers()
 		return E_FAIL;
 
 	m_pCutSceneManager = CCut_Scene_Manager::Get_Instance();
+	if (nullptr == m_pCall_Center)
+		return E_FAIL;
+
+	m_pBGM_Player = CBGM_Player::Get_Instance();
 	if (nullptr == m_pCall_Center)
 		return E_FAIL;
 
@@ -1819,4 +1825,5 @@ void CLevel_GamePlay::Free()
 
 	Safe_Release(m_pCall_Center);
 	Safe_Release(m_pCutSceneManager);
+	Safe_Release(m_pBGM_Player);
 }

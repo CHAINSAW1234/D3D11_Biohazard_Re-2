@@ -144,6 +144,9 @@ public:
 	void								Play_Random_Open_Door_Sound();
 
 public:
+	inline _bool						Is_RagDoll() { return m_bRagdoll; }
+
+public:
 	void								Play_Animations_Body(_float fTimeDelta);
 
 public:		/* For.IK Controll */

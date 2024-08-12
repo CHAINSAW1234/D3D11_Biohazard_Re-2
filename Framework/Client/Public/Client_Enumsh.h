@@ -15,6 +15,7 @@ namespace Client
 		BGM_2D, 
 		CH1_2D, CH2_2D, CH3_2D, CH4_2D,
 		CH_TICK_2D,
+		BGM_ZOMBIE,
 		CH_END
 	};
 
