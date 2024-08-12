@@ -29,7 +29,10 @@ HRESULT CWindow::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+
+	if (m_tagPropDesc.iRegionNum == LOCATION_MAP_VISIT::OPERATION_HALLWAY)
+		m_bDummy = true;
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -38,14 +41,18 @@ HRESULT CWindow::Initialize(void* pArg)
 
 	m_iNeedItem = woodbarricade01a;
 
-	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
-		return E_FAIL;
-	m_pGameInstance->Set_Volume_3D(m_pTransformCom,0,0.1f);
-	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 1, 0.1f);
-	m_pGameInstance->Set_Volume_3D(m_pTransformCom, 2, 0.5f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 0, 1.f, 5.f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 1, 1.f, 5.f);
-	m_pGameInstance->Set_Distance_3D(m_pTransformCom, 2, 1.f, 10.f);
+	if (!m_bDummy)
+	{
+		if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3)))
+			return E_FAIL;
+		m_pGameInstance->Set_Volume_3D(m_pTransformCom, 0, 0.1f);
+		m_pGameInstance->Set_Volume_3D(m_pTransformCom, 1, 0.1f);
+		m_pGameInstance->Set_Volume_3D(m_pTransformCom, 2, 0.5f);
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom, 0, 1.f, 5.f);
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom, 1, 1.f, 5.f);
+		m_pGameInstance->Set_Distance_3D(m_pTransformCom, 2, 1.f, 10.f);
+	}
+
 	return S_OK;
 }
 
@@ -157,7 +164,8 @@ void CWindow::Late_Tick(_float fTimeDelta)
 		return;
 	if (!Visible())
 	{
-		Select_UI();
+		if(!m_bDummy)
+			Select_UI();
 		return;
 	}
 
@@ -191,8 +199,8 @@ void CWindow::Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 	}
-
-	Select_UI();
+	if(!m_bDummy)
+		Select_UI();
 
 
 
