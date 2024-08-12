@@ -1858,7 +1858,8 @@ void CGameInstance::PlayBGM_2D(wstring FileKey, _int eID)
 
 void CGameInstance::StopSound_2D(_int eID)
 {
-	m_pSound_Manager_2D->StopSound_2D(eID);
+	if(eID >= 0)
+		m_pSound_Manager_2D->StopSound_2D(eID);
 }
 
 
