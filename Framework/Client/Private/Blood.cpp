@@ -51,7 +51,8 @@ void CBlood::Tick(_float fTimeDelta)
 
 	if (m_iFrame == 1)
 	{
-		PlaySound();
+		if(m_bSound)
+			PlaySound();
 	}
 
 	if (m_pHitPart && m_bBiteBlood == false)

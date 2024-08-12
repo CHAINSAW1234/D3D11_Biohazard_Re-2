@@ -54,6 +54,10 @@ public:
 	{
 		m_bBlood_CutScene = boolean;
 	}
+	void					SetSound(_bool boolean)
+	{
+		m_bSound = boolean;
+	}
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
@@ -89,6 +93,9 @@ private:
 
 	_bool					m_bDecalSound = { false };
 	_bool					m_bBlood_CutScene = { false };
+
+
+	_bool					m_bSound = { true };
 public:
 	static CBlood_Drop* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

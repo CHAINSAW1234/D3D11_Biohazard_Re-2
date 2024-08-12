@@ -40,6 +40,10 @@ public:
 	{
 		m_bBiteBlood = boolean;
 	}
+	void					SetSound(_bool boolean)
+	{
+		m_bSound = boolean;
+	}
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
@@ -64,6 +68,8 @@ private:
 	PxRigidDynamic*			m_pHitPart = { nullptr };
 	_float4					m_vPrev_HitPartPos;
 	_bool					m_bBiteBlood = { false };
+
+	_bool					m_bSound = { false };
 public:
 	static CBlood* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

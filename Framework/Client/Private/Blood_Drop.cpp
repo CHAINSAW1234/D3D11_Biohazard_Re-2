@@ -63,7 +63,8 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 
 	if (m_iFrame == 1)
 	{
-		PlaySound();
+		if(m_bSound)
+			PlaySound();
 	}
 
 	if (m_bDecal)

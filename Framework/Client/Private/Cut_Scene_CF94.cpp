@@ -68,6 +68,7 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 		pBlood->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
 		m_vecBlood.push_back(pBlood);
 		pBlood->Start();
+		pBlood->SetSound(false);
 	}
 
 	for (size_t i = 0; i < BLOOD_DROP_COUNT; ++i)
@@ -78,6 +79,7 @@ HRESULT CCut_Scene_CF94::Initialize(void* pArg)
 		pBlood_Drop->SetDropDir_CutScene();
 		pBlood_Drop->SetCutScene_Blood(true);
 		pBlood_Drop->Start();
+		pBlood_Drop->SetSound(false);
 	}
 
 	CActor_PartObject* pPartBody = m_Actors[static_cast<_uint>(CF94_ACTOR_TYPE::_EM_0000)]->Get_PartObject(static_cast<_uint>(CActor_EM00::ACTOR_EM00_PART::_BODY));
