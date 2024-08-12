@@ -580,7 +580,7 @@ void CRead_Item_UI::Render_Condition()
         return;
     }
 
-    if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+    if (DOWN == m_pGameInstance->Get_KeyState(VK_ESCAPE))
     {
         m_isRender = false;
         m_isPrevRender = false;
