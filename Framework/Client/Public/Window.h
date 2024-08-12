@@ -95,6 +95,7 @@ public:
 
 
 private:
+	_bool				m_bDummy = { false };
 	_bool				m_bBarrigateInstallable = { true };
 	_bool				m_bBarrigate = { false };
 	_bool				m_bCamera = { false };

@@ -60,6 +60,7 @@ HRESULT CActor_PL78::Initialize(void* pArg)
 		pBlood->SetSize(HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE, HEADBLOW_BLOOD_SIZE);
 		m_vecBlood.push_back(pBlood);
 		pBlood->Start();
+		pBlood->SetSound(false);
 	}
 
 	for (size_t i = 0; i < BLOOD_DROP_COUNT; ++i)
@@ -70,6 +71,7 @@ HRESULT CActor_PL78::Initialize(void* pArg)
 		pBlood_Drop->SetDropDir_CutScene();
 		pBlood_Drop->SetCutScene_Blood(true);
 		pBlood_Drop->Start();
+		pBlood_Drop->SetSound(false);
 	}
 
 	CModel* pBody_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };

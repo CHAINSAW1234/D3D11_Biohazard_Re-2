@@ -395,9 +395,9 @@ void CNewpoliceStatue::Active()
 	if (m_iEXCode == 0)
 		m_iNeedItem = virginmedal01a;
 	else if (m_iEXCode == 1)
-		m_iNeedItem = unicornmedal01a;
-	else
 		m_iNeedItem = virginmedal02a;
+	else
+		m_iNeedItem = unicornmedal01a;
 
 	if (m_iEXCode > 3)
 		m_iEXCode = 3;

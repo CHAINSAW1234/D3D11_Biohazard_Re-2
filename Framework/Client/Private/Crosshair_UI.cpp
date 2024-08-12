@@ -159,6 +159,8 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
         m_isRender = false;
         m_isShoot = false;
     }
+
+    m_fBlending = 0.f;
 }
 
 void CCrosshair_UI::Late_Tick(_float fTimeDelta)
