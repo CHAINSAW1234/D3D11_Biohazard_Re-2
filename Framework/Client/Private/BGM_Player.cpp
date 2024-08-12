@@ -32,7 +32,7 @@ void CBGM_Player::Tick(_float fTimeDelta)
 			if(m_iLevel == 0)
 				m_iChannel = pGameInstance->PlaySoundEffect_2D_Using_Index(TEXT("BGM"), TEXT("cf092_music_en.bnk.2_1.mp3"), 0.001f);
 
-			_float			fVolume = { m_fAccTime / m_fMaxTime * 0.5f };
+			_float			fVolume = { m_fAccTime / m_fMaxTime * 0.3f };
 			_int			iLevel = { static_cast<_int>(fVolume * 1000.f) };
 			if (iLevel != m_iLevel && -1 != m_iChannel)
 			{				
