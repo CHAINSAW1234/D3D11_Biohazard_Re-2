@@ -921,7 +921,8 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 		switch (eInvenEvent)
 		{
 		case Client::COMBINED_ITEM: {
-			Combind_Item(m_pSelected_ItemUI, m_pTemp_ItemUI);
+			//Combind_Item(m_pSelected_ItemUI, m_pTemp_ItemUI);
+			Combind_Item(m_pTemp_ItemUI, m_pSelected_ItemUI);
 			m_pSlotHighlighter->Set_DragShadow(false);
 			m_eInven_Manager_State = EVENT_IDLE;
 			m_eTaskSequence = TS_END;
@@ -1374,7 +1375,8 @@ void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondIte
 	//gunpowder01b,	
 	//strengtheningyellow01a
 
-	else if (gunpowder01a <= eFirstNum && strengtheningyellow01a >= eFirstNum &&
+	else if (
+		gunpowder01a <= eFirstNum && strengtheningyellow01a >= eFirstNum &&
 		gunpowder01a <= eSecondNum && strengtheningyellow01a >= eSecondNum &&
 		handgun_bullet01a <= eItemResult && shotgun_bullet01a >= eItemResult) 
 	{
