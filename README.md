@@ -1,25 +1,27 @@
-# D3D11_Biohazard_Re-2
+## D3D11_Biohazard_Re-2
 
-# Áê½Å 141±â Team Portfolio
+ì¥¬ì‹  141ê¸° Team Portfolio
 
-# ÆÀÀå ÀÌÁ¤Çö
-#   - ÇÁ·¹ÀÓ¿öÅ©, ÇÇÁ÷½º, ÀÌÆåÆ®
-# ÆÀ¿ø ¿°ÇüÁØ
-#   - ¾Ö´Ï¸ÞÀÌ¼Ç, ¸ó½ºÅÍ(Á»ºñ), ÄÆ½Å
-# ÆÀ¿ø ½ÅÃ¢±Õ
-#   - UI, ÀÎº¥Åä¸®
-# ÆÀ¿ø Á¶ÇöÁø
-#   - ¼ÎÀÌ´õ, ÇÃ·¹ÀÌ¾î
-# ÆÀ¿ø ÀÌ³ª¿µ
-#   - UI, ¹Ì´Ï¸Ê, ÆÛÁñ
-# ÆÀ¿ø ±è¿¹Àº
-#   - ¸Ê, ±â¹Í, ÆÛÁñ
+## íŒ€ì› êµ¬ì„±
+# íŒ€ìž¥ ì´ì •í˜„
+  - í”„ë ˆìž„ì›Œí¬, í”¼ì§ìŠ¤, ì´íŽ™íŠ¸
+# íŒ€ì› ì—¼í˜•ì¤€
+  - ì• ë‹ˆë©”ì´ì…˜, ëª¬ìŠ¤í„°(ì¢€ë¹„), ì»·ì‹ 
+# íŒ€ì› ì‹ ì°½ê· 
+  - UI, ì¸ë²¤í† ë¦¬
+# íŒ€ì› ì¡°í˜„ì§„
+  - ì…°ì´ë”, í”Œë ˆì´ì–´
+# íŒ€ì› ì´ë‚˜ì˜
+  - UI, ë¯¸ë‹ˆë§µ, í¼ì¦
+# íŒ€ì› ê¹€ì˜ˆì€
+  - ë§µ, ê¸°ë¯¹, í¼ì¦
+
+# ìž‘ì—…ê¸°ê°„
+  2024.05.16 ~ 2024.06.26
+
+# ìž¬ì‹¤í–‰ì‹œ ì£¼ì˜ì‚¬í•­
+  1. T,Y, U, I ,O í‚¤ë¥¼ ì´ìš©í•´ì„œ ì»·ì‹ ì„ ì ì ˆí•œ íƒ€ì´ë°ì— ìž¬ìƒí•´ì•¼í•¨
+  2. ..\Framework\Client\Bin\Resources\Models\Map\Location\Merged\Merge_Policefbx.ip ì„ ì••ì¶•í•´ì œí•´ì•¼ í•©ë‹ˆë‹¤
+  3. ..\Framework\Client\Bin\Resources\Textures\SkyBox\Sky_3.zipë„ ì••ì¶•í•´ì œí•˜ë©´ ë” ì¢‹ìŠµë‹ˆë‹¤
 
 
-# ÀÛ¾÷±â°£
-# 2024.05.16 ~ 2024.06.26
-
-# Àç½ÇÇà½Ã ÁÖÀÇ»çÇ×
-# 1. T,Y, U, I ,O Å°¸¦ ÀÌ¿ëÇØ¼­ ÄÆ½ÅÀ» ÀûÀýÇÑ Å¸ÀÌ¹Ö¿¡ Àç»ýÇØ¾ßÇÔ
-# 2. ..\Framework\Client\Bin\Resources\Models\Map\Location\Merged\Merge_Policefbx.ip À» ¾ÐÃàÇØÁ¦ÇØ¾ß ÇÕ´Ï´Ù
-# 3. ..\Framework\Client\Bin\Resources\Textures\SkyBox\Sky_3.zipµµ ¾ÐÃàÇØÁ¦ÇÏ¸é ´õ ÁÁ½À´Ï´Ù
